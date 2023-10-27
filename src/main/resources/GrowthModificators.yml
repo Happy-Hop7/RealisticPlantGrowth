@@ -1,0 +1,344 @@
+# Ageable / BlockGrowEvent or BlockSpreadEvent - Important note, as of PPG 1.6 the plant names are now all in UPPER CASE matching the actual Bukkit Material.TYPE
+BAMBOO:
+  Growth: 50
+  Death: 5
+  BiomeGroup:
+    - Jungle
+  Jungle:
+    Growth: 50
+    GrowthDark: 25
+    Death: 0
+    DeathDark: 5
+  Biome:
+    - NONE
+
+# Bamboo Sapling is a freshly planted bamboo, it is a block item not a tree item even though it is labeled "sapling"
+BAMBOO_SAPLING:
+  Growth: 50
+  Death: 5
+  BiomeGroup:
+    - Jungle
+  Jungle:
+    Growth: 50
+    GrowthDark: 25
+    Death: 0
+    DeathDark: 5
+  Biome:
+    - NONE
+
+# In this example beetroot only grows in GoodGrowing and GreatGrowing biomes, setting biome NONE should block all others
+BEETROOTS:
+  Growth: 50
+  GrowthDark: 25
+  Death: 5
+  DeathDark: 25
+  BiomeGroup:
+    - GreatGrowing
+    - GoodGrowing
+  GreatGrowing:
+    Growth: 100
+    GrowthDark: 75
+    Death: 0
+    DeathDark: 5
+  GoodGrowing:
+    Growth: 80
+    GrowthDark: 55
+    Death: 5
+    DeathDark: 10
+  Biome:
+    - NONE
+
+# In this example cactus is restricted to the biomegroup desert and savanna
+CACTUS:
+  Growth: 50
+  GrowthDark: 25
+  Death: 5
+  DeathDark: 25
+  BiomeGroup:
+    - Desert
+  Desert:
+    Growth: 50
+    GrowthDark: 25
+    Death: 0
+    DeathDark: 5
+  Biome:
+    - SAVANNA
+  SAVANNA:
+    Growth: 25
+    Death: 50
+
+# Carrot example is setup like beetroot but also grows in desert by setting Biome: - DESERT value
+CARROTS:
+  Growth: 50
+  GrowthDark: 25
+  Death: 5
+  DeathDark: 25
+  BiomeGroup:
+    - GreatGrowing
+    - GoodGrowing
+  GreatGrowing:
+    Growth: 100
+    GrowthDark: 75
+    Death: 0
+    DeathDark: 5
+  GoodGrowing:
+    Growth: 80
+    GrowthDark: 55
+    Death: 5
+    DeathDark: 10
+  Biome:
+    - DESERT
+  DESERT:
+    Growth: 25
+    Death: 50
+
+# Chorus flower needs endstone to grow on and be in the end
+CHORUS_FLOWER:
+  Growth: 50
+  Death: 5
+  Biome:
+    - END_BARRENS
+    - END_HIGHLANDS
+    - END_MIDLANDS
+    - THE_END
+
+# In this example Cocoa will only grow in jungle biomes at 25% normal rate
+COCOA:
+  Growth: 25
+  Death: 5
+  BiomeGroup:
+    - Jungle
+  Jungle:
+    Growth: 25
+    GrowthDark: 25
+    Death: 5
+    DeathDark: 5
+  Biome:
+    - NONE
+
+# In this example grass, tallgrass, bonemeal used on grass - will grow anywhere - Biome: [] - but only at 50%
+GRASS:
+  Growth: 50
+  Death: 0
+  Biome: []
+
+# Similar to GRASS above, specifically for when bonemeal is used on a grass block
+GRASS_BLOCK:
+  Growth: 50
+  Death: 0
+  Biome: []
+
+# In this example kelp will grow anywhere - Biome: [] - but only at 50%
+KELP:
+  Growth: 50
+  Death: 5
+  Biome: []
+
+# In this example melons will grow anywhere - Biome: [] - but only at 50%
+MELON:
+  Growth: 50
+  Death: 5
+  Biome: []
+
+# This is the stem portion, it can be set to grow differently than the melon/pumpkin
+MELON_STEM:
+  Growth: 50
+  Death: 5
+  Biome: []
+
+# In this example netherwart is restricted to the nether biomegroup at 25%
+NETHER_WART:
+  Growth: 25
+  Death: 5
+  BiomeGroup:
+    - Hell
+  Hell:
+    Growth: 25
+    Death: 5
+  Biome: []
+
+# Potato will grow in great and good areas, all others at its default rate with Biome: []
+POTATOES:
+  Growth: 50
+  GrowthDark: 25
+  Death: 5
+  DeathDark: 25
+  BiomeGroup:
+    - GreatGrowing
+    - GoodGrowing
+  GreatGrowing:
+    Growth: 100
+    GrowthDark: 75
+    Death: 0
+    DeathDark: 5
+  GoodGrowing:
+    Growth: 80
+    GrowthDark: 55
+    Death: 5
+    DeathDark: 10
+  Biome: []
+
+PUMPKIN:
+  Growth: 50
+  Death: 5
+  Biome: []
+
+# This is the stem portion, it can be set to grow differently than the melon/pumpkin
+PUMPKIN_STEM:
+  Growth: 50
+  Death: 5
+  Biome: []
+
+# In this example sugar cane will only grow in these biomes at a 50% rate and no where else
+SUGAR_CANE:
+  Growth: 50
+  Death: 5
+  Biome:
+    - BEACHES
+    - BEACH
+    - RIVER
+    - SWAMPLAND
+
+# Sweet berry bush was added in minecraft 1.14 and pwnplantgrowth v2.5.0
+SWEET_BERRY_BUSH:
+  Growth: 50
+  GrowthDark: 25
+  Death: 5
+  DeathDark: 25
+  BiomeGroup:
+    - GreatGrowing
+    - GoodGrowing
+  GreatGrowing:
+    Growth: 100
+    GrowthDark: 75
+    Death: 0
+    DeathDark: 5
+  GoodGrowing:
+    Growth: 80
+    GrowthDark: 55
+    Death: 5
+    DeathDark: 10
+  Biome: []
+
+TWISTING_VINES:
+  Growth: 25
+  Death: 5
+  BiomeGroup:
+    - Hell
+  Hell:
+    Growth: 25
+    Death: 5
+  Biome: []
+
+WEEPING_VINES:
+  Growth: 25
+  Death: 5
+  BiomeGroup:
+    - Hell
+  Hell:
+    Growth: 25
+    Death: 5
+  Biome: []
+
+# This is WHEAT - In this example wheat will grow everywhere at 50% rate, and at better rates in great and good growing groups
+WHEAT:
+  Growth: 50
+  GrowthDark: 25
+  Death: 5
+  DeathDark: 25
+  BiomeGroup:
+    - GreatGrowing
+    - GoodGrowing
+  GreatGrowing:
+    Growth: 100
+    GrowthDark: 75
+    Death: 0
+    DeathDark: 5
+  GoodGrowing:
+    Growth: 80
+    GrowthDark: 55
+    Death: 5
+    DeathDark: 10
+  Biome: []
+
+
+# StructureGrowEvent Items
+# As of version 2.4.0 PwnPlantGrowth switched to the block type (sapling) that starts the tree/structure, the growth result could be regular, tall, mega, etc based on other conditions.
+ACACIA_SAPLING:
+  Growth: 50
+  Death: 5
+  Biome:
+    - SAVANNA
+    - SAVANNA_MOUNTAINS
+    - SAVANNA_PLATEAU
+    - SAVANNA_PLATEAU_MOUNTAINS
+
+BIRCH_SAPLING:
+  Growth: 50
+  Death: 5
+  Biome:
+    - FOREST
+    - FOREST_HILLS
+    - TAIGA
+    - TAIGA_HILLS
+
+DARK_OAK_SAPLING:
+  Growth: 50
+  Death: 5
+  Biome:
+    - ROOFED_FOREST
+    - ROOFED_FOREST_MOUNTAINS
+
+JUNGLE_SAPLING:
+  Growth: 50
+  Death: 5
+  BiomeGroup:
+    - Jungle
+  Jungle:
+    Growth: 50
+    GrowthDark: 25
+    Death: 0
+    DeathDark: 5
+  Biome:
+    - NONE
+
+OAK_SAPLING:
+  Growth: 50
+  Death: 5
+  Biome: []
+
+SPRUCE_SAPLING:
+  Growth: 50
+  Death: 5
+  Biome: []
+
+BROWN_MUSHROOM:
+  Growth: 50
+  Death: 5
+  Biome:
+    - MUSHROOM_ISLAND
+    - MUSHROOM_SHORE
+
+RED_MUSHROOM:
+  Growth: 50
+  Death: 5
+  Biome:
+    - MUSHROOM_ISLAND
+    - MUSHROOM_SHORE
+
+CRIMSON_FUNGUS:
+  Growth: 50
+  Death: 5
+  Biome:
+    - CRIMSON_FOREST
+
+WARPED_FUNGUS:
+  Growth: 50
+  Death: 5
+  Biome:
+    - WARPED_FOREST
+
+# Plugin will check for the following list of plants as of ver. 2.6.1 for Minecraft 1.16.x
+
+# Ageable / BlockGrowEvent: "BAMBOO", "BAMBOO_SAPLING", "BEETROOTS", "CACTUS", "CARROTS", "COCOA", "CHORUS_FLOWER", "GRASS", "GRASS_BLOCK", "KELP", "MELON", "MELON_STEM", "NETHER_WART", "POTATOS", "PUMPKIN", "PUMPKIN_STEM", "SUGAR_CANE", "TWISTING_VINES", "WEEPING_VINES", "WHEAT", "SWEET_BERRY_BUSH"
+# Structures / StructureGrowEvent: "ACACIA_SAPLING", "BIRCH_SAPLING", "DARK_OAK_SAPLING", "JUNGLE_SAPLING", "OAK_SAPLING", "SPRUCE_SAPLING", "RED_MUSHROOM", "BROWN_MUSHROOM", "CRIMSON_FUNGUS", "WARPED_FUNGUS"
