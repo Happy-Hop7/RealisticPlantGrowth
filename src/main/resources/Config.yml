@@ -1,0 +1,105 @@
+# RealisticPlantGrowth configuration file
+#
+# Visit RealisticPlantGrowth's page on http://dev.bukkit.org for more config details.
+#
+# Full biome list available at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
+#
+# Plants / Crops are available in the "Material" list.
+# Full material list available at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+#
+# If you like this Plugin please consider leaving a donation <3
+# ----------------------->  Donation LINK   <---------------------------------------------------
+
+
+########################################################################################################################
+#|
+#| General Settings
+#|
+########################################################################################################################
+localization: de-DE                                 # Supported language codes under: /RealisticPlantGrowth/local
+plugin-prefix: "&7[&2RealisticPlantGrowth&7]&r "    # Plugin prefix shown in Console logs. Does not affect chat massages
+
+# Which worlds should this plugin be enabled in? Worlds not in this list will have default growth behavior.
+enabled_worlds:
+  - example_world
+  - example_world_nether
+  - example_world_end
+
+bonemeal_limit: 3            # Limits the use of bonemeal on a single plant to the set amount.
+                             # Use negative numbers to disable this feature (eg. bonemeal_limit: -1)
+
+min_natural_light: 10        # Natural sky light level is required in order for plants to grow.
+                             # sky light level: 0: allows growth also underground in caves.
+                             # sky light level 10: corresponds to sunlight through glass/tree leaves.
+                             # sky light level 15: plants grow only in direct sunlight.
+
+report_growth: false         # Show players possible growth rates for an item they are holding in hand when
+                             # left-clicking on the ground.
+                             # Only growth rates for the biome, the player is standig in, are displayed.
+
+
+########################################################################################################################
+#|
+#| Fertilizer
+#|
+#| Composters fertilizing corps in the surrounding area. This allows plant growth in normally inhabitable areas.
+#|
+########################################################################################################################
+fertilizer_enabled: false    # Enable use of composter fertilizer.
+
+fertilizer_radius: 5         # Plants within this distance of Blocks will grow at fertilizer_growth_rate. (see below)
+
+fertilizer_growth_rate: 100  # Set the fertilizer rate of growth globally when a composter is nearby, defaults to 100%.
+                             # note that specific plant/biome dark and death rates take effect regardless of fertilizer.
+fertilizer_passiv: true      # false: requires the player to actively fill the composter to get the fertilizer effects.
+                             # true: fertilizer effects don't drain composters in order to fertilize the surroundings.
+
+
+########################################################################################################################
+#|
+#| UV-Light
+#|
+#| Will allow plants in radius to grow where there is no natural sky light.
+#| Note: Plants still require a certain light level in order to grow.
+#|
+########################################################################################################################
+uv_enabled: false            # Enable use of UV Light Block
+
+# A List of Blocks that can act as UV Light (Doesn't need to be a light emitting block)
+uv_blocks:
+  - GLOWSTONE
+  - CRYING_OBSIDIAN
+
+uv_radius: 5                 # Radius around an UV-block that UV affects
+
+# List of items allowed to grow in artificial light (e.g. torches and lanterns (not the same as UV-Light))
+# Use offical MATERIAL_NAMES to add to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
+grow_in_dark:
+  - RED_MUSHROOM
+  - BROWN_MUSHROOM
+  - NETHER_WARTS
+  - COCOA
+
+
+########################################################################################################################
+#|
+#| Logging & Debugging
+#|
+#| Runs various debug logs to view additional plugin data for troubleshooting and configuration.
+#|
+########################################################################################################################
+debug_log:    false     # Enables Debug-Mode. Can get spammy, use for only for debugging.
+tree_log:     false     # Will additionally log Tree Growing Events.
+plant_log:    false     # Will additionally log Plant Growing Events
+bonemeal_log: false     # Will additionally log Bonemeal Growing Events.
+log_coords:   false     # Will additionally log the coordinates on the world of the event. (gets really spammy)
+
+
+########################################################################################################################
+#|
+#| Spooky internal settings.
+#| Don't touch this pls =)
+#|
+########################################################################################################################
+config-version: 1
+verbose: false          # Ultra verbose logging, logs tons of information that may be useful for extra debugging.
