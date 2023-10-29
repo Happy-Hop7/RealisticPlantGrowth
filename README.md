@@ -55,7 +55,7 @@ which can be found [here](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Ma
 
 ### TREES:
 
-Full tree list available at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/TreeSpecies.html
+Full tree list available at [https://hub.spigotmc.org/javadocs/spigot/org/bukkit/TreeType.html](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/TreeType.html)
 
 - **ACACIA**: Acacia tree.
 - **BIG_TREE**: Regular tree, extra tall with branches
