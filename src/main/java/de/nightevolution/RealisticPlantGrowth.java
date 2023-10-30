@@ -1,5 +1,6 @@
 package de.nightevolution;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,13 +13,16 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
     // For convenience, a reference to the instance of this plugin
     private static RealisticPlantGrowth instance;
-    // Plugin prefix is getting read from the YAMAL Config.
+    // Plugin prefix is getting read from the YAML Config.
     // This is the default value.
     private static String pluginPrefix = "[RealisticPlantGrowth] ";
     private static String classPrefix = pluginPrefix + "RealisticPlantGrowth: ";
-    private static boolean debug = false;
+    private static boolean verboseMode = false;
 
     public static File dataFolder;
+
+    private ConfigManager configManager;
+    private MessageManager messageManager;
 
     // TODO: Check what of this Stuff is used
     // declare some stuffs to be used later
@@ -75,9 +79,13 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         // Create an instance of this Plugin
         instance = this;
 
-        ConfigManager cm = ConfigManager.get();
-        debug = cm.getDebug();
-        pluginPrefix = cm.getPluginPrefix();
+        MiniMessage miniMessage = MiniMessage.miniMessage();
+        this.configManager = ConfigManager.get();
+
+        verboseMode = configManager.getDebug();
+        pluginPrefix = configManager.getPluginPrefix();
+
+        this.messageManager = new MessageManager(this, this.configManager , miniMessage);
 
     }
 
@@ -85,6 +93,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
     }
+
 
     /**
      * Method used by error used, if critical error appears.
@@ -103,7 +112,15 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         return instance;
     }
     public static boolean getDebugStatus() {
-        return debug;
+        return verboseMode;
+    }
+
+    public ConfigManager getConfigManager(){
+        return this.configManager;
+    }
+
+    public MessageManager getMessageManager(){
+        return this.messageManager;
     }
 
     // Setters

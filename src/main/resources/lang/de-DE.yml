@@ -1,0 +1,6 @@
+# German Language-File (coming soon)
+# Message format - set how the plugin displays messages to users
+player_msg_format: "&2PwnPlantGrowth: &r"
+
+# No Permission message
+no_permissions: ""

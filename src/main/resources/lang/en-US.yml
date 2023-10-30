@@ -1,0 +1,11 @@
+# English Language-File (coming soon)
+# Message format - set how the plugin displays messages to users
+player_msg_format: "&2PwnPlantGrowth: &r"
+
+# No Permission message
+no_permissions: "You don't have the required permissions to perform this command!"
+
+# Help menu which shows up at wrong command usage and /rpg help
+rpg_help: "/rpg help - Shows this help message"
+rpg_info: "/rpg info - Gives information about plant currently in holding in hand"
+rpg_reload:  "/rpg reload - Reloads the plugin and all related configs"

@@ -16,7 +16,7 @@
 #| General Settings
 #|
 ########################################################################################################################
-localization: de-DE                                 # Supported language codes under: /RealisticPlantGrowth/local
+language: de-DE                                     # Supported language codes under: /RealisticPlantGrowth/local
 plugin-prefix: "&7[&2RealisticPlantGrowth&7]&r "    # Plugin prefix shown in Console logs. Does not affect chat massages
 
 # Which worlds should this plugin be enabled in? Worlds not in this list will have default growth behavior.

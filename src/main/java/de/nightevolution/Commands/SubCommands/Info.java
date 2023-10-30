@@ -1,4 +1,6 @@
 package de.nightevolution.Commands.SubCommands;
 
-public class Info {
+
+public class Info extends SubCommand {
+
 }

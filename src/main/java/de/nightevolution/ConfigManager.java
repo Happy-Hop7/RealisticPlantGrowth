@@ -2,8 +2,6 @@ package de.nightevolution;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
@@ -11,12 +9,33 @@ import java.io.IOException;
 
 
 public class ConfigManager {
+    // Main config file
     private static YamlDocument config;
-    private static boolean debug;
-    private static RealisticPlantGrowth instance;
+
+    // locals containing plugin messages
+    private static YamlDocument defaultLocale_en_US;
+    private static YamlDocument selectedLocale;
+
+    // All predefined localizations
+    String[] localsArray = {"en_US", "de_DE"};
+
+    private static File pluginFolder;
+    private static File localsFolder;
+
     private static String pluginPrefix = "[RealisticPlantGrowth] ";
     private static String classPrefix = pluginPrefix + "ConfigManager: ";
+
     private static ConfigManager configManager;
+    private static RealisticPlantGrowth instance;
+    private static MessageManager messageManager;
+
+    // Different debug and logging modes
+    private static boolean verboseMode = true;
+    private static boolean debug_log;
+    private static boolean tree_log;
+    private static boolean plant_log;
+    private static boolean bonemeal_log;
+    private static boolean log_coords;
 
     /**
      * Constructor for a new Singleton ConfigManager instance, which creates, reads and updates the config file.
@@ -28,10 +47,30 @@ public class ConfigManager {
         configManager = this;
         instance = RealisticPlantGrowth.getInstance();
 
-        registerYamlConfig();
+        pluginFolder = instance.getDataFolder();
+        localsFolder = new File(pluginFolder + File.separator + "lang");
 
-        debug = getDebugFromConfig();
-        pluginPrefix = readPluginPrefixFromConfig();
+        if(!localsFolder.exists()){
+            if(verboseMode){
+                Bukkit.getLogger().info(classPrefix + "Language directory doesn't exist!");
+                Bukkit.getLogger().info(classPrefix + "Creating new directory...");
+            }
+            try {
+                if(localsFolder.mkdir()){
+                    Bukkit.getLogger().info(pluginPrefix + "New language directory created.");
+                }
+
+
+            }catch (SecurityException e){
+                Bukkit.getLogger().warning(classPrefix + "Couldn't create language directory!");
+                instance.disablePlugin();
+            }
+        }
+
+        registerYamlConfig();
+        registerLocals();
+
+        getConfigData();
 
     }
 
@@ -54,7 +93,7 @@ public class ConfigManager {
      */
     private void registerYamlConfig(){
         try{
-            config = YamlDocument.create(new File(instance.getDataFolder(), "Config.yml"), instance.getResource("Config.yml"));
+            config = YamlDocument.create(new File(pluginFolder, "Config.yml"), instance.getResource("Config.yml"));
             config.update();
             Bukkit.getLogger().info(pluginPrefix + "Configuration loaded.");
         }catch (IOException e){
@@ -65,26 +104,52 @@ public class ConfigManager {
     }
 
     /**
-     * Reads the debug boolean from the config File.
-     * @return TRUE, if debug is activated. FALSE otherwise.
+     * Registers the config Files for RealisticPlantGrowth Plugin.
+     * Creates new one, if no config exists.
+     * Uses BoostedYAML API for config operations.
      */
-    private boolean getDebugFromConfig(){
-        try {
-            // Get Debug-Mode from Config.yml
-
-            return config.getBoolean("debug");
-
-        }catch (YAMLException e){
-            Bukkit.getLogger().warning("[RealisticPlantGrowth] ConfigManager: Debug-mode could not be read from config!");
-            Bukkit.getLogger().warning(e.getLocalizedMessage());
+    private void registerLocals(){
+        try{
+            config = YamlDocument.create(new File(pluginFolder, "Config.yml"), instance.getResource("Config.yml"));
+            config.update();
+            Bukkit.getLogger().info(pluginPrefix + "Configuration loaded.");
+        }catch (IOException e){
+            Bukkit.getLogger().warning(classPrefix + "Couldn't load YAML configuration!");
+            Bukkit.getLogger().warning(classPrefix + "Configuration could not be loaded.");
+            instance.disablePlugin();
         }
-        return false;
     }
 
+    /**
+     * Reads the debug boolean from the config file.
+     * @return TRUE, if debug is activated. FALSE otherwise.
+     * Todo: Add all config parameters
+     * Todo: Make this call asynchronous
+     */
+    private void getConfigData(){
+        try {
+            // Get diffrent debugging and logging modes from Config.yml
+            verboseMode = config.getBoolean("verbose");
+            debug_log = config.getBoolean("debug_log");;
+            tree_log = config.getBoolean("tree_log");
+            plant_log = config.getBoolean("plant_log");
+            bonemeal_log = config.getBoolean("bonemeal_log");
+            log_coords = config.getBoolean("log_coords");
 
+        }catch (YAMLException e){
+            Bukkit.getLogger().warning(classPrefix + "Verbose-mode could not be read from config!");
+            Bukkit.getLogger().warning(e.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * Reads plugin-prefix String from the config file.
+     * This Method calls the MessageManager and dissolves any miniMessage Tags the String is containing.
+     * @return A formatted String with the plugin prefix shown in console.
+     */
     private String readPluginPrefixFromConfig(){
-        String formatted = dissolveColorCodes(config.getString("plugin-prefix"));
-        if(debug)
+        String formatted = instance.getMessageManager().parseMessage(config.getString("plugin-prefix")).toString();
+        if(verboseMode)
             Bukkit.getLogger().info(classPrefix + "Plugin-Prefix from config: " + formatted);
         return formatted;
     }
@@ -100,7 +165,7 @@ public class ConfigManager {
             config.reload();
             Bukkit.getLogger().info(pluginPrefix + "Config reloaded.");
 
-            debug = getDebugFromConfig();
+            verboseMode = getConfigData();
             pluginPrefix = readPluginPrefixFromConfig();
             instance.setPluginPrefix(pluginPrefix);
 
@@ -114,23 +179,13 @@ public class ConfigManager {
         }
     }
 
-    /**
-     * Dissolves all Minecraft color codes in a given Sting.
-     * Uses Bukkit's color codes.
-     * @param stringWithColorCodes String with Minecraft color codes.
-     * @return Formatted and colored String.
-     */
-    public String dissolveColorCodes(String stringWithColorCodes){
-        Bukkit.getLogger().info(pluginPrefix + "StringWithColorCodes: " + stringWithColorCodes);
-        return ChatColor.translateAlternateColorCodes('&', stringWithColorCodes);
-    }
 
     // Getters for config values
     public String getPluginPrefix(){
         return pluginPrefix;
     }
     public boolean getDebug(){
-        return debug;
+        return verboseMode;
     }
 
 
