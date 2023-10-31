@@ -17,6 +17,8 @@ public class ConfigManager {
     private static ConfigManager configManager;
     private static RealisticPlantGrowth instance;
     private static MessageManager messageManager;
+    
+    private static Logger logger = Bukkit.getLogger();
 
     // Main config
     private static YamlDocument config;
@@ -30,11 +32,11 @@ public class ConfigManager {
     private static String classPrefix = pluginPrefix + "ConfigManager: ";
 
     private static File pluginFolder;
-    private static File localsFolder;
+    private static File languageFolder;
 
 
     // All predefined localizations
-    String[] localsArray = {"en_US", "de_DE"};
+    String[] localsArray = {"de-DE", "en-US"};
     private static String language_code;
 
     // Different debug and logging modes
@@ -76,30 +78,33 @@ public class ConfigManager {
         instance = RealisticPlantGrowth.getInstance();
 
         pluginFolder = instance.getDataFolder();
-        localsFolder = new File(pluginFolder + File.separator + "lang");
+        languageFolder = new File(pluginFolder + File.separator + "lang");
 
-        if(!localsFolder.exists()){
+        registerYamlConfig();
+        getConfigData();
+
+        
+        if(!languageFolder.exists()){
             if(verbose){
-                Bukkit.getLogger().info(classPrefix + "Language directory doesn't exist!");
-                Bukkit.getLogger().info(classPrefix + "Creating new directory...");
+                logger.info(classPrefix + "Language directory doesn't exist!");
+                logger.info(classPrefix + "Creating new directory...");
             }
             try {
-                if(localsFolder.mkdir()){
-                    Bukkit.getLogger().info(pluginPrefix + "New language directory created.");
+                if(languageFolder.mkdir()){
+                    logger.info(pluginPrefix + "New language directory created.");
+                    logger.info(pluginPrefix + "Loading supported languages...");
+                    copyDefaultLanguages();
                 }
 
 
             }catch (SecurityException e){
-                Bukkit.getLogger().warning(classPrefix + "Couldn't create language directory!");
+                logger.warning(classPrefix + "Couldn't create language directory!");
                 instance.disablePlugin();
             }
         }
-
-        registerYamlConfig();
-        registerLanguages();
-
-        getConfigData();
-
+        
+        registerLanguage();
+        
     }
 
     /**
@@ -124,10 +129,9 @@ public class ConfigManager {
         try{
             config = YamlDocument.create(new File(pluginFolder, "Config.yml"), instance.getResource("Config.yml"));
             config.update();
-            Bukkit.getLogger().info(pluginPrefix + "Configuration loaded.");
+            logger.info(pluginPrefix + "Configuration loaded.");
         }catch (IOException e){
-            Bukkit.getLogger().warning(classPrefix + "Couldn't load YAML configuration!");
-            Bukkit.getLogger().warning(classPrefix + "Configuration could not be loaded.");
+            logger.warning(classPrefix + "Couldn't load YAML configuration!");
             instance.disablePlugin();
         }
     }
@@ -137,18 +141,42 @@ public class ConfigManager {
      * Creates new one, if no config exists.
      * Uses BoostedYAML API for config operations.
      */
-    private void registerLanguages(){
-        //TODO: NULL check directory and lang file
-        if()
-
+    private void registerLanguage(){
 
         try{
-            config = YamlDocument.create(new File(pluginFolder, "Config.yml"), instance.getResource("Config.yml"));
+            config = YamlDocument.create(new File(pluginFolder, "Config.yml"),
+                    instance.getResource("Config.yml"));
             config.update();
-            Bukkit.getLogger().info(pluginPrefix + "Configuration loaded.");
+            logger.info(pluginPrefix + "Configuration loaded.");
         }catch (IOException e){
-            Bukkit.getLogger().warning(classPrefix + "Couldn't load YAML configuration!");
-            Bukkit.getLogger().warning(classPrefix + "Configuration could not be loaded.");
+            logger.warning(classPrefix + "Couldn't load YAML configuration!");
+            instance.disablePlugin();
+        }
+    }
+
+    /**
+     * Copies all default language files into the "lang" directory.
+     * Gets executed only at first plugin start.
+     */
+    private void copyDefaultLanguages(){
+
+        try {
+            for (String languageCode : localsArray) {
+
+                if(languageCode.equalsIgnoreCase(getLanguage_code())){
+                    selectedLanguageFile = YamlDocument.create(new File(languageFolder, languageCode + ".yml"),
+                            instance.getResource(languageCode + ".yml"));
+
+                }else {
+                    YamlDocument.create(new File(languageFolder, languageCode + ".yml"),
+                            instance.getResource(languageCode + ".yml"));
+                }
+
+                logger.info(pluginPrefix + languageCode + ".yml loaded.");
+
+            }
+        }catch (IOException e){
+            logger.warning(classPrefix + "Couldn't load language files!");
             instance.disablePlugin();
         }
     }
@@ -160,17 +188,14 @@ public class ConfigManager {
      * Todo: Make this call asynchronous
      */
     private void getConfigData(){
-        Logger logger = Bukkit.getLogger();
+
         try {
 
             // Get diffrent debugging and logging modes from Config.yml
             verbose = config.getBoolean("verbose");
-            if(verbose) logger.info(classPrefix + "verbose: " + verbose);
+            if(verbose) logger.info(classPrefix + "verbose: true");
 
-
-            pluginPrefix = config.getString("plugin_prefix");
-            if(verbose) logger.info(classPrefix + "plugin_prefix: " + pluginPrefix);
-
+            pluginPrefix = readPluginPrefixFromConfig();
 
             debug_log = config.getBoolean("debug_log");
             if(verbose) logger.info(classPrefix + "debug_log: " + debug_log);
@@ -187,6 +212,7 @@ public class ConfigManager {
             log_coords = config.getBoolean("log_coords");
             if(verbose) logger.info(classPrefix + "log_coords: " + log_coords);
 
+            
             // General settings
             language_code = config.getString("language_code");
             if(verbose) logger.info(classPrefix + "language_code: " + language_code);
@@ -208,6 +234,7 @@ public class ConfigManager {
             report_growth = config.getBoolean("report_growth");
             if(verbose) logger.info(classPrefix + "report_growth: " + report_growth);
 
+            
             // Fertilizer settings
             fertilizer_enabled = config.getBoolean("fertilizer_enabled");
             if(verbose) logger.info(classPrefix + "fertilizer_enabled: " + fertilizer_enabled);
@@ -255,27 +282,28 @@ public class ConfigManager {
     }
 
     /**
-     * Reads plugin-prefix String from the config file.
+     * Reads plugin_prefix String from the main config file.
      * This Method calls the MessageManager and dissolves any miniMessage Tags the String is containing.
      * @return A formatted String with the plugin prefix shown in console.
      */
     private String readPluginPrefixFromConfig(){
-        String formatted = instance.getMessageManager().parseMessage(config.getString("plugin-prefix")).toString();
+        String formatted = instance.getMessageManager().parseMessage(config.getString("plugin_prefix")).toString();
         if(verbose)
-            Bukkit.getLogger().info(classPrefix + "Plugin-Prefix from config: " + formatted);
+            logger.info(classPrefix + "plugin_prefix: " + formatted);
         return formatted;
     }
+
 
     /**
      * This method is executed when Plugin is reloading.
      * Reads all values from config File and updates global Fields.
      */
     public void reloadConfig() {
-        Bukkit.getLogger().warning("ConfigManager: Reloading config file...");
+        logger.warning(pluginPrefix + "Reloading config file...");
         try {
             config.save();
             config.reload();
-            Bukkit.getLogger().info(pluginPrefix + "Config reloaded.");
+            logger.info(pluginPrefix + "Config reloaded.");
 
             // Gets updated config data and stores them as global variables.
             getConfigData();
@@ -283,8 +311,8 @@ public class ConfigManager {
             //todo: update language file
 
         }catch (YAMLException | IOException e){
-            Bukkit.getLogger().warning(classPrefix + e.getLocalizedMessage());
-            Bukkit.getLogger().warning(classPrefix + "Error while reloading config file.");
+            logger.warning(classPrefix + e.getLocalizedMessage());
+            logger.warning(classPrefix + "Error while reloading config file.");
             instance.disablePlugin();
         }
     }
@@ -303,91 +331,91 @@ public class ConfigManager {
         return pluginFolder;
     }
 
-    public static File getLocalsFolder() {
-        return localsFolder;
+    public static File getLanguageFolder() {
+        return languageFolder;
     }
 
     public String[] getLocalsArray() {
         return localsArray;
     }
 
-    public static String getLanguage_code() {
+    public String getLanguage_code() {
         return language_code;
     }
 
-    public static boolean isVerbose() {
+    public boolean isVerbose() {
         return verbose;
     }
 
-    public static boolean isDebug_log() {
+    public boolean isDebug_log() {
         return debug_log;
     }
 
-    public static boolean isTree_log() {
+    public boolean isTree_log() {
         return tree_log;
     }
 
-    public static boolean isPlant_log() {
+    public boolean isPlant_log() {
         return plant_log;
     }
 
-    public static boolean isBonemeal_log() {
+    public boolean isBonemeal_log() {
         return bonemeal_log;
     }
 
-    public static boolean isLog_coords() {
+    public boolean isLog_coords() {
         return log_coords;
     }
 
-    public static List<String> getEnabled_worlds() {
+    public List<String> getEnabled_worlds() {
         return enabled_worlds;
     }
 
-    public static int getBonemeal_limit() {
+    public int getBonemeal_limit() {
         return bonemeal_limit;
     }
 
-    public static int getMin_natural_light() {
+    public int getMin_natural_light() {
         return min_natural_light;
     }
 
-    public static boolean isReport_growth() {
+    public boolean isReport_growth() {
         return report_growth;
     }
 
-    public static boolean isFertilizer_enabled() {
+    public boolean isFertilizer_enabled() {
         return fertilizer_enabled;
     }
 
-    public static int getFertilizer_radius() {
+    public int getFertilizer_radius() {
         return fertilizer_radius;
     }
 
-    public static boolean isFertilizer_passiv() {
+    public boolean isFertilizer_passiv() {
         return fertilizer_passiv;
     }
 
-    public static double getFertilizer_boost_growth_rate() {
+    public double getFertilizer_boost_growth_rate() {
         return fertilizer_boost_growth_rate;
     }
 
-    public static boolean isFertilizer_allow_growth_rate_above_100() {
+    public boolean isFertilizer_allow_growth_rate_above_100() {
         return fertilizer_allow_growth_rate_above_100;
     }
 
-    public static boolean isUv_enabled() {
+    public boolean isUv_enabled() {
         return uv_enabled;
     }
 
-    public static int getUv_radius() {
+    public int getUv_radius() {
         return uv_radius;
     }
 
-    public static ArrayList<Material> getUv_blocks() {
+    public ArrayList<Material> getUv_blocks() {
         return uv_blocks;
     }
 
-    public static ArrayList<Material> getGrow_in_dark() {
+    public ArrayList<Material> getGrow_in_dark() {
         return grow_in_dark;
     }
 

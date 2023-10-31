@@ -17,9 +17,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     // This is the default value.
     private static String pluginPrefix = "[RealisticPlantGrowth] ";
     private static String classPrefix = pluginPrefix + "RealisticPlantGrowth: ";
-    private static boolean verboseMode = false;
-
-    public static File dataFolder;
+    private static boolean verbose = false;
 
     private ConfigManager configManager;
     private MessageManager messageManager;
@@ -75,6 +73,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
 
     @Override
+    //TODO: Add Startup Messages
     public void onEnable() {
         // Create an instance of this Plugin
         instance = this;
@@ -82,8 +81,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         MiniMessage miniMessage = MiniMessage.miniMessage();
         this.configManager = ConfigManager.get();
 
-        verboseMode = configManager.getDebug();
-        pluginPrefix = configManager.getPluginPrefix();
+        verbose = configManager.isVerbose();
+        pluginPrefix = ConfigManager.getPluginPrefix();
 
         this.messageManager = new MessageManager(this, this.configManager , miniMessage);
 
@@ -112,7 +111,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         return instance;
     }
     public static boolean getDebugStatus() {
-        return verboseMode;
+        return verbose;
     }
 
     public ConfigManager getConfigManager(){
