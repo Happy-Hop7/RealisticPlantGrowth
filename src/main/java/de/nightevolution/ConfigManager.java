@@ -2,46 +2,74 @@ package de.nightevolution;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
-
+//TODO: add config version system
 public class ConfigManager {
-    // Main config file
-    private static YamlDocument config;
-
-    // locals containing plugin messages
-    private static YamlDocument defaultLocale_en_US;
-    private static YamlDocument selectedLocale;
-
-    // All predefined localizations
-    String[] localsArray = {"en_US", "de_DE"};
-
-    private static File pluginFolder;
-    private static File localsFolder;
-
-    private static String pluginPrefix = "[RealisticPlantGrowth] ";
-    private static String classPrefix = pluginPrefix + "ConfigManager: ";
 
     private static ConfigManager configManager;
     private static RealisticPlantGrowth instance;
     private static MessageManager messageManager;
 
+    // Main config
+    private static YamlDocument config;
+
+    // Language files containing plugin messages
+    private static YamlDocument defaultLanguageFile_en_US;
+    private static YamlDocument selectedLanguageFile;
+
+
+    private static String pluginPrefix = "[RealisticPlantGrowth] ";
+    private static String classPrefix = pluginPrefix + "ConfigManager: ";
+
+    private static File pluginFolder;
+    private static File localsFolder;
+
+
+    // All predefined localizations
+    String[] localsArray = {"en_US", "de_DE"};
+    private static String language_code;
+
     // Different debug and logging modes
-    private static boolean verboseMode = true;
+    private static boolean verbose = true;
     private static boolean debug_log;
     private static boolean tree_log;
     private static boolean plant_log;
     private static boolean bonemeal_log;
     private static boolean log_coords;
 
+    // Enabled worlds
+    private static List<String> enabled_worlds;
+
+    // More config values
+    private static int bonemeal_limit;
+    private static int min_natural_light;
+    private static boolean report_growth;
+
+    // Fertilizer config values
+    private static boolean fertilizer_enabled;
+    private static int fertilizer_radius;
+    private static boolean fertilizer_passiv;
+    private static double fertilizer_boost_growth_rate;
+    private static boolean fertilizer_allow_growth_rate_above_100;
+
+    // UV-Light config values
+    private static boolean uv_enabled;
+    private static int uv_radius;
+    private static ArrayList<Material> uv_blocks;
+    private static ArrayList<Material> grow_in_dark;
+
     /**
      * Constructor for a new Singleton ConfigManager instance, which creates, reads and updates the config file.
-     * Calls RealisticPlantGrowth for Plugin prefix.
      * Get an instance of ConfigManager with ConfigManager.get();.
-     * ConfigManager uses BoostedYAMAL API in order to perform file operations.
+     * ConfigManager uses BoostedYAML API in order to perform file operations.
      */
     private ConfigManager(){
         configManager = this;
@@ -51,7 +79,7 @@ public class ConfigManager {
         localsFolder = new File(pluginFolder + File.separator + "lang");
 
         if(!localsFolder.exists()){
-            if(verboseMode){
+            if(verbose){
                 Bukkit.getLogger().info(classPrefix + "Language directory doesn't exist!");
                 Bukkit.getLogger().info(classPrefix + "Creating new directory...");
             }
@@ -68,7 +96,7 @@ public class ConfigManager {
         }
 
         registerYamlConfig();
-        registerLocals();
+        registerLanguages();
 
         getConfigData();
 
@@ -92,6 +120,7 @@ public class ConfigManager {
      * Uses BoostedYAML API for config operations.
      */
     private void registerYamlConfig(){
+
         try{
             config = YamlDocument.create(new File(pluginFolder, "Config.yml"), instance.getResource("Config.yml"));
             config.update();
@@ -108,7 +137,11 @@ public class ConfigManager {
      * Creates new one, if no config exists.
      * Uses BoostedYAML API for config operations.
      */
-    private void registerLocals(){
+    private void registerLanguages(){
+        //TODO: NULL check directory and lang file
+        if()
+
+
         try{
             config = YamlDocument.create(new File(pluginFolder, "Config.yml"), instance.getResource("Config.yml"));
             config.update();
@@ -127,18 +160,97 @@ public class ConfigManager {
      * Todo: Make this call asynchronous
      */
     private void getConfigData(){
+        Logger logger = Bukkit.getLogger();
         try {
+
             // Get diffrent debugging and logging modes from Config.yml
-            verboseMode = config.getBoolean("verbose");
-            debug_log = config.getBoolean("debug_log");;
+            verbose = config.getBoolean("verbose");
+            if(verbose) logger.info(classPrefix + "verbose: " + verbose);
+
+
+            pluginPrefix = config.getString("plugin_prefix");
+            if(verbose) logger.info(classPrefix + "plugin_prefix: " + pluginPrefix);
+
+
+            debug_log = config.getBoolean("debug_log");
+            if(verbose) logger.info(classPrefix + "debug_log: " + debug_log);
+
             tree_log = config.getBoolean("tree_log");
+            if(verbose) logger.info(classPrefix + "tree_log: " + tree_log);
+
             plant_log = config.getBoolean("plant_log");
+            if(verbose) logger.info(classPrefix + "plant_log: " + plant_log);
+
             bonemeal_log = config.getBoolean("bonemeal_log");
+            if(verbose) logger.info(classPrefix + "bonemeal_log: " + bonemeal_log);
+
             log_coords = config.getBoolean("log_coords");
+            if(verbose) logger.info(classPrefix + "log_coords: " + log_coords);
+
+            // General settings
+            language_code = config.getString("language_code");
+            if(verbose) logger.info(classPrefix + "language_code: " + language_code);
+
+            enabled_worlds = config.getStringList("enabled_worlds");
+            if(verbose) {
+                logger.info(classPrefix + "enabled worlds:");
+                enabled_worlds.forEach((n) -> {
+                    logger.info(classPrefix + "- " + n);
+                });
+            }
+
+            bonemeal_limit = config.getInt("bonemeal_limit");
+            if(verbose) logger.info(classPrefix + "bonemeal_limit: " + bonemeal_limit);
+
+            min_natural_light = config.getInt("min_natural_light");
+            if(verbose) logger.info(classPrefix + "min_natural_light: " + min_natural_light);
+
+            report_growth = config.getBoolean("report_growth");
+            if(verbose) logger.info(classPrefix + "report_growth: " + report_growth);
+
+            // Fertilizer settings
+            fertilizer_enabled = config.getBoolean("fertilizer_enabled");
+            if(verbose) logger.info(classPrefix + "fertilizer_enabled: " + fertilizer_enabled);
+
+            fertilizer_radius = config.getInt("fertilizer_radius");
+            if(verbose) logger.info(classPrefix + "fertilizer_radius: " + fertilizer_radius);
+
+            fertilizer_passiv = config.getBoolean("fertilizer_passiv");
+            if(verbose) logger.info(classPrefix + "fertilizer_passiv: " + fertilizer_passiv);
+
+            fertilizer_boost_growth_rate = config.getDouble("fertilizer_boost_growth_rate");
+            if(verbose) logger.info(classPrefix + "fertilizer_boost_growth_rate: " + fertilizer_boost_growth_rate);
+
+            fertilizer_allow_growth_rate_above_100 = config.getBoolean("fertilizer_allow_growth_rate_above_100");
+            if(verbose) logger.info(classPrefix + "fertilizer_allow_growth_rate_above_100: " + fertilizer_allow_growth_rate_above_100);
+
+            // UV-Light settings
+            uv_enabled = config.getBoolean("uv_enabled");
+            if(verbose) logger.info(classPrefix + "uv_enabled: " + uv_enabled);
+
+            uv_radius = config.getInt("uv_radius");
+            if(verbose) logger.info(classPrefix + "uv_radius: " + uv_radius);
+
+            List <String> uv_blocks_string= config.getStringList("uv_blocks");
+            if(verbose) logger.info(classPrefix + "uv_blocks: " + uv_blocks);
+            uv_blocks_string.forEach( (materialName) -> {
+                uv_blocks.add(Material.getMaterial(materialName));
+                if(verbose) logger.info(classPrefix + "- " + materialName);
+            });
+
+            List <String> grow_in_dark_string= config.getStringList("grow_in_dark");
+            if(verbose) logger.info(classPrefix + "grow_in_dark: " + grow_in_dark);
+            grow_in_dark_string.forEach( (materialName) -> {
+                grow_in_dark.add(Material.getMaterial(materialName));
+                if(verbose) logger.info(classPrefix + "- " + materialName);
+            });
+
 
         }catch (YAMLException e){
-            Bukkit.getLogger().warning(classPrefix + "Verbose-mode could not be read from config!");
-            Bukkit.getLogger().warning(e.getLocalizedMessage());
+            logger.warning(classPrefix + "An Error occurred while reading config.yml data!");
+            logger.warning(e.getLocalizedMessage());
+
+            instance.disablePlugin();
         }
     }
 
@@ -149,7 +261,7 @@ public class ConfigManager {
      */
     private String readPluginPrefixFromConfig(){
         String formatted = instance.getMessageManager().parseMessage(config.getString("plugin-prefix")).toString();
-        if(verboseMode)
+        if(verbose)
             Bukkit.getLogger().info(classPrefix + "Plugin-Prefix from config: " + formatted);
         return formatted;
     }
@@ -165,12 +277,10 @@ public class ConfigManager {
             config.reload();
             Bukkit.getLogger().info(pluginPrefix + "Config reloaded.");
 
-            verboseMode = getConfigData();
-            pluginPrefix = readPluginPrefixFromConfig();
-            instance.setPluginPrefix(pluginPrefix);
+            // Gets updated config data and stores them as global variables.
+            getConfigData();
 
-            // todo: Methode zum auslesen wichtiger config Inhalte();
-            Bukkit.getLogger().info(pluginPrefix + "Sachen ausgelesen.");
+            //todo: update language file
 
         }catch (YAMLException | IOException e){
             Bukkit.getLogger().warning(classPrefix + e.getLocalizedMessage());
@@ -181,11 +291,104 @@ public class ConfigManager {
 
 
     // Getters for config values
-    public String getPluginPrefix(){
+    public static String getPluginPrefix() {
         return pluginPrefix;
     }
-    public boolean getDebug(){
-        return verboseMode;
+
+    public static String getClassPrefix() {
+        return classPrefix;
+    }
+
+    public static File getPluginFolder() {
+        return pluginFolder;
+    }
+
+    public static File getLocalsFolder() {
+        return localsFolder;
+    }
+
+    public String[] getLocalsArray() {
+        return localsArray;
+    }
+
+    public static String getLanguage_code() {
+        return language_code;
+    }
+
+    public static boolean isVerbose() {
+        return verbose;
+    }
+
+    public static boolean isDebug_log() {
+        return debug_log;
+    }
+
+    public static boolean isTree_log() {
+        return tree_log;
+    }
+
+    public static boolean isPlant_log() {
+        return plant_log;
+    }
+
+    public static boolean isBonemeal_log() {
+        return bonemeal_log;
+    }
+
+    public static boolean isLog_coords() {
+        return log_coords;
+    }
+
+    public static List<String> getEnabled_worlds() {
+        return enabled_worlds;
+    }
+
+    public static int getBonemeal_limit() {
+        return bonemeal_limit;
+    }
+
+    public static int getMin_natural_light() {
+        return min_natural_light;
+    }
+
+    public static boolean isReport_growth() {
+        return report_growth;
+    }
+
+    public static boolean isFertilizer_enabled() {
+        return fertilizer_enabled;
+    }
+
+    public static int getFertilizer_radius() {
+        return fertilizer_radius;
+    }
+
+    public static boolean isFertilizer_passiv() {
+        return fertilizer_passiv;
+    }
+
+    public static double getFertilizer_boost_growth_rate() {
+        return fertilizer_boost_growth_rate;
+    }
+
+    public static boolean isFertilizer_allow_growth_rate_above_100() {
+        return fertilizer_allow_growth_rate_above_100;
+    }
+
+    public static boolean isUv_enabled() {
+        return uv_enabled;
+    }
+
+    public static int getUv_radius() {
+        return uv_radius;
+    }
+
+    public static ArrayList<Material> getUv_blocks() {
+        return uv_blocks;
+    }
+
+    public static ArrayList<Material> getGrow_in_dark() {
+        return grow_in_dark;
     }
 
 

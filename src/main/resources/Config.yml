@@ -16,8 +16,8 @@
 #| General Settings
 #|
 ########################################################################################################################
-language: de-DE                                     # Supported language codes under: /RealisticPlantGrowth/local
-plugin-prefix: "&7[&2RealisticPlantGrowth&7]&r "    # Plugin prefix shown in Console logs. Does not affect chat massages
+language_code: de_DE                                # Supported language codes under: /RealisticPlantGrowth/local
+plugin_prefix: "&7[&2RealisticPlantGrowth&7]&r "    # Plugin prefix shown in Console logs. Does not affect chat massages
 
 # Which worlds should this plugin be enabled in? Worlds not in this list will have default growth behavior.
 enabled_worlds:
@@ -25,17 +25,17 @@ enabled_worlds:
   - example_world_nether
   - example_world_end
 
-bonemeal_limit: 3            # Limits the use of bonemeal on a single plant to the set amount.
-                             # Use negative numbers to disable this feature (eg. bonemeal_limit: -1)
+bonemeal_limit: 3             # Limits the use of bonemeal on a single plant to the set amount.
+                              # Use negative numbers to disable this feature (eg. bonemeal_limit: -1)
 
-min_natural_light: 10        # Natural sky light level is required in order for plants to grow.
-                             # sky light level: 0: allows growth also underground in caves.
-                             # sky light level 10: corresponds to sunlight through glass/tree leaves.
-                             # sky light level 15: plants grow only in direct sunlight.
+min_natural_light: 10         # Natural sky light level is required in order for plants to grow.
+                              # sky light level: 0: allows growth also underground in caves.
+                              # sky light level 10: corresponds to sunlight through glass/tree leaves.
+                              # sky light level 15: plants grow only in direct sunlight.
 
-report_growth: false         # Show players possible growth rates for an item they are holding in hand when
-                             # left-clicking on the ground.
-                             # Only growth rates for the biome, the player is standig in, are displayed.
+report_growth: false          # Show players possible growth rates for an item they are holding in hand when
+                              # left-clicking on the ground.
+                              # Only growth rates for the biome, the player is standig in, are displayed.
 
 
 ########################################################################################################################
@@ -45,15 +45,25 @@ report_growth: false         # Show players possible growth rates for an item th
 #| Composters fertilizing corps in the surrounding area. This allows plant growth in normally inhabitable areas.
 #|
 ########################################################################################################################
-fertilizer_enabled: false    # Enable use of composter fertilizer.
+fertilizer_enabled: false     # Enable use of composter fertilizer.
 
-fertilizer_radius: 5         # Plants within this distance of Blocks will grow at fertilizer_growth_rate. (see below)
+fertilizer_radius: 5          # Plants within this distance of Blocks will grow at fertilizer_growth_rate. (see below)
 
-fertilizer_growth_rate: 100  # Set the fertilizer rate of growth globally when a composter is nearby, defaults to 100%.
-                             # note that specific plant/biome dark and death rates take effect regardless of fertilizer.
-fertilizer_passiv: true      # false: requires the player to actively fill the composter to get the fertilizer effects.
-                             # true: fertilizer effects don't drain composters in order to fertilize the surroundings.
+fertilizer_passiv: true       # false: requires the player to actively fill the composter to get the fertilizer effects.
+                              # true: fertilizer effects don't drain composters in order to fertilize the surroundings.
 
+# The fertilizer_boost_growth_rate represents a percentage value which is added on top of biome-specific growth rates,
+# if a composter is within configured fertilizer_radius.
+# For example: biome specific growth rate of wheat in a dessert is 20% so a fertilizer_boost_growth_rate of 25.0% leads
+# to a growth value of 45.0% of wheat plants.
+# Note that specific plant/biome dark and death rates take effect regardless of fertilizer.
+fertilizer_boost_growth_rate: 20.0
+
+# Should a growth_rate above 100.0% be allowed?
+# If a plant has a biome specific growth rate of 100.0% and fertilizer_allow_growth_rate_above_100 is set to true,
+# then the resulting growth rate is above 100.0% (e.g. 125.0%)
+# Otherwise the growth_rate is capped at 100.0%
+fertilizer_allow_growth_rate_above_100: true;
 
 ########################################################################################################################
 #|
