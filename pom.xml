@@ -20,6 +20,14 @@
 
     <url>https://online.nightevolution.de</url>
 
+    <licenses>
+        <license>
+            <name>GPL v3 License</name>
+            <url>https://www.gnu.org/licenses/</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <build>
         <defaultGoal>package</defaultGoal>
         <plugins>
@@ -72,6 +80,16 @@
                                     <shadedPattern>de.nightevolution.shade.boostedyaml</shadedPattern>
                                 </relocation>
 
+                                <relocation>
+                                    <pattern>org.jetbrains.</pattern>
+                                    <shadedPattern>de.nightevolution.shade.jetbrains.</shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>org.intellij.</pattern>
+                                    <shadedPattern>de.nightevolution.shade.intellij.</shadedPattern>
+                                </relocation>
+
                             </relocations>
 
                             <artifactSet>
@@ -88,30 +106,8 @@
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
                                         <exclude>META-INF/*.MF</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>dev.dejvokep:boosted-yaml</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/versions.9/module-info</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>net.kyori:adventure-key</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/MANIFEST.MF</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>net.kyori:examination-api</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/MANIFEST.MF</exclude>
-                                    </excludes>
-                                </filter>
-                                <filter>
-                                    <artifact>net.kyori:examination-string</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>*License*</exclude>
+                                        <exclude>*LICENSE*</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -124,8 +120,12 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <targetPath>.</targetPath>
                 <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>src/main/resources/lang</exclude>
+                </excludes>
             </resource>
         </resources>
     </build>

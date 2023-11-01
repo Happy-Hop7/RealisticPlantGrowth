@@ -17,7 +17,7 @@
 #|
 ########################################################################################################################
 language_code: de-DE                                # Supported language codes under: /RealisticPlantGrowth/local
-plugin_prefix: "&7[&2RealisticPlantGrowth&7]&r "    # Plugin prefix shown in Console logs. Does not affect chat massages
+
 
 # Which worlds should this plugin be enabled in? Worlds not in this list will have default growth behavior.
 enabled_worlds:
@@ -112,4 +112,4 @@ log_coords:   false     # Will additionally log the coordinates on the world of 
 #|
 ########################################################################################################################
 config-version: 1
-verbose: false          # Ultra verbose logging, logs tons of information that may be useful for extra debugging.
+verbose: true          # Ultra verbose logging, logs tons of information that may be useful for extra debugging.

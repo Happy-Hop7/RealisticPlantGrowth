@@ -1,9 +1,0 @@
-name: RealisticPlantGrowth
-version: '${project.version}'
-main: de.nightevolution.RealisticPlantGrowth
-api-version: '1.20'
-authors: [pwn9, msudol, TheRealPredator]
-description: A Spigot/Paper Plugin for Minecraft that makes plant growth more configurable, per biome.
-website: https://online.nightevolution.de
-depend: []
-softdepend: []

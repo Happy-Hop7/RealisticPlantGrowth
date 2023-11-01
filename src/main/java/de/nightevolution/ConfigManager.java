@@ -1,8 +1,10 @@
 package de.nightevolution;
 
 import dev.dejvokep.boostedyaml.YamlDocument;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
@@ -18,7 +20,7 @@ public class ConfigManager {
     private static RealisticPlantGrowth instance;
     private static MessageManager messageManager;
     
-    private static Logger logger = Bukkit.getLogger();
+    private static final Logger logger = Bukkit.getLogger();
 
     // Main config
     private static YamlDocument config;
@@ -28,8 +30,7 @@ public class ConfigManager {
     private static YamlDocument selectedLanguageFile;
 
 
-    private static String pluginPrefix = "[RealisticPlantGrowth] ";
-    private static String classPrefix = pluginPrefix + "ConfigManager: ";
+    private static final String classPrefix = "ConfigManager: ";
 
     private static File pluginFolder;
     private static File languageFolder;
@@ -65,8 +66,8 @@ public class ConfigManager {
     // UV-Light config values
     private static boolean uv_enabled;
     private static int uv_radius;
-    private static ArrayList<Material> uv_blocks;
-    private static ArrayList<Material> grow_in_dark;
+    private static ArrayList<Material> uv_blocks = new ArrayList<>();
+    private static ArrayList<Material> grow_in_dark = new ArrayList<>();
 
     /**
      * Constructor for a new Singleton ConfigManager instance, which creates, reads and updates the config file.
@@ -74,8 +75,11 @@ public class ConfigManager {
      * ConfigManager uses BoostedYAML API in order to perform file operations.
      */
     private ConfigManager(){
+
         configManager = this;
         instance = RealisticPlantGrowth.getInstance();
+
+        messageManager = new MessageManager(instance, configManager);
 
         pluginFolder = instance.getDataFolder();
         languageFolder = new File(pluginFolder + File.separator + "lang");
@@ -91,9 +95,8 @@ public class ConfigManager {
             }
             try {
                 if(languageFolder.mkdir()){
-                    logger.info(pluginPrefix + "New language directory created.");
-                    logger.info(pluginPrefix + "Loading supported languages...");
-                    copyDefaultLanguages();
+                    logger.info("New language directory created.");
+
                 }
 
 
@@ -102,7 +105,9 @@ public class ConfigManager {
                 instance.disablePlugin();
             }
         }
-        
+
+        logger.info("Loading supported languages...");
+        copyDefaultLanguages();
         registerLanguage();
         
     }
@@ -125,11 +130,10 @@ public class ConfigManager {
      * Uses BoostedYAML API for config operations.
      */
     private void registerYamlConfig(){
-
         try{
             config = YamlDocument.create(new File(pluginFolder, "Config.yml"), instance.getResource("Config.yml"));
             config.update();
-            logger.info(pluginPrefix + "Configuration loaded.");
+            logger.info("Configuration loaded.");
         }catch (IOException e){
             logger.warning(classPrefix + "Couldn't load YAML configuration!");
             instance.disablePlugin();
@@ -144,10 +148,10 @@ public class ConfigManager {
     private void registerLanguage(){
 
         try{
-            config = YamlDocument.create(new File(pluginFolder, "Config.yml"),
-                    instance.getResource("Config.yml"));
-            config.update();
-            logger.info(pluginPrefix + "Configuration loaded.");
+            selectedLanguageFile.update();
+            logger.info("Language files loaded.");
+            logger.info("Selected language: " + language_code);
+
         }catch (IOException e){
             logger.warning(classPrefix + "Couldn't load YAML configuration!");
             instance.disablePlugin();
@@ -168,11 +172,12 @@ public class ConfigManager {
                             instance.getResource(languageCode + ".yml"));
 
                 }else {
-                    YamlDocument.create(new File(languageFolder, languageCode + ".yml"),
+                    YamlDocument temp = YamlDocument.create(new File(languageFolder, languageCode + ".yml"),
                             instance.getResource(languageCode + ".yml"));
+                    temp.update();
                 }
 
-                logger.info(pluginPrefix + languageCode + ".yml loaded.");
+                logger.info(languageCode + ".yml loaded.");
 
             }
         }catch (IOException e){
@@ -194,8 +199,6 @@ public class ConfigManager {
             // Get diffrent debugging and logging modes from Config.yml
             verbose = config.getBoolean("verbose");
             if(verbose) logger.info(classPrefix + "verbose: true");
-
-            pluginPrefix = readPluginPrefixFromConfig();
 
             debug_log = config.getBoolean("debug_log");
             if(verbose) logger.info(classPrefix + "debug_log: " + debug_log);
@@ -221,7 +224,7 @@ public class ConfigManager {
             if(verbose) {
                 logger.info(classPrefix + "enabled worlds:");
                 enabled_worlds.forEach((n) -> {
-                    logger.info(classPrefix + "- " + n);
+                    logger.info(classPrefix + "  - " + n);
                 });
             }
 
@@ -259,17 +262,17 @@ public class ConfigManager {
             if(verbose) logger.info(classPrefix + "uv_radius: " + uv_radius);
 
             List <String> uv_blocks_string= config.getStringList("uv_blocks");
-            if(verbose) logger.info(classPrefix + "uv_blocks: " + uv_blocks);
+            if(verbose) logger.info(classPrefix + "uv_blocks:");
             uv_blocks_string.forEach( (materialName) -> {
                 uv_blocks.add(Material.getMaterial(materialName));
-                if(verbose) logger.info(classPrefix + "- " + materialName);
+                if(verbose) logger.info(classPrefix + "  - " + materialName);
             });
 
             List <String> grow_in_dark_string= config.getStringList("grow_in_dark");
-            if(verbose) logger.info(classPrefix + "grow_in_dark: " + grow_in_dark);
+            if(verbose) logger.info(classPrefix + "grow_in_dark:");
             grow_in_dark_string.forEach( (materialName) -> {
                 grow_in_dark.add(Material.getMaterial(materialName));
-                if(verbose) logger.info(classPrefix + "- " + materialName);
+                if(verbose) logger.info(classPrefix + "  - " + materialName);
             });
 
 
@@ -282,28 +285,15 @@ public class ConfigManager {
     }
 
     /**
-     * Reads plugin_prefix String from the main config file.
-     * This Method calls the MessageManager and dissolves any miniMessage Tags the String is containing.
-     * @return A formatted String with the plugin prefix shown in console.
-     */
-    private String readPluginPrefixFromConfig(){
-        String formatted = instance.getMessageManager().parseMessage(config.getString("plugin_prefix")).toString();
-        if(verbose)
-            logger.info(classPrefix + "plugin_prefix: " + formatted);
-        return formatted;
-    }
-
-
-    /**
      * This method is executed when Plugin is reloading.
      * Reads all values from config File and updates global Fields.
      */
     public void reloadConfig() {
-        logger.warning(pluginPrefix + "Reloading config file...");
+        logger.warning("Reloading config file...");
         try {
             config.save();
             config.reload();
-            logger.info(pluginPrefix + "Config reloaded.");
+            logger.info("Config reloaded.");
 
             // Gets updated config data and stores them as global variables.
             getConfigData();
@@ -319,10 +309,6 @@ public class ConfigManager {
 
 
     // Getters for config values
-    public static String getPluginPrefix() {
-        return pluginPrefix;
-    }
-
     public static String getClassPrefix() {
         return classPrefix;
     }

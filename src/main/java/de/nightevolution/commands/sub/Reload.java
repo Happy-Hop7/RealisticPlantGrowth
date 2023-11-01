@@ -1,4 +1,4 @@
-package de.nightevolution.Commands.SubCommands;
+package de.nightevolution.commands.sub;
 
 
 import org.bukkit.permissions.Permission;

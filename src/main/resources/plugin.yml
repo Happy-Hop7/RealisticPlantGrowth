@@ -2,17 +2,19 @@ name: RealisticPlantGrowth
 version: '${project.version}'
 main: de.nightevolution.RealisticPlantGrowth
 api-version: '1.20'
-prefix: '[RealisticPlantGrowth]'
+prefix: 'RealisticPlantGrowth'
 authors: [pwn9, msudol, TheRealPredator]
 description: A Spigot/Paper Plugin for Minecraft that makes plant growth more configurable, per biome.
 website: https://online.nightevolution.de
 
 commands:
-   ppg:
+   rpg:
       description: Execute a PwnPlantGrowth command
       usage: /ppg <reload|save>
       permission: ppg.ppg
       permission-message: You dont have permission for this command
+      aliases: [rpg, realisticPlantGrowth, realisticplantgrowth]
+
 permissions:
   ppg.*:
     description: gives all permissions of PwnPlantGrowth

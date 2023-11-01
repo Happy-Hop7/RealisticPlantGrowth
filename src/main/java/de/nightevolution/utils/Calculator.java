@@ -1,4 +1,4 @@
-package de.nightevolution.Utils;
+package de.nightevolution.utils;
 
 public abstract class Calculator {
 }

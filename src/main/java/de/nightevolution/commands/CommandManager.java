@@ -1,24 +1,35 @@
-package de.nightevolution.Commands;
+package de.nightevolution.commands;
 
 
-import de.nightevolution.Commands.SubCommands.Help;
-import de.nightevolution.Commands.SubCommands.Info;
-import de.nightevolution.Commands.SubCommands.Reload;
-import de.nightevolution.Commands.SubCommands.SubCommand;
+import de.nightevolution.commands.sub.Help;
+import de.nightevolution.commands.sub.Info;
+import de.nightevolution.commands.sub.Reload;
 import de.nightevolution.RealisticPlantGrowth;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 public class CommandManager implements CommandExecutor {
 
     private static RealisticPlantGrowth instance;
+    private static CommandManager commandManager;
+
+
+    private CommandManager(){
+        instance = RealisticPlantGrowth.getInstance();
+    }
+
+    public static CommandManager get(){
+        if(commandManager == null)
+            commandManager = new CommandManager();
+        return commandManager;
+    }
+
+
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command cmd, String s, String[] arguments) {
-        instance = JavaPlugin.getPlugin(RealisticPlantGrowth.class);
+    public boolean onCommand(CommandSender commandSender, Command cmd, String s, String[] arguments) {
+        instance = RealisticPlantGrowth.getInstance();
 
         if(s.equalsIgnoreCase("rpg") || s.equalsIgnoreCase("realisticPlantGrowth")){
             // input validation

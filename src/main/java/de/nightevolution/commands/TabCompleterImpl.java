@@ -1,10 +1,9 @@
-package de.nightevolution.Commands;
+package de.nightevolution.commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.util.StringUtil;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +11,7 @@ import java.util.List;
 
 public class TabCompleterImpl implements TabCompleter {
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
         List<String> commands = new ArrayList<>();
         List<String> shownTabs = new ArrayList<>();
         List<String> allPermissions = new ArrayList<>();

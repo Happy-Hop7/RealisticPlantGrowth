@@ -1,6 +1,5 @@
-package de.nightevolution.Commands.SubCommands;
+package de.nightevolution.commands.sub;
 
-import de.nightevolution.Commands.CommandManager;
 import de.nightevolution.RealisticPlantGrowth;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
