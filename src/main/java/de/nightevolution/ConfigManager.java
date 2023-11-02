@@ -1,8 +1,8 @@
 package de.nightevolution;
 
+import de.nightevolution.utils.Logger;
 import dev.dejvokep.boostedyaml.YamlDocument;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import org.yaml.snakeyaml.error.YAMLException;
@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 //TODO: add config version system
 public class ConfigManager {
@@ -19,8 +18,10 @@ public class ConfigManager {
     private static ConfigManager configManager;
     private static RealisticPlantGrowth instance;
     private static MessageManager messageManager;
-    
-    private static final Logger logger = Bukkit.getLogger();
+    private static Logger logger;
+
+    private static String plugin_prefix;
+  
 
     // Main config
     private static YamlDocument config;
@@ -28,9 +29,6 @@ public class ConfigManager {
     // Language files containing plugin messages
     private static YamlDocument defaultLanguageFile_en_US;
     private static YamlDocument selectedLanguageFile;
-
-
-    private static final String classPrefix = "ConfigManager: ";
 
     private static File pluginFolder;
     private static File languageFolder;
@@ -79,6 +77,8 @@ public class ConfigManager {
         configManager = this;
         instance = RealisticPlantGrowth.getInstance();
 
+        logger = new Logger(this.getClass().getSimpleName(), instance, true);
+
         messageManager = new MessageManager(instance, configManager);
 
         pluginFolder = instance.getDataFolder();
@@ -89,24 +89,23 @@ public class ConfigManager {
 
         
         if(!languageFolder.exists()){
-            if(verbose){
-                logger.info(classPrefix + "Language directory doesn't exist!");
-                logger.info(classPrefix + "Creating new directory...");
-            }
+            logger.log("&eLanguage directory doesn't exist!");
+            logger.log("Creating new directory...");
+            
             try {
                 if(languageFolder.mkdir()){
-                    logger.info("New language directory created.");
+                    logger.log("New language directory created.");
 
                 }
 
 
             }catch (SecurityException e){
-                logger.warning(classPrefix + "Couldn't create language directory!");
+                logger.log("&4Couldn't create language directory!");
                 instance.disablePlugin();
             }
         }
 
-        logger.info("Loading supported languages...");
+        logger.log("Loading supported languages...");
         copyDefaultLanguages();
         registerLanguage();
         
@@ -133,9 +132,9 @@ public class ConfigManager {
         try{
             config = YamlDocument.create(new File(pluginFolder, "Config.yml"), instance.getResource("Config.yml"));
             config.update();
-            logger.info("Configuration loaded.");
+            logger.log("&2Configuration loaded.");
         }catch (IOException e){
-            logger.warning(classPrefix + "Couldn't load YAML configuration!");
+            logger.log("&4Couldn't load YAML configuration!");
             instance.disablePlugin();
         }
     }
@@ -149,11 +148,11 @@ public class ConfigManager {
 
         try{
             selectedLanguageFile.update();
-            logger.info("Language files loaded.");
-            logger.info("Selected language: " + language_code);
+            logger.log("&2Language files loaded.");
+            logger.verbose("Selected language: " + language_code);
 
         }catch (IOException e){
-            logger.warning(classPrefix + "Couldn't load YAML configuration!");
+            logger.log("&4Couldn't load YAML configuration!");
             instance.disablePlugin();
         }
     }
@@ -177,15 +176,16 @@ public class ConfigManager {
                     temp.update();
                 }
 
-                logger.info(languageCode + ".yml loaded.");
+                logger.verbose(languageCode + ".yml loaded.");
 
             }
         }catch (IOException e){
-            logger.warning(classPrefix + "Couldn't load language files!");
+            logger.log("&4Couldn't load language files!");
             instance.disablePlugin();
         }
     }
 
+    
     /**
      * Reads the debug boolean from the config file.
      * @return TRUE, if debug is activated. FALSE otherwise.
@@ -198,87 +198,99 @@ public class ConfigManager {
 
             // Get diffrent debugging and logging modes from Config.yml
             verbose = config.getBoolean("verbose");
-            if(verbose) logger.info(classPrefix + "verbose: true");
+            logger.log("verbose: " + verbose);
+            logger.setVerbose(verbose);
+
+            logger.verbose("");
+            logger.verbose("-------------------- config data --------------------");
+            logger.verbose("");
+
+            plugin_prefix = config.getString("plugin_prefix");
+            logger.setPluginPrefix(plugin_prefix);
+            logger.verbose("plugin_prefix: " + plugin_prefix);
 
             debug_log = config.getBoolean("debug_log");
-            if(verbose) logger.info(classPrefix + "debug_log: " + debug_log);
+            logger.verbose("debug_log: " + debug_log);
 
             tree_log = config.getBoolean("tree_log");
-            if(verbose) logger.info(classPrefix + "tree_log: " + tree_log);
+            logger.verbose("tree_log: " + tree_log);
 
             plant_log = config.getBoolean("plant_log");
-            if(verbose) logger.info(classPrefix + "plant_log: " + plant_log);
+            logger.verbose("plant_log: " + plant_log);
 
             bonemeal_log = config.getBoolean("bonemeal_log");
-            if(verbose) logger.info(classPrefix + "bonemeal_log: " + bonemeal_log);
+            logger.verbose("bonemeal_log: " + bonemeal_log);
 
             log_coords = config.getBoolean("log_coords");
-            if(verbose) logger.info(classPrefix + "log_coords: " + log_coords);
+            logger.verbose("log_coords: " + log_coords);
 
             
             // General settings
             language_code = config.getString("language_code");
-            if(verbose) logger.info(classPrefix + "language_code: " + language_code);
+            logger.verbose("language_code: " + language_code);
 
             enabled_worlds = config.getStringList("enabled_worlds");
-            if(verbose) {
-                logger.info(classPrefix + "enabled worlds:");
-                enabled_worlds.forEach((n) -> {
-                    logger.info(classPrefix + "  - " + n);
-                });
-            }
+            
+            logger.verbose("enabled worlds:");
+            enabled_worlds.forEach((n) -> {
+                logger.verbose("  - " + n);
+            });
+            
 
             bonemeal_limit = config.getInt("bonemeal_limit");
-            if(verbose) logger.info(classPrefix + "bonemeal_limit: " + bonemeal_limit);
+            logger.verbose("bonemeal_limit: " + bonemeal_limit);
 
             min_natural_light = config.getInt("min_natural_light");
-            if(verbose) logger.info(classPrefix + "min_natural_light: " + min_natural_light);
+            logger.verbose("min_natural_light: " + min_natural_light);
 
             report_growth = config.getBoolean("report_growth");
-            if(verbose) logger.info(classPrefix + "report_growth: " + report_growth);
+            logger.verbose("report_growth: " + report_growth);
 
             
             // Fertilizer settings
             fertilizer_enabled = config.getBoolean("fertilizer_enabled");
-            if(verbose) logger.info(classPrefix + "fertilizer_enabled: " + fertilizer_enabled);
+            logger.verbose("fertilizer_enabled: " + fertilizer_enabled);
 
             fertilizer_radius = config.getInt("fertilizer_radius");
-            if(verbose) logger.info(classPrefix + "fertilizer_radius: " + fertilizer_radius);
+            logger.verbose("fertilizer_radius: " + fertilizer_radius);
 
             fertilizer_passiv = config.getBoolean("fertilizer_passiv");
-            if(verbose) logger.info(classPrefix + "fertilizer_passiv: " + fertilizer_passiv);
+            logger.verbose("fertilizer_passiv: " + fertilizer_passiv);
 
             fertilizer_boost_growth_rate = config.getDouble("fertilizer_boost_growth_rate");
-            if(verbose) logger.info(classPrefix + "fertilizer_boost_growth_rate: " + fertilizer_boost_growth_rate);
+            logger.verbose("fertilizer_boost_growth_rate: " + fertilizer_boost_growth_rate);
 
             fertilizer_allow_growth_rate_above_100 = config.getBoolean("fertilizer_allow_growth_rate_above_100");
-            if(verbose) logger.info(classPrefix + "fertilizer_allow_growth_rate_above_100: " + fertilizer_allow_growth_rate_above_100);
+            logger.verbose("fertilizer_allow_growth_rate_above_100: " + fertilizer_allow_growth_rate_above_100);
 
             // UV-Light settings
             uv_enabled = config.getBoolean("uv_enabled");
-            if(verbose) logger.info(classPrefix + "uv_enabled: " + uv_enabled);
+            logger.verbose("uv_enabled: " + uv_enabled);
 
             uv_radius = config.getInt("uv_radius");
-            if(verbose) logger.info(classPrefix + "uv_radius: " + uv_radius);
+            logger.verbose("uv_radius: " + uv_radius);
 
             List <String> uv_blocks_string= config.getStringList("uv_blocks");
-            if(verbose) logger.info(classPrefix + "uv_blocks:");
+            logger.verbose("uv_blocks:");
             uv_blocks_string.forEach( (materialName) -> {
                 uv_blocks.add(Material.getMaterial(materialName));
-                if(verbose) logger.info(classPrefix + "  - " + materialName);
+                logger.verbose("  - " + materialName);
             });
 
             List <String> grow_in_dark_string= config.getStringList("grow_in_dark");
-            if(verbose) logger.info(classPrefix + "grow_in_dark:");
+            logger.verbose("grow_in_dark:");
             grow_in_dark_string.forEach( (materialName) -> {
                 grow_in_dark.add(Material.getMaterial(materialName));
-                if(verbose) logger.info(classPrefix + "  - " + materialName);
+                logger.verbose("  - " + materialName);
             });
 
+            logger.verbose("");
+            logger.verbose("-----------------------------------------------------");
+            logger.verbose("");
 
         }catch (YAMLException e){
-            logger.warning(classPrefix + "An Error occurred while reading config.yml data!");
-            logger.warning(e.getLocalizedMessage());
+            logger.log("&4An Error occurred while reading config.yml data!");
+            logger.log(e.getLocalizedMessage());
 
             instance.disablePlugin();
         }
@@ -289,11 +301,11 @@ public class ConfigManager {
      * Reads all values from config File and updates global Fields.
      */
     public void reloadConfig() {
-        logger.warning("Reloading config file...");
+        logger.log("&eReloading config file...");
         try {
             config.save();
             config.reload();
-            logger.info("Config reloaded.");
+            logger.log("Config reloaded.");
 
             // Gets updated config data and stores them as global variables.
             getConfigData();
@@ -301,17 +313,14 @@ public class ConfigManager {
             //todo: update language file
 
         }catch (YAMLException | IOException e){
-            logger.warning(classPrefix + e.getLocalizedMessage());
-            logger.warning(classPrefix + "Error while reloading config file.");
+            logger.log(e.getLocalizedMessage());
+            logger.log("&4Error while reloading config file.");
             instance.disablePlugin();
         }
     }
 
 
     // Getters for config values
-    public static String getClassPrefix() {
-        return classPrefix;
-    }
 
     public static File getPluginFolder() {
         return pluginFolder;
@@ -329,6 +338,9 @@ public class ConfigManager {
         return language_code;
     }
 
+    public String getPluginPrefix() {
+        return plugin_prefix;
+    }
     public boolean isVerbose() {
         return verbose;
     }
@@ -404,6 +416,5 @@ public class ConfigManager {
     public ArrayList<Material> getGrow_in_dark() {
         return grow_in_dark;
     }
-
 
 }

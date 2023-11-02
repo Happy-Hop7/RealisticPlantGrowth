@@ -17,7 +17,7 @@
 #|
 ########################################################################################################################
 language_code: de-DE                                # Supported language codes under: /RealisticPlantGrowth/local
-
+plugin_prefix: "[RealisticPlantGrowth&7] "          # Plugin prefix shown in Console logs. Does not affect chat massages
 
 # Which worlds should this plugin be enabled in? Worlds not in this list will have default growth behavior.
 enabled_worlds:
@@ -26,6 +26,7 @@ enabled_worlds:
   - example_world_end
 
 bonemeal_limit: 3             # Limits the use of bonemeal on a single plant to the set amount.
+                              # Use 'bonemeal_limit: 0' to completly forbid the use of bonemeal on plants
                               # Use negative numbers to disable this feature (eg. bonemeal_limit: -1)
 
 min_natural_light: 10         # Natural sky light level is required in order for plants to grow.

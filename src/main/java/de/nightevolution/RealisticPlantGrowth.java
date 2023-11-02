@@ -2,6 +2,7 @@ package de.nightevolution;
 
 import de.nightevolution.commands.CommandManager;
 import de.nightevolution.commands.TabCompleterImpl;
+import de.nightevolution.utils.Logger;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -20,6 +21,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private MessageManager messageManager;
     private BukkitAudiences adventure;
 
+    private Logger logger;
+
     @Override
     //TODO: Add Startup Messages
     public void onEnable() {
@@ -32,11 +35,14 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         this.configManager = ConfigManager.get();
 
         verbose = configManager.isVerbose();
+        logger = new Logger(this.getClass().getTypeName(), this, verbose);
 
         registerCommands();
         registerTabCompleter();
 
-        Bukkit.getLogger().info("<green>RealisticPlantGrowth enabled.");
+        logger.log("");
+        logger.log("&2Plugin successfully enabled.");
+        logger.log("");
     }
 
     @Override

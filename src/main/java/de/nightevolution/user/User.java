@@ -26,12 +26,7 @@ public class User {
         this.username = username;
     }
 
-    @NotNull
-    public static User of(@NotNull UUID uuid, @NotNull String username) {
-        return new User(uuid, username);
-    }
-
-    @Override
+      @Override
     public boolean equals(@NotNull Object obj) {
         if (obj instanceof User user) {
             return user.getUuid().equals(getUuid());

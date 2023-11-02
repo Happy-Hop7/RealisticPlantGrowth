@@ -13,7 +13,7 @@ commands:
       usage: /ppg <reload|save>
       permission: ppg.ppg
       permission-message: You dont have permission for this command
-      aliases: [rpg, realisticPlantGrowth, realisticplantgrowth]
+      aliases: [realisticPlantGrowth, realisticplantgrowth]
 
 permissions:
   ppg.*:
