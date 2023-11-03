@@ -17,14 +17,15 @@ public class StringUtils {
      */
     @NotNull
     public static String translateColor(@NotNull String unparsedString) {
-
+        /*
         Matcher matcher = HEX_PATTERN.matcher(unparsedString);
         StringBuilder builder = new StringBuilder();
 
         while (matcher.find())
             matcher.appendReplacement(builder, ChatColor.of("#" + matcher.group(1)).toString());
-
-        return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(builder).toString());
+       return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(builder).toString());
+         */
+        return ChatColor.translateAlternateColorCodes('&', unparsedString);
     }
 
 }

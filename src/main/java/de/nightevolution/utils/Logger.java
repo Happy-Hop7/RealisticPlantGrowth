@@ -1,10 +1,10 @@
 package de.nightevolution.utils;
 
 import de.nightevolution.RealisticPlantGrowth;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.logging.Level;
 
 public class Logger {
     private static RealisticPlantGrowth instance;
@@ -13,30 +13,56 @@ public class Logger {
     private static boolean debug;
     private static String pluginPrefix = "[RealisticPlantGrowth] ";
 
+    private static final String DEBUG = "&4DEBUG >>&r ";
+    private static final String VERBOSE = "&cVERBOSE >>&r ";
+    private static final String WARN = "&eWARNING >> ";
+    private static final String ERROR = "&cERROR >> ";
+
     private final String classPrefix;
 
-    private java.util.logging.Logger javaLogger;
-
-
-    public Logger(String classPrefix, RealisticPlantGrowth instance, boolean verbose) {
+    public Logger(String classPrefix, RealisticPlantGrowth instance, boolean verbose, boolean debug) {
         this.classPrefix = classPrefix.strip() + ": ";
         Logger.instance = instance;
         Logger.verbose = verbose;
-        debug = verbose;
+        Logger.debug = debug;
     }
 
-    public void log(String msg) {
+    public void log_old(String msg) {
         msg = StringUtils.translateColor(pluginPrefix + msg);
         Bukkit.getConsoleSender().sendMessage(msg);
     }
+    public void log(String msg) {
+        Component c = MiniMessage.miniMessage().deserialize(pluginPrefix + msg);
+        String msgInANSI = ANSIComponentSerializer.ansi().serialize(c);
 
+        // Translate & in § Lagacy ColorCodes for Console
+        Bukkit.getConsoleSender().sendMessage(StringUtils.translateColor(msgInANSI));
+
+    }
+
+    public void warn_old(String msg) {
+        Component c = MiniMessage.miniMessage().deserialize(classPrefix + msg);
+        String msgToANSI = ANSIComponentSerializer.ansi().serialize(c);
+        Bukkit.getLogger().warning(msgToANSI);
+
+    }
     public void debug(String msg) {
         if (isDebug())
-            log("&c&lDEBUG >>&r " + classPrefix + msg);
+            log(DEBUG + classPrefix + msg);
     }
     public void verbose(String msg) {
         if (isVerbose())
-            log("&4&lVERBOSE >>&r " + classPrefix + msg);
+            log(VERBOSE + classPrefix + msg);
+    }
+    public void warn(String msg) {
+        if(verbose)
+            log( WARN + classPrefix + msg);
+        else
+            log( WARN + msg);
+    }
+
+    public void error(String msg) {
+        log( ERROR + classPrefix + msg);
     }
 
     public String getPluginPrefix(){

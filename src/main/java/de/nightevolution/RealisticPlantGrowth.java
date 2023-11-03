@@ -15,11 +15,14 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private static RealisticPlantGrowth instance;
 
     private static final String classPrefix = "RealisticPlantGrowth: ";
-    private static boolean verbose = false;
+
+    // TODO: Set verbose and debug values of logger to false
+    private static boolean verbose = true;
+    private static boolean debug = true;
 
     private ConfigManager configManager;
     private MessageManager messageManager;
-    private BukkitAudiences adventure;
+    private BukkitAudiences bukkitAudiences;
 
     private Logger logger;
 
@@ -29,28 +32,27 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         // Create an instance of this Plugin
         instance = this;
 
+        logger = new Logger(this.getClass().getSimpleName(), this, verbose, debug);
+
         // Initialize an audiences instance for the plugin
-        this.adventure = BukkitAudiences.create(this);
+        this.bukkitAudiences = BukkitAudiences.create(this);
 
         this.configManager = ConfigManager.get();
-
-        verbose = configManager.isVerbose();
-        logger = new Logger(this.getClass().getTypeName(), this, verbose);
 
         registerCommands();
         registerTabCompleter();
 
         logger.log("");
-        logger.log("&2Plugin successfully enabled.");
+        logger.log("&2" + this.getClass().getSimpleName() + "&2 successfully enabled.");
         logger.log("");
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        if(this.adventure != null) {
-            this.adventure.close();
-            this.adventure = null;
+        if(this.bukkitAudiences != null) {
+            this.bukkitAudiences.close();
+            this.bukkitAudiences = null;
         }
     }
 
@@ -60,7 +62,9 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Disables this plugin via the Bukkit plugin manager.
      */
     void disablePlugin(){
-        Bukkit.getLogger().warning(Color.RED + "Disabling Plugin...");
+        logger.log("");
+        logger.error("&cDisabling " + this.getClass().getSimpleName() + "...");
+        logger.log("");
         getServer().getPluginManager().disablePlugin(this);
     }
 
@@ -72,11 +76,11 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     }
 
 
-    public @NonNull BukkitAudiences adventure() {
-        if (this.adventure == null) {
+    public @NonNull BukkitAudiences getBukkitAudiences() {
+        if (this.bukkitAudiences == null) {
             throw new IllegalStateException(classPrefix + "Tried to access Adventure API when the plugin was disabled!");
         }
-        return this.adventure;
+        return this.bukkitAudiences;
     }
 
     // Getters

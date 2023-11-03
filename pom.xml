@@ -158,6 +158,18 @@
 
         <dependency>
             <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <version>4.14.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-plain</artifactId>
+            <version>4.14.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
             <version>4.14.0</version>
         </dependency>
@@ -166,6 +178,18 @@
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
             <version>4.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-ansi</artifactId>
+            <version>4.14.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>ansi</artifactId>
+            <version>1.0.3</version>
         </dependency>
 
     </dependencies>

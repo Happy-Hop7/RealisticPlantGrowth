@@ -12,12 +12,16 @@
 
 
 ########################################################################################################################
-#|
-#| General Settings
-#|
+#|                                                                                                                    |#
+#| General Settings                                                                                                   |#
+#|                                                                                                                    |#
 ########################################################################################################################
-language_code: de-DE                                # Supported language codes under: /RealisticPlantGrowth/local
-plugin_prefix: "[RealisticPlantGrowth&7] "          # Plugin prefix shown in Console logs. Does not affect chat massages
+# Supported language codes under: /RealisticPlantGrowth/local
+language_code: de-DE
+
+# Plugin prefix shown in Console logs. Does not affect chat massages.
+# Supports color miniMessage Format and Legacy &-ColorCodes (https://docs.advntr.dev/minimessage/format.html)
+plugin_prefix: "&7[&2RealisticPlantGrowth&7] "
 
 # Which worlds should this plugin be enabled in? Worlds not in this list will have default growth behavior.
 enabled_worlds:
@@ -25,33 +29,38 @@ enabled_worlds:
   - example_world_nether
   - example_world_end
 
-bonemeal_limit: 3             # Limits the use of bonemeal on a single plant to the set amount.
-                              # Use 'bonemeal_limit: 0' to completly forbid the use of bonemeal on plants
-                              # Use negative numbers to disable this feature (eg. bonemeal_limit: -1)
+# Limits the use of bonemeal on a single plant to the set amount.
+# Use 'bonemeal_limit: 0' to completly forbid the use of bonemeal on plants
+# Use negative numbers to disable this feature (e.g. bonemeal_limit: -1)
+bonemeal_limit: 3
 
-min_natural_light: 10         # Natural sky light level is required in order for plants to grow.
-                              # sky light level: 0: allows growth also underground in caves.
-                              # sky light level 10: corresponds to sunlight through glass/tree leaves.
-                              # sky light level 15: plants grow only in direct sunlight.
+# Natural sky light level required for plants to grow.
+# sky light level: 0: allows plants to growth underground. (light sources are still required.)
+# sky light level 10: corresponds to sunlight through glass/tree leaves.
+# sky light level 15: plants grow only in direct sunlight.
+min_natural_light: 10
 
-report_growth: false          # Show players possible growth rates for an item they are holding in hand when
-                              # left-clicking on the ground.
-                              # Only growth rates for the biome, the player is standig in, are displayed.
-
+# Show players possible growth rates for an item they are holding in hand when left-clicking on the ground.
+# Only growth rates for the biome, the player is standig in, are displayed.
+report_growth: false
 
 ########################################################################################################################
-#|
-#| Fertilizer
-#|
-#| Composters fertilizing corps in the surrounding area. This allows plant growth in normally inhabitable areas.
-#|
+#|                                                                                                                    |#
+#| Fertilizer                                                                                                         |#
+#|                                                                                                                    |#
+#| Composters fertilizing corps in the surrounding area. This allows plant growth in normally inhabitable areas.      |#
+#|                                                                                                                    |#
 ########################################################################################################################
-fertilizer_enabled: false     # Enable use of composter fertilizer.
+# Enable use of composter fertilizer.
+fertilizer_enabled: false
 
-fertilizer_radius: 5          # Plants within this distance of Blocks will grow at fertilizer_growth_rate. (see below)
+# Plants within this distance of Blocks will grow at fertilizer_growth_rate. (see below)
+# Higher values require more server resources and may causing server lag.
+fertilizer_radius: 5
 
-fertilizer_passiv: true       # false: requires the player to actively fill the composter to get the fertilizer effects.
-                              # true: fertilizer effects don't drain composters in order to fertilize the surroundings.
+# true: fertilizer effects don't drain composters in order to fertilize the surroundings.
+# false: requires the player to actively fill the composter to get the fertilizer effects.
+fertilizer_passiv: true
 
 # The fertilizer_boost_growth_rate represents a percentage value which is added on top of biome-specific growth rates,
 # if a composter is within configured fertilizer_radius.
@@ -67,21 +76,25 @@ fertilizer_boost_growth_rate: 20.0
 fertilizer_allow_growth_rate_above_100: true;
 
 ########################################################################################################################
-#|
-#| UV-Light
-#|
-#| Will allow plants in radius to grow where there is no natural sky light.
-#| Note: Plants still require a certain light level in order to grow.
-#|
+#|                                                                                                                    |#
+#| UV-Light                                                                                                           |#
+#|                                                                                                                    |#
+#| UV-Light is an artificial light source, that allows plants in radius to grow where the sky light value is lower    |#
+#| than the min_natural_light value.                                                                                  |#
+#| This allows the cultivation of plants underground or in buildings with no direkt sky light access.                 |#
+#| Note: Plants still require a certain light level in order to grow.                                                 |#
+#|                                                                                                                    |#
 ########################################################################################################################
-uv_enabled: false            # Enable use of UV Light Block
+# Enable use of UV Light Blocks
+uv_enabled: false
 
 # A List of Blocks that can act as UV Light (Doesn't need to be a light emitting block)
 uv_blocks:
   - GLOWSTONE
   - CRYING_OBSIDIAN
 
-uv_radius: 5                 # Radius around an UV-block that UV affects
+# Radius around an UV-block that UV affects
+uv_radius: 5
 
 # List of items allowed to grow in artificial light (e.g. torches and lanterns (not the same as UV-Light))
 # Use offical MATERIAL_NAMES to add to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
@@ -93,24 +106,35 @@ grow_in_dark:
 
 
 ########################################################################################################################
-#|
-#| Logging & Debugging
-#|
-#| Runs various debug logs to view additional plugin data for troubleshooting and configuration.
-#|
+#|                                                                                                                    |#
+#| Logging & Debugging                                                                                                |#
+#|                                                                                                                    |#
+#| Runs various debug logs to view additional plugin data for troubleshooting and configuration.                      |#
+#|                                                                                                                    |#
 ########################################################################################################################
-debug_log:    false     # Enables Debug-Mode. Can get spammy, use for only for debugging.
-tree_log:     false     # Will additionally log Tree Growing Events.
-plant_log:    false     # Will additionally log Plant Growing Events
-bonemeal_log: false     # Will additionally log Bonemeal Growing Events.
-log_coords:   false     # Will additionally log the coordinates on the world of the event. (gets really spammy)
+# Enables Debug-Mode. Can get spammy, use for only for debugging.
+debug_log:    true
+
+# Will additionally log Tree Growing Events.
+tree_log:     false
+
+# Will additionally log Plant Growing Events
+plant_log:    false
+
+# Will additionally log Bonemeal Growing Events.
+bonemeal_log: false
+
+# Will additionally log the coordinates on the world of the event. (gets really spammy)
+log_coords:   false
 
 
 ########################################################################################################################
-#|
-#| Spooky internal settings.
-#| Don't touch this pls =)
-#|
+#|                                                                                                                    |#
+#| Spooky internal settings.                                                                                          |#
+#| Don't touch this pls =)                                                                                            |#
+#|                                                                                                                    |#
 ########################################################################################################################
 config-version: 1
-verbose: true          # Ultra verbose logging, logs tons of information that may be useful for extra debugging.
+
+# Ultra verbose logging, logs tons of information that may be useful for extra debugging.
+verbose: true
