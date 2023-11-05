@@ -2,13 +2,13 @@ package de.nightevolution.utils;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import java.io.FileWriter;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,7 +42,7 @@ public class Logger {
     }
 
     /**
-     * Stores a String with an Timestamp to a log file
+     * Stores a String with a Timestamp to a log file
      * Calls {@link ConfigManager} to perform the file I/O tasks.
      * @param msg String to write into the file.
      * @param fileName String representing the name of a File.
@@ -69,7 +69,7 @@ public class Logger {
         Component c = MiniMessage.miniMessage().deserialize(pluginPrefix + msg);
         String msgInANSI = ANSIComponentSerializer.ansi().serialize(c);
 
-        // Translate & in § Lagacy ColorCodes for Console
+        // Translate & in § Legacy ColorCodes for Console
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', msgInANSI));
     }
 
