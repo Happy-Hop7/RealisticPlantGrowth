@@ -8,9 +8,12 @@ import org.bukkit.Material;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 //TODO: add config version system
 public class ConfigManager {
@@ -25,6 +28,9 @@ public class ConfigManager {
 
     // Main config
     private static YamlDocument config;
+    private static YamlDocument biomeGroupsFile;
+    private static YamlDocument growthModificatorsFile;
+
 
     // Language files containing plugin messages
     private static YamlDocument defaultLanguageFile_en_US;
@@ -32,6 +38,7 @@ public class ConfigManager {
 
     private static File pluginFolder;
     private static File languageFolder;
+    private static File logFolder;
 
 
     // All predefined localizations
@@ -64,8 +71,8 @@ public class ConfigManager {
     // UV-Light config values
     private static boolean uv_enabled;
     private static int uv_radius;
-    private static ArrayList<Material> uv_blocks = new ArrayList<>();
-    private static ArrayList<Material> grow_in_dark = new ArrayList<>();
+    private static final ArrayList<Material> uv_blocks = new ArrayList<>();
+    private static final ArrayList<Material> grow_in_dark = new ArrayList<>();
 
     /**
      * Constructor for a new Singleton ConfigManager instance, which creates, reads and updates the config file.
@@ -85,14 +92,17 @@ public class ConfigManager {
 
         pluginFolder = instance.getDataFolder();
         languageFolder = new File(pluginFolder + File.separator + "lang");
+        logFolder = new File(pluginFolder + File.separator + "log");
 
-        logger.verbose("Calling registerYamlConfig()");
-        registerYamlConfig();
+        logger.verbose("Calling registerYamlConfigs()");
+        registerYamlConfigs();
 
         logger.verbose("Calling getConfigData()");
         getConfigData();
 
-        
+
+
+
         if(!languageFolder.exists()){
             logger.warn("&eLanguage directory doesn't exist!");
             logger.log("Creating new directory...");
@@ -117,7 +127,8 @@ public class ConfigManager {
 
         logger.verbose("Calling registerLanguage()");
         registerLanguage();
-        
+
+
     }
 
     /**
@@ -133,19 +144,47 @@ public class ConfigManager {
 
 
     /**
-     * Registers the config Files for RealisticPlantGrowth Plugin.
+     * Registers all config Files for RealisticPlantGrowth Plugin.
      * Creates new one, if no config exists.
      * Uses BoostedYAML API for config operations.
      */
-    private void registerYamlConfig(){
+    private void registerYamlConfigs(){
+        // Main Config
         try{
-            config = YamlDocument.create(new File(pluginFolder, "Config.yml"), instance.getResource("Config.yml"));
+            config = YamlDocument.create(new File(pluginFolder, "Config.yml"),
+                    Objects.requireNonNull(instance.getResource("Config.yml")));
             config.update();
             logger.log("Configuration loaded.");
+
         }catch (IOException e){
             logger.error("&cCouldn't load YAML configuration!");
             instance.disablePlugin();
         }
+
+        // BiomeGroups Config
+        try{
+            biomeGroupsFile = YamlDocument.create(new File(pluginFolder, "BiomeGroups.yml"),
+                    Objects.requireNonNull(instance.getResource("BiomeGroups.yml")));
+            biomeGroupsFile.update();
+            logger.log("BiomeGroups loaded.");
+
+        }catch (IOException e){
+            logger.error("&cCouldn't load BiomeGroups YAML configuration!");
+            instance.disablePlugin();
+        }
+
+        // GrowthModificators Config
+        try{
+            growthModificatorsFile = YamlDocument.create(new File(pluginFolder, "GrowthModificators.yml"),
+                    Objects.requireNonNull(instance.getResource("GrowthModificators.yml")));
+            config.update();
+            logger.log("GrowthModificators loaded.");
+
+        }catch (IOException e){
+            logger.error("&cCouldn't load GrowthModificators YAML configuration!");
+            instance.disablePlugin();
+        }
+
     }
 
     /**
@@ -176,11 +215,11 @@ public class ConfigManager {
             for (String languageCode : localsArray) {
                 if(languageCode.equalsIgnoreCase(getLanguage_code())){
                     selectedLanguageFile = YamlDocument.create(new File(languageFolder, languageCode + ".yml"),
-                            instance.getResource(languageCode + ".yml"));
+                            Objects.requireNonNull(instance.getResource(languageCode + ".yml")));
 
                 }else {
                     YamlDocument temp = YamlDocument.create(new File(languageFolder, languageCode + ".yml"),
-                            instance.getResource(languageCode + ".yml"));
+                            Objects.requireNonNull(instance.getResource(languageCode + ".yml")));
                     temp.update();
                 }
 
@@ -196,7 +235,6 @@ public class ConfigManager {
     
     /**
      * Reads the debug boolean from the config file.
-     * @return TRUE, if debug is activated. FALSE otherwise.
      * Todo: Add all config parameters
      * Todo: Make this call asynchronous
      */
@@ -329,20 +367,58 @@ public class ConfigManager {
         }
     }
 
+    /**
+     * Writes a given String into a .log File.
+     * If the file does not exit, this method will create a new one.
+     * Uses {@link FileWriter} in order to write into the .log files.
+     * @param msg String to write into the file.
+     * @param fileName String representing the name of a File.
+     */
+    public void writeToLogFile(String msg, String fileName){
+
+        if(!logFolder.exists()){
+            logger.warn("&eLog directory doesn't exist!");
+            logger.log("Creating new directory...");
+
+            try {
+                if(logFolder.mkdir()){
+                    logger.log("New log directory created.");
+
+                }
+
+
+            }catch (SecurityException e){
+                logger.error("&cCouldn't create log directory!");
+                return;
+            }
+        }else
+            logger.verbose("Log directory does exist.");
+
+        try {
+
+            File logFile = new File(logFolder, fileName+".log");
+            if (logFile.createNewFile()) {
+                logger.log("New log File created: " + logFile.getName());
+            }else{
+                logger.debug(logFile.getName() + " loaded.");
+            }
+
+            FileWriter fw = new FileWriter(logFile, true);
+            PrintWriter pw = new PrintWriter(fw);
+
+            pw.println(msg);
+            pw.flush();
+            pw.close();
+
+        }
+        catch (IOException e)        {
+            logger.error("An Error occurred while trying to log a message into a log file.");
+            return;
+        }
+
+    }
 
     // Getters for config values
-
-    public static File getPluginFolder() {
-        return pluginFolder;
-    }
-
-    public static File getLanguageFolder() {
-        return languageFolder;
-    }
-
-    public String[] getLocalsArray() {
-        return localsArray;
-    }
 
     public String getLanguage_code() {
         return language_code;

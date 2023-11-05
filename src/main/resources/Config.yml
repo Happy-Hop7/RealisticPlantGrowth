@@ -115,13 +115,13 @@ grow_in_dark:
 # Enables Debug-Mode. Can get spammy, use for only for debugging.
 debug_log:    true
 
-# Will additionally log Tree Growing Events.
+# Will additionally log Tree Growing Events in a separate log file.
 tree_log:     false
 
-# Will additionally log Plant Growing Events
+# Will additionally log Plant Growing Events in a separate log file.
 plant_log:    false
 
-# Will additionally log Bonemeal Growing Events.
+# Will additionally log Bonemeal Growing Events in a separate log file.
 bonemeal_log: false
 
 # Will additionally log the coordinates on the world of the event. (gets really spammy)
@@ -129,12 +129,8 @@ log_coords:   false
 
 
 ########################################################################################################################
-#|                                                                                                                    |#
 #| Spooky internal settings.                                                                                          |#
 #| Don't touch this pls =)                                                                                            |#
-#|                                                                                                                    |#
 ########################################################################################################################
 config-version: 1
-
-# Ultra verbose logging, logs tons of information that may be useful for extra debugging.
 verbose: true

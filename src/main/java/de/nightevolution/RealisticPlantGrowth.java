@@ -4,10 +4,10 @@ import de.nightevolution.commands.CommandManager;
 import de.nightevolution.commands.TabCompleterImpl;
 import de.nightevolution.utils.Logger;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.Objects;
 
 public final class RealisticPlantGrowth extends JavaPlugin {
 
@@ -16,9 +16,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
     private static final String classPrefix = "RealisticPlantGrowth: ";
 
-    // TODO: Set verbose and debug values of logger to false
-    private static boolean verbose = true;
-    private static boolean debug = true;
+    private static boolean verbose = false;
+    private static boolean debug = false;
 
     private ConfigManager configManager;
     private MessageManager messageManager;
@@ -32,12 +31,14 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         // Create an instance of this Plugin
         instance = this;
 
-        logger = new Logger(this.getClass().getSimpleName(), this, verbose, debug);
-
         // Initialize an audiences instance for the plugin
         this.bukkitAudiences = BukkitAudiences.create(this);
 
         this.configManager = ConfigManager.get();
+        verbose = configManager.isVerbose();
+        debug = configManager.isDebug_log();
+
+        logger = new Logger(this.getClass().getSimpleName(), this, verbose, debug);
 
         registerCommands();
         registerTabCompleter();
@@ -45,6 +46,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         logger.log("");
         logger.log("&2" + this.getClass().getSimpleName() + "&2 successfully enabled.");
         logger.log("");
+
+
     }
 
     @Override
@@ -69,10 +72,10 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     }
 
     private void registerCommands(){
-        instance.getCommand("rpg").setExecutor(CommandManager.get());
+        Objects.requireNonNull(instance.getCommand("rpg")).setExecutor(CommandManager.get());
     }
     private void registerTabCompleter(){
-        instance.getCommand("rpg").setTabCompleter(new TabCompleterImpl());
+        Objects.requireNonNull(instance.getCommand("rpg")).setTabCompleter(new TabCompleterImpl());
     }
 
 
@@ -88,10 +91,12 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     public static RealisticPlantGrowth getInstance(){
         return instance;
     }
-    public static boolean getDebugStatus() {
+    public static boolean isVerbose() {
         return verbose;
     }
-
+    public static boolean isDebug() {
+        return debug;
+    }
     public ConfigManager getConfigManager(){
         return this.configManager;
     }

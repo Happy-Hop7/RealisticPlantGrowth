@@ -1,10 +1,17 @@
 package de.nightevolution.utils;
 
+import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
+import java.io.FileWriter;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Logger {
     private static RealisticPlantGrowth instance;
@@ -27,33 +34,70 @@ public class Logger {
         Logger.debug = debug;
     }
 
-    public void log_old(String msg) {
-        msg = StringUtils.translateColor(pluginPrefix + msg);
-        Bukkit.getConsoleSender().sendMessage(msg);
+    public static String getDate() {
+        Date date = new Date();
+        Format formatter = new SimpleDateFormat("[yyyy/MM/dd HH:mm:ss]");
+
+        return formatter.format(date);
     }
+
+    /**
+     * Stores a String with an Timestamp to a log file
+     * Calls {@link ConfigManager} to perform the file I/O tasks.
+     * @param msg String to write into the file.
+     * @param fileName String representing the name of a File.
+     */
+    public void logToFile(String msg, String fileName) {
+
+        ConfigManager cm = instance.getConfigManager();
+        if(cm == null){
+            error("&cCould not log into File: ConfigManager not initialized yet.");
+            return;
+        }
+
+        cm.writeToLogFile(getDate() + " " + msg, fileName);
+
+    }
+
+    /**
+     * Formats and logs a given message provided as String to the console.
+     * Messages containing {@link MiniMessage} tags get serialized using the {@link ANSIComponentSerializer}.
+     * '&' color cotes get resolved by using the {@link ChatColor} functions of {@link Bukkit}.
+     * @param msg Message to send to the console.
+     */
     public void log(String msg) {
         Component c = MiniMessage.miniMessage().deserialize(pluginPrefix + msg);
         String msgInANSI = ANSIComponentSerializer.ansi().serialize(c);
 
         // Translate & in § Lagacy ColorCodes for Console
-        Bukkit.getConsoleSender().sendMessage(StringUtils.translateColor(msgInANSI));
-
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', msgInANSI));
     }
 
-    public void warn_old(String msg) {
-        Component c = MiniMessage.miniMessage().deserialize(classPrefix + msg);
-        String msgToANSI = ANSIComponentSerializer.ansi().serialize(c);
-        Bukkit.getLogger().warning(msgToANSI);
-
-    }
+    /**
+     * Special message format for debugging messages in console.
+     * Calls log() in order to resolve {@link MiniMessage} tags and to send the message.
+     * @param msg Debugging message.
+     */
     public void debug(String msg) {
-        if (isDebug())
+        if (debug)
             log(DEBUG + classPrefix + msg);
     }
+
+    /**
+     * Special message format for extra verbose messages in console.
+     * Calls log() in order to resolve {@link MiniMessage} tags and to send the message.
+     * @param msg Verbose message.
+     */
     public void verbose(String msg) {
-        if (isVerbose())
+        if (verbose)
             log(VERBOSE + classPrefix + msg);
     }
+
+    /**
+     * Special message format for warning messages in console.
+     * Calls log() in order to resolve {@link MiniMessage} tags and to send the message.
+     * @param msg Warning message.
+     */
     public void warn(String msg) {
         if(verbose)
             log( WARN + classPrefix + msg);
@@ -61,13 +105,18 @@ public class Logger {
             log( WARN + msg);
     }
 
+    /**
+     * Special message format for error messages in console.
+     * Calls log() in order to resolve {@link MiniMessage} tags and to send the message.
+     * @param msg Error message.
+     */
     public void error(String msg) {
         log( ERROR + classPrefix + msg);
     }
 
-    public String getPluginPrefix(){
-        return pluginPrefix;
-    }
+
+
+
     public boolean isDebug() {
         return debug;
     }
@@ -75,9 +124,6 @@ public class Logger {
         return verbose;
     }
 
-    public void setInstance(RealisticPlantGrowth instance){
-        Logger.instance = instance;
-    }
     public void setPluginPrefix(String pluginPrefix){
         Logger.pluginPrefix = pluginPrefix;
     }
