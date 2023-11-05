@@ -2,6 +2,7 @@ package de.nightevolution;
 
 import de.nightevolution.commands.CommandManager;
 import de.nightevolution.commands.TabCompleterImpl;
+import de.nightevolution.listeners.*;
 import de.nightevolution.utils.Logger;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,6 +43,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
         registerCommands();
         registerTabCompleter();
+        registerListeners();
 
         logger.log("");
         logger.log("&2" + this.getClass().getSimpleName() + "&2 successfully enabled.");
@@ -76,6 +78,14 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     }
     private void registerTabCompleter(){
         Objects.requireNonNull(instance.getCommand("rpg")).setTabCompleter(new TabCompleterImpl());
+    }
+
+    private void registerListeners(){
+        new BlockGrowListener(instance);
+        new StructureGrowListener(instance);
+        new PlayerListener(instance);
+        new BlockSpreadListener(instance);
+        new BlockFertilizeListener(instance);
     }
 
 
