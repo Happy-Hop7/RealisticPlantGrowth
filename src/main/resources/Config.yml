@@ -55,7 +55,7 @@ report_growth: false
 fertilizer_enabled: false
 
 # Plants within this distance of Blocks will grow at fertilizer_growth_rate. (see below)
-# Higher values require more server resources and may causing server lag.
+# Higher values require more server resources and may causing server lag. (max. 15 Blocks)
 fertilizer_radius: 5
 
 # true: fertilizer effects don't drain composters in order to fertilize the surroundings.
@@ -93,11 +93,12 @@ uv_blocks:
   - GLOWSTONE
   - CRYING_OBSIDIAN
 
-# Radius around an UV-block that UV affects
+# Radius around an UV-block that UV light affects.
+# Higher values require more server resources and may causing server lag. (max. 15 Blocks)
 uv_radius: 5
 
 # List of items allowed to grow in artificial light (e.g. torches and lanterns (not the same as UV-Light))
-# Use offical MATERIAL_NAMES to add to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
+# Use official MATERIAL_NAMES to add to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
 grow_in_dark:
   - RED_MUSHROOM
   - BROWN_MUSHROOM
