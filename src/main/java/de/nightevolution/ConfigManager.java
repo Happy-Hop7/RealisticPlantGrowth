@@ -237,6 +237,7 @@ public class ConfigManager {
      * Reads the debug boolean from the config file.
      * Todo: Add all config parameters
      * Todo: Make this call asynchronous
+     * Todo: Add parameter check !!!
      */
     private void getConfigData(){
 
@@ -418,8 +419,57 @@ public class ConfigManager {
 
     }
 
-    // Getters for config values
+    // Setters for config values
 
+    public static void setEnabled_worlds(List<String> enabled_worlds) {
+        ConfigManager.enabled_worlds = enabled_worlds;
+    }
+
+    public static void setBonemeal_limit(int bonemeal_limit) {
+        ConfigManager.bonemeal_limit = bonemeal_limit;
+    }
+
+    public static void setMin_natural_light(int min_natural_light) {
+        ConfigManager.min_natural_light = min_natural_light;
+    }
+
+    public static void setReport_growth(boolean report_growth) {
+        ConfigManager.report_growth = report_growth;
+    }
+
+    public static void setFertilizer_enabled(boolean fertilizer_enabled) {
+        ConfigManager.fertilizer_enabled = fertilizer_enabled;
+    }
+
+    public static void setFertilizer_radius(int fertilizer_radius) {
+        ConfigManager.fertilizer_radius = fertilizer_radius;
+    }
+
+    public static void setFertilizer_passiv(boolean fertilizer_passiv) {
+        ConfigManager.fertilizer_passiv = fertilizer_passiv;
+    }
+
+    public static void setFertilizer_boost_growth_rate(double fertilizer_boost_growth_rate) {
+        ConfigManager.fertilizer_boost_growth_rate = fertilizer_boost_growth_rate;
+    }
+
+    public static void setFertilizer_allow_growth_rate_above_100(boolean fertilizer_allow_growth_rate_above_100) {
+        ConfigManager.fertilizer_allow_growth_rate_above_100 = fertilizer_allow_growth_rate_above_100;
+    }
+
+    public static void setUv_enabled(boolean uv_enabled) {
+        ConfigManager.uv_enabled = uv_enabled;
+    }
+
+    public static void setUv_radius(int uv_radius) {
+        ConfigManager.uv_radius = uv_radius;
+    }
+
+
+
+
+
+    // Getters for config values
     public String getLanguage_code() {
         return language_code;
     }
