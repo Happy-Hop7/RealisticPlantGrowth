@@ -9,20 +9,57 @@ import org.bukkit.block.Block;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is responsible for finding special blocks like UV light sources and composters (as fertilizer sources)
+ * within a specified radius around a given block. The radius values are obtained from the {@link ConfigManager}.
+ * It uses a singleton pattern to ensure only one instance is used throughout the application.
+ */
 public class SpecialBlockSearch {
 
+    /**
+     * A singleton instance of the SpecialBlockSearch class to ensure that only one instance is used throughout the application.
+     * This instance is used to carry out searches for special blocks within a certain radius.
+     */
     SpecialBlockSearch specialBlockSearch;
+
+    /**
+     * The ConfigManager instance used to access configuration settings such as radii for UV and fertilizer searches,
+     * and to check if UV light sources and fertilizer (composters) are enabled.
+     */
     ConfigManager configManager;
 
-    Logger logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.getInstance(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+    /**
+     * Logger instance for logging verbose and debug information.
+     * The logger is configured based on the application's settings for verbosity and debug mode.
+     */
+    Logger logger;
 
+    /**
+     * The search radius for UV light sources, specified in blocks.
+     * This value is set based on the configuration settings.
+     */
     private int radiusUV;
+
+    /**
+     * The search radius for fertilizer sources, specified in blocks.
+     * This value is set based on the configuration settings.
+     */
     private int radiusFertilizer;
 
+    /**
+     * Private constructor to enforce Singleton pattern.
+     */
     private SpecialBlockSearch() {
         specialBlockSearch = this;
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.getInstance(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
     }
 
+    /**
+     * Provides access to the singleton instance of SpecialBlockSearch, initializing it if it doesn't exist.
+     * Upon each invocation, it updates the search radii for UV light sources and fertilizer sources from the config.
+     *
+     * @return The singleton instance of SpecialBlockSearch with updated search parameters.
+     */
     public SpecialBlockSearch get() {
         if (specialBlockSearch == null)
             new SpecialBlockSearch();
@@ -35,13 +72,13 @@ public class SpecialBlockSearch {
     }
 
     /**
-     * Searches for UV- and Fertilizer-blocks in a given radius around a given {@link Block}.
-     * The Radius is set in Config.yml and updated when getting a new instance with get().
+     * Searches for UV light source and fertilizer blocks within a configured radius around the provided center block.
+     * The search radius is determined by the configuration settings. This method performs an O(n^3) search
+     * in the area around the block, which may be inefficient for large radii.
      *
-     * @param startingBlock {@link Block} in the center of the search radius.
-     * @return The {@link Surrounding} of a {@link Block} containing all UV- and Fertilizer-blocks in the radius,
-     * defined in the config.
-     * Null if, no search was required.
+     * @param startingBlock The block from which the search radius extends.
+     * @return A {@link Surrounding} object containing all found UV light sources and fertilizer blocks within the radius,
+     * or null if no search is required due to configuration.
      */
     public Surrounding surroundingOf(Block startingBlock) {
 
@@ -102,14 +139,13 @@ public class SpecialBlockSearch {
     }
 
     /**
-     * This Method is required for differatiating the two possible diffrent radi.
-     * We dont't wont to iterate 2 times with this o(n^3) search so we have to check, that
-     * the smaller radius isn't überschritten
-     * @param startingLocation Starting {@link Location}
-     * @param relativeLocation Location
-     * @param radius UV-Radius or fertilizerRadius to check.
-     * @return true, if the radius is within the radius set in the config.
-     *         false, otherwise.
+     * Helper method to determine if a block is within a specified radius of a starting location.
+     * It compares the squared distances to avoid the computational cost of square root calculations.
+     *
+     * @param startingLocation The central location from which the radius extends.
+     * @param relativeLocation The location of the block to check.
+     * @param radius           The search radius to compare against, which can be for either UV or fertilizer.
+     * @return true if the block is within or equal the specified radius, false otherwise.
      */
     private boolean isBlockWithinRadius(Location startingLocation, Location relativeLocation, int radius){
         int radiusSquared = radius * radius;
