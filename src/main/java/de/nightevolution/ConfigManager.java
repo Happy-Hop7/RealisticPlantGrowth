@@ -98,7 +98,7 @@ public class ConfigManager {
         registerYamlConfigs();
 
         logger.verbose("Calling getConfigData()");
-        getConfigData();
+        readConfigData();
 
 
 
@@ -177,7 +177,7 @@ public class ConfigManager {
         try{
             growthModificatorsFile = YamlDocument.create(new File(pluginFolder, "GrowthModificators.yml"),
                     Objects.requireNonNull(instance.getResource("GrowthModificators.yml")));
-            config.update();
+            growthModificatorsFile.update();
             logger.log("GrowthModificators loaded.");
 
         }catch (IOException e){
@@ -239,7 +239,7 @@ public class ConfigManager {
      * Todo: Make this call asynchronous
      * Todo: Add parameter check !!!
      */
-    private void getConfigData(){
+    private void readConfigData(){
 
         try {
 
@@ -354,18 +354,33 @@ public class ConfigManager {
         try {
             config.save();
             config.reload();
-            logger.log("Config reloaded.");
+            logger.verbose("Config.yml reloaded.");
 
+            growthModificatorsFile.save();
+            growthModificatorsFile.reload();
+            logger.verbose("GrowthModificators.yml reloaded.");
+
+            biomeGroupsFile.save();
+            biomeGroupsFile.reload();
+            logger.verbose("BiomeGroups.yml reloaded.");
+
+            logger.log("&2All configuration files reloaded.");
             // Gets updated config data and stores them as global variables.
-            getConfigData();
+            readConfigData();
+            readLanguageData();
 
             //todo: update language file
 
         }catch (YAMLException | IOException e){
             logger.log(e.getLocalizedMessage());
-            logger.error("&cError while reloading config file.");
+            logger.error("&cError while reloading config files.");
             instance.disablePlugin();
         }
+    }
+
+    // TODO: Read language Strings from selected languageFile.
+    private void readLanguageData(){
+
     }
 
     /**
