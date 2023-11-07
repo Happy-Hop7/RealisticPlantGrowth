@@ -1,14 +1,16 @@
-# RealisticPlantGrowth configuration file
+# RealisticPlantGrowth Configuration File
 #
-# Visit RealisticPlantGrowth's page on http://dev.bukkit.org for more config details.
+# For additional configuration details, visit the RealisticPlantGrowth page at http://dev.bukkit.org.
 #
-# Full biome list available at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
+# A complete list of biomes can be found at the Spigot API documentation:
+# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
 #
-# Plants / Crops are available in the "Material" list.
-# Full material list available at https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+# Information on plants and crops can be referenced in the "Material" list at:
+# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
 #
-# If you like this Plugin please consider leaving a donation <3
-# ----------------------->  Donation LINK   <---------------------------------------------------
+# If you appreciate this plugin, please consider showing your support with a donation.
+# Your contributions help maintain and develop the plugin further. Thank you! ❤️
+# Donation link: [Insert actual donation link here]
 
 
 ########################################################################################################################
@@ -16,89 +18,90 @@
 #| General Settings                                                                                                   |#
 #|                                                                                                                    |#
 ########################################################################################################################
-# Supported language codes under: /RealisticPlantGrowth/local
+# Language setting for the plugin. Language files are located in /RealisticPlantGrowth/local
 language_code: de-DE
 
-# Plugin prefix shown in Console logs. Does not affect chat massages.
-# Supports color miniMessage Format and Legacy &-ColorCodes (https://docs.advntr.dev/minimessage/format.html)
+# Plugin prefix for console logs. Does not affect chat messages.
+# Supports miniMessage format and legacy &-color codes (Details at https://docs.advntr.dev/minimessage/format.html)
 plugin_prefix: "&7[&2RealisticPlantGrowth&7] "
 
-# Which worlds should this plugin be enabled in? Worlds not in this list will have default growth behavior.
+# List of worlds where this plugin is active. Worlds not listed here will use default growth behavior.
 enabled_worlds:
   - example_world
   - example_world_nether
   - example_world_end
 
-# Limits the use of bonemeal on a single plant to the set amount.
-# Use 'bonemeal_limit: 0' to completly forbid the use of bonemeal on plants
-# Use negative numbers to disable this feature (e.g. bonemeal_limit: -1)
+# Limits the use of bonemeal on plants to the specified amount.
+# Setting 'bonemeal_limit: 0' completely disables the use of bone meal.
+# Negative numbers deactivate this feature (e.g., 'bonemeal_limit: -1').
 bonemeal_limit: 3
 
-# Natural sky light level required for plants to grow.
-# sky light level: 0: allows plants to growth underground. (light sources are still required.)
-# sky light level 10: corresponds to sunlight through glass/tree leaves.
-# sky light level 15: plants grow only in direct sunlight.
+# Required natural sky light level for plant growth.
+# Sky light level: 0: allows underground growth. (Additional light sources are still necessary.)
+# Sky light level 10: corresponds to sunlight filtered through glass/leaves.
+# Sky light level 15: plants only grow in direct sunlight.
 min_natural_light: 10
 
-# Show players possible growth rates for an item they are holding in hand when left-clicking on the ground.
-# Only growth rates for the biome, the player is standig in, are displayed.
+# Displays potential growth rates for an item in hand when a player left-clicks the ground.
+# Only shows growth rates for the biome the player is currently in.
 report_growth: false
 
 ########################################################################################################################
 #|                                                                                                                    |#
 #| Fertilizer                                                                                                         |#
 #|                                                                                                                    |#
-#| Composters fertilizing corps in the surrounding area. This allows plant growth in normally inhabitable areas.      |#
+#| Enables Composters to fertilize crops in the surrounding area, allowing for growth in normally uninhabitable areas.|#
 #|                                                                                                                    |#
 ########################################################################################################################
-# Enable use of composter fertilizer.
+# Enables the use of composters to fertilize crops in the surrounding area.
 fertilizer_enabled: false
 
-# Plants within this distance of Blocks will grow at fertilizer_growth_rate. (see below)
-# Higher values require more server resources and may causing server lag. (max. 15 Blocks)
+# Plants within this block radius will grow at the 'fertilizer_growth_rate' (see below).
+# Higher values consume more server resources and may cause server lag. (Maximum 15 blocks)
 fertilizer_radius: 5
 
-# true: fertilizer effects don't drain composters in order to fertilize the surroundings.
-# false: requires the player to actively fill the composter to get the fertilizer effects.
+# true: Fertilizer effects do not deplete composters to fertilize the surroundings.
+# false: Players must actively fill the composter to achieve fertilization effects.
 fertilizer_passiv: true
 
-# The fertilizer_boost_growth_rate represents a percentage value which is added on top of biome-specific growth rates,
-# if a composter is within configured fertilizer_radius.
-# For example: biome specific growth rate of wheat in a dessert is 20% so a fertilizer_boost_growth_rate of 25.0% leads
-# to a growth value of 45.0% of wheat plants.
-# Note that specific plant/biome dark and death rates take effect regardless of fertilizer.
+# The 'fertilizer_boost_growth_rate' is a percentage added to biome-specific growth rates,
+# if a composter is within the configured 'fertilizer_radius'.
+# For example: A biome-specific growth rate of wheat in a desert is 20%. A 'fertilizer_boost_growth_rate' of 25.0%
+# results in a growth rate of 45.0% for wheat plants.
+# Note that specific plant/biome growth and death rates take effect regardless of fertilizer.
 fertilizer_boost_growth_rate: 20.0
 
-# Should a growth_rate above 100.0% be allowed?
-# If a plant has a biome specific growth rate of 100.0% and fertilizer_allow_growth_rate_above_100 is set to true,
-# then the resulting growth rate is above 100.0% (e.g. 125.0%)
-# Otherwise the growth_rate is capped at 100.0%
+# Allows a growth rate above 100.0%.
+# If a plant has a biome-specific growth rate of 100.0% and this is set to true,
+# the resulting growth rate can exceed 100.0% (e.g., 125.0%).
+# Otherwise, the growth rate is capped at 100.0%.
 fertilizer_allow_growth_rate_above_100: true;
 
 ########################################################################################################################
 #|                                                                                                                    |#
 #| UV-Light                                                                                                           |#
 #|                                                                                                                    |#
-#| UV-Light is an artificial light source, that allows plants in radius to grow where the sky light value is lower    |#
-#| than the min_natural_light value.                                                                                  |#
-#| This allows the cultivation of plants underground or in buildings with no direkt sky light access.                 |#
-#| Note: Plants still require a certain light level in order to grow.                                                 |#
+#| Artificial light source that allows plants within its radius to grow where the sky light level is lower            |#
+#| than the 'min_natural_light' value. This allows the cultivation of plants underground or in buildings without      |#
+#| direct sky light access.                                                                                           |#
+#| Note: Plants still require a certain light level to grow.                                                          |#
 #|                                                                                                                    |#
 ########################################################################################################################
-# Enable use of UV Light Blocks
+# Enable use of UV-Light Blocks
 uv_enabled: false
 
-# A List of Blocks that can act as UV Light (Doesn't need to be a light emitting block)
+# List of blocks that can act as UV-Light sources. Does not need to be a light-emitting block.
 uv_blocks:
-  - GLOWSTONE
-  - CRYING_OBSIDIAN
+  - OCHRE_FROGLIGHT
+  - PEARLESCENT_FROGLIGHT
+  - VERDANT_FROGLIGHT
 
-# Radius around an UV-block that UV light affects.
-# Higher values require more server resources and may causing server lag. (max. 15 Blocks)
+# Radius around a UV-Light block that affects growth.
+# Higher values consume more server resources and may cause server lag. (Maximum 15 blocks)
 uv_radius: 5
 
-# List of items allowed to grow in artificial light (e.g. torches and lanterns (not the same as UV-Light))
-# Use official MATERIAL_NAMES to add to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
+# Plants allowed to grow in artificial light sources like torches and lanterns (not the same as UV-Light).
+# Use official MATERIAL_NAMES to add items to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
 grow_in_dark:
   - RED_MUSHROOM
   - BROWN_MUSHROOM
@@ -110,28 +113,28 @@ grow_in_dark:
 #|                                                                                                                    |#
 #| Logging & Debugging                                                                                                |#
 #|                                                                                                                    |#
-#| Runs various debug logs to view additional plugin data for troubleshooting and configuration.                      |#
+#| Provides various debug logs to offer additional plugin data for troubleshooting and configuration.                 |#
 #|                                                                                                                    |#
 ########################################################################################################################
 # Enables Debug-Mode. Can get spammy, use for only for debugging.
 debug_log:    true
 
-# Will additionally log Tree Growing Events in a separate log file.
+# Logs Tree Growing Events in a separate log file.
 tree_log:     false
 
-# Will additionally log Plant Growing Events in a separate log file.
+# Logs Plant Growing Events in a separate log file.
 plant_log:    false
 
-# Will additionally log Bonemeal Growing Events in a separate log file.
+# Logs Bonemeal Usage Events in a separate log file.
 bonemeal_log: false
 
-# Will additionally log the coordinates on the world of the event. (gets really spammy)
+# Logs the coordinates in the world where events occur. (Can be very verbose.)
 log_coords:   false
 
 
 ########################################################################################################################
 #| Spooky internal settings.                                                                                          |#
-#| Don't touch this pls =)                                                                                            |#
+#| Please do not modify. =)                                                                                            |#
 ########################################################################################################################
 config-version: 1
 verbose: true
