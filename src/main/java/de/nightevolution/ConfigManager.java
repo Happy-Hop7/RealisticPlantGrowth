@@ -7,10 +7,7 @@ import org.bukkit.Material;
 
 import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,7 +39,7 @@ public class ConfigManager {
 
 
     // All predefined localizations
-    String[] localsArray = {"de-DE", "en-US"};
+    private static final String[] supportedLanguageCodes = {"de-DE", "en-US"};
     private static String language_code;
 
     // Different debug and logging modes
@@ -110,14 +107,13 @@ public class ConfigManager {
             try {
                 if(languageFolder.mkdir()){
                     logger.log("New language directory created.");
-
                 }
-
 
             }catch (SecurityException e){
                 logger.error("&cCouldn't create language directory!");
                 instance.disablePlugin();
             }
+
         }else
             logger.verbose("Language directory does exist");
 
@@ -188,6 +184,41 @@ public class ConfigManager {
     }
 
     /**
+     * Copies all default language files into the "lang" directory.
+     * Gets executed only at first plugin start.
+     */
+    private void copyDefaultLanguages(){
+
+        logger.verbose("Language Folder: " + languageFolder);
+
+        try {
+            for (String languageCode : supportedLanguageCodes) {
+                logger.verbose("Language: " + languageCode);
+
+                if(languageCode.equalsIgnoreCase(getLanguage_code())){
+                    logger.verbose( "Loading selected language File: " + languageFolder + File.separator + languageCode + ".yml");
+
+                    selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
+                            Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")));
+
+                }else {
+                    logger.verbose( "Loading language File: " + languageFolder + File.separator + languageCode + ".yml");
+                    YamlDocument temp = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
+                            Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")));
+                    temp.update();
+                }
+
+                logger.debug(languageCode + ".yml loaded.");
+
+            }
+        }catch (Exception e){
+            logger.error("&cCouldn't load language files!");
+            instance.disablePlugin();
+        }
+    }
+
+
+    /**
      * Registers the config Files for RealisticPlantGrowth Plugin.
      * Creates new one, if no config exists.
      * Uses BoostedYAML API for config operations.
@@ -205,34 +236,6 @@ public class ConfigManager {
         }
     }
 
-    /**
-     * Copies all default language files into the "lang" directory.
-     * Gets executed only at first plugin start.
-     */
-    private void copyDefaultLanguages(){
-
-        try {
-            for (String languageCode : localsArray) {
-                if(languageCode.equalsIgnoreCase(getLanguage_code())){
-                    selectedLanguageFile = YamlDocument.create(new File(languageFolder, languageCode + ".yml"),
-                            Objects.requireNonNull(instance.getResource(languageCode + ".yml")));
-
-                }else {
-                    YamlDocument temp = YamlDocument.create(new File(languageFolder, languageCode + ".yml"),
-                            Objects.requireNonNull(instance.getResource(languageCode + ".yml")));
-                    temp.update();
-                }
-
-                logger.debug(languageCode + ".yml loaded.");
-
-            }
-        }catch (IOException e){
-            logger.error("&cCouldn't load language files!");
-            instance.disablePlugin();
-        }
-    }
-
-    
     /**
      * Reads the debug boolean from the config file.
      * Todo: Add all config parameters
