@@ -9,6 +9,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -43,8 +44,9 @@ public class BlockBreakListener implements Listener {
 
 
     /**
-     * converts farmland back to dirt after a crop is harvested
-     * @param e
+     * Handles the BlockBreakEvent triggered when a block is broken.
+     *
+     * @param e BlockBreakEvent containing information about the event.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreakEvent (BlockBreakEvent e) {
@@ -56,27 +58,10 @@ public class BlockBreakListener implements Listener {
             ItemStack usedHOE = p.getInventory().getItemInMainHand();
             logger.verbose("Player using a " + usedHOE.getType().name() + " to harvest.");
 
-            // Require a hoe to harvest
-            if(configManager.isRequire_hoe()) {
-                // If not using a hoe: cancel DropItems and replace plant with air
-                if(!usedHOE.getType().name().endsWith("_HOE")) {
-                    logger.verbose("Block drops cancelled: true");
-                    e.setDropItems(false);
-                    b.setType(Material.AIR);
-                }else{
-                    //TODO: consider unbreaking enchantment in durability calculation
-                    // Damage the usedHOE
-                    Damageable hoe = (Damageable) usedHOE.getItemMeta();
-                    assert hoe != null;
-                    hoe.setDamage(hoe.getDamage()+1);
-                    usedHOE.setItemMeta(hoe);
-                    if(hoe.getDamage() >= usedHOE.getType().getMaxDurability()) {
-                        p.playEffect(EntityEffect.BREAK_EQUIPMENT_MAIN_HAND);
-                        p.getInventory().remove(usedHOE);
-                    }
-                    p.updateInventory();
-                }
-            }
+            if(configManager.isRequire_hoe())
+                requireHoeToHarvest(e, p, usedHOE);
+
+
 
             logger.verbose("destroy_farmland: " + configManager.isDestroy_farmland());
             logger.verbose("isSolid: " + !b.getType().isSolid());
@@ -84,21 +69,82 @@ public class BlockBreakListener implements Listener {
 
             // Destroy Farmland
             if (configManager.isDestroy_farmland() && !b.getType().isSolid()) {
-                Block u = b.getRelative(BlockFace.DOWN);
-
-                if (u.getType().equals(Material.FARMLAND)) {
-
-                    // Schedule the replacement of farmland with coarse dirt with a 1-tick delay
-                    BukkitScheduler scheduler = Bukkit.getScheduler();
-                    scheduler.runTaskLater(instance, () ->{
-                        logger.verbose("Replacing Farmland.");
-                        u.setType(Material.COARSE_DIRT);
-                    },1 ); // 1 Tick delay
-
-                }
+                destroyFarmland(e);
             }
 
         }
+
+    }
+
+    /**
+     * Handles the logic for requiring a hoe to harvest a plant.
+     * If a hoe is required and not used, this method cancels item drops and replaces the plant with air.
+     * If a hoe is used, it delegates to the 'damageHoe' method to simulate durability changes.
+     *
+     * @param e       The BlockBreakEvent containing information about the event.
+     * @param p       The player who caused the BlockBreakEvent.
+     * @param usedHoe The hoe used to harvest the plant.
+     */
+    private void requireHoeToHarvest(BlockBreakEvent e, Player p, ItemStack usedHoe){
+        // If not using a hoe: cancel DropItems and replace plant with air
+        if(!usedHoe.getType().name().endsWith("_HOE")) {
+            logger.verbose("Block drops cancelled: true");
+            e.setDropItems(false);
+            e.getBlock().setType(Material.AIR);
+        }else{
+            damageHoe(p, usedHoe);
+        }
+    }
+
+
+    /**
+     * Destroys farmland below the broken block, replacing it with coarse dirt after a 1-tick delay.
+     *
+     * @param e BlockBreakEvent containing information about the event.
+     */
+    private void destroyFarmland(BlockBreakEvent e){
+        Block u = e.getBlock().getRelative(BlockFace.DOWN);
+        if (u.getType().equals(Material.FARMLAND)) {
+
+            // Schedule the replacement of farmland with coarse dirt with a 1-tick delay
+            BukkitScheduler scheduler = Bukkit.getScheduler();
+            scheduler.runTaskLater(instance, () ->{
+                logger.verbose("Replacing Farmland.");
+                u.setType(Material.COARSE_DIRT);
+            },1 ); // 1 Tick delay
+        }
+    }
+
+    /**
+     * Calculates and applies durability changes to the provided hoe used for harvesting.
+     *
+     * This method simulates durability changes based on enchantments like Unbreaking.
+     * If the hoe has the Unbreaking enchantment, there is a chance that the durability
+     * will not decrease with each use. Additionally, the method handles the removal of
+     * the hoe if it reaches its maximum durability.
+     *
+     * @param p          The player who caused the BlockBreakEvent.
+     * @param usedHoe   The hoe used to harvest the plant.
+     */
+    private void damageHoe(Player p, ItemStack usedHoe){
+
+        Damageable hoe = (Damageable) usedHoe.getItemMeta();
+        if(hoe == null)
+            return;
+
+        if (usedHoe.getEnchantments().containsKey(Enchantment.DURABILITY)) {
+            if (Math.random() <= ((double) 1 / (usedHoe.getEnchantmentLevel(Enchantment.DURABILITY) + 1))) {
+                hoe.setDamage(hoe.getDamage() + 1);
+                usedHoe.setItemMeta(hoe);
+            }
+        }
+
+        // Remove the hoe if it reaches maximum durability
+        if(hoe.getDamage() >= usedHoe.getType().getMaxDurability()) {
+            p.playEffect(EntityEffect.BREAK_EQUIPMENT_MAIN_HAND);
+            p.getInventory().remove(usedHoe);
+        }
+        p.updateInventory();
 
     }
 
