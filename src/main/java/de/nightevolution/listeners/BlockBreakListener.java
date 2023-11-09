@@ -117,7 +117,6 @@ public class BlockBreakListener implements Listener {
 
     /**
      * Calculates and applies durability changes to the provided hoe used for harvesting.
-     *
      * This method simulates durability changes based on enchantments like Unbreaking.
      * If the hoe has the Unbreaking enchantment, there is a chance that the durability
      * will not decrease with each use. Additionally, the method handles the removal of
@@ -137,6 +136,9 @@ public class BlockBreakListener implements Listener {
                 hoe.setDamage(hoe.getDamage() + 1);
                 usedHoe.setItemMeta(hoe);
             }
+        }else{
+            hoe.setDamage(hoe.getDamage() + 1);
+            usedHoe.setItemMeta(hoe);
         }
 
         // Remove the hoe if it reaches maximum durability

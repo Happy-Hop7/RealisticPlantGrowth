@@ -63,7 +63,6 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
 
         // TODO: Get Plants from ConfigManager
         plants.add(Material.WHEAT);
-        instance.getServer().getPluginManager().registerEvents(this, instance);
 
     }
 
@@ -111,12 +110,6 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
         }
         return this.bukkitAudiences;
     }
-
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onBlockBreakEvent (BlockBreakEvent e) {
-            logger.verbose("MONITOR: sure cancelled?: " + e.isDropItems());
-        }
 
 
     // Getters
