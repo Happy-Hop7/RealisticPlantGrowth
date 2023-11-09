@@ -15,6 +15,7 @@ public class PlayerListener implements Listener {
     public PlayerListener(RealisticPlantGrowth instance){
         this.instance = instance;
         logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        instance.getServer().getPluginManager().registerEvents(this, instance);
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
     }
 

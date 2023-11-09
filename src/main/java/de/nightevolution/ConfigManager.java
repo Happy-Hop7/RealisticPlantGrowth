@@ -56,6 +56,7 @@ public class ConfigManager {
     // More config values
     private static int bonemeal_limit;
     private static int min_natural_light;
+    private static  boolean destroy_farmland;
     private static boolean report_growth;
 
     // Fertilizer config values
@@ -294,6 +295,9 @@ public class ConfigManager {
             min_natural_light = config.getInt("min_natural_light");
             logger.debug("min_natural_light: " + min_natural_light);
 
+            destroy_farmland = config.getBoolean("destroy_farmland");
+            logger.debug("destroy_farmland: " + destroy_farmland);
+
             report_growth = config.getBoolean("report_growth");
             logger.debug("report_growth: " + report_growth);
 
@@ -529,6 +533,10 @@ public class ConfigManager {
 
     public int getMin_natural_light() {
         return min_natural_light;
+    }
+
+    public boolean isDestroy_farmland(){
+        return destroy_farmland;
     }
 
     public boolean isReport_growth() {

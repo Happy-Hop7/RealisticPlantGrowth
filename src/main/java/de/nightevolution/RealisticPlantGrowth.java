@@ -5,9 +5,13 @@ import de.nightevolution.commands.TabCompleterImpl;
 import de.nightevolution.listeners.*;
 import de.nightevolution.utils.Logger;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public final class RealisticPlantGrowth extends JavaPlugin {
@@ -25,6 +29,9 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private BukkitAudiences bukkitAudiences;
 
     private Logger logger;
+
+    private static List<Material> plants = new ArrayList<>();
+    private static List<Material> aquaticPlants = new ArrayList<>();
 
     @Override
     //TODO: Add Startup Messages
@@ -48,6 +55,9 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         logger.log("");
         logger.log("&2" + this.getClass().getSimpleName() + "&2 successfully enabled.");
         logger.log("");
+
+        // TODO: Get Plants from ConfigManager
+        plants.add(Material.WHEAT);
 
 
     }
@@ -83,9 +93,10 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private void registerListeners(){
         new BlockGrowListener(instance);
         new StructureGrowListener(instance);
-        new PlayerListener(instance);
         new BlockSpreadListener(instance);
         new BlockFertilizeListener(instance);
+        new PlayerListener(instance);
+        new BlockBreakListener(instance);
     }
 
 
@@ -113,6 +124,19 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
     public MessageManager getMessageManager(){
         return this.messageManager;
+    }
+
+    public static void updatePlantList(){
+        // TODO: get plant list from configManager
+    }
+
+    public static boolean isAPlant(Block b){
+
+        return plants.contains(b.getType());
+    }
+
+    public static boolean isAnAquaticPlant(Block b){
+        return aquaticPlants.contains(b.getType());
     }
 
 

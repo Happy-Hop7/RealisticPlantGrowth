@@ -42,6 +42,10 @@ bonemeal_limit: 3
 # Sky light level 15: plants only grow in direct sunlight.
 min_natural_light: 10
 
+# When a player harvests a plant that has grown on farmland, the farmland is automatically replaced with a
+# coarse dirt block. As a result, the player needs to re-hoe the farmland.
+destroy_farmland: true
+
 # Displays potential growth rates for an item in hand when a player left-clicks the ground.
 # Only shows growth rates for the biome the player is currently in.
 report_growth: false
