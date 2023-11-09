@@ -43,8 +43,13 @@ bonemeal_limit: 3
 min_natural_light: 10
 
 # When a player harvests a plant that has grown on farmland, the farmland is automatically replaced with a
-# coarse dirt block. As a result, the player needs to re-hoe the farmland.
+# coarse dirt block. Consequently, the player is required to re-hoe the area to prepare it for seeding new plants.
+# Setting 'destroy_farmland' to 'true' enables this feature.
 destroy_farmland: true
+
+# Determines whether a player needs a hoe to harvest plants. If set to 'true', players must use a hoe for harvesting.
+# If 'require_hoe' is set to 'true' and a plant is harvested without a hoe, the plant will not drop anything.
+require_hoe: true
 
 # Displays potential growth rates for an item in hand when a player left-clicks the ground.
 # Only shows growth rates for the biome the player is currently in.

@@ -7,6 +7,11 @@ import de.nightevolution.utils.Logger;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -14,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class RealisticPlantGrowth extends JavaPlugin {
+public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
 
     // For convenience, a reference to the instance of this plugin
     private static RealisticPlantGrowth instance;
@@ -58,7 +63,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
         // TODO: Get Plants from ConfigManager
         plants.add(Material.WHEAT);
-
+        instance.getServer().getPluginManager().registerEvents(this, instance);
 
     }
 
@@ -106,6 +111,13 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         }
         return this.bukkitAudiences;
     }
+
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockBreakEvent (BlockBreakEvent e) {
+            logger.verbose("MONITOR: sure cancelled?: " + e.isDropItems());
+        }
+
 
     // Getters
 
