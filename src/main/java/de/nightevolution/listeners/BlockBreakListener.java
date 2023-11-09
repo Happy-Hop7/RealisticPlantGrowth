@@ -3,10 +3,7 @@ package de.nightevolution.listeners;
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.EntityEffect;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
@@ -52,6 +49,11 @@ public class BlockBreakListener implements Listener {
     public void onBlockBreakEvent (BlockBreakEvent e) {
         Block b = e.getBlock();
         logger.verbose("BlockBreakEvent!");
+
+        World world = e.getBlock().getWorld();
+        if(configManager.getEnabled_worlds().contains(world.getName()))
+            return;
+
 
         if(RealisticPlantGrowth.isAPlant(b) && !(e.getPlayer().getGameMode() == GameMode.CREATIVE)){
             Player p = e.getPlayer();
