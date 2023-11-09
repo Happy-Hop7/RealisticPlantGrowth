@@ -24,12 +24,12 @@ public class Surrounding {
     private Block closestComposter;
 
     /**
-     * A list of blocks that act as sources of UV light for plant growth.
+     * A list of UV light Blocks in the surrounding of the centerBlock.
      */
     private final List<Block> uvSources;
 
     /**
-     * A list of blocks that act as sources of fertilizer for plant growth.
+     * A list of Fertilizer (Composter) Blocks in the surrounding of the centerBlock.
      */
     private final List<Block> fertilizerSources;
 
@@ -38,22 +38,49 @@ public class Surrounding {
      */
     private final Logger logger;
 
+    private boolean isDark;
+
 
     /**
-     * Constructs a Surrounding object with specified center block, UV sources, and fertilizer sources.
-     * Initializes a logger for the Surrounding class.
+     * Constructs a Surrounding object representing the environmental conditions around a central block.
+     * This class encapsulates information about the center block, UV light sources, fertilizer sources,
+     * and the darkness status of the environment.
      *
-     * @param centerBlock The central block around which the environment is defined.
-     * @param uvBlocks A list of blocks that provide UV light.
-     * @param fertilizerBlocks A list of blocks that provide fertilizer.
+     * @param centerBlock      The central block around which the environmental conditions are assessed.
+     * @param uvBlocks         The list of blocks representing UV light sources in the surrounding area.
+     * @param fertilizerBlocks The list of blocks representing fertilizer sources in the surrounding area.
+     * @param isDark           A boolean indicating whether the environment is considered dark.
+     *                         It is true if the natural sky light is lower than the set value in the configuration.
+     */
+    public Surrounding(Block centerBlock, List<Block> uvBlocks, List<Block> fertilizerBlocks, boolean isDark) {
+        this.centerBlock = centerBlock;
+        this.isDark = isDark;
+
+        uvSources = uvBlocks;
+        fertilizerSources = fertilizerBlocks;
+
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.getInstance(),
+                RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+    }
+
+    /**
+     * Constructs a Surrounding object representing the environmental conditions around a central block.
+     * This class encapsulates information about the center block, UV light sources, fertilizer sources.
+     * With this constructor darkness is considered {@code false}.
+     *
+     * @param centerBlock      The central block around which the environmental conditions are assessed.
+     * @param uvBlocks         The list of blocks representing UV light sources in the surrounding area.
+     * @param fertilizerBlocks The list of blocks representing fertilizer sources in the surrounding area.
      */
     public Surrounding(Block centerBlock, List<Block> uvBlocks, List<Block> fertilizerBlocks) {
         this.centerBlock = centerBlock;
+        this.isDark = false;
+
         uvSources = uvBlocks;
         fertilizerSources = fertilizerBlocks;
+
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.getInstance(),
                 RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
-
     }
 
     /**
@@ -149,7 +176,7 @@ public class Surrounding {
      * If the list of UV sources or fertilizer sources is not empty, each element is included in the representation.
      * If the closest composter is not null, its representation is included; otherwise, "None" is indicated.
      *
-     * @return A string that textually represents the current state of the Surrounding object.
+     * @return A {@code String} that textually represents the current state of the Surrounding object.
      */
     @Override
     public String toString() {
@@ -185,5 +212,27 @@ public class Surrounding {
         return builder.toString();
     }
 
+
+    /**
+     * Is the environment currently considered dark?
+     * The environment is considered dark if the natural sky light is lower than
+     * the specified value in the configuration.
+     *
+     * @return {@code true} if the environment is dark; {@code false} otherwise.
+     */
+    public boolean isDark(){
+        return isDark;
+    }
+
+    /**
+     * Sets the darkness status of the environment.
+     * The environment is considered dark if the natural sky light is lower than
+     * the specified value in the configuration.
+     *
+     * @param isDark {@code true} to indicate that the environment is dark; {@code false} otherwise.
+     */
+    public void setDark(boolean isDark){
+        this.isDark = isDark;
+    }
 
 }

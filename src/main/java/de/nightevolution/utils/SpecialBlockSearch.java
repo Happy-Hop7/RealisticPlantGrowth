@@ -20,31 +20,22 @@ public class SpecialBlockSearch {
      * A singleton instance of the SpecialBlockSearch class to ensure that only one instance is used throughout the application.
      * This instance is used to carry out searches for special blocks within a certain radius.
      */
-    SpecialBlockSearch specialBlockSearch;
-
-    /**
-     * The ConfigManager instance used to access configuration settings such as radii for UV and fertilizer searches,
-     * and to check if UV light sources and fertilizer (composters) are enabled.
-     */
-    ConfigManager configManager;
-
-    /**
-     * Logger instance for logging verbose and debug information.
-     * The logger is configured based on the application's settings for verbosity and debug mode.
-     */
+    static SpecialBlockSearch specialBlockSearch;
+    static RealisticPlantGrowth instance;
+    static ConfigManager configManager;
     Logger logger;
 
     /**
      * The search radius for UV light sources, specified in blocks.
      * This value is set based on the configuration settings.
      */
-    private int radiusUV;
+    private static int radiusUV;
 
     /**
      * The search radius for fertilizer sources, specified in blocks.
      * This value is set based on the configuration settings.
      */
-    private int radiusFertilizer;
+    private static int radiusFertilizer;
 
     /**
      * Private constructor to enforce Singleton pattern.
@@ -60,10 +51,11 @@ public class SpecialBlockSearch {
      *
      * @return The singleton instance of SpecialBlockSearch with updated search parameters.
      */
-    public SpecialBlockSearch get() {
+    public static SpecialBlockSearch get() {
         if (specialBlockSearch == null)
             new SpecialBlockSearch();
 
+        instance = RealisticPlantGrowth.getInstance();
         configManager = ConfigManager.get();
         radiusUV = configManager.getUv_radius();
         radiusFertilizer = configManager.getFertilizer_radius();
@@ -77,8 +69,7 @@ public class SpecialBlockSearch {
      * in the area around the block, which may be inefficient for large radii.
      *
      * @param startingBlock The block from which the search radius extends.
-     * @return A {@link Surrounding} object containing all found UV light sources and fertilizer blocks within the radius,
-     * or null if no search is required due to configuration.
+     * @return A {@link Surrounding} object containing all found UV light sources and fertilizer blocks within the radius.
      */
     public Surrounding surroundingOf(Block startingBlock) {
 
@@ -98,7 +89,7 @@ public class SpecialBlockSearch {
             radius = radiusFertilizer;
         } else {
             // No special block search required.
-            return null;
+            return new Surrounding(startingBlock, null, null, calculateDarkness(startingBlock));
         }
 
 
@@ -134,8 +125,22 @@ public class SpecialBlockSearch {
             }
         }
 
+        boolean isDark = calculateDarkness(startingBlock);
 
-        return new Surrounding(startingBlock, uvSources, fertilizerSources);
+        return new Surrounding(startingBlock, uvSources, fertilizerSources, isDark);
+    }
+
+    /**
+     * Calculates the darkness status of a block based on its natural sky light level and configuration settings.
+     * The environment is considered dark if the natural sky light is lower than the set value in the configuration
+     * and the block type allows growth in the dark.
+     *
+     * @param block The block for which darkness status is calculated.
+     * @return {@code true} if the environment is dark; {@code false} otherwise.
+     */
+    public boolean calculateDarkness(Block block){
+        int skyLightLevel = block.getLightFromSky();
+        return (configManager.getMin_natural_light() > skyLightLevel && instance.canGrowInDark(block));
     }
 
     /**

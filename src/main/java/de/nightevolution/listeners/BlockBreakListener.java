@@ -55,7 +55,7 @@ public class BlockBreakListener implements Listener {
             return;
 
 
-        if(RealisticPlantGrowth.isAPlant(b) && !(e.getPlayer().getGameMode() == GameMode.CREATIVE)){
+        if(instance.isAPlant(b) && !(e.getPlayer().getGameMode() == GameMode.CREATIVE)){
             Player p = e.getPlayer();
             ItemStack usedHOE = p.getInventory().getItemInMainHand();
             logger.verbose("Player using a " + usedHOE.getType().name() + " to harvest.");
@@ -67,7 +67,7 @@ public class BlockBreakListener implements Listener {
 
             logger.verbose("destroy_farmland: " + configManager.isDestroy_farmland());
             logger.verbose("isSolid: " + !b.getType().isSolid());
-            logger.verbose("isAPlant: " + RealisticPlantGrowth.isAPlant(b));
+            logger.verbose("isAPlant: " + instance.isAPlant(b));
 
             // Destroy Farmland
             if (configManager.isDestroy_farmland() && !b.getType().isSolid()) {

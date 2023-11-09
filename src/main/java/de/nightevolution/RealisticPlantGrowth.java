@@ -29,14 +29,14 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     private static boolean verbose = false;
     private static boolean debug = false;
 
-    private ConfigManager configManager;
+    private static ConfigManager configManager;
     private MessageManager messageManager;
     private BukkitAudiences bukkitAudiences;
 
     private Logger logger;
 
-    private static List<Material> plants = new ArrayList<>();
-    private static List<Material> aquaticPlants = new ArrayList<>();
+    private static final List<Material> plants = new ArrayList<>();
+    private static final List<Material> aquaticPlants = new ArrayList<>();
 
     @Override
     //TODO: Add Startup Messages
@@ -47,7 +47,7 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
         // Initialize an audiences instance for the plugin
         this.bukkitAudiences = BukkitAudiences.create(this);
 
-        this.configManager = ConfigManager.get();
+        configManager = ConfigManager.get();
         verbose = configManager.isVerbose();
         debug = configManager.isDebug_log();
 
@@ -117,31 +117,36 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     public static RealisticPlantGrowth getInstance(){
         return instance;
     }
-    public static boolean isVerbose() {
-        return verbose;
-    }
-    public static boolean isDebug() {
-        return debug;
-    }
     public ConfigManager getConfigManager(){
-        return this.configManager;
+        return configManager;
     }
-
     public MessageManager getMessageManager(){
         return this.messageManager;
     }
 
-    public static void updatePlantList(){
-        // TODO: get plant list from configManager
+
+    public static void update(){
+        // TODO: get new data from configManager
     }
 
-    public static boolean isAPlant(Block b){
+
+    public boolean isAPlant(Block b){
 
         return plants.contains(b.getType());
     }
-
-    public static boolean isAnAquaticPlant(Block b){
+    public boolean isAnAquaticPlant(Block b){
         return aquaticPlants.contains(b.getType());
+    }
+    public boolean canGrowInDark(Block b){
+        return configManager.getGrow_in_dark().contains(b.getType());
+    }
+
+
+    public static boolean isDebug() {
+        return debug;
+    }
+    public static boolean isVerbose() {
+        return verbose;
     }
 
 

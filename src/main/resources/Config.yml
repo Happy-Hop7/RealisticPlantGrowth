@@ -27,9 +27,9 @@ plugin_prefix: "&7[&2RealisticPlantGrowth&7] "
 
 # List of worlds where this plugin is active. Worlds not listed here will use default growth behavior.
 enabled_worlds:
-  - example_world
-  - example_world_nether
-  - example_world_end
+  - world
+  - world_nether
+  - world_end
 
 # Limits the use of bonemeal on plants to the specified amount.
 # Setting 'bonemeal_limit: 0' completely disables the use of bone meal.
