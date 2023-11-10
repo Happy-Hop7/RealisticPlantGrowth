@@ -1,4 +1,33 @@
-# BIOME GROUPS - You can MAKE YOUR OWN versions of these, this is just a sample set of groups
+# RealisticPlantGrowth BiomeGroups File
+#
+# For additional configuration details, visit the RealisticPlantGrowth page at http://dev.bukkit.org.
+#
+# A complete list of biomes can be found at the Spigot API documentation:
+# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
+#
+# Information on plants and crops can be referenced in the "Material" list at:
+# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+#
+# If you appreciate this plugin, please consider showing your support with a donation.
+# Your contributions help maintain and develop the plugin further. Thank you! ❤️
+# Donation link: [Insert actual donation link here]
+#
+########################################################################################################################
+#
+# BiomeGroups.yml defines groups of biomes categorized for specific plant growth modifications.
+# Plants in Minecraft may have varied growth rates based on the biome they're planted in.
+# This configuration allows you to tailor growth rates for different sets of biomes,
+# creating diverse environmental conditions for your in-game plants.
+#
+# Disclaimer:
+# The BiomeGroups.yml settings provided here are EXAMPLES. Users are encouraged to customize and modify
+# these settings based on their specific preferences and gameplay needs.
+# Experiment with different growth rates in various biomes to create a unique and tailored
+# experience in your Minecraft world.
+#
+# I would greatly appreciate sharing well-configured versions of this file with the community :)
+#
+########################################################################################################################
 BiomeGroup:
   Hell:
     - BASALT_DELTAS
