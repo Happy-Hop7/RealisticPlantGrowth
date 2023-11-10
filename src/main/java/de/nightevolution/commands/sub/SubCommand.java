@@ -6,12 +6,19 @@ import org.bukkit.permissions.Permission;
 
 public abstract class SubCommand {
 
-    CommandSender commandSender;
-    String[] args;
-    RealisticPlantGrowth instance;
-    Permission permission;
+    protected CommandSender commandSender;
+    protected String[] args;
+    protected RealisticPlantGrowth instance;
+    protected Permission permission;
 
-    public static void executeCommand(CommandSender commandSender, String[] args, RealisticPlantGrowth instance) {
+    public SubCommand(CommandSender commandSender, String[] args, RealisticPlantGrowth instance){
+        this.commandSender = commandSender;
+        this.args = args;
+        this.instance = instance;
+    }
 
+    public void executeCommand() {
+        if(!commandSender.hasPermission(permission))
+            return;
     }
 }

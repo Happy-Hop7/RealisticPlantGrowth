@@ -1,10 +1,11 @@
 package de.nightevolution.commands;
 
 
+import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.commands.sub.Help;
 import de.nightevolution.commands.sub.Info;
 import de.nightevolution.commands.sub.Reload;
-import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.commands.sub.SubCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -48,13 +49,16 @@ public class CommandManager implements CommandExecutor {
             if(args.length == 1){
                 switch (args[0]){
                     case "help":
-                        Help.executeCommand(commandSender, args, instance);
+                        SubCommand help = new Help(commandSender, args, instance);
+                        help.executeCommand();
                         break;
                     case "info":
-                        Info.executeCommand(commandSender, args, instance);
+                        SubCommand info = new Info(commandSender, args, instance);
+                        info.executeCommand();
                         break;
                     case "reload":
-                        Reload.executeCommand(commandSender, args, instance);
+                        SubCommand reload = new Reload(commandSender, args, instance);
+                        reload.executeCommand();
                         break;
                     default:
                         if(commandSender.hasPermission("rpg.help")) {
