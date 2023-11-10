@@ -25,6 +25,7 @@ public class BlockBreakListener implements Listener {
     private final RealisticPlantGrowth instance;
     private final ConfigManager configManager;
     private final Logger logger;
+    private final BukkitScheduler scheduler;
 
     /**
      * Constructs a new BlockBreakListener.
@@ -37,6 +38,7 @@ public class BlockBreakListener implements Listener {
         configManager = instance.getConfigManager();
         instance.getServer().getPluginManager().registerEvents(this, instance);
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
+        scheduler = Bukkit.getScheduler();
     }
 
 
@@ -48,26 +50,25 @@ public class BlockBreakListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreakEvent (BlockBreakEvent e) {
         Block b = e.getBlock();
-        logger.verbose("BlockBreakEvent!");
+        World world = b.getWorld();
 
-        World world = e.getBlock().getWorld();
-        if(configManager.getEnabled_worlds().contains(world.getName()))
+        if(!configManager.getEnabled_worlds().contains(world.getName()))
             return;
 
 
         if(instance.isAPlant(b) && !(e.getPlayer().getGameMode() == GameMode.CREATIVE)){
             Player p = e.getPlayer();
             ItemStack usedHOE = p.getInventory().getItemInMainHand();
+
             logger.verbose("Player using a " + usedHOE.getType().name() + " to harvest.");
-
-            if(configManager.isRequire_hoe())
-                requireHoeToHarvest(e, p, usedHOE);
-
-
-
+            logger.verbose("require_hoe: " + configManager.isRequire_hoe());
             logger.verbose("destroy_farmland: " + configManager.isDestroy_farmland());
-            logger.verbose("isSolid: " + !b.getType().isSolid());
+            logger.verbose("isSolid: " + b.getType().isSolid());
             logger.verbose("isAPlant: " + instance.isAPlant(b));
+
+            if(configManager.isRequire_hoe()) {
+                requireHoeToHarvest(e, p, usedHOE);
+            }
 
             // Destroy Farmland
             if (configManager.isDestroy_farmland() && !b.getType().isSolid()) {
@@ -80,7 +81,7 @@ public class BlockBreakListener implements Listener {
 
     /**
      * Handles the logic for requiring a hoe to harvest a plant.
-     * If a hoe is required and not used, this method cancels item drops and replaces the plant with air.
+     * If a hoe is required and not used, this method cancels item drops.
      * If a hoe is used, it delegates to the 'damageHoe' method to simulate durability changes.
      *
      * @param e       The BlockBreakEvent containing information about the event.
@@ -88,13 +89,14 @@ public class BlockBreakListener implements Listener {
      * @param usedHoe The hoe used to harvest the plant.
      */
     private void requireHoeToHarvest(BlockBreakEvent e, Player p, ItemStack usedHoe){
-        // If not using a hoe: cancel DropItems and replace plant with air
+        // If not using a hoe: cancel DropItems
         if(!usedHoe.getType().name().endsWith("_HOE")) {
             logger.verbose("Block drops cancelled: true");
             e.setDropItems(false);
-            e.getBlock().setType(Material.AIR);
         }else{
+            scheduler.runTaskLater(instance, () -> {
             damageHoe(p, usedHoe);
+        },1 ); // 1 Tick delay
         }
     }
 
@@ -109,7 +111,6 @@ public class BlockBreakListener implements Listener {
         if (u.getType().equals(Material.FARMLAND)) {
 
             // Schedule the replacement of farmland with coarse dirt with a 1-tick delay
-            BukkitScheduler scheduler = Bukkit.getScheduler();
             scheduler.runTaskLater(instance, () ->{
                 logger.verbose("Replacing Farmland.");
                 u.setType(Material.COARSE_DIRT);

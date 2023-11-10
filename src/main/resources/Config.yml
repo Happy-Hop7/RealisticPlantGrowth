@@ -10,20 +10,20 @@
 #
 # If you appreciate this plugin, please consider showing your support with a donation.
 # Your contributions help maintain and develop the plugin further. Thank you! ❤️
-# Donation link: [Insert actual donation link here]
-
-
+#
+# Donation link: https://www.buymeacoffee.com/TheRealPredator
+#
 ########################################################################################################################
 #|                                                                                                                    |#
 #| General Settings                                                                                                   |#
 #|                                                                                                                    |#
 ########################################################################################################################
 # Language setting for the plugin. Language files are located in /RealisticPlantGrowth/local
-language_code: de-DE
+language_code: en-US
 
 # Plugin prefix for console logs. Does not affect chat messages.
 # Supports miniMessage format and legacy &-color codes (Details at https://docs.advntr.dev/minimessage/format.html)
-plugin_prefix: "&7[&2RealisticPlantGrowth&7] "
+plugin_prefix: "[&8RealisticPlantGrowth&r] "
 
 # List of worlds where this plugin is active. Worlds not listed here will use default growth behavior.
 enabled_worlds:
@@ -75,7 +75,7 @@ fertilizer_passiv: true
 
 # The 'fertilizer_boost_growth_rate' is a percentage added to biome-specific growth rates,
 # if a composter is within the configured 'fertilizer_radius'.
-# For example: A biome-specific growth rate of wheat in a desert is 20%. A 'fertilizer_boost_growth_rate' of 25.0%
+# For example, a biome-specific growth rate of wheat in a desert is 20%. A 'fertilizer_boost_growth_rate' of 25.0%
 # results in a growth rate of 45.0% for wheat plants.
 # Note that specific plant/biome growth and death rates take effect regardless of fertilizer.
 fertilizer_boost_growth_rate: 20.0
