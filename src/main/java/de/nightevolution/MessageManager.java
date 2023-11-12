@@ -2,7 +2,6 @@ package de.nightevolution;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 public class MessageManager {
@@ -20,9 +19,9 @@ public class MessageManager {
     private String rpg_reload;
 
 
-    public MessageManager(RealisticPlantGrowth instance, ConfigManager configManager){
+    public MessageManager(RealisticPlantGrowth instance){
         this.instance = instance;
-        this.configManager = configManager;
+        this.configManager = instance.getConfigManager();
         this.miniMessage = MiniMessage.miniMessage();
     }
 
@@ -32,8 +31,6 @@ public class MessageManager {
     public String serializeMiniMessage(Component message){
                 return ChatColor.translateAlternateColorCodes('&', miniMessage.serialize(message));
     }
-    // Todo: read lang yaml from config
-    // Todo: create all language files in lang directory
     private void readMessageStringsFromConfig(){
 
     }

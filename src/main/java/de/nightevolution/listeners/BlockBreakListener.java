@@ -52,10 +52,11 @@ public class BlockBreakListener implements Listener {
         Block b = e.getBlock();
         World world = b.getWorld();
 
-        if(!configManager.getEnabled_worlds().contains(world.getName()))
+        if(!configManager.getEnabled_worlds().contains(world.getName())){
             return;
+        }
 
-
+        // basically every crop planted on farmland + nether warts
         if(instance.isAgriculturalPlant(b) && !(e.getPlayer().getGameMode() == GameMode.CREATIVE)){
             Player p = e.getPlayer();
             ItemStack usedHOE = p.getInventory().getItemInMainHand();
@@ -90,13 +91,14 @@ public class BlockBreakListener implements Listener {
      */
     private void requireHoeToHarvest(BlockBreakEvent e, Player p, ItemStack usedHoe){
         // If not using a hoe: cancel DropItems
+
         if(!usedHoe.getType().name().endsWith("_HOE")) {
             logger.verbose("Block drops cancelled: true");
             e.setDropItems(false);
         }else{
             scheduler.runTaskLater(instance, () -> {
-            damageHoe(p, usedHoe);
-        },1 ); // 1 Tick delay
+                damageHoe(p, usedHoe);
+            },1 ); // 1 Tick delay
         }
     }
 

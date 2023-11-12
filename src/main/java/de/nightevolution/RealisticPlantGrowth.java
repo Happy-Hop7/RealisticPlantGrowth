@@ -55,11 +55,11 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
             Material.SUGAR_CANE,
             Material.SWEET_BERRIES,
             Material.TORCHFLOWER_SEEDS,
+            Material.TWISTING_VINES,
             Material.VINE,
             Material.WARPED_FUNGUS,
             Material.WHEAT_SEEDS,
-            Material.WEEPING_VINES,
-            Material.TWISTING_VINES
+            Material.WEEPING_VINES
     ));
 
     private static final Set<Material> agriculturalPlants = new HashSet<>(Arrays.asList(
@@ -84,6 +84,7 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
             Material.CARROTS,
             Material.CAVE_VINES,
             Material.CHORUS_FLOWER,
+            Material.COCOA,
             Material.CRIMSON_FUNGUS,
             Material.GLOW_LICHEN,
             Material.MELON_STEM,
