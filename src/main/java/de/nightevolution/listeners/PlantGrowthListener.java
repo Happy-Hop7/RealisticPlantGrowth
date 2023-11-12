@@ -2,6 +2,7 @@ package de.nightevolution.listeners;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.utils.GrowthCalculator;
 import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.SpecialBlockSearch;
 import de.nightevolution.utils.Surrounding;
@@ -19,6 +20,7 @@ public abstract class PlantGrowthListener  implements Listener{
 
     // Block Data
     protected String coords;
+    protected Block eventBlock;
     protected StringBuilder toLog;
     protected boolean isDark;
     protected int lightLevel;
@@ -36,14 +38,16 @@ public abstract class PlantGrowthListener  implements Listener{
 
     }
 
-    protected void readBlockData(BlockEvent e){
+    protected void getBlockData(BlockEvent e){
         // Get coords of the event for logging
-        coords = e.getBlock().getLocation().toString();
+        eventBlock = e.getBlock();
+        coords = eventBlock.getLocation().toString();
 
         if(configManager.isLog_coords())
             toLog.append(coords).append(": ");
 
-
+        surrounding = specialBlockSearch.surroundingOf(eventBlock);
+        GrowthCalculator calc = new GrowthCalculator(instance);
     }
     protected void checkForSpecialBlocks(Block b){
         specialBlockSearch.surroundingOf(b);

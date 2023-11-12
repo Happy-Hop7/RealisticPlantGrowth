@@ -56,7 +56,7 @@ public class BlockBreakListener implements Listener {
             return;
 
 
-        if(instance.isAPlant(b) && !(e.getPlayer().getGameMode() == GameMode.CREATIVE)){
+        if(instance.isAgriculturalPlant(b) && !(e.getPlayer().getGameMode() == GameMode.CREATIVE)){
             Player p = e.getPlayer();
             ItemStack usedHOE = p.getInventory().getItemInMainHand();
 

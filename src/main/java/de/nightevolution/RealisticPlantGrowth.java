@@ -6,18 +6,16 @@ import de.nightevolution.listeners.*;
 import de.nightevolution.utils.Logger;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
 
@@ -35,8 +33,79 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
 
     private Logger logger;
 
-    private static final List<Material> plants = new ArrayList<>();
-    private static final List<Material> aquaticPlants = new ArrayList<>();
+
+    // #saplings are added later to this List.
+    private static final Set<Material> seeds = new HashSet<>(Arrays.asList(
+            Material.BAMBOO,
+            Material.BEETROOT_SEEDS,
+            Material.BROWN_MUSHROOM,
+            Material.CACTUS,
+            Material.CARROT,
+            Material.CHORUS_FLOWER,
+            Material.COCOA_BEANS,
+            Material.CRIMSON_FUNGUS,
+            Material.GLOW_BERRIES,
+            Material.KELP,
+            Material.MELON_SEEDS,
+            Material.NETHER_WART,
+            Material.PITCHER_POD,
+            Material.POTATO,
+            Material.PUMPKIN_SEEDS,
+            Material.RED_MUSHROOM,
+            Material.SUGAR_CANE,
+            Material.SWEET_BERRIES,
+            Material.TORCHFLOWER_SEEDS,
+            Material.VINE,
+            Material.WARPED_FUNGUS,
+            Material.WHEAT_SEEDS,
+            Material.WEEPING_VINES,
+            Material.TWISTING_VINES
+    ));
+
+    private static final Set<Material> agriculturalPlants = new HashSet<>(Arrays.asList(
+            Material.ATTACHED_MELON_STEM,
+            Material.ATTACHED_PUMPKIN_STEM,
+            Material.BEETROOTS,
+            Material.CARROTS,
+            Material.MELON_STEM,
+            Material.NETHER_WART,
+            Material.PITCHER_CROP,
+            Material.POTATOES,
+            Material.PUMPKIN_STEM,
+            Material.TORCHFLOWER,
+            Material.TORCHFLOWER_CROP,
+            Material.WHEAT
+    ));
+
+    // #saplings are added later to this List.
+    private static final Set<Material> plants = new HashSet<>(Arrays.asList(
+            Material.BAMBOO_SAPLING,
+            Material.BEETROOTS,
+            Material.CARROTS,
+            Material.CAVE_VINES,
+            Material.CHORUS_FLOWER,
+            Material.CRIMSON_FUNGUS,
+            Material.GLOW_LICHEN,
+            Material.MELON_STEM,
+            Material.NETHER_WART,
+            Material.PITCHER_CROP,
+            Material.POTATOES,
+            Material.PUMPKIN_STEM,
+            Material.SWEET_BERRY_BUSH,
+            Material.TORCHFLOWER,
+            Material.TORCHFLOWER_CROP,
+            Material.TWISTING_VINES,
+            Material.WARPED_FUNGUS,
+            Material.WEEPING_VINES,
+            Material.WHEAT
+    ));
+
+    private static final Set<Material> aquaticPlants = new HashSet<>(Arrays.asList(
+            Material.KELP,
+            Material.SEAGRASS,
+            Material.SEA_PICKLE,
+            Material.TALL_SEAGRASS
+    ));
 
     @Override
     //TODO: Add Startup Messages
@@ -53,6 +122,7 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
 
         logger = new Logger(this.getClass().getSimpleName(), this, verbose, debug);
 
+        getSaplingsTag();
         registerCommands();
         registerTabCompleter();
         registerListeners();
@@ -61,8 +131,6 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
         logger.log("&2" + this.getClass().getSimpleName() + "&2 successfully enabled.");
         logger.log("");
 
-        // TODO: Get Plants from ConfigManager
-        plants.add(Material.WHEAT);
 
     }
 
@@ -129,10 +197,38 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
         // TODO: get new data from configManager
     }
 
+    /**
+     * Adds all saplings to the seeds and plants list.
+     * Saplings are chosen by vanilla {@code saplings} tag.
+     * AZALEA and FLOWERING_AZALEA are also included.
+     */
+    private void getSaplingsTag(){
+        logger.verbose("Getting saplings tag...");
+        Set<Material> saplingSet = (Tag.SAPLINGS.getValues());
 
+        logger.verbose("Adding saplings to List");
+        seeds.addAll(saplingSet);
+        plants.addAll(saplingSet);
+
+        logger.verbose("Printing Lists:");
+        if(verbose){
+            logger.verbose(" - Seeds:");
+            for (Material material : seeds){
+                logger.verbose("    - " + material);
+            }
+
+            logger.verbose("Plants:");
+            for (Material material : plants){
+                logger.verbose("    - " + material);
+            }
+        }
+    }
     public boolean isAPlant(Block b){
-
         return plants.contains(b.getType());
+    }
+
+    public boolean isAgriculturalPlant(Block b){
+        return agriculturalPlants.contains(b.getType());
     }
     public boolean isAnAquaticPlant(Block b){
         return aquaticPlants.contains(b.getType());
