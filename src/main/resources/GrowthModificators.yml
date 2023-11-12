@@ -10,7 +10,8 @@
 #
 # If you appreciate this plugin, please consider showing your support with a donation.
 # Your contributions help maintain and develop the plugin further. Thank you! ❤️
-# Donation link: [Insert actual donation link here]
+#
+# Donation link: https://www.buymeacoffee.com/TheRealPredator
 #
 ########################################################################################################################
 #
@@ -46,8 +47,10 @@
 #                                     'ALL' means: apply to all vanilla biomes
 #                                     '[]' means: NO GROWTH in every biome (except BiomeGroups listed above)
 #
-# Every biome not listed in the BiomeGroups or in the Biome list is considered a 'BAD' biome where
-# the plant dies with a chance of 100%. Fertilizer in range can enable plant growth in 'BAD' biomes.
+# Note:
+# Every biome not listed under 'Groups' or in the 'Biome' list is considered a 'BAD' biome where the plant dies with
+# a 100% chance. Fertilizer in range can enable plant growth in 'BAD' biomes.
+# BiomeGroups listed under 'Groups' and not specified further receive the 'Default' values.
 #
 # Disclaimer:
 # The GrowthModificators.yml settings provided here are EXAMPLES. Users are encouraged to customize and modify
@@ -58,4 +61,29 @@
 # I would greatly appreciate sharing well-configured versions of this file with the community :)
 #
 ########################################################################################################################
+# Bamboo grows only in biomes within the 'Jungle' biome group.
+# Therefore, as the specifications for the 'Jungle' biome are not defined, the 'Default' values
+# are applied to all biomes in the Jungle group.
+# Since 'Biome' is an empty list, every other biome is considered as 'BAD'.
+BAMBOO:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
 
+# Bamboo saplings share identical growth specifications with mature bamboo plants.
+BAMBOO_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
