@@ -76,6 +76,7 @@ BAMBOO:
     UVLightDeathChance: 5
     Biome: []
 
+
 # Bamboo saplings share identical growth specifications with mature bamboo plants.
 BAMBOO_SAPLING:
   BiomeGroup:
@@ -87,3 +88,313 @@ BAMBOO_SAPLING:
     NaturalDeathChance: 0
     UVLightDeathChance: 5
     Biome: []
+
+
+BEETROOTS:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+BROWN_MUSHROOM:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+CACTUS:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+CARROT:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+CAVE_VINES:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+CHORUS_FLOWER:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+COCOA:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+CRIMSON_FUNGUS:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+GLOW_LICHEN:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+KELP:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+MELON_STEM:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+NETHER_WART:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+PITCHER_CROP:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+POTATOES:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+PUMPKIN_STEM:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+RED_MUSHROOM:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+SEAGRASS:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+SEA_PICKLE:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+SUGAR_CANE:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+SWEET_BERRY_BUSH:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+TORCHFLOWER_CROP:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+VINES:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+TWISTING_VINES:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+WARPED_FUNGUS:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+WEEPING_VINES:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+WHEAT:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+

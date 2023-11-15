@@ -2,15 +2,14 @@ package de.nightevolution;
 
 import de.nightevolution.utils.Logger;
 import dev.dejvokep.boostedyaml.YamlDocument;
-
 import org.bukkit.Material;
-
 import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
 
 //TODO: add config version system
 public class ConfigManager {
@@ -29,8 +28,7 @@ public class ConfigManager {
     private static YamlDocument growthModificatorsFile;
 
 
-    // Language files containing plugin messages
-    private static YamlDocument defaultLanguageFile_en_US;
+    // Selected language file containing plugin messages
     private static YamlDocument selectedLanguageFile;
 
     private static File pluginFolder;
@@ -38,8 +36,12 @@ public class ConfigManager {
     private static File logFolder;
 
 
-    // All predefined localizations
-    private static final String[] supportedLanguageCodes = {"de-DE", "en-US"};
+    // All predefined supported localizations.
+    private static final List<String> supportedLanguageCodes = (Arrays.asList(
+            "de-DE",
+            "en-US"
+    ));
+
     private static String language_code;
 
     // Different debug and logging modes
@@ -73,10 +75,20 @@ public class ConfigManager {
     private static final ArrayList<Material> uv_blocks = new ArrayList<>();
     private static final ArrayList<Material> grow_in_dark = new ArrayList<>();
 
+    // GrowthModificators.yml
+    private static Map<String, Object> growthModificatorsData;
+
+    // BiomeGroups.yml
+    private static Map<String, Object> biomeGroupsData;
+
+    // Selected language file data
+    private static Map<String, Object> languageFileData;
+
+
     /**
      * Constructor for a new Singleton ConfigManager instance, which creates, reads and updates the config file.
-     * Get an instance of ConfigManager with ConfigManager.get();.
-     * ConfigManager uses BoostedYAML API in order to perform file operations.
+     * Get an instance of ConfigManager with ConfigManager.get().
+     * ConfigManager uses BoostedYAML API to perform file operations.
      */
     private ConfigManager(){
 
@@ -87,7 +99,7 @@ public class ConfigManager {
         logger = new Logger(this.getClass().getSimpleName(), instance, true, true);
 
         logger.verbose("Creating new MessageManager");
-        messageManager = new MessageManager(instance, configManager);
+        messageManager = new MessageManager(instance);
 
         pluginFolder = instance.getDataFolder();
         languageFolder = new File(pluginFolder + File.separator + "lang");
@@ -121,11 +133,19 @@ public class ConfigManager {
 
         logger.log("Loading supported languages...");
         logger.verbose("Calling copyDefaultLanguages()");
-        copyDefaultLanguages();
+        registerSupportedLanguages();
 
         logger.verbose("Calling registerLanguage()");
-        registerLanguage();
+        registerSelectedLanguage();
 
+        logger.verbose("Calling readLanguageData()");
+        readLanguageData();
+
+        logger.verbose("Calling readBiomeGroupsData()");
+        readBiomeGroupsData();
+
+        logger.verbose("Calling readGrowthModificatorsData()");
+        readGrowthModificatorsData();
 
     }
 
@@ -143,7 +163,7 @@ public class ConfigManager {
 
     /**
      * Registers all config Files for RealisticPlantGrowth Plugin.
-     * Creates new one, if no config exists.
+     * Creates new one if no config exists.
      * Uses BoostedYAML API for config operations.
      */
     private void registerYamlConfigs(){
@@ -186,13 +206,17 @@ public class ConfigManager {
     }
 
     /**
-     * Copies all default language files into the "lang" directory.
-     * Gets executed only at first plugin start.
+     * This Method copies default language files into the "lang" directory during plugin initialization.
+     * This method is executed only once, at the start of the plugin and during reloads.
+     * It supports custom language files in the "lang" directory and selects "en-US" as the default language
+     * if the language code specified in the Config.yml cannot be resolved.
      */
-    private void copyDefaultLanguages(){
+    private void registerSupportedLanguages() {
 
         logger.verbose("Language Folder: " + languageFolder);
 
+        // Copies all supported language files into the lang directory.
+        // Selects
         try {
             for (String languageCode : supportedLanguageCodes) {
                 logger.verbose("Language: " + languageCode);
@@ -213,19 +237,65 @@ public class ConfigManager {
                 logger.debug(languageCode + ".yml loaded.");
 
             }
-        }catch (Exception e){
+        }catch (IOException e){
             logger.error("&cCouldn't load language files!");
             instance.disablePlugin();
+            return;
         }
+
+        // Search for custom files in lang directory.
+        if (selectedLanguageFile == null){
+            // lese daten von ordner
+            File[] allFiles = languageFolder.listFiles();
+
+            if (allFiles == null) {
+                logger.error("&cCouldn't load language files!");
+                instance.disablePlugin();
+                return;
+            }
+
+            logger.log("Searching for custom language files...");
+
+            for (File allFile : allFiles) {
+                if (allFile.isFile()) {
+                    String fileName = allFile.getName();
+                    if (fileName.equalsIgnoreCase(getLanguage_code())) {
+                        try {
+                            selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, "en-US.yml"));
+                            logger.log(fileName + " loaded.");
+                        } catch (IOException e) {
+                            logger.warn("Couldn't load language_code: " + getLanguage_code());
+                        }
+
+                    }
+                }
+            }
+
+        }
+
+        // Setting the default language if selected 'language_code' file not found.
+        if (selectedLanguageFile == null){
+            try {
+                logger.warn("No custom language file with language_code '" + getLanguage_code() + "' located in 'lang' directory!");
+                logger.warn("Using default language file: en-US");
+                selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, "en-US.yml"),
+                        Objects.requireNonNull(instance.getResource("lang/" + "en-US.yml")));
+            }catch (IOException e){
+                logger.error("&cCouldn't load custom language file!");
+                instance.disablePlugin();
+            }
+
+        }
+
     }
 
 
     /**
      * Registers the config Files for RealisticPlantGrowth Plugin.
-     * Creates new one, if no config exists.
+     * Creates new one if no config exists.
      * Uses BoostedYAML API for config operations.
      */
-    private void registerLanguage(){
+    private void registerSelectedLanguage(){
 
         try{
             selectedLanguageFile.update();
@@ -240,7 +310,6 @@ public class ConfigManager {
 
     /**
      * Reads the debug boolean from the config file.
-     * Todo: Add all config parameters
      * Todo: Make this call asynchronous
      * Todo: Add parameter check !!!
      */
@@ -258,7 +327,7 @@ public class ConfigManager {
             logger.debug("debug_log: " + debug_log);
 
             logger.debug("");
-            logger.debug("-------------------- config data --------------------");
+            logger.debug("-------------------- Config.yml Data --------------------");
             logger.debug("");
 
             plugin_prefix = config.getString("plugin_prefix");
@@ -344,8 +413,6 @@ public class ConfigManager {
             });
 
             logger.debug("");
-            logger.debug("-----------------------------------------------------");
-            logger.debug("");
             
             
         }catch (YAMLException e){
@@ -356,31 +423,78 @@ public class ConfigManager {
         }
     }
 
+    private void readBiomeGroupsData(){
+        biomeGroupsData = biomeGroupsFile.getStringRouteMappedValues(true);
+
+        logger.debug("");
+        logger.debug("-------------------- BiomeGroups.yml Data --------------------");
+        logger.debug("");
+        if(verbose)
+            printMap(biomeGroupsData);
+        // TODO: Check Data
+
+    }
+
+    private void readGrowthModificatorsData(){
+        growthModificatorsData = growthModificatorsFile.getStringRouteMappedValues(true);
+
+        logger.debug("");
+        logger.debug("-------------------- GrowthModificators.yml Data --------------------");
+        logger.debug("");
+        if(verbose)
+            printMap(growthModificatorsData);
+        // TODO: Check Data
+    }
+
+    private void readLanguageData(){
+        languageFileData = selectedLanguageFile.getStringRouteMappedValues(true);
+
+        logger.debug("");
+        logger.debug("-------------------- " + language_code + ".yml Data --------------------");
+        logger.debug("");
+        if(verbose)
+            printMap(languageFileData);
+        // TODO: Check Data
+    }
+
+    private void printMap(Map<String, Object> data){
+        Set<String> keys = data.keySet();
+        keys.forEach((key) -> {
+            logger.debug(data.get(key).toString());
+        });
+    }
+
     /**
-     * This method is executed when Plugin is reloading.
-     * Reads all values from config File and updates global Fields.
+     * Reloads configuration files when the plugin is in a reloading state.
+     * Reads values from the configuration files and updates global fields accordingly.
+     * This method reloads the main configuration file (Config.yml), as well as other YAML files
+     * responsible for growth modifiers (GrowthModificators.yml), biome groups (BiomeGroups.yml),
+     * and language settings (Language files).
      */
-    public void reloadConfig() {
+    public void reloadAllYAMLFiles() {
         logger.warn("&eReloading config file...");
         try {
-            config.save();
             config.reload();
             logger.verbose("Config.yml reloaded.");
 
-            growthModificatorsFile.save();
             growthModificatorsFile.reload();
             logger.verbose("GrowthModificators.yml reloaded.");
 
-            biomeGroupsFile.save();
             biomeGroupsFile.reload();
             logger.verbose("BiomeGroups.yml reloaded.");
 
-            logger.log("&2All configuration files reloaded.");
-            // Gets updated config data and stores them as global variables.
-            readConfigData();
-            readLanguageData();
+            selectedLanguageFile.update();
+            logger.verbose("Language files reloaded.");
 
-            //todo: update language file
+            // Get updated config data and store new data in global variables.
+            readConfigData();
+            registerSupportedLanguages();
+            readLanguageData();
+            readBiomeGroupsData();
+            readGrowthModificatorsData();
+
+            logger.log("&2All configuration files reloaded.");
+
 
         }catch (YAMLException | IOException e){
             logger.log(e.getLocalizedMessage());
@@ -389,10 +503,6 @@ public class ConfigManager {
         }
     }
 
-    // TODO: Read language Strings from selected languageFile.
-    private void readLanguageData(){
-
-    }
 
     /**
      * Writes a given String into a .log File.
@@ -440,7 +550,6 @@ public class ConfigManager {
         }
         catch (IOException e)        {
             logger.error("An Error occurred while trying to log a message into a log file.");
-            return;
         }
 
     }
@@ -585,6 +694,18 @@ public class ConfigManager {
 
     public ArrayList<Material> getGrow_in_dark() {
         return grow_in_dark;
+    }
+
+    public Map<String, Object> getBiomeGroups(){
+        return biomeGroupsData;
+    }
+
+    public Map<String, Object> getGrowthModificators(){
+        return growthModificatorsData;
+    }
+
+    public Map<String, Object> getLanguageFileData(){
+        return languageFileData;
     }
 
 }
