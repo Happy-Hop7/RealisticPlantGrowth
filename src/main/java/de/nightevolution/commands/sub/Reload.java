@@ -16,6 +16,6 @@ public class Reload extends SubCommand {
     @Override
     public void executeCommand() {
         super.executeCommand();
-        instance.getConfigManager().reloadConfig();
+        instance.getConfigManager().reloadAllYAMLFiles();
     }
 }
