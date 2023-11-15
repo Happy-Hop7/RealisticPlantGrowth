@@ -2,6 +2,10 @@ package de.nightevolution;
 
 import de.nightevolution.utils.Logger;
 import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import org.bukkit.Material;
 import org.yaml.snakeyaml.error.YAMLException;
 
@@ -168,9 +172,11 @@ public class ConfigManager {
      */
     private void registerYamlConfigs(){
         // Main Config
+        // -> should use default values if something is missing.
         try{
             config = YamlDocument.create(new File(pluginFolder, "Config.yml"),
-                    Objects.requireNonNull(instance.getResource("Config.yml")));
+                    Objects.requireNonNull(instance.getResource("Config.yml")),
+                    GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
             config.update();
             logger.log("Configuration loaded.");
 
@@ -180,10 +186,13 @@ public class ConfigManager {
         }
 
         // BiomeGroups Config
+        // don't use defaults here
+        GeneralSettings gs = GeneralSettings.builder().setUseDefaults(false).build();
         try{
             biomeGroupsFile = YamlDocument.create(new File(pluginFolder, "BiomeGroups.yml"),
-                    Objects.requireNonNull(instance.getResource("BiomeGroups.yml")));
-            biomeGroupsFile.update();
+                    Objects.requireNonNull(instance.getResource("BiomeGroups.yml")),
+                    gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
+            //biomeGroupsFile.update();
             logger.log("BiomeGroups loaded.");
 
         }catch (IOException e){
@@ -194,8 +203,9 @@ public class ConfigManager {
         // GrowthModificators Config
         try{
             growthModificatorsFile = YamlDocument.create(new File(pluginFolder, "GrowthModificators.yml"),
-                    Objects.requireNonNull(instance.getResource("GrowthModificators.yml")));
-            growthModificatorsFile.update();
+                    Objects.requireNonNull(instance.getResource("GrowthModificators.yml")),
+                    gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
+            //growthModificatorsFile.update();
             logger.log("GrowthModificators loaded.");
 
         }catch (IOException e){
@@ -216,7 +226,6 @@ public class ConfigManager {
         logger.verbose("Language Folder: " + languageFolder);
 
         // Copies all supported language files into the lang directory.
-        // Selects
         try {
             for (String languageCode : supportedLanguageCodes) {
                 logger.verbose("Language: " + languageCode);
@@ -225,12 +234,14 @@ public class ConfigManager {
                     logger.verbose( "Loading selected language File: " + languageFolder + File.separator + languageCode + ".yml");
 
                     selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
-                            Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")));
+                            Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")),
+                            GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
 
                 }else {
                     logger.verbose( "Loading language File: " + languageFolder + File.separator + languageCode + ".yml");
                     YamlDocument temp = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
-                            Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")));
+                            Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")),
+                            GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
                     temp.update();
                 }
 
@@ -254,17 +265,18 @@ public class ConfigManager {
                 return;
             }
 
+            GeneralSettings gs = GeneralSettings.builder().setUseDefaults(false).build();
             logger.log("Searching for custom language files...");
-
-            for (File allFile : allFiles) {
-                if (allFile.isFile()) {
-                    String fileName = allFile.getName();
-                    if (fileName.equalsIgnoreCase(getLanguage_code())) {
+            for (File file : allFiles) {
+                if (file.isFile()) {
+                    String fileName = file.getName();
+                    if (fileName.equalsIgnoreCase(language_code + ".yml")) {
                         try {
-                            selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, "en-US.yml"));
+                            selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, language_code + ".yml"),
+                                    gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
                             logger.log(fileName + " loaded.");
                         } catch (IOException e) {
-                            logger.warn("Couldn't load language_code: " + getLanguage_code());
+                            logger.warn("Couldn't load language_code: " + language_code);
                         }
 
                     }
@@ -279,7 +291,8 @@ public class ConfigManager {
                 logger.warn("No custom language file with language_code '" + getLanguage_code() + "' located in 'lang' directory!");
                 logger.warn("Using default language file: en-US");
                 selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, "en-US.yml"),
-                        Objects.requireNonNull(instance.getResource("lang/" + "en-US.yml")));
+                        Objects.requireNonNull(instance.getResource("lang/" + "en-US.yml")),
+                        GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
             }catch (IOException e){
                 logger.error("&cCouldn't load custom language file!");
                 instance.disablePlugin();
@@ -426,9 +439,9 @@ public class ConfigManager {
     private void readBiomeGroupsData(){
         biomeGroupsData = biomeGroupsFile.getStringRouteMappedValues(true);
 
-        logger.debug("");
-        logger.debug("-------------------- BiomeGroups.yml Data --------------------");
-        logger.debug("");
+        logger.verbose("");
+        logger.verbose("-------------------- BiomeGroups --------------------");
+        logger.verbose("");
         if(verbose)
             printMap(biomeGroupsData);
         // TODO: Check Data
@@ -438,9 +451,9 @@ public class ConfigManager {
     private void readGrowthModificatorsData(){
         growthModificatorsData = growthModificatorsFile.getStringRouteMappedValues(true);
 
-        logger.debug("");
-        logger.debug("-------------------- GrowthModificators.yml Data --------------------");
-        logger.debug("");
+        logger.verbose("");
+        logger.verbose("-------------------- GrowthModificators --------------------");
+        logger.verbose("");
         if(verbose)
             printMap(growthModificatorsData);
         // TODO: Check Data
@@ -448,10 +461,9 @@ public class ConfigManager {
 
     private void readLanguageData(){
         languageFileData = selectedLanguageFile.getStringRouteMappedValues(true);
-
-        logger.debug("");
-        logger.debug("-------------------- " + language_code + ".yml Data --------------------");
-        logger.debug("");
+        logger.verbose("");
+        logger.verbose("-------------------- " + Objects.requireNonNull(selectedLanguageFile.getFile()).getName() + " --------------------");
+        logger.verbose("");
         if(verbose)
             printMap(languageFileData);
         // TODO: Check Data
@@ -459,9 +471,12 @@ public class ConfigManager {
 
     private void printMap(Map<String, Object> data){
         Set<String> keys = data.keySet();
+
         keys.forEach((key) -> {
-            logger.debug(data.get(key).toString());
+            logger.verbose(key);
         });
+
+
     }
 
     /**
@@ -475,20 +490,21 @@ public class ConfigManager {
         logger.warn("&eReloading config file...");
         try {
             config.reload();
-            logger.verbose("Config.yml reloaded.");
+            logger.debug("Config.yml reloaded.");
 
             growthModificatorsFile.reload();
-            logger.verbose("GrowthModificators.yml reloaded.");
+            logger.debug("GrowthModificators.yml reloaded.");
 
             biomeGroupsFile.reload();
-            logger.verbose("BiomeGroups.yml reloaded.");
+            logger.debug("BiomeGroups.yml reloaded.");
 
             selectedLanguageFile.update();
-            logger.verbose("Language files reloaded.");
+            logger.debug("Language files reloaded.");
 
             // Get updated config data and store new data in global variables.
             readConfigData();
             registerSupportedLanguages();
+            registerSelectedLanguage();
             readLanguageData();
             readBiomeGroupsData();
             readGrowthModificatorsData();
@@ -529,7 +545,7 @@ public class ConfigManager {
                 return;
             }
         }else
-            logger.verbose("Log directory does exist.");
+            logger.debug("Log directory does exist.");
 
         try {
 

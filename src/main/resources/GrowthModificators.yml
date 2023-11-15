@@ -340,7 +340,7 @@ TORCHFLOWER_CROP:
     Biome: []
 
 
-VINES:
+VINE:
   BiomeGroup:
     Groups:
       - Jungle
