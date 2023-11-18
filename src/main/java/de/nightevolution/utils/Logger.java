@@ -2,20 +2,23 @@ package de.nightevolution.utils;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Logger {
     private static RealisticPlantGrowth instance;
-
+    private static File logFolder;
     private static boolean verbose;
     private static boolean debug;
     private static String pluginPrefix = "[RealisticPlantGrowth] ";
@@ -32,6 +35,9 @@ public class Logger {
         Logger.instance = instance;
         Logger.verbose = verbose;
         Logger.debug = debug;
+
+        File pluginFolder = instance.getDataFolder();
+        logFolder = new File(pluginFolder + File.separator + "log");
     }
 
     public static String getDate() {
@@ -44,19 +50,18 @@ public class Logger {
     /**
      * Stores a String with a Timestamp to a log file
      * Calls {@link ConfigManager} to perform the file I/O tasks.
+     * Should be called async.
      * @param msg String to write into the file.
      * @param fileName String representing the name of a File.
      */
     public void logToFile(String msg, String fileName) {
 
-        ConfigManager cm = instance.getConfigManager();
-        if(cm == null){
-            error("&cCould not log into File: ConfigManager not initialized yet.");
-            return;
-        }
+        // Print all debug values, if verbose is enabled.
+        if(verbose)
+            debug(msg);
 
-        cm.writeToLogFile(getDate() + " " + msg, fileName);
-
+        // write log file
+        writeToLogFile(getDate() + " " + msg, fileName);
     }
 
     /**
@@ -115,7 +120,49 @@ public class Logger {
     }
 
 
+    /**
+     * Writes a given String into a .log File.
+     * If the file does not exit, this method will create a new one.
+     * Should be called async.
+     * Uses {@link FileWriter} in order to write into the .log files.
+     * @param msg String to write into the file.
+     * @param fileName String representing the name of a File.
+     */
+    private void writeToLogFile(String msg, String fileName){
 
+        if(!logFolder.exists()){
+            warn("&eLog directory doesn't exist!");
+            log("Creating new directory...");
+
+            try {
+                if(logFolder.mkdir()){
+                    log("New log directory created.");
+                }
+            }catch (SecurityException e){
+                error("&cCouldn't create log directory!");
+                return;
+            }
+        }
+
+        try {
+            File logFile = new File(logFolder, fileName + ".log");
+            if (logFile.createNewFile()) {
+                log("New log File created: " + logFile.getName());
+            }
+
+            FileWriter fw = new FileWriter(logFile, true);
+            PrintWriter pw = new PrintWriter(fw);
+
+            pw.println(msg);
+            pw.flush();
+            pw.close();
+
+        }
+        catch (IOException e)        {
+            error("An Error occurred while trying to log a message into a log file.");
+        }
+
+    }
 
     public boolean isDebug() {
         return debug;

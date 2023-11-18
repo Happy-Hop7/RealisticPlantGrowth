@@ -3,23 +3,22 @@ version: '${project.version}'
 main: de.nightevolution.RealisticPlantGrowth
 api-version: '1.20'
 prefix: 'RealisticPlantGrowth'
-authors: [pwn9, msudol, TheRealPredator]
+author: TheRealPredator
 description: '${project.description}'
 website: '${project.url}'
 
 commands:
    rpg:
-      description: Execute a PwnPlantGrowth command
-      usage: /ppg <reload|save>
-      permission: ppg.ppg
-      permission-message: You dont have permission for this command
+      description: Execute a RealisticPlantGrowth command.
+      usage: /ppg <reload|debug>
+      permission: rpg.help
       aliases: [realisticPlantGrowth, realisticplantgrowth]
 
 permissions:
-  ppg.*:
-    description: gives all permissions of PwnPlantGrowth
+  rpg.*:
+    description: Gives access to all RealisticPlantGrowth features.
     default: op
     children:
-        ppg.ppg: true
-        ppg.reload: true 
-        ppg.save: true
+        rpg.help: true
+        rpg.reload: true
+        rpg.debug: true

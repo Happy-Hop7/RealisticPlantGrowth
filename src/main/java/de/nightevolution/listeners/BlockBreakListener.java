@@ -62,17 +62,17 @@ public class BlockBreakListener implements Listener {
             ItemStack usedHOE = p.getInventory().getItemInMainHand();
 
             logger.verbose("Player using a " + usedHOE.getType().name() + " to harvest.");
-            logger.verbose("require_hoe: " + configManager.isRequire_hoe());
-            logger.verbose("destroy_farmland: " + configManager.isDestroy_farmland());
+            logger.verbose("require_hoe: " + configManager.isRequire_Hoe());
+            logger.verbose("destroy_farmland: " + configManager.isDestroy_Farmland());
             logger.verbose("isSolid: " + b.getType().isSolid());
             logger.verbose("isAPlant: " + instance.isAPlant(b));
 
-            if(configManager.isRequire_hoe()) {
+            if(configManager.isRequire_Hoe()) {
                 requireHoeToHarvest(e, p, usedHOE);
             }
 
             // Destroy Farmland
-            if (configManager.isDestroy_farmland() && !b.getType().isSolid()) {
+            if (configManager.isDestroy_Farmland() && !b.getType().isSolid()) {
                 destroyFarmland(e);
             }
 

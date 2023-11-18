@@ -1,11 +1,16 @@
 package de.nightevolution.utils;
 
+import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Class representing the environment around a block that triggered a PlantGrowthEvent.
@@ -13,6 +18,9 @@ import java.util.*;
  * A logger is also included for outputting verbose and debug information.
  */
 public class Surrounding {
+    private final RealisticPlantGrowth instance;
+    private final ConfigManager configManager;
+
     /**
      * The central block associated with the plant growth event.
      */
@@ -38,7 +46,7 @@ public class Surrounding {
      */
     private final Logger logger;
 
-    private boolean isDark;
+
 
 
     /**
@@ -49,39 +57,20 @@ public class Surrounding {
      * @param centerBlock      The central block around which the environmental conditions are assessed.
      * @param uvBlocks         The list of blocks representing UV light sources in the surrounding area.
      * @param fertilizerBlocks The list of blocks representing fertilizer sources in the surrounding area.
-     * @param isDark           A boolean indicating whether the environment is considered dark.
-     *                         It is true if the natural sky light is lower than the set value in the configuration.
-     */
-    public Surrounding(Block centerBlock, List<Block> uvBlocks, List<Block> fertilizerBlocks, boolean isDark) {
-        this.centerBlock = centerBlock;
-        this.isDark = isDark;
-
-        uvSources = uvBlocks;
-        fertilizerSources = fertilizerBlocks;
-
-        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.getInstance(),
-                RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
-    }
-
-    /**
-     * Constructs a Surrounding object representing the environmental conditions around a central block.
-     * This class encapsulates information about the center block, UV light sources, fertilizer sources.
-     * With this constructor darkness is considered {@code false}.
-     *
-     * @param centerBlock      The central block around which the environmental conditions are assessed.
-     * @param uvBlocks         The list of blocks representing UV light sources in the surrounding area.
-     * @param fertilizerBlocks The list of blocks representing fertilizer sources in the surrounding area.
      */
     public Surrounding(Block centerBlock, List<Block> uvBlocks, List<Block> fertilizerBlocks) {
         this.centerBlock = centerBlock;
-        this.isDark = false;
+
+        instance = RealisticPlantGrowth.getInstance();
+        configManager = instance.getConfigManager();
 
         uvSources = uvBlocks;
         fertilizerSources = fertilizerBlocks;
 
-        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.getInstance(),
+        logger = new Logger(this.getClass().getSimpleName(), instance,
                 RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
     }
+
 
     /**
      * Retrieves the central block.
@@ -181,8 +170,12 @@ public class Surrounding {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Surrounding{");
-        builder.append("centerBlock=").append(centerBlock);
+        builder.append("Surrounding{").append(System.lineSeparator());
+        builder.append("centerBlock=[");
+        builder.append(centerBlock.getLocation().getBlockX()).append(" | ");
+        builder.append(centerBlock.getLocation().getBlockY()).append(" | ");
+        builder.append(centerBlock.getLocation().getBlockZ()).append("] ");
+        builder.append(System.lineSeparator());
 
         builder.append(", uvSources=[");
         for(Block uvSource : uvSources) {
@@ -214,25 +207,55 @@ public class Surrounding {
 
 
     /**
-     * Is the environment currently considered dark?
-     * The environment is considered dark if the natural sky light is lower than
-     * the specified value in the configuration.
+     * Retrieves the biome of the center block.
      *
-     * @return {@code true} if the environment is dark; {@code false} otherwise.
+     * @return The biome of the center block.
      */
-    public boolean isDark(){
-        return isDark;
+    public Biome getBiome(){
+        return centerBlock.getBiome();
+    }
+
+
+    /**
+     * Retrieves the material type of the center block.
+     *
+     * @return The material type of the center block.
+     */
+    public Material getType(){
+        return centerBlock.getType();
+    }
+
+    public boolean hasUVLightAccess(){
+        List<Material> allValidUVBlocks = configManager.getUV_Blocks();
+
+        if(uvSources == null || uvSources.isEmpty()){
+            logger.verbose("No UV-Light access!");
+            return false;
+        }
+
+        if(configManager.getRequire_All_UV_Blocks()){
+            HashSet<Material> uvBlockMix = new HashSet<>();
+            for (Block b : uvSources){
+                uvBlockMix.add(b.getType());
+            }
+            return uvBlockMix.containsAll(allValidUVBlocks);
+
+        }else{
+            return true;
+        }
     }
 
     /**
-     * Sets the darkness status of the environment.
-     * The environment is considered dark if the natural sky light is lower than
-     * the specified value in the configuration.
+     * Calculates the darkness status of a block based on its natural sky light level and configuration settings.
+     * The environment is considered dark if the natural sky light is lower than the set value in the configuration
+     * and the block type does not allow growth in the dark.
      *
-     * @param isDark {@code true} to indicate that the environment is dark; {@code false} otherwise.
+     * @return {@code true} if the environment is dark; {@code false} otherwise.
      */
-    public void setDark(boolean isDark){
-        this.isDark = isDark;
+    public boolean isInDarkness(){
+        int skyLightLevel = centerBlock.getLightFromSky();
+        boolean hasNotMinSkyLight =  (configManager.getMin_Natural_Light() > skyLightLevel);
+        return (hasNotMinSkyLight && !instance.canGrowInDark(centerBlock));
     }
 
 }

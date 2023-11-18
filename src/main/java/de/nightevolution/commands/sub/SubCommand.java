@@ -17,8 +17,10 @@ public abstract class SubCommand {
         this.instance = instance;
     }
 
-    public void executeCommand() {
+    public boolean executeCommand() {
         if(!commandSender.hasPermission(permission))
-            return;
+            return false;
+
+        return true;
     }
 }

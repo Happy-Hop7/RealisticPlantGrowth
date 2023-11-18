@@ -6,13 +6,12 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 //TODO: add config version system
@@ -24,20 +23,23 @@ public class ConfigManager {
     private static Logger logger;
 
     private static String plugin_prefix;
-  
+    private static final String logFile = "debug";
 
     // Main config
     private static YamlDocument config;
-    private static YamlDocument biomeGroupsFile;
-    private static YamlDocument growthModificatorsFile;
 
+    private static YamlDocument biomeGroupsFile;
+    private static Map<String, Object> biomeGroupsData;
+
+    private static YamlDocument growthModificatorsFile;
+    private static Map<String, Object> growthModificatorsData;
 
     // Selected language file containing plugin messages
     private static YamlDocument selectedLanguageFile;
+    private static Map<String, Object> languageFileData;
 
     private static File pluginFolder;
     private static File languageFolder;
-    private static File logFolder;
 
 
     // All predefined supported localizations.
@@ -76,17 +78,9 @@ public class ConfigManager {
     // UV-Light config values
     private static boolean uv_enabled;
     private static int uv_radius;
+    private static boolean require_all_uv_blocks;
     private static final ArrayList<Material> uv_blocks = new ArrayList<>();
     private static final ArrayList<Material> grow_in_dark = new ArrayList<>();
-
-    // GrowthModificators.yml
-    private static Map<String, Object> growthModificatorsData;
-
-    // BiomeGroups.yml
-    private static Map<String, Object> biomeGroupsData;
-
-    // Selected language file data
-    private static Map<String, Object> languageFileData;
 
 
     /**
@@ -102,17 +96,11 @@ public class ConfigManager {
         // TODO: Set verbose and debug values of logger to false
         logger = new Logger(this.getClass().getSimpleName(), instance, true, true);
 
-        logger.verbose("Creating new MessageManager");
-        messageManager = new MessageManager(instance);
-
         pluginFolder = instance.getDataFolder();
         languageFolder = new File(pluginFolder + File.separator + "lang");
-        logFolder = new File(pluginFolder + File.separator + "log");
 
-        logger.verbose("Calling registerYamlConfigs()");
+        
         registerYamlConfigs();
-
-        logger.verbose("Calling getConfigData()");
         readConfigData();
 
 
@@ -133,22 +121,17 @@ public class ConfigManager {
             }
 
         }else
-            logger.verbose("Language directory does exist");
+            logger.logToFile("Language directory already exist.", logFile);
 
         logger.log("Loading supported languages...");
-        logger.verbose("Calling copyDefaultLanguages()");
         registerSupportedLanguages();
-
-        logger.verbose("Calling registerLanguage()");
         registerSelectedLanguage();
-
-        logger.verbose("Calling readLanguageData()");
         readLanguageData();
-
-        logger.verbose("Calling readBiomeGroupsData()");
+        
+        logger.log("Loading BiomeGroups data...");
         readBiomeGroupsData();
-
-        logger.verbose("Calling readGrowthModificatorsData()");
+        
+        logger.log("Loading GrowthModificators data...");
         readGrowthModificatorsData();
 
     }
@@ -158,7 +141,7 @@ public class ConfigManager {
      * Creates a new instance if no instance already exists.
      * @return ConfigManager Singleton instance
      */
-    public static ConfigManager get(){
+    protected static ConfigManager get(){
         if(configManager == null)
             new ConfigManager();
         return configManager;
@@ -223,29 +206,29 @@ public class ConfigManager {
      */
     private void registerSupportedLanguages() {
 
-        logger.verbose("Language Folder: " + languageFolder);
+        logger.logToFile("Language Folder: " + languageFolder, logFile);
 
         // Copies all supported language files into the lang directory.
         try {
             for (String languageCode : supportedLanguageCodes) {
-                logger.verbose("Language: " + languageCode);
+                logger.logToFile("Language: " + languageCode, logFile);
 
                 if(languageCode.equalsIgnoreCase(getLanguage_code())){
-                    logger.verbose( "Loading selected language File: " + languageFolder + File.separator + languageCode + ".yml");
+                    logger.logToFile( "Loading selected language File: " + languageFolder + File.separator + languageCode + ".yml", logFile);
 
                     selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
                             Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")),
                             GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
 
                 }else {
-                    logger.verbose( "Loading language File: " + languageFolder + File.separator + languageCode + ".yml");
+                    logger.logToFile( "Loading language File: " + languageFolder + File.separator + languageCode + ".yml", logFile);
                     YamlDocument temp = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
                             Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")),
                             GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
                     temp.update();
                 }
 
-                logger.debug(languageCode + ".yml loaded.");
+                logger.logToFile(languageCode + ".yml loaded.", logFile);
 
             }
         }catch (IOException e){
@@ -313,7 +296,7 @@ public class ConfigManager {
         try{
             selectedLanguageFile.update();
             logger.log("Language files loaded.");
-            logger.debug("Selected language: " + language_code);
+            logger.logToFile("Selected language: " + language_code, logFile);
 
         }catch (IOException e){
             logger.error("&cCouldn't load YAML configuration!");
@@ -337,97 +320,50 @@ public class ConfigManager {
 
             debug_log = config.getBoolean("debug_log");
             logger.setDebug(debug_log);
-            logger.debug("debug_log: " + debug_log);
-
-            logger.debug("");
-            logger.debug("-------------------- Config.yml Data --------------------");
-            logger.debug("");
+            logger.logToFile("debug_log: " + debug_log, logFile);
 
             plugin_prefix = config.getString("plugin_prefix");
             logger.setPluginPrefix(plugin_prefix);
-            logger.debug("plugin_prefix: " + plugin_prefix);
 
             tree_log = config.getBoolean("tree_log");
-            logger.debug("tree_log: " + tree_log);
-
             plant_log = config.getBoolean("plant_log");
-            logger.debug("plant_log: " + plant_log);
-
             bonemeal_log = config.getBoolean("bonemeal_log");
-            logger.debug("bonemeal_log: " + bonemeal_log);
-
             log_coords = config.getBoolean("log_coords");
-            logger.debug("log_coords: " + log_coords);
 
-            
             // General settings
             language_code = config.getString("language_code");
-            logger.debug("language_code: " + language_code);
-
             enabled_worlds = config.getStringList("enabled_worlds");
-            
-            logger.debug("enabled worlds:");
-            enabled_worlds.forEach((n) -> {
-                logger.debug("  - " + n);
-            });
-            
-
             bonemeal_limit = config.getInt("bonemeal_limit");
-            logger.debug("bonemeal_limit: " + bonemeal_limit);
-
             min_natural_light = config.getInt("min_natural_light");
-            logger.debug("min_natural_light: " + min_natural_light);
-
             destroy_farmland = config.getBoolean("destroy_farmland");
-            logger.debug("destroy_farmland: " + destroy_farmland);
-
             require_hoe = config.getBoolean("require_hoe");
-            logger.debug("require_hoe: " + require_hoe);
-
             report_growth = config.getBoolean("report_growth");
-            logger.debug("report_growth: " + report_growth);
 
-            
             // Fertilizer settings
             fertilizer_enabled = config.getBoolean("fertilizer_enabled");
-            logger.debug("fertilizer_enabled: " + fertilizer_enabled);
-
             fertilizer_radius = config.getInt("fertilizer_radius");
-            logger.debug("fertilizer_radius: " + fertilizer_radius);
-
             fertilizer_passiv = config.getBoolean("fertilizer_passiv");
-            logger.debug("fertilizer_passiv: " + fertilizer_passiv);
-
             fertilizer_boost_growth_rate = config.getDouble("fertilizer_boost_growth_rate");
-            logger.debug("fertilizer_boost_growth_rate: " + fertilizer_boost_growth_rate);
-
             fertilizer_allow_growth_rate_above_100 = config.getBoolean("fertilizer_allow_growth_rate_above_100");
-            logger.debug("fertilizer_allow_growth_rate_above_100: " + fertilizer_allow_growth_rate_above_100);
 
             // UV-Light settings
             uv_enabled = config.getBoolean("uv_enabled");
-            logger.debug("uv_enabled: " + uv_enabled);
-
             uv_radius = config.getInt("uv_radius");
-            logger.debug("uv_radius: " + uv_radius);
+            require_all_uv_blocks = config.getBoolean("require_all_uv_blocks");
 
-            List <String> uv_blocks_string= config.getStringList("uv_blocks");
-            logger.debug("uv_blocks:");
-            uv_blocks_string.forEach( (materialName) -> {
+            List<String> uv_blocks_string = config.getStringList("uv_blocks");
+            uv_blocks_string.forEach((materialName) -> {
                 uv_blocks.add(Material.getMaterial(materialName));
-                logger.debug("  - " + materialName);
             });
 
-            List <String> grow_in_dark_string= config.getStringList("grow_in_dark");
-            logger.debug("grow_in_dark:");
-            grow_in_dark_string.forEach( (materialName) -> {
+            List<String> grow_in_dark_string = config.getStringList("grow_in_dark");
+            grow_in_dark_string.forEach((materialName) -> {
                 grow_in_dark.add(Material.getMaterial(materialName));
-                logger.debug("  - " + materialName);
             });
 
-            logger.debug("");
-            
-            
+
+            printConfigData();
+
         }catch (YAMLException e){
             logger.error("&cAn Error occurred while reading config.yml data!");
             logger.log(e.getLocalizedMessage());
@@ -436,47 +372,103 @@ public class ConfigManager {
         }
     }
 
+    // TODO: Check user modified data
+    private void readLanguageData(){
+        languageFileData = selectedLanguageFile.getStringRouteMappedValues(true);
+
+        if(debug_log) {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
+                logger.logToFile("", logFile);
+                logger.logToFile( "-------------------- " +
+                        Objects.requireNonNull(selectedLanguageFile.getFile()).getName() +
+                        "-------------------- " , logFile);
+                logger.logToFile("", logFile);
+
+                printMap(languageFileData);
+
+            }, 7 * 20);
+        }
+    }
+
+    // TODO: Check user modified data
     private void readBiomeGroupsData(){
         biomeGroupsData = biomeGroupsFile.getStringRouteMappedValues(true);
 
-        logger.verbose("");
-        logger.verbose("-------------------- BiomeGroups --------------------");
-        logger.verbose("");
-        if(verbose)
-            printMap(biomeGroupsData);
-        // TODO: Check Data
-
+        if(debug_log) {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
+                logger.logToFile("", logFile);
+                logger.logToFile("-------------------- BiomeGroups --------------------", logFile);
+                logger.logToFile("", logFile);
+                printMap(biomeGroupsData);
+            }, 8 * 20);
+        }
     }
 
+    // TODO: Check user modified data
     private void readGrowthModificatorsData(){
         growthModificatorsData = growthModificatorsFile.getStringRouteMappedValues(true);
 
-        logger.verbose("");
-        logger.verbose("-------------------- GrowthModificators --------------------");
-        logger.verbose("");
-        if(verbose)
-            printMap(growthModificatorsData);
-        // TODO: Check Data
-    }
-
-    private void readLanguageData(){
-        languageFileData = selectedLanguageFile.getStringRouteMappedValues(true);
-        logger.verbose("");
-        logger.verbose("-------------------- " + Objects.requireNonNull(selectedLanguageFile.getFile()).getName() + " --------------------");
-        logger.verbose("");
-        if(verbose)
-            printMap(languageFileData);
-        // TODO: Check Data
+        if(debug_log) {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
+                logger.logToFile("", logFile);
+                logger.logToFile("-------------------- GrowthModificators --------------------", logFile);
+                logger.logToFile("", logFile);
+                printMap(growthModificatorsData);
+            }, 9 * 20);
+        }
     }
 
     private void printMap(Map<String, Object> data){
         Set<String> keys = data.keySet();
-
         keys.forEach((key) -> {
-            logger.verbose(key);
+            logger.logToFile(key, logFile);
         });
+    }
 
+    private void printConfigData(){
+        Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
+            logger.logToFile("", logFile);
+            logger.logToFile("-------------------- Config.yml Data --------------------", logFile);
+            logger.logToFile("", logFile);
 
+            logger.logToFile("plugin_prefix: " + plugin_prefix, logFile);
+            logger.logToFile("tree_log: " + tree_log, logFile);
+            logger.logToFile("plant_log: " + plant_log, logFile);
+            logger.logToFile("bonemeal_log: " + bonemeal_log, logFile);
+            logger.logToFile("log_coords: " + log_coords, logFile);
+            logger.logToFile("language_code: " + language_code, logFile);
+            logger.logToFile("enabled worlds:", logFile);
+            enabled_worlds.forEach((n) -> {
+                logger.logToFile("  - " + n, logFile);
+            });
+            logger.logToFile("bonemeal_limit: " + bonemeal_limit, logFile);
+            logger.logToFile("min_natural_light: " + min_natural_light, logFile);
+            logger.logToFile("destroy_farmland: " + destroy_farmland, logFile);
+            logger.logToFile("require_hoe: " + require_hoe, logFile);
+            logger.logToFile("report_growth: " + report_growth, logFile);
+
+            logger.logToFile("fertilizer_enabled: " + fertilizer_enabled, logFile);
+            logger.logToFile("fertilizer_radius: " + fertilizer_radius, logFile);
+            logger.logToFile("fertilizer_passiv: " + fertilizer_passiv, logFile);
+            logger.logToFile("fertilizer_boost_growth_rate: "
+                    + fertilizer_boost_growth_rate, logFile);
+            logger.logToFile("fertilizer_allow_growth_rate_above_100: "
+                    + fertilizer_allow_growth_rate_above_100, logFile);
+
+            logger.logToFile("uv_enabled: " + uv_enabled, logFile);
+            logger.logToFile("uv_radius: " + uv_radius, logFile);
+            logger.logToFile("require_all_uv_blocks: " + require_all_uv_blocks, logFile);
+
+            logger.logToFile("uv_blocks:", logFile);
+            uv_blocks.forEach( (materialName) -> {
+                logger.logToFile("  - " + materialName, logFile);
+            });
+
+            logger.logToFile("grow_in_dark:", logFile);
+            grow_in_dark.forEach( (materialName) -> {
+                logger.logToFile("  - " + materialName, logFile);
+            });
+        }, 6 * 20);
     }
 
     /**
@@ -520,55 +512,7 @@ public class ConfigManager {
     }
 
 
-    /**
-     * Writes a given String into a .log File.
-     * If the file does not exit, this method will create a new one.
-     * Uses {@link FileWriter} in order to write into the .log files.
-     * @param msg String to write into the file.
-     * @param fileName String representing the name of a File.
-     */
-    public void writeToLogFile(String msg, String fileName){
 
-        if(!logFolder.exists()){
-            logger.warn("&eLog directory doesn't exist!");
-            logger.log("Creating new directory...");
-
-            try {
-                if(logFolder.mkdir()){
-                    logger.log("New log directory created.");
-
-                }
-
-
-            }catch (SecurityException e){
-                logger.error("&cCouldn't create log directory!");
-                return;
-            }
-        }else
-            logger.debug("Log directory does exist.");
-
-        try {
-
-            File logFile = new File(logFolder, fileName+".log");
-            if (logFile.createNewFile()) {
-                logger.log("New log File created: " + logFile.getName());
-            }else{
-                logger.debug(logFile.getName() + " loaded.");
-            }
-
-            FileWriter fw = new FileWriter(logFile, true);
-            PrintWriter pw = new PrintWriter(fw);
-
-            pw.println(msg);
-            pw.flush();
-            pw.close();
-
-        }
-        catch (IOException e)        {
-            logger.error("An Error occurred while trying to log a message into a log file.");
-        }
-
-    }
 
     // Setters for config values
 
@@ -660,15 +604,15 @@ public class ConfigManager {
         return bonemeal_limit;
     }
 
-    public int getMin_natural_light() {
+    public int getMin_Natural_Light() {
         return min_natural_light;
     }
 
-    public boolean isDestroy_farmland(){
+    public boolean isDestroy_Farmland(){
         return destroy_farmland;
     }
 
-    public boolean isRequire_hoe() {
+    public boolean isRequire_Hoe() {
         return require_hoe;
     }
 
@@ -696,19 +640,23 @@ public class ConfigManager {
         return fertilizer_allow_growth_rate_above_100;
     }
 
-    public boolean isUv_enabled() {
+    public boolean isUV_Enabled() {
         return uv_enabled;
     }
 
-    public int getUv_radius() {
+    public int getUV_Radius() {
         return uv_radius;
     }
 
-    public ArrayList<Material> getUv_blocks() {
+    public ArrayList<Material> getUV_Blocks() {
         return uv_blocks;
     }
 
-    public ArrayList<Material> getGrow_in_dark() {
+    public boolean getRequire_All_UV_Blocks(){
+        return require_all_uv_blocks;
+    }
+
+    public ArrayList<Material> getGrow_In_Dark() {
         return grow_in_dark;
     }
 
@@ -722,6 +670,18 @@ public class ConfigManager {
 
     public Map<String, Object> getLanguageFileData(){
         return languageFileData;
+    }
+
+    public YamlDocument getConfigFile(){
+        return config;
+    }
+
+    public YamlDocument getBiomeGroupsFile(){
+        return biomeGroupsFile;
+    }
+
+    public YamlDocument getGrowthModificatorsFile(){
+        return growthModificatorsFile;
     }
 
 }

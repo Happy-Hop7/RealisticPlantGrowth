@@ -10,6 +10,8 @@ public class MessageManager {
 
     private final RealisticPlantGrowth instance;
     private final ConfigManager configManager;
+    private static MessageManager messageManager;
+
     private final MiniMessage miniMessage;
 
     private String player_msg_format;
@@ -19,12 +21,18 @@ public class MessageManager {
     private String rpg_reload;
 
 
-    public MessageManager(RealisticPlantGrowth instance){
-        this.instance = instance;
+    private MessageManager(){
+        this.instance = RealisticPlantGrowth.getInstance();
         this.configManager = instance.getConfigManager();
         this.miniMessage = MiniMessage.miniMessage();
+        messageManager = this;
     }
 
+    protected static MessageManager get(){
+        if(messageManager == null)
+            new MessageManager();
+        return messageManager;
+    }
     public Component deserializeMiniMessage(String message){
         return miniMessage.deserialize(message);
     }

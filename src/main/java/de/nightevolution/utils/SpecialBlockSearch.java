@@ -45,6 +45,9 @@ public class SpecialBlockSearch {
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.getInstance(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
     }
 
+    private static boolean debug_log = false;
+
+
     /**
      * Provides access to the singleton instance of SpecialBlockSearch, initializing it if it doesn't exist.
      * Upon each invocation, it updates the search radii for UV light sources and fertilizer sources from the config.
@@ -56,9 +59,10 @@ public class SpecialBlockSearch {
             new SpecialBlockSearch();
 
         instance = RealisticPlantGrowth.getInstance();
-        configManager = ConfigManager.get();
-        radiusUV = configManager.getUv_radius();
+        configManager = instance.getConfigManager();
+        radiusUV = configManager.getUV_Radius();
         radiusFertilizer = configManager.getFertilizer_radius();
+        debug_log = configManager.isDebug_log();
 
         return specialBlockSearch;
     }
@@ -75,10 +79,10 @@ public class SpecialBlockSearch {
 
         int radius;
 
-        boolean uvEnabled = configManager.isUv_enabled();
+        boolean uvEnabled = configManager.isUV_Enabled();
         boolean fertilizerEnabled = configManager.isFertilizer_enabled();
 
-        List<Material> uvMaterials = configManager.getUv_blocks();
+        List<Material> uvMaterials = configManager.getUV_Blocks();
 
         // Determine the search radius
         if (uvEnabled && fertilizerEnabled) {
@@ -89,9 +93,8 @@ public class SpecialBlockSearch {
             radius = radiusFertilizer;
         } else {
             // No special block search required.
-            return new Surrounding(startingBlock, null, null, calculateDarkness(startingBlock));
+            return new Surrounding(startingBlock, null, null);
         }
-
 
         List<Block> fertilizerSources = new ArrayList<>();
         List<Block> uvSources = new ArrayList<>();
@@ -109,38 +112,41 @@ public class SpecialBlockSearch {
                     relativeBlock = startingBlock.getRelative(x, y, z);
                     relativeBlockLocation = relativeBlock.getLocation();
 
-                    logger.verbose("Relative Block: " + x + " " + y + " " + z);
 
                     if (uvEnabled && isBlockWithinRadius(startingBlockLocation, relativeBlockLocation, radiusUV) && uvMaterials.contains(relativeBlock.getType())) {
                         uvSources.add(startingBlock.getRelative(x, y, z));
-                        logger.verbose("  - Found UV-Source.");
+                        if(debug_log)
+                            logger.logToFile("[" + relativeBlockLocation + "] Located UV-Source: " + relativeBlock.getType(), "debug");
+
                     }
 
                     // TODO: Check Composter for fertilizer nbt tag
                     if (fertilizerEnabled && isBlockWithinRadius(startingBlockLocation,relativeBlockLocation, radiusFertilizer) && relativeBlock.getType() == Material.COMPOSTER) {
                         fertilizerSources.add(startingBlock.getRelative(x, y, z));
-                        logger.verbose("  - Found Fertilizer-Source.");
+                        if(debug_log)
+                            logger.logToFile("[" + relativeBlockLocation + "] Located Fertilizer-Source: " + relativeBlock.getType(), "debug");
                     }
                 }
             }
         }
 
-        boolean isDark = calculateDarkness(startingBlock);
+        Surrounding s = new Surrounding(startingBlock, uvSources, fertilizerSources);
+        if (debug_log)
+            logger.logToFile(s.toString(), "debug");
 
-        return new Surrounding(startingBlock, uvSources, fertilizerSources, isDark);
+        return s;
     }
 
     /**
-     * Calculates the darkness status of a block based on its natural sky light level and configuration settings.
-     * The environment is considered dark if the natural sky light is lower than the set value in the configuration
-     * and the block type allows growth in the dark.
-     *
-     * @param block The block for which darkness status is calculated.
-     * @return {@code true} if the environment is dark; {@code false} otherwise.
+     * Method only used for debugging purpose
+     * @param startingBlock
+     * @param radius
+     * @return
      */
-    public boolean calculateDarkness(Block block){
-        int skyLightLevel = block.getLightFromSky();
-        return (configManager.getMin_natural_light() > skyLightLevel && instance.canGrowInDark(block));
+    public Surrounding surroundingOf(Block startingBlock, int radius) {
+        radiusUV = radius;
+        radiusFertilizer = radius;
+        return surroundingOf(startingBlock);
     }
 
     /**
@@ -151,9 +157,11 @@ public class SpecialBlockSearch {
      * @param relativeLocation The location of the block to check.
      * @param radius           The search radius to compare against, which can be for either UV or fertilizer.
      * @return true if the block is within or equal the specified radius, false otherwise.
+     *
      */
     private boolean isBlockWithinRadius(Location startingLocation, Location relativeLocation, int radius){
-        int radiusSquared = radius * radius;
+        double betterRadius = radius + 0.33;
+        double radiusSquared = betterRadius * betterRadius;
         return startingLocation.distanceSquared(relativeLocation) <= radiusSquared;
     }
 

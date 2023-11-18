@@ -47,11 +47,10 @@ public abstract class PlantGrowthListener  implements Listener{
             toLog.append(coords).append(": ");
 
         surrounding = specialBlockSearch.surroundingOf(eventBlock);
-        GrowthCalculator calc = new GrowthCalculator(instance);
+        GrowthCalculator calc = new GrowthCalculator(instance, surrounding);
     }
     protected void checkForSpecialBlocks(Block b){
         specialBlockSearch.surroundingOf(b);
     }
-
 
 }

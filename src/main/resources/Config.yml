@@ -23,7 +23,7 @@ language_code: en-US
 
 # Plugin prefix for console logs. Does not affect chat messages.
 # Supports miniMessage format and legacy &-color codes (Details at https://docs.advntr.dev/minimessage/format.html)
-plugin_prefix: "[&8RealisticPlantGrowth&r] "
+plugin_prefix: "[RealisticPlantGrowth] "
 
 # List of worlds where this plugin is active. Worlds not listed here will use default growth behavior.
 enabled_worlds:
@@ -105,6 +105,11 @@ uv_blocks:
   - PEARLESCENT_FROGLIGHT
   - VERDANT_FROGLIGHT
 
+# Determines whether a plant needs all UV-Light Blocks listed above to grow.
+#   true: All blocks in 'uv_blocks' are required for the plant to grow.
+#   false: Only one of the blocks listed in 'uv_blocks' is required for plant growth.
+require_all_uv_blocks: true
+
 # Radius around a UV-Light block that affects growth.
 # Higher values consume more server resources and may cause server lag. (Maximum 15 blocks)
 uv_radius: 5
@@ -136,9 +141,6 @@ plant_log:    false
 
 # Logs Bonemeal Usage Events in a separate log file.
 bonemeal_log: false
-
-# Logs the coordinates in the world where events occur. (Can be very verbose.)
-log_coords:   false
 
 
 ########################################################################################################################
