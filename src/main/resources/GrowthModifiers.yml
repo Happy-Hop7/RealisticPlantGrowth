@@ -1,4 +1,4 @@
-# RealisticPlantGrowth GrowthModificators File
+# RealisticPlantGrowth GrowthModifiers File
 #
 # For additional configuration details, visit the RealisticPlantGrowth page at http://dev.bukkit.org.
 #
@@ -53,7 +53,7 @@
 # BiomeGroups listed under 'Groups' and not specified further receive the 'Default' values.
 #
 # Disclaimer:
-# The GrowthModificators.yml settings provided here are EXAMPLES. Users are encouraged to customize and modify
+# The GrowthModifiers.yml settings provided here are EXAMPLES. Users are encouraged to customize and modify
 # these settings based on their specific preferences and gameplay needs.
 # Experiment with different growth rates in various biomes to create a unique and tailored
 # experience in your Minecraft world.

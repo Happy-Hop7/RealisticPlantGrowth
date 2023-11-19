@@ -117,7 +117,6 @@ public class SpecialBlockSearch {
                         uvSources.add(startingBlock.getRelative(x, y, z));
                         if(debug_log)
                             logger.logToFile("[" + relativeBlockLocation + "] Located UV-Source: " + relativeBlock.getType(), "debug");
-
                     }
 
                     // TODO: Check Composter for fertilizer nbt tag

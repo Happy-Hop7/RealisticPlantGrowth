@@ -61,13 +61,13 @@ public class BiomeChecker {
      */
     public Set<Biome> getValidBiomesFor(@NotNull Material plant){
         YamlDocument biomeGroupFile = cm.getBiomeGroupsFile();
-        YamlDocument growthModFile = cm.getGrowthModificatorsFile();
+        YamlDocument growthModFile = cm.getGrowthModifiersFile();
         Set<Biome> validBiomes = new HashSet<>();
         Set<Material> growthModifiedPlants = instance.getGrowthModifiedPlants();
 
         logger.verbose("getValidBiomesFor(" + plant + ")");
         if(!growthModifiedPlants.contains(plant)){
-            logger.verbose(plant + " is not listed in GrowthModificators.yml!");
+            logger.verbose(plant + " is not listed in GrowthModifiers.yml!");
             return null;
         }
 

@@ -258,12 +258,12 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     }
 
     /**
-     * Identifies and collects plants with modified growth behavior from the root entries of GrowthModificators.
+     * Identifies and collects plants with modified growth behavior from the root entries of GrowthModifiers.
      * Each root entry corresponds to a plant with modified growth characteristics.
      * The method extracts these plants and adds them to the collection of modified growth rate plants.
      */
     private void updateGrowthModifiedPlants(){
-        Map<String, Object> growthModData = configManager.getGrowthModificators();
+        Map<String, Object> growthModData = configManager.getGrowthModifiers();
         Set<String> keys = growthModData.keySet();
         growthModifiedPlants = new HashSet<>();
 
@@ -275,7 +275,7 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
 
                 if(m == null){
                     logger.warn("Material '" + key + "' is not a Bukkit Material!" );
-                    logger.warn("Growth modificators for '" + key + "' are ignored.");
+                    logger.warn("Plant growth modifiers for '" + key + "' are ignored.");
                 }else {
                     growthModifiedPlants.add(m);
                 }

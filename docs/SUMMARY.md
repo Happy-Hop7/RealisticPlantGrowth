@@ -15,7 +15,7 @@
 * [🛠 Configuration](guides/configuration/README.md)
   * [Config.yml](guides/configuration/config.yml.md)
   * [BiomeGroups.yml](guides/configuration/biomegroups.yml.md)
-  * [GrowthModificators.yml](guides/configuration/growthmodificators.yml.md)
+  * [GrowthModifiers.yml](guides/configuration/growthmodifiers.yml.md)
 
 ## For Contributors
 

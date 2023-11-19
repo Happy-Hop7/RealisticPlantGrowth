@@ -1,2 +1,0 @@
-# GrowthModificators.yml
-

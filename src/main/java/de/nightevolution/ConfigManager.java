@@ -31,8 +31,8 @@ public class ConfigManager {
     private static YamlDocument biomeGroupsFile;
     private static Map<String, Object> biomeGroupsData;
 
-    private static YamlDocument growthModificatorsFile;
-    private static Map<String, Object> growthModificatorsData;
+    private static YamlDocument growthModifiersFile;
+    private static Map<String, Object> growthModifierData;
 
     // Selected language file containing plugin messages
     private static YamlDocument selectedLanguageFile;
@@ -131,8 +131,8 @@ public class ConfigManager {
         logger.log("Loading BiomeGroups data...");
         readBiomeGroupsData();
         
-        logger.log("Loading GrowthModificators data...");
-        readGrowthModificatorsData();
+        logger.log("Loading GrowthModifiers ...");
+        readGrowthModifierData();
 
     }
 
@@ -161,7 +161,7 @@ public class ConfigManager {
                     Objects.requireNonNull(instance.getResource("Config.yml")),
                     GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
             config.update();
-            logger.log("Configuration loaded.");
+            logger.log("Config.yml loaded.");
 
         }catch (IOException e){
             logger.error("&cCouldn't load YAML configuration!");
@@ -175,24 +175,24 @@ public class ConfigManager {
             biomeGroupsFile = YamlDocument.create(new File(pluginFolder, "BiomeGroups.yml"),
                     Objects.requireNonNull(instance.getResource("BiomeGroups.yml")),
                     gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
-            //biomeGroupsFile.update();
-            logger.log("BiomeGroups loaded.");
+
+            logger.log("BiomeGroups.yml loaded.");
 
         }catch (IOException e){
             logger.error("&cCouldn't load BiomeGroups YAML configuration!");
             instance.disablePlugin();
         }
 
-        // GrowthModificators Config
+        // GrowthModifiers Config
         try{
-            growthModificatorsFile = YamlDocument.create(new File(pluginFolder, "GrowthModificators.yml"),
-                    Objects.requireNonNull(instance.getResource("GrowthModificators.yml")),
+            growthModifiersFile = YamlDocument.create(new File(pluginFolder, "GrowthModifiers.yml"),
+                    Objects.requireNonNull(instance.getResource("GrowthModifiers.yml")),
                     gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
-            //growthModificatorsFile.update();
-            logger.log("GrowthModificators loaded.");
+
+            logger.log("GrowthModifiers.yml loaded.");
 
         }catch (IOException e){
-            logger.error("&cCouldn't load GrowthModificators YAML configuration!");
+            logger.error("&cCouldn't load GrowthModifiers YAML configuration!");
             instance.disablePlugin();
         }
 
@@ -405,15 +405,15 @@ public class ConfigManager {
     }
 
     // TODO: Check user modified data
-    private void readGrowthModificatorsData(){
-        growthModificatorsData = growthModificatorsFile.getStringRouteMappedValues(true);
+    private void readGrowthModifierData(){
+        growthModifierData = growthModifiersFile.getStringRouteMappedValues(true);
 
         if(debug_log) {
             Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
                 logger.logToFile("", logFile);
-                logger.logToFile("-------------------- GrowthModificators --------------------", logFile);
+                logger.logToFile("-------------------- GrowthModifiers --------------------", logFile);
                 logger.logToFile("", logFile);
-                printMap(growthModificatorsData);
+                printMap(growthModifierData);
             }, 9 * 20);
         }
     }
@@ -475,7 +475,7 @@ public class ConfigManager {
      * Reloads configuration files when the plugin is in a reloading state.
      * Reads values from the configuration files and updates global fields accordingly.
      * This method reloads the main configuration file (Config.yml), as well as other YAML files
-     * responsible for growth modifiers (GrowthModificators.yml), biome groups (BiomeGroups.yml),
+     * responsible for growth modifiers (GrowthModifiers.yml), biome groups (BiomeGroups.yml),
      * and language settings (Language files).
      */
     public void reloadAllYAMLFiles() {
@@ -484,8 +484,8 @@ public class ConfigManager {
             config.reload();
             logger.debug("Config.yml reloaded.");
 
-            growthModificatorsFile.reload();
-            logger.debug("GrowthModificators.yml reloaded.");
+            growthModifiersFile.reload();
+            logger.debug("GrowthModifiers.yml reloaded.");
 
             biomeGroupsFile.reload();
             logger.debug("BiomeGroups.yml reloaded.");
@@ -499,7 +499,7 @@ public class ConfigManager {
             registerSelectedLanguage();
             readLanguageData();
             readBiomeGroupsData();
-            readGrowthModificatorsData();
+            readGrowthModifierData();
 
             logger.log("&2All configuration files reloaded.");
 
@@ -664,8 +664,8 @@ public class ConfigManager {
         return biomeGroupsData;
     }
 
-    public Map<String, Object> getGrowthModificators(){
-        return growthModificatorsData;
+    public Map<String, Object> getGrowthModifiers(){
+        return growthModifierData;
     }
 
     public Map<String, Object> getLanguageFileData(){
@@ -680,8 +680,8 @@ public class ConfigManager {
         return biomeGroupsFile;
     }
 
-    public YamlDocument getGrowthModificatorsFile(){
-        return growthModificatorsFile;
+    public YamlDocument getGrowthModifiersFile(){
+        return growthModifiersFile;
     }
 
 }
