@@ -50,19 +50,14 @@ public class BiomeChecker {
 
         outerLoop:
         for (String biomeGroup : biomeList){
-            Optional<Section> biomeGroupSection = cm.getBiomeGroupSection(Route.from(biomeGroup));
-            if(biomeGroupSection.isEmpty()){
-                logger.verbose("BiomeGroup '" + biomeGroup + "' ");
-                continue;
-            }
-            Route r = Route.from(biomeGroupSection);
-            Optional<List<String>> biomesOfBiomeGroup = biomeGroupSection.get().getOptionalStringList(r);
+
+            Route r = Route.from(biomeGroup);
+            Optional<List<String>> biomesOfBiomeGroup = cm.getBiomeGroupsFile().getOptionalStringList(r);
 
             if(biomesOfBiomeGroup.isEmpty() || biomesOfBiomeGroup.get().isEmpty()){
-                logger.verbose("No Biomes found for BiomeGroup '" + biomeGroup + "'.");
+                logger.warn("BiomeGroup '" + biomeGroup + "' is empty! Please check your BiomeGroups.yml");
                 continue;
             }
-
 
             for (String biomeInGroup : biomesOfBiomeGroup.get()) {
                 if(biomeInGroup.equalsIgnoreCase(biome.name())){
@@ -73,6 +68,10 @@ public class BiomeChecker {
                 }
             }
 
+        }
+        if(verbose){
+            logger.verbose("BiomeGroups for '" + biome + "': ");
+            biomeGroupsOfBiome.forEach((bG) -> logger.verbose("  - " + bG));
         }
         return biomeGroupsOfBiome;
     }

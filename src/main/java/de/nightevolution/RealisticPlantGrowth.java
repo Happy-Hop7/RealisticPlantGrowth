@@ -258,75 +258,166 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     }
 
 
-    //TODO: implement
 
-    /**
-     * Ca
-     * @param surroundingOfPlant
-     * @return
-     */
+
     public double getGrowthModifierFor(Surrounding surroundingOfPlant){
         Block plant = surroundingOfPlant.getCenterBlock();
         Material plantType = plant.getType();
         Biome biome = surroundingOfPlant.getBiome();
         double initialGrowthRate = 0.0;
-
-        // The growth rate is 0 if the plant is in darkness and has no uv-light access.
-        if(surroundingOfPlant.isInDarkness())
-            return 0.0;
+        String modifier;
 
         // Vanilla plant growth, if plant is not specified in GrowthModifiers.yml
         if(!growthModifiedPlants.contains(plantType))
             return 100.0;
 
+        // The growth rate is 0 if the plant is in darkness and has no uv-light access.
+        if(surroundingOfPlant.isInDarkness()){
+            if(cm.isUV_Enabled() && surroundingOfPlant.hasUVLightAccess()){
+                modifier = "UVLightGrowthRate";
+            }else{
+                return 0.0;
+            }
 
-        Optional<List<String>> validBiomes = new BiomeChecker(instance).getAllBiomeGroupsOf(biome);
+        }else{
+            modifier = "GrowthRate";
+        }
+        logger.verbose("Using modifier: " + modifier);
 
+        List<String> validBiomeGroups = surroundingOfPlant.getBiomeGroupList();
+        BiomeChecker biomeChecker = new BiomeChecker(getInstance());
 
         // If false: no further checks needed. -> using values defined under 'Default'.
-        if(validBiomes.isPresent()) {
+        if(!validBiomeGroups.isEmpty()) {
             Route biomeGroupRoute = Route.from(plantType, "BiomeGroup");
             Route groupsRoute = Route.from(plantType, "BiomeGroup", "Groups");
 
             // The Whole BiomeGroup Section - May contain own modifier values
             Optional<Section> biomeGroupSection = cm.getGrowthModifierSection(biomeGroupRoute);
+            String selectedBiomeGroup;
+
 
             if (biomeGroupSection.isPresent()) {
                 Optional<List<String>> biomeGroupList = biomeGroupSection.get().getOptionalStringList(groupsRoute);
                 if (biomeGroupList.isPresent() && !biomeGroupList.get().isEmpty()) {
-                    String selected
+                    selectedBiomeGroup = biomeChecker.getOneBiomeGroupOf(biomeGroupList.get(), biome);
+                    Route modifierRoute = Route.from(biomeGroupRoute, selectedBiomeGroup, modifier);
+                    Optional<Double> optionalDouble = biomeGroupSection.get().getOptionalDouble(modifierRoute);
+                    if (optionalDouble.isPresent()) {// TODO: use defaults if value not present
+                        initialGrowthRate = optionalDouble.get();
+                        logger.verbose("BiomeGroup-GrowthRate selected: " + initialGrowthRate);
+                    }
                 }
 
             }
-        }else{
-            Route defaultBiomes = Route.from(plantType, "Default", "Biome");
 
+        }else{
+            // TODO: Check fpr default Biomes
+            Route defaultRoute = Route.from(plantType, "Default");
+            Route modifierRoute = Route.from(plantType, "Default", modifier);
+            Optional<Section> defaultSection = cm.getGrowthModifierSection(defaultRoute);
+
+            if(defaultSection.isPresent()) {
+                Optional<Double> optionalDouble = defaultSection.get().getOptionalDouble(modifierRoute);
+                if (optionalDouble.isPresent()) {// TODO: use defaults if value not present
+                    initialGrowthRate = optionalDouble.get();
+                    logger.verbose("Default-GrowthRate selected: " + initialGrowthRate);
+                }else{
+                    logger.verbose("Modifier not found" + modifierRoute);
+                }
+            }else {
+                logger.error("Default Section is missing for '" + plantType + "' in GrowthModifiers.yml!");
+            }
         }
 
         if(surroundingOfPlant.canApplyFertilizerBoost())
             initialGrowthRate += cm.getFertilizer_boost_growth_rate();
 
+        logger.verbose("Fertilizer GrowthRate: " + initialGrowthRate);
 
-        if(initialGrowthRate > 100.0 && cm.isFertilizer_allow_growth_rate_above_100()){
-            return initialGrowthRate;
+        if(initialGrowthRate > 100.0 && !cm.isFertilizer_allow_growth_rate_above_100()){
+            return 100.0;
         }
 
-        return 100.0;
+        return initialGrowthRate;
     }
 
-    //TODO: implement
+
     public double getDeathChanceFor(Surrounding surroundingOfPlant){
         Block plant = surroundingOfPlant.getCenterBlock();
         Material plantType = plant.getType();
+        Biome biome = surroundingOfPlant.getBiome();
+        double initialDeathChance = 0.0;
+        String modifier;
 
-        // The death chance is 100% if the plant is in darkness and has no uv-light access.
-        if(surroundingOfPlant.isInDarkness())
-            return 100.0;
 
         // Vanilla plant growth, if plant is not specified in GrowthModifiers.yml
         if(!growthModifiedPlants.contains(plantType))
             return 0.0;
-        return 0.0;
+
+        // The growth rate is 0 if the plant is in darkness and has no uv-light access.
+        if(surroundingOfPlant.isInDarkness()){
+            if(cm.isUV_Enabled() && surroundingOfPlant.hasUVLightAccess()){
+                logger.verbose("Using: UVLightDeathChance");
+                modifier = "UVLightDeathChance";
+            }else{
+                return 0.0;
+            }
+
+        }else{
+            logger.verbose("Using: NaturalDeathChance");
+            modifier = "NaturalDeathChance";
+        }
+
+
+        List<String> validBiomeGroups = surroundingOfPlant.getBiomeGroupList();
+        BiomeChecker biomeChecker = new BiomeChecker(getInstance());
+
+        // If false: no further checks needed. -> using values defined under 'Default'.
+        if(!validBiomeGroups.isEmpty()) {
+            logger.verbose("IF");
+            Route biomeGroupRoute = Route.from(plantType, "BiomeGroup");
+            Route groupsRoute = Route.from(plantType, "BiomeGroup", "Groups");
+
+            // The Whole BiomeGroup Section - May contain own modifier values
+            Optional<Section> biomeGroupSection = cm.getGrowthModifierSection(biomeGroupRoute);
+            String selectedBiomeGroup;
+
+
+            if (biomeGroupSection.isPresent()) {
+                Optional<List<String>> biomeGroupList = biomeGroupSection.get().getOptionalStringList(groupsRoute);
+                if (biomeGroupList.isPresent() && !biomeGroupList.get().isEmpty()) {
+                    selectedBiomeGroup = biomeChecker.getOneBiomeGroupOf(biomeGroupList.get(), biome);
+                    Route modifierRoute = Route.from(biomeGroupRoute, selectedBiomeGroup, modifier);
+                    Optional<Double> optionalDouble = biomeGroupSection.get().getOptionalDouble(modifierRoute);
+                    if (optionalDouble.isPresent()) {// TODO: use defaults if value not present
+                        initialDeathChance = optionalDouble.get();
+                        logger.verbose("BiomeGroup-DeathChance selected: " + initialDeathChance);
+                    }
+                }
+
+            }
+
+        }else{
+            logger.verbose("ELSE");
+            // TODO: Check fpr default Biomes
+            Route defaultRoute = Route.from(plantType.toString(), "Default");
+            Route modifierRoute = Route.from(defaultRoute, modifier);
+            Optional<Section> defaultSection = cm.getGrowthModifierSection(defaultRoute);
+
+            if(defaultSection.isPresent()) {
+                Optional<Double> optionalDouble = defaultSection.get().getOptionalDouble(modifierRoute);
+                if (optionalDouble.isPresent()) {// TODO: use defaults if value not present
+                    initialDeathChance = optionalDouble.get();
+                    logger.verbose("Default-DeathChance selected: " + initialDeathChance);
+                }
+            }else {
+                logger.error("Default Section is missing for '" + plantType + "' in GrowthModifiers.yml!");
+            }
+        }
+
+
+        return initialDeathChance;
     }
 
 

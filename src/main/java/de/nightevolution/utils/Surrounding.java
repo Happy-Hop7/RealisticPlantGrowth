@@ -141,6 +141,134 @@ public class Surrounding {
         return closestComposter;
     }
 
+
+
+
+
+
+    /**
+     * Retrieves the biome of the center block.
+     *
+     * @return The biome of the center block.
+     */
+    public Biome getBiome(){
+        return biome;
+    }
+
+    public List<String> getBiomeGroupList(){
+        if(biomeGroupsCache.isEmpty())
+            calcIsInValidBiome();
+
+        if(!biomeGroupsCache.containsKey(plantType))
+            return new ArrayList<>(); // empty list
+
+        return biomeGroupsCache.get(plantType);
+    }
+
+
+    /**
+     * Retrieves the material type of the center block.
+     *
+     * @return The material type of the center block.
+     */
+    public Material getType(){
+        return plantType;
+    }
+
+    public boolean hasUVLightAccess(){
+        List<Material> allValidUVBlocks = configManager.getUV_Blocks();
+
+        if(uvSources == null || uvSources.isEmpty()){
+            logger.verbose("No UV-Light access!");
+            return false;
+        }
+
+        if(configManager.getRequire_All_UV_Blocks()){
+            HashSet<Material> uvBlockMix = new HashSet<>();
+            for (Block b : uvSources){
+                uvBlockMix.add(b.getType());
+            }
+            return uvBlockMix.containsAll(allValidUVBlocks);
+
+        }else{
+            return true;
+        }
+    }
+
+    public double getGrowthRate(){
+        return instance.getGrowthModifierFor(this);
+
+    }
+
+    public double getDeathChance(){
+        return instance.getDeathChanceFor(this);
+    }
+
+
+    private boolean calcIsInValidBiome(){
+
+        if(biomeGroupsCache.containsKey(plantType)){
+
+            if(biomeGroupsCache.get(plantType).isEmpty()){
+                logger.verbose("Plant: " + plantType + " is NOT in a Valid biome");
+                return false;
+            }
+
+            for (String biomeGroup : biomeGroupsCache.get(plantType)){
+                Optional<Set<Biome>> biomeSet = biomeChecker.getBiomeListOf(biomeGroup);
+                if (biomeSet.isPresent() && biomeSet.get().contains(biome)){
+                    logger.verbose("Plant: " + plantType + " is in a Valid biome");
+                    return true;
+                }
+            }
+            return false;
+        } // else search valid biome groups
+
+        Optional<List<String>> allBiomeGroups = biomeChecker.getAllBiomeGroupsOf(biome);
+
+        if(allBiomeGroups.isEmpty() || allBiomeGroups.get().isEmpty()){
+            // new cache entry
+            biomeGroupsCache.put(plantType, new ArrayList<>());
+            logger.verbose("No BiomeGroups found for: " + biome);
+            return false;
+        }
+
+        // new cache entry
+        logger.verbose("New Cache entry for: " + plantType);
+        biomeGroupsCache.put(plantType, allBiomeGroups.get());
+        return calcIsInValidBiome(); // recursive call of this method
+    }
+
+    public boolean isInValidBiome(){
+        return validBiome;
+    }
+
+
+
+    public boolean canApplyFertilizerBoost(){
+        if(configManager.isFertilizer_enabled() && !getFertilizerSources().isEmpty()) {
+            if (isInValidBiome()) { //TODO: Check closest Composter Fill level
+                return true;
+            }
+            return configManager.isFertilizer_Enables_Growth_In_Bad_Biomes();
+        }
+        return false;
+    }
+
+
+    /**
+     * Calculates the darkness status of a block based on its natural sky light level and configuration settings.
+     * The environment is considered dark if the natural sky light is lower than the set value in the configuration
+     * and the block type does not allow growth in the dark.
+     *
+     * @return {@code true} if the environment is dark; {@code false} otherwise.
+     */
+    public boolean isInDarkness(){
+        int skyLightLevel = centerBlock.getLightFromSky();
+        boolean hasNotMinSkyLight =  (configManager.getMin_Natural_Light() > skyLightLevel);
+        return (hasNotMinSkyLight && !instance.canGrowInDark(centerBlock));
+    }
+
     /**
      * Creates and returns a comparator for Block objects based on their squared distance from the center block.
      * If two blocks have the same squared distance to the center block, the comparator will randomly choose one to prioritize.
@@ -155,7 +283,7 @@ public class Surrounding {
         return (b1, b2) -> {
 
             int comparison = Double.compare(b1.getLocation().distanceSquared(centerBlockLocation),
-                                            b2.getLocation().distanceSquared(centerBlockLocation));
+                    b2.getLocation().distanceSquared(centerBlockLocation));
 
             // If 2 Blocks have the same distance to the centerBlock, a random one is chosen to prioritize.
             if(comparison == 0) {
@@ -212,116 +340,5 @@ public class Surrounding {
         builder.append('}');
         return builder.toString();
     }
-
-
-    /**
-     * Retrieves the biome of the center block.
-     *
-     * @return The biome of the center block.
-     */
-    public Biome getBiome(){
-        return biome;
-    }
-
-
-    /**
-     * Retrieves the material type of the center block.
-     *
-     * @return The material type of the center block.
-     */
-    public Material getType(){
-        return plantType;
-    }
-
-    public boolean hasUVLightAccess(){
-        List<Material> allValidUVBlocks = configManager.getUV_Blocks();
-
-        if(uvSources == null || uvSources.isEmpty()){
-            logger.verbose("No UV-Light access!");
-            return false;
-        }
-
-        if(configManager.getRequire_All_UV_Blocks()){
-            HashSet<Material> uvBlockMix = new HashSet<>();
-            for (Block b : uvSources){
-                uvBlockMix.add(b.getType());
-            }
-            return uvBlockMix.containsAll(allValidUVBlocks);
-
-        }else{
-            return true;
-        }
-    }
-
-    public double getGrowthRate(){
-        return instance.getGrowthModifierFor(this);
-
-    }
-
-    public double getDeathChance(){
-        return instance.getDeathChanceFor(this);
-    }
-
-
-    private boolean calcIsInValidBiome(){
-
-        if(biomeGroupsCache.containsKey(plantType)){
-
-            if(biomeGroupsCache.get(plantType).isEmpty())
-                return false;
-
-            for (String biomeGroup : biomeGroupsCache.get(plantType)){
-                Optional<Set<Biome>> biomeSet = biomeChecker.getBiomeListOf(biomeGroup);
-                if (biomeSet.isPresent() && biomeSet.get().contains(biome)){
-                    return true;
-                }
-            }
-            return false;
-        } // else search valid biome groups
-
-        Optional<List<String>> allBiomeGroups = biomeChecker.getAllBiomeGroupsOf(biome);
-
-        if(allBiomeGroups.isEmpty() || allBiomeGroups.get().isEmpty()){
-            // new cache entry
-            biomeGroupsCache.put(plantType, new ArrayList<>());
-            return false;
-        }
-
-        // new cache entry
-        biomeGroupsCache.put(plantType, allBiomeGroups.get());
-        return calcIsInValidBiome(); // recursive call of this method
-    }
-
-    public boolean isInValidBiome(){
-        return validBiome;
-    }
-
-
-
-    public boolean canApplyFertilizerBoost(){
-        if(configManager.isFertilizer_enabled() && !getFertilizerSources().isEmpty()) {
-            if (isInValidBiome()) { //TODO: Check closest Composter Fill level
-                return true;
-            }
-            return configManager.isFertilizer_Enables_Growth_In_Bad_Biomes();
-        }
-        return false;
-    }
-
-
-    /**
-     * Calculates the darkness status of a block based on its natural sky light level and configuration settings.
-     * The environment is considered dark if the natural sky light is lower than the set value in the configuration
-     * and the block type does not allow growth in the dark.
-     *
-     * @return {@code true} if the environment is dark; {@code false} otherwise.
-     */
-    public boolean isInDarkness(){
-        int skyLightLevel = centerBlock.getLightFromSky();
-        boolean hasNotMinSkyLight =  (configManager.getMin_Natural_Light() > skyLightLevel);
-        return (hasNotMinSkyLight && !instance.canGrowInDark(centerBlock));
-    }
-
-
 
 }
