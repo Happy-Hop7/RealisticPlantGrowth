@@ -20,10 +20,12 @@ public class SpecialBlockSearch {
      * A singleton instance of the SpecialBlockSearch class to ensure that only one instance is used throughout the application.
      * This instance is used to carry out searches for special blocks within a certain radius.
      */
-    static SpecialBlockSearch specialBlockSearch;
-    static RealisticPlantGrowth instance;
-    static ConfigManager configManager;
-    Logger logger;
+    private static SpecialBlockSearch specialBlockSearch;
+    private static RealisticPlantGrowth instance;
+    private static ConfigManager configManager;
+    private final Logger logger;
+
+    private static final String logFile = "debug";
 
     /**
      * The search radius for UV light sources, specified in blocks.
@@ -116,14 +118,14 @@ public class SpecialBlockSearch {
                     if (uvEnabled && isBlockWithinRadius(startingBlockLocation, relativeBlockLocation, radiusUV) && uvMaterials.contains(relativeBlock.getType())) {
                         uvSources.add(startingBlock.getRelative(x, y, z));
                         if(debug_log)
-                            logger.logToFile("[" + relativeBlockLocation + "] Located UV-Source: " + relativeBlock.getType(), "debug");
+                            logger.logToFile("[" + relativeBlockLocation + "] Located UV-Source: " + relativeBlock.getType(), logFile);
                     }
 
                     // TODO: Check Composter for fertilizer nbt tag
                     if (fertilizerEnabled && isBlockWithinRadius(startingBlockLocation,relativeBlockLocation, radiusFertilizer) && relativeBlock.getType() == Material.COMPOSTER) {
                         fertilizerSources.add(startingBlock.getRelative(x, y, z));
                         if(debug_log)
-                            logger.logToFile("[" + relativeBlockLocation + "] Located Fertilizer-Source: " + relativeBlock.getType(), "debug");
+                            logger.logToFile("[" + relativeBlockLocation + "] Located Fertilizer-Source: " + relativeBlock.getType(), logFile);
                     }
                 }
             }
@@ -131,7 +133,7 @@ public class SpecialBlockSearch {
 
         Surrounding s = new Surrounding(startingBlock, uvSources, fertilizerSources);
         if (debug_log)
-            logger.logToFile(s.toString(), "debug");
+            logger.logToFile(s.toString(), logFile);
 
         return s;
     }

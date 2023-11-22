@@ -3,14 +3,18 @@ package de.nightevolution;
 import de.nightevolution.commands.CommandManager;
 import de.nightevolution.commands.TabCompleterImpl;
 import de.nightevolution.listeners.*;
+import de.nightevolution.utils.BiomeChecker;
 import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.SpecialBlockSearch;
+import de.nightevolution.utils.Surrounding;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.route.Route;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -30,8 +34,8 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     private static boolean verbose = false;
     private static boolean debug = false;
 
-    private static ConfigManager configManager;
-    private MessageManager messageManager;
+    private static ConfigManager cm;
+    private MessageManager mm;
     private BukkitAudiences bukkitAudiences;
 
     private Logger logger;
@@ -131,16 +135,16 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     }
 
     public void reload(){
-        configManager.reloadAllYAMLFiles();
+        cm.reloadAllYAMLFiles();
         updateVariables();
     }
 
     public void updateVariables(){
-        configManager = ConfigManager.get();
-        messageManager = MessageManager.get();
+        cm = ConfigManager.get();
+        mm = MessageManager.get();
 
-        verbose = configManager.isVerbose();
-        debug = configManager.isDebug_log();
+        verbose = cm.isVerbose();
+        debug = cm.isDebug_log();
 
         logger = new Logger(this.getClass().getSimpleName(), this, verbose, debug);
 
@@ -150,6 +154,8 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
         registerCommands();
         registerTabCompleter();
         registerListeners();
+        Surrounding.clearCache();
+        BiomeChecker.clearCache();
 
         // testing
         HashMap<Location, Integer> testLocationList = new HashMap<>();
@@ -206,10 +212,10 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
         return instance;
     }
     public ConfigManager getConfigManager(){
-        return configManager;
+        return cm;
     }
     public MessageManager getMessageManager(){
-        return this.messageManager;
+        return this.mm;
     }
 
 
@@ -248,14 +254,81 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
         return aquaticPlants.contains(b.getType());
     }
     public boolean canGrowInDark(@NotNull Block b){
-        return configManager.getGrow_In_Dark().contains(b.getType());
+        return cm.getGrow_In_Dark().contains(b.getType());
     }
 
 
     //TODO: implement
-    public double getGrowthModifierFor(Block plant){
+
+    /**
+     * Ca
+     * @param surroundingOfPlant
+     * @return
+     */
+    public double getGrowthModifierFor(Surrounding surroundingOfPlant){
+        Block plant = surroundingOfPlant.getCenterBlock();
+        Material plantType = plant.getType();
+        Biome biome = surroundingOfPlant.getBiome();
+        double initialGrowthRate = 0.0;
+
+        // The growth rate is 0 if the plant is in darkness and has no uv-light access.
+        if(surroundingOfPlant.isInDarkness())
+            return 0.0;
+
+        // Vanilla plant growth, if plant is not specified in GrowthModifiers.yml
+        if(!growthModifiedPlants.contains(plantType))
+            return 100.0;
+
+
+        Optional<List<String>> validBiomes = new BiomeChecker(instance).getAllBiomeGroupsOf(biome);
+
+
+        // If false: no further checks needed. -> using values defined under 'Default'.
+        if(validBiomes.isPresent()) {
+            Route biomeGroupRoute = Route.from(plantType, "BiomeGroup");
+            Route groupsRoute = Route.from(plantType, "BiomeGroup", "Groups");
+
+            // The Whole BiomeGroup Section - May contain own modifier values
+            Optional<Section> biomeGroupSection = cm.getGrowthModifierSection(biomeGroupRoute);
+
+            if (biomeGroupSection.isPresent()) {
+                Optional<List<String>> biomeGroupList = biomeGroupSection.get().getOptionalStringList(groupsRoute);
+                if (biomeGroupList.isPresent() && !biomeGroupList.get().isEmpty()) {
+                    String selected
+                }
+
+            }
+        }else{
+            Route defaultBiomes = Route.from(plantType, "Default", "Biome");
+
+        }
+
+        if(surroundingOfPlant.canApplyFertilizerBoost())
+            initialGrowthRate += cm.getFertilizer_boost_growth_rate();
+
+
+        if(initialGrowthRate > 100.0 && cm.isFertilizer_allow_growth_rate_above_100()){
+            return initialGrowthRate;
+        }
+
+        return 100.0;
+    }
+
+    //TODO: implement
+    public double getDeathChanceFor(Surrounding surroundingOfPlant){
+        Block plant = surroundingOfPlant.getCenterBlock();
+        Material plantType = plant.getType();
+
+        // The death chance is 100% if the plant is in darkness and has no uv-light access.
+        if(surroundingOfPlant.isInDarkness())
+            return 100.0;
+
+        // Vanilla plant growth, if plant is not specified in GrowthModifiers.yml
+        if(!growthModifiedPlants.contains(plantType))
+            return 0.0;
         return 0.0;
     }
+
 
     /**
      * Identifies and collects plants with modified growth behavior from the root entries of GrowthModifiers.
@@ -263,7 +336,7 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
      * The method extracts these plants and adds them to the collection of modified growth rate plants.
      */
     private void updateGrowthModifiedPlants(){
-        Map<String, Object> growthModData = configManager.getGrowthModifiers();
+        Map<String, Object> growthModData = cm.getGrowthModifiers();
         Set<String> keys = growthModData.keySet();
         growthModifiedPlants = new HashSet<>();
 

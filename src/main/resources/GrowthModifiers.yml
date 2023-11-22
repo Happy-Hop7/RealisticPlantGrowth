@@ -27,7 +27,7 @@
 #   BiomeGroup:                       Settings related to BiomeGroups.
 #     Groups:                     <-- List of BiomeGroups defined in 'BiomeGroups.yml'
 #       - GreatGrowing                Example BiomeGroups with specific modifications for this plant.
-#       - GoodGrowing                 Values must be defined below!  '[]' indicates no special modifications.
+#       - GoodGrowing                 Values can be defined below.  '[]' indicates no special modifications.
 #     GreatGrowing:               <-- 1. BiomeGroup name (All listed BiomeGroups need to be specified!)
 #       GrowthRate: 100           <-- 100% of Minecraft vanilla growth rate.
 #       UVLightGrowthRate: 75     <-- 75% growth rate, if plant is in darkness and has only UV Light access.
@@ -69,6 +69,11 @@ BAMBOO:
   BiomeGroup:
     Groups:
       - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
   Default:
     GrowthRate: 50
     UVLightGrowthRate: 25

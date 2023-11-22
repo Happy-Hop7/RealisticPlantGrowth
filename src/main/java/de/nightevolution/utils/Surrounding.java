@@ -8,9 +8,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class representing the environment around a block that triggered a PlantGrowthEvent.
@@ -18,13 +16,22 @@ import java.util.List;
  * A logger is also included for outputting verbose and debug information.
  */
 public class Surrounding {
-    private final RealisticPlantGrowth instance;
-    private final ConfigManager configManager;
+    private final static RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();
+    private final static ConfigManager configManager = instance.getConfigManager();
+    private final BiomeChecker biomeChecker;
+    private final static HashMap<Material, List<String>> biomeGroupsCache = new HashMap<>();
+
 
     /**
      * The central block associated with the plant growth event.
      */
     private final Block centerBlock;
+
+    private final Material plantType;
+
+    private final Location plantLocation;
+
+    private final Biome biome;
 
     /**
      * The closest composter block to the central block.
@@ -46,6 +53,7 @@ public class Surrounding {
      */
     private final Logger logger;
 
+    private final boolean validBiome;
 
 
 
@@ -60,17 +68,23 @@ public class Surrounding {
      */
     public Surrounding(Block centerBlock, List<Block> uvBlocks, List<Block> fertilizerBlocks) {
         this.centerBlock = centerBlock;
-
-        instance = RealisticPlantGrowth.getInstance();
-        configManager = instance.getConfigManager();
+        this.plantType = centerBlock.getType();
+        this.biome = centerBlock.getBiome();
+        this.plantLocation = centerBlock.getLocation();
 
         uvSources = uvBlocks;
         fertilizerSources = fertilizerBlocks;
 
         logger = new Logger(this.getClass().getSimpleName(), instance,
                 RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+
+        biomeChecker = new BiomeChecker(instance);
+        validBiome = calcIsInValidBiome();
     }
 
+    public static void clearCache(){
+        biomeGroupsCache.clear();
+    }
 
     /**
      * Retrieves the central block.
@@ -82,26 +96,20 @@ public class Surrounding {
     }
 
     /**
-     * Retrieves the list of UV source blocks. Returns null if the list is empty.
+     * Retrieves the list of UV source blocks.
      *
-     * @return A list of blocks that provide UV light or null if there are none.
+     * @return A list of blocks that provide UV light.
      */
     public List<Block> getUvSources() {
-        if(uvSources.isEmpty())
-            return null;
-
         return uvSources;
     }
 
     /**
-     * Retrieves the list of fertilizer source blocks. Returns null if the list is empty.
+     * Retrieves the list of fertilizer source blocks.
      *
-     * @return A list of blocks that provide fertilizer or null if there are none.
+     * @return A list of blocks that provide fertilizer.
      */
     public List<Block> getFertilizerSources() {
-        if(fertilizerSources.isEmpty())
-            return null;
-
         return fertilizerSources;
     }
 
@@ -142,7 +150,7 @@ public class Surrounding {
      */
     @NotNull
     private Comparator<Block> getBlockDistanceComparator() {
-        Location centerBlockLocation = centerBlock.getLocation();
+        Location centerBlockLocation = plantLocation;
 
         return (b1, b2) -> {
 
@@ -172,9 +180,9 @@ public class Surrounding {
         StringBuilder builder = new StringBuilder();
         builder.append("Surrounding{").append(System.lineSeparator());
         builder.append("centerBlock=[");
-        builder.append(centerBlock.getLocation().getBlockX()).append(" | ");
-        builder.append(centerBlock.getLocation().getBlockY()).append(" | ");
-        builder.append(centerBlock.getLocation().getBlockZ()).append("] ");
+        builder.append(plantLocation.getBlockX()).append(" | ");
+        builder.append(plantLocation.getBlockY()).append(" | ");
+        builder.append(plantLocation.getBlockZ()).append("] ");
         builder.append(System.lineSeparator());
 
         builder.append(", uvSources=[");
@@ -212,7 +220,7 @@ public class Surrounding {
      * @return The biome of the center block.
      */
     public Biome getBiome(){
-        return centerBlock.getBiome();
+        return biome;
     }
 
 
@@ -222,7 +230,7 @@ public class Surrounding {
      * @return The material type of the center block.
      */
     public Material getType(){
-        return centerBlock.getType();
+        return plantType;
     }
 
     public boolean hasUVLightAccess(){
@@ -245,6 +253,62 @@ public class Surrounding {
         }
     }
 
+    public double getGrowthRate(){
+        return instance.getGrowthModifierFor(this);
+
+    }
+
+    public double getDeathChance(){
+        return instance.getDeathChanceFor(this);
+    }
+
+
+    private boolean calcIsInValidBiome(){
+
+        if(biomeGroupsCache.containsKey(plantType)){
+
+            if(biomeGroupsCache.get(plantType).isEmpty())
+                return false;
+
+            for (String biomeGroup : biomeGroupsCache.get(plantType)){
+                Optional<Set<Biome>> biomeSet = biomeChecker.getBiomeListOf(biomeGroup);
+                if (biomeSet.isPresent() && biomeSet.get().contains(biome)){
+                    return true;
+                }
+            }
+            return false;
+        } // else search valid biome groups
+
+        Optional<List<String>> allBiomeGroups = biomeChecker.getAllBiomeGroupsOf(biome);
+
+        if(allBiomeGroups.isEmpty() || allBiomeGroups.get().isEmpty()){
+            // new cache entry
+            biomeGroupsCache.put(plantType, new ArrayList<>());
+            return false;
+        }
+
+        // new cache entry
+        biomeGroupsCache.put(plantType, allBiomeGroups.get());
+        return calcIsInValidBiome(); // recursive call of this method
+    }
+
+    public boolean isInValidBiome(){
+        return validBiome;
+    }
+
+
+
+    public boolean canApplyFertilizerBoost(){
+        if(configManager.isFertilizer_enabled() && !getFertilizerSources().isEmpty()) {
+            if (isInValidBiome()) { //TODO: Check closest Composter Fill level
+                return true;
+            }
+            return configManager.isFertilizer_Enables_Growth_In_Bad_Biomes();
+        }
+        return false;
+    }
+
+
     /**
      * Calculates the darkness status of a block based on its natural sky light level and configuration settings.
      * The environment is considered dark if the natural sky light is lower than the set value in the configuration
@@ -257,5 +321,7 @@ public class Surrounding {
         boolean hasNotMinSkyLight =  (configManager.getMin_Natural_Light() > skyLightLevel);
         return (hasNotMinSkyLight && !instance.canGrowInDark(centerBlock));
     }
+
+
 
 }

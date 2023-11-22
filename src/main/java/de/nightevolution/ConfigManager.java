@@ -2,6 +2,8 @@ package de.nightevolution;
 
 import de.nightevolution.utils.Logger;
 import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import dev.dejvokep.boostedyaml.route.Route;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
@@ -72,6 +74,7 @@ public class ConfigManager {
     private static boolean fertilizer_enabled;
     private static int fertilizer_radius;
     private static boolean fertilizer_passiv;
+    private static boolean fertilizer_enables_growth_in_bad_biomes;
     private static double fertilizer_boost_growth_rate;
     private static boolean fertilizer_allow_growth_rate_above_100;
 
@@ -296,7 +299,7 @@ public class ConfigManager {
         try{
             selectedLanguageFile.update();
             logger.log("Language files loaded.");
-            logger.logToFile("Selected language: " + language_code, logFile);
+            logger.log("Selected language: " + language_code);
 
         }catch (IOException e){
             logger.error("&cCouldn't load YAML configuration!");
@@ -343,6 +346,7 @@ public class ConfigManager {
             fertilizer_enabled = config.getBoolean("fertilizer_enabled");
             fertilizer_radius = config.getInt("fertilizer_radius");
             fertilizer_passiv = config.getBoolean("fertilizer_passiv");
+            fertilizer_enables_growth_in_bad_biomes = config.getBoolean("fertilizer_enables_growth_in_bad_biomes");
             fertilizer_boost_growth_rate = config.getDouble("fertilizer_boost_growth_rate");
             fertilizer_allow_growth_rate_above_100 = config.getBoolean("fertilizer_allow_growth_rate_above_100");
 
@@ -450,10 +454,12 @@ public class ConfigManager {
             logger.logToFile("fertilizer_enabled: " + fertilizer_enabled, logFile);
             logger.logToFile("fertilizer_radius: " + fertilizer_radius, logFile);
             logger.logToFile("fertilizer_passiv: " + fertilizer_passiv, logFile);
-            logger.logToFile("fertilizer_boost_growth_rate: "
-                    + fertilizer_boost_growth_rate, logFile);
-            logger.logToFile("fertilizer_allow_growth_rate_above_100: "
-                    + fertilizer_allow_growth_rate_above_100, logFile);
+            logger.logToFile("fertilizer_enables_growth_in_bad_biomes: " +
+                    fertilizer_enables_growth_in_bad_biomes, logFile);
+            logger.logToFile("fertilizer_boost_growth_rate: " +
+                    fertilizer_boost_growth_rate, logFile);
+            logger.logToFile("fertilizer_allow_growth_rate_above_100: " +
+                    fertilizer_allow_growth_rate_above_100, logFile);
 
             logger.logToFile("uv_enabled: " + uv_enabled, logFile);
             logger.logToFile("uv_radius: " + uv_radius, logFile);
@@ -511,8 +517,15 @@ public class ConfigManager {
         }
     }
 
-
-
+    public Optional<Section> getConfigSection(Route routeToSection){
+        return config.getOptionalSection(routeToSection);
+    }
+    public Optional<Section> getGrowthModifierSection(Route routeToSection){
+        return growthModifiersFile.getOptionalSection(routeToSection);
+    }
+    public Optional<Section> getBiomeGroupSection(Route routeToSection){
+        return biomeGroupsFile.getOptionalSection(routeToSection);
+    }
 
     // Setters for config values
 
@@ -592,7 +605,7 @@ public class ConfigManager {
         return bonemeal_log;
     }
 
-    public boolean isLog_coords() {
+    public boolean isLog_Coords() {
         return log_coords;
     }
 
@@ -630,6 +643,10 @@ public class ConfigManager {
 
     public boolean isFertilizer_passiv() {
         return fertilizer_passiv;
+    }
+
+    public boolean isFertilizer_Enables_Growth_In_Bad_Biomes(){
+        return  fertilizer_enables_growth_in_bad_biomes;
     }
 
     public double getFertilizer_boost_growth_rate() {

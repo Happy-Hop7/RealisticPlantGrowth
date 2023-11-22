@@ -66,12 +66,16 @@ report_growth: false
 fertilizer_enabled: false
 
 # Plants within this block radius will grow at the 'fertilizer_growth_rate' (see below).
-# Higher values consume more server resources and may cause server lag. (Maximum 15 blocks)
+# Higher values may increase server resource consumption and cause lag (Maximum 15 blocks).
 fertilizer_radius: 5
 
 # true: Fertilizer effects do not deplete composters to fertilize the surroundings.
 # false: Players must actively fill the composter to achieve fertilization effects.
 fertilizer_passiv: true
+
+# true: Fertilizer enables the use of plants in 'bad' biomes.
+# false: Restricts growth in biomes not listed under GrowthModifiers.yml 'Biome' list.
+fertilizer_enables_growth_in_bad_biomes: true
 
 # The 'fertilizer_boost_growth_rate' is a percentage added to biome-specific growth rates,
 # if a composter is within the configured 'fertilizer_radius'.
