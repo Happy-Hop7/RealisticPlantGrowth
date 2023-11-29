@@ -75,6 +75,7 @@ public class ConfigManager {
     private static int fertilizer_radius;
     private static boolean fertilizer_passiv;
     private static boolean fertilizer_enables_growth_in_bad_biomes;
+    private static double fertilizer_invalid_biome_death_chance;
     private static double fertilizer_boost_growth_rate;
     private static boolean fertilizer_allow_growth_rate_above_100;
 
@@ -347,6 +348,7 @@ public class ConfigManager {
             fertilizer_radius = config.getInt("fertilizer_radius");
             fertilizer_passiv = config.getBoolean("fertilizer_passiv");
             fertilizer_enables_growth_in_bad_biomes = config.getBoolean("fertilizer_enables_growth_in_bad_biomes");
+            fertilizer_invalid_biome_death_chance = config.getDouble("fertilizer_invalid_biome_death_chance");
             fertilizer_boost_growth_rate = config.getDouble("fertilizer_boost_growth_rate");
             fertilizer_allow_growth_rate_above_100 = config.getBoolean("fertilizer_allow_growth_rate_above_100");
 
@@ -456,6 +458,8 @@ public class ConfigManager {
             logger.logToFile("fertilizer_passiv: " + fertilizer_passiv, logFile);
             logger.logToFile("fertilizer_enables_growth_in_bad_biomes: " +
                     fertilizer_enables_growth_in_bad_biomes, logFile);
+            logger.logToFile("fertilizer_invalid_biome_death_chance: " +
+                    fertilizer_invalid_biome_death_chance, logFile);
             logger.logToFile("fertilizer_boost_growth_rate: " +
                     fertilizer_boost_growth_rate, logFile);
             logger.logToFile("fertilizer_allow_growth_rate_above_100: " +
@@ -525,6 +529,29 @@ public class ConfigManager {
     }
     public Optional<Section> getBiomeGroupSection(Route routeToSection){
         return biomeGroupsFile.getOptionalSection(routeToSection);
+    }
+
+    public Section getDefaultModifierSection(Material plantType){
+        Route r = Route.from(plantType, "Default");
+        Optional<Section> defaultSection = growthModifiersFile.getOptionalSection(r);
+        if(defaultSection.isPresent()){
+            return defaultSection.get();
+        }
+        logger.error("Check your GrowthModifiers.yml and make sure every entry has a 'Default' Section!");
+        throw new NullPointerException("Default Section for '" + plantType + "' is missing!");
+    }
+
+    public double getModifierOnRoute(Route route){
+        Optional<Double> optionalDouble = growthModifiersFile.getOptionalDouble(route);
+
+        if (optionalDouble.isEmpty()) {
+            logger.error("No value for modifier '" + route + "' found in default section!");
+            logger.error("Please assign a double value to this modifier in the default section.");
+            logger.error("For more information, check out GrowthModifiers in the wiki.");
+            throw new YAMLException("Check your GrowthModifiers.yml!");
+        }
+
+        return optionalDouble.get();
     }
 
     // Setters for config values
@@ -651,6 +678,10 @@ public class ConfigManager {
 
     public double getFertilizer_boost_growth_rate() {
         return fertilizer_boost_growth_rate;
+    }
+
+    public double getFertilizer_invalid_biome_death_chance(){
+        return fertilizer_invalid_biome_death_chance;
     }
 
     public boolean isFertilizer_allow_growth_rate_above_100() {
