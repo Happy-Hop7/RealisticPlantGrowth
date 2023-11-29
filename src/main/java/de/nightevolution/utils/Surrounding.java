@@ -2,11 +2,14 @@ package de.nightevolution.utils;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import dev.dejvokep.boostedyaml.route.Route;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.util.*;
 
@@ -19,6 +22,9 @@ public class Surrounding {
     private final static RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();
     private final static ConfigManager configManager = instance.getConfigManager();
     private final BiomeChecker biomeChecker;
+    private final Modifier  modifier;
+    private final Logger logger;
+
     private final static HashMap<Material, List<String>> biomeGroupsCache = new HashMap<>();
 
 
@@ -49,10 +55,8 @@ public class Surrounding {
     private final List<Block> fertilizerSources;
 
     /**
-     * Logger for outputting information about the surrounding environment.
+     * Is the centerBlock in a valid (allowed) Biome?
      */
-    private final Logger logger;
-
     private final boolean validBiome;
 
 
@@ -80,6 +84,9 @@ public class Surrounding {
 
         biomeChecker = new BiomeChecker(instance);
         validBiome = calcIsInValidBiome();
+
+        modifier = getModifier();
+
     }
 
     public static void clearCache(){
@@ -196,28 +203,146 @@ public class Surrounding {
     }
 
     public double getGrowthRate(){
-        return instance.getGrowthModifierFor(this);
-
+        return modifier.getGrowthModifier();
     }
 
     public double getDeathChance(){
-        return instance.getDeathChanceFor(this);
+       return modifier.getDeathChance();
     }
 
+    public Modifier getModifier(){
+
+        Modifier tempModifier;
+        String growthModifierType;
+        String deathModifierType;
+
+        if (!isInValidBiome()) {
+            if (!canApplyFertilizerBoost()) {
+                logger.verbose(String.format("Plant '%s' is in an invalid Biome, and no fertilizer effects can be applied.", plantType));
+                return new Modifier(0.0, 100.0, false);
+            }
+
+            logger.verbose(String.format("Plant '%s' is in an invalid Biome, but fertilizer effects can be applied.", plantType));
+            return new Modifier(configManager.getFertilizer_boost_growth_rate(),
+                    configManager.getFertilizer_invalid_biome_death_chance(), true);
+        }
+
+        if (isInDarkness()) {
+            if (configManager.isUV_Enabled() && hasUVLightAccess()) {
+                growthModifierType = "UVLightGrowthRate";
+                deathModifierType = "UVLightDeathChance";
+            } else {
+                logger.verbose(String.format("Plant '%s' is in darkness, and no UV-Light effects can be applied.", plantType));
+                return new Modifier(0.0, 100.0, false);
+            }
+        } else {
+            growthModifierType = "GrowthRate";
+            deathModifierType = "NaturalDeathChance";
+        }
+
+        logger.verbose("Using growthModifierType: " + growthModifierType);
+        logger.verbose("Using deathModifierType: " + deathModifierType);
+
+        tempModifier = processBiomeGroupSection(growthModifierType, deathModifierType);
+        if(tempModifier == null){
+            // Using the default Section
+            logger.verbose("Using default modifier section!");
+            Optional<Double> growth = configManager.getDefaultModifierSection(plantType).getOptionalDouble(growthModifierType);
+            Optional<Double> death = configManager.getDefaultModifierSection(plantType).getOptionalDouble(deathModifierType);
+
+            if(growth.isPresent() && death.isPresent()){
+                tempModifier = new Modifier(growth.get(), death.get(), false);
+            }else {
+                // throws exception
+                logger.error("Couldn't read default modifier values from GrowthModifiers.yml!");
+                throw new YAMLException("Check your GrowthModifiers.yml!");
+            }
+        }
+
+        if(canApplyFertilizerBoost()) {
+            logger.verbose("Applying fertilizer effects.");
+            double fertilizerBoost = tempModifier.getGrowthModifier() + configManager.getFertilizer_boost_growth_rate();
+            tempModifier.setGrowthModifier(fertilizerBoost);
+            tempModifier.setFertilizerUsed(true);
+        }
+
+
+        return tempModifier;
+
+    }
+
+    // TODO: let config manager make file accesses
+    // TODO: FOR SCHLEIFE FÜR ALLE BIOMEGROUPS AUS DER LISTE
+    private Modifier processBiomeGroupSection(String growthModifierType, String deathModifierType){
+        Route biomeGroupsRoute = Route.from(plantType, "BiomeGroup", "Groups");
+        Optional<List<String>> biomeGroupList = configManager.getGrowthModifiersFile().getOptionalStringList(biomeGroupsRoute);
+
+        // If false: no further checks needed. -> using values defined under 'Default'.
+        if(biomeGroupList.isEmpty() || biomeGroupList.get().isEmpty())
+            return null;
+
+        logger.verbose("StringList of BiomeGroup.Groups is present and not empty.");
+        String selectedBiomeGroup = biomeChecker.getOneBiomeGroupOf(biomeGroupList.get(), biome);
+
+        if(selectedBiomeGroup == null)
+            return null;
+
+        Route growthModifierRoute = Route.from(selectedBiomeGroup, growthModifierType);
+        Route deathModifierRoute = Route.from(selectedBiomeGroup, deathModifierType);
+
+        logger.verbose(growthModifierRoute.toString());
+        logger.verbose(deathModifierRoute.toString());
+
+        Optional<Double> optionalGrowthModifier = configManager.getGrowthModifiersFile().getOptionalDouble(growthModifierRoute);
+        Optional<Double> optionalDeathModifier = configManager.getGrowthModifiersFile().getOptionalDouble(deathModifierRoute);
+
+        // config error handling
+        if(optionalGrowthModifier.isEmpty() || optionalDeathModifier.isEmpty()) {
+            logger.error("Couldn't read BiomeGroup modifier values from GrowthModifiers.yml!");
+            throw new YAMLException("Check your GrowthModifiers.yml!");
+        }
+
+        return new Modifier(optionalGrowthModifier.get(), optionalDeathModifier.get(), false);
+
+    }
 
     private boolean calcIsInValidBiome(){
+
+        // This section should be in BiomeChecker class getValidBiomesFor(Material plantType)
+        Section defaultSection = configManager.getDefaultModifierSection(plantType);
+        Optional<List<String>> defaultBiomeList = defaultSection.getOptionalStringList("Biome");
+        if(defaultBiomeList.isPresent() && !defaultBiomeList.get().isEmpty()){
+            if(defaultBiomeList.get().size() == 1){
+                switch (defaultBiomeList.get().getFirst()){
+                    case "ALL":
+                        logger.verbose("ALL Biomes are valid!");
+                        return true;
+                    case "NONE":
+                        logger.verbose("No additional Biomes are valid!");
+                        return false;
+                    default:
+                        break;
+                }
+            }
+
+            if(defaultBiomeList.get().contains(biome.toString())){
+                return true;
+            }
+            // TODO: Cache valid default biomes
+        }
+        // -----
 
         if(biomeGroupsCache.containsKey(plantType)){
 
             if(biomeGroupsCache.get(plantType).isEmpty()){
-                logger.verbose("Plant: " + plantType + " is NOT in a Valid biome");
+                logger.verbose("Plant: " + plantType + " is NOT in a valid biome");
                 return false;
             }
 
             for (String biomeGroup : biomeGroupsCache.get(plantType)){
                 Optional<Set<Biome>> biomeSet = biomeChecker.getBiomeListOf(biomeGroup);
                 if (biomeSet.isPresent() && biomeSet.get().contains(biome)){
-                    logger.verbose("Plant: " + plantType + " is in a Valid biome");
+                    logger.verbose("Plant: " + plantType + " is in a valid biome");
                     return true;
                 }
             }
@@ -268,6 +393,16 @@ public class Surrounding {
         boolean hasNotMinSkyLight =  (configManager.getMin_Natural_Light() > skyLightLevel);
         return (hasNotMinSkyLight && !instance.canGrowInDark(centerBlock));
     }
+
+    /**
+     * If Fertilizer was used to calculate the GrowthRate and DeathChance, this method return true.
+     * Use this method to check, when to drain the composter fill level.
+     * @return true if fertilizer was used false if not
+     */
+    public boolean usedFertilizer(){
+        return modifier.isFertilizerUsed();
+    }
+
 
     /**
      * Creates and returns a comparator for Block objects based on their squared distance from the center block.

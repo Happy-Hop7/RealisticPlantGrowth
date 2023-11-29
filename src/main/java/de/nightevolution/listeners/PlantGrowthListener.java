@@ -44,7 +44,7 @@ public abstract class PlantGrowthListener  implements Listener{
         if(!isWorldEnabled(eventWorld))
             return false;
 
-        if(instance.isAPlant(eventBlock) || instance.isAnAquaticPlant(eventBlock)) {
+        if(instance.getGrowthModifiedPlants().contains(eventBlock.getType()) && (instance.isAPlant(eventBlock) || instance.isAnAquaticPlant(eventBlock))) {
 
             if (configManager.isLog_Coords()) {
                 coords = "[ " +

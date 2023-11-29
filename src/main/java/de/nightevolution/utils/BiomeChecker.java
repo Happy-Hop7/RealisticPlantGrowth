@@ -116,7 +116,7 @@ public class BiomeChecker {
     }
 
 
-    // TODO: implement biomeGrop caching
+    // TODO: implement biomeGroup caching
 
     /**
      * Method used to get all biomes for a plant
@@ -176,6 +176,8 @@ public class BiomeChecker {
                 logger.verbose("  - " + b);
             }
         }
+
+
 
         return validBiomes;
     }
