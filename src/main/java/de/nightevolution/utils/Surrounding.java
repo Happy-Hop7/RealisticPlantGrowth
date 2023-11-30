@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Levelled;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.error.YAMLException;
 
@@ -151,14 +152,22 @@ public class Surrounding {
             logger.verbose("Sorted Distance List:" + block.getLocation());
         }
 
-        closestComposter = fertilizerSources.get(0);
+        if(configManager.isFertilizer_passiv()) {
+            closestComposter = fertilizerSources.get(0);
+            return closestComposter;
 
-        return closestComposter;
+        }
+
+        for (Block composterBlock : fertilizerSources) {
+            Levelled composter = (Levelled) composterBlock.getBlockData();
+            if (composter.getLevel() < composter.getMaximumLevel()) {
+                closestComposter = composterBlock;
+                return closestComposter;
+            }
+        }
+        logger.verbose("All Composters fill levels are empty.");
+        return null;
     }
-
-
-
-
 
 
     /**
@@ -214,14 +223,14 @@ public class Surrounding {
         }
     }
 
-    public double getGrowthRate(){
-        return modifier.getGrowthModifier();
-    }
 
-    public double getDeathChance(){
-       return modifier.getDeathChance();
-    }
 
+    /**
+     * Retrieves the modifier for plant growth based on various conditions such as biome, light, and fertilizer effects.
+     *
+     * @return A Modifier object representing the calculated growth and death modifiers for the plant.
+     * @throws YAMLException If there is an error while reading modifier values from the configuration file.
+     */
     public Modifier getModifier(){
 
         Modifier tempModifier;
@@ -284,7 +293,14 @@ public class Surrounding {
     }
 
     // TODO: let config manager make file accesses
-    // TODO: FOR SCHLEIFE FÜR ALLE BIOMEGROUPS AUS DER LISTE
+    /**
+     * Processes the configuration for a specific biome group and retrieves the growth and death modifiers.
+     *
+     * @param growthModifierType The type of growth modifier to retrieve.
+     * @param deathModifierType  The type of death modifier to retrieve.
+     * @return A Modifier object with the processed growth and death modifiers, or null if no valid configuration is found.
+     * @throws YAMLException If there is an error reading the BiomeGroup modifier values from GrowthModifiers.yml.
+     */
     private Modifier processBiomeGroupSection(String growthModifierType, String deathModifierType){
         Route biomeGroupsListRoute = Route.from(BIOME_GROUPS_ROUTE, "Groups");
         Optional<List<String>> biomeGroupsList = configManager.getGrowthModifiersFile().getOptionalStringList(biomeGroupsListRoute);
@@ -336,6 +352,11 @@ public class Surrounding {
         return null;
     }
 
+    /**
+     * Calculates whether the current biome is valid for plant growth based on the configured biome groups and default settings.
+     *
+     * @return True if the current biome is valid for plant growth, false otherwise.
+     */
     private boolean calcIsInValidBiome(){
 
         // This section should be in BiomeChecker class getValidBiomesFor(Material plantType)
@@ -394,18 +415,26 @@ public class Surrounding {
         return calcIsInValidBiome(); // recursive call of this method
     }
 
-    public boolean isInValidBiome(){
-        return validBiome;
-    }
 
 
 
+    /**
+     * Checks whether a fertilizer boost can be applied based on the plugin's configuration and surrounding conditions.
+     *
+     * @return True if a fertilizer boost can be applied, false otherwise.
+     */
     public boolean canApplyFertilizerBoost(){
         if(configManager.isFertilizer_enabled() && !getFertilizerSources().isEmpty()) {
-            if (isInValidBiome()) { //TODO: Check closest Composter Fill level
-                return true;
+
+            if (configManager.isFertilizer_passiv()) {
+                if(isInValidBiome())
+                    return true;
+
+                return configManager.isFertilizer_Enables_Growth_In_Invalid_Biomes();
             }
-            return configManager.isFertilizer_Enables_Growth_In_Invalid_Biomes();
+
+            return getClosestComposter() != null;
+
         }
         return false;
     }
@@ -433,6 +462,32 @@ public class Surrounding {
         return modifier.isFertilizerUsed();
     }
 
+    /**
+     * Checks whether the current location is in a valid biome for plant growth.
+     *
+     * @return True if the current location is in a valid biome, false otherwise.
+     */
+    public boolean isInValidBiome(){
+        return validBiome;
+    }
+
+    /**
+     * Gets the current growth rate modifier for the plant.
+     *
+     * @return The growth rate modifier value.
+     */
+    public double getGrowthRate(){
+        return modifier.getGrowthModifier();
+    }
+
+    /**
+     * Gets the current death chance modifier for the plant.
+     *
+     * @return The death chance modifier value.
+     */
+    public double getDeathChance(){
+        return modifier.getDeathChance();
+    }
 
     /**
      * Creates and returns a comparator for Block objects based on their squared distance from the center block.

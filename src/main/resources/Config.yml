@@ -81,24 +81,25 @@ fertilizer_passiv: true
 fertilizer_boost_growth_rate: 20.0
 
 # Allows a growth rate above 100.0%.
-# If a plant has a biome-specific growth rate of 100.0% and this is set to true,
+# If a plant has a biome-specific growth rate of 100.0% and this is set to be true,
 # the resulting growth rate can exceed 100.0% (e.g., 125.0%).
 # Otherwise, the growth rate is capped at 100.0%.
 fertilizer_allow_growth_rate_above_100: true
 
-# true: Fertilizer enables the use of plants in 'bad' biomes.
-# false: Restricts growth in biomes not listed under GrowthModifiers.yml 'Biome' list.
+# If set to true, Fertilizer allows plants to thrive in 'invalid' biomes.
+# If set to false, plant growth is limited to biomes explicitly listed in 'Biome' within GrowthModifiers.yml.
 fertilizer_enables_growth_in_invalid_biomes: true
 
 # Growth rate of plants in invalid biomes with fertilizer access.
-# Only active if 'fertilizer_enables_growth_in_bad_biomes' is set to 'true', and the plant is
-# in an invalid biome.
+# Only active if 'fertilizer_enables_growth_in_invalid_biomes' is set to 'true',
+# and the plant is in an invalid biome.
 fertilizer_invalid_biome_growth_rate: 35.0
 
-# Death Chance of a plant in an invalid biome with fertilizer supply.
-# Only active if 'fertilizer_enables_growth_in_bad_biomes' is set to 'true', and the plant is
-# in an invalid biome.
-# If a plant is an instance of the Ageable interface, death-rate is divided by maxAge!
+# Probability of plant death in an invalid biome despite fertilizer supply.
+# This rule is effective only when 'fertilizer_enables_growth_in_invalid_biomes'
+# is set to 'true' and the plant is located in an inappropriate biome.
+# If the Growth process of the plant consists of multiple growth stages, the death rate is internally
+# adjusted by dividing it by the number of growth stages
 fertilizer_invalid_biome_death_chance: 25.0
 
 
@@ -115,22 +116,23 @@ fertilizer_invalid_biome_death_chance: 25.0
 # Enable use of UV-Light Blocks
 uv_enabled: false
 
-# List of blocks that can act as UV-Light sources. Does not need to be a light-emitting block.
+# List of blocks that can function as UV-Light sources; they don't need to emit light.
 uv_blocks:
   - OCHRE_FROGLIGHT
   - PEARLESCENT_FROGLIGHT
   - VERDANT_FROGLIGHT
 
-# Determines whether a plant needs all UV-Light Blocks listed above to grow.
-#   true: All blocks in 'uv_blocks' are required for the plant to grow.
+# Determines whether a plant requires all UV-Light Blocks listed above to grow.
+#   true: All blocks in 'uv_blocks' are necessary for plant growth.
 #   false: Only one of the blocks listed in 'uv_blocks' is required for plant growth.
 require_all_uv_blocks: true
 
 # Radius around a UV-Light block that affects growth.
-# Higher values consume more server resources and may cause server lag. (Maximum 15 blocks)
+# Higher values consume more server resources and may lead to server lag. (Maximum 15 blocks)
 uv_radius: 5
 
-# Plants allowed to grow in artificial light sources like torches and lanterns (not the same as UV-Light).
+# List of plants that grow without requiring natural sky light, allowing growth
+# in artificial light sources like torches and lanterns (not the same as UV-Light).
 # Use official MATERIAL_NAMES to add items to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
 grow_in_dark:
   - RED_MUSHROOM
