@@ -74,10 +74,11 @@ public class ConfigManager {
     private static boolean fertilizer_enabled;
     private static int fertilizer_radius;
     private static boolean fertilizer_passiv;
-    private static boolean fertilizer_enables_growth_in_bad_biomes;
-    private static double fertilizer_invalid_biome_death_chance;
     private static double fertilizer_boost_growth_rate;
     private static boolean fertilizer_allow_growth_rate_above_100;
+    private static boolean fertilizer_enables_growth_in_invalid_biomes;
+    private static double fertilizer_invalid_biome_growth_rate;
+    private static double fertilizer_invalid_biome_death_chance;
 
     // UV-Light config values
     private static boolean uv_enabled;
@@ -347,10 +348,11 @@ public class ConfigManager {
             fertilizer_enabled = config.getBoolean("fertilizer_enabled");
             fertilizer_radius = config.getInt("fertilizer_radius");
             fertilizer_passiv = config.getBoolean("fertilizer_passiv");
-            fertilizer_enables_growth_in_bad_biomes = config.getBoolean("fertilizer_enables_growth_in_bad_biomes");
-            fertilizer_invalid_biome_death_chance = config.getDouble("fertilizer_invalid_biome_death_chance");
             fertilizer_boost_growth_rate = config.getDouble("fertilizer_boost_growth_rate");
             fertilizer_allow_growth_rate_above_100 = config.getBoolean("fertilizer_allow_growth_rate_above_100");
+            fertilizer_enables_growth_in_invalid_biomes = config.getBoolean("fertilizer_enables_growth_in_invalid_biomes");
+            fertilizer_invalid_biome_growth_rate = config.getDouble("fertilizer_invalid_biome_growth_rate");
+            fertilizer_invalid_biome_death_chance = config.getDouble("fertilizer_invalid_biome_death_chance");
 
             // UV-Light settings
             uv_enabled = config.getBoolean("uv_enabled");
@@ -456,15 +458,16 @@ public class ConfigManager {
             logger.logToFile("fertilizer_enabled: " + fertilizer_enabled, logFile);
             logger.logToFile("fertilizer_radius: " + fertilizer_radius, logFile);
             logger.logToFile("fertilizer_passiv: " + fertilizer_passiv, logFile);
-            logger.logToFile("fertilizer_enables_growth_in_bad_biomes: " +
-                    fertilizer_enables_growth_in_bad_biomes, logFile);
-            logger.logToFile("fertilizer_invalid_biome_death_chance: " +
-                    fertilizer_invalid_biome_death_chance, logFile);
             logger.logToFile("fertilizer_boost_growth_rate: " +
                     fertilizer_boost_growth_rate, logFile);
             logger.logToFile("fertilizer_allow_growth_rate_above_100: " +
                     fertilizer_allow_growth_rate_above_100, logFile);
-
+            logger.logToFile("fertilizer_enables_growth_in_invalid_biomes: " +
+                    fertilizer_enables_growth_in_invalid_biomes, logFile);
+            logger.logToFile("fertilizer_invalid_biome_growth_rate: " +
+                    fertilizer_invalid_biome_growth_rate, logFile);
+            logger.logToFile("fertilizer_invalid_biome_death_chance: " +
+                    fertilizer_invalid_biome_death_chance, logFile);
             logger.logToFile("uv_enabled: " + uv_enabled, logFile);
             logger.logToFile("uv_radius: " + uv_radius, logFile);
             logger.logToFile("require_all_uv_blocks: " + require_all_uv_blocks, logFile);
@@ -527,8 +530,8 @@ public class ConfigManager {
     public Optional<Section> getGrowthModifierSection(Route routeToSection){
         return growthModifiersFile.getOptionalSection(routeToSection);
     }
-    public Optional<Section> getBiomeGroupSection(Route routeToSection){
-        return biomeGroupsFile.getOptionalSection(routeToSection);
+    public Optional<List<String>> getBiomeGroupStringList(Route routeToSection){
+        return biomeGroupsFile.getOptionalStringList(routeToSection);
     }
 
     public Section getDefaultModifierSection(Material plantType){
@@ -672,16 +675,20 @@ public class ConfigManager {
         return fertilizer_passiv;
     }
 
-    public boolean isFertilizer_Enables_Growth_In_Bad_Biomes(){
-        return  fertilizer_enables_growth_in_bad_biomes;
+    public boolean isFertilizer_Enables_Growth_In_Invalid_Biomes(){
+        return  fertilizer_enables_growth_in_invalid_biomes;
     }
 
-    public double getFertilizer_boost_growth_rate() {
-        return fertilizer_boost_growth_rate;
+    public double getFertilizer_invalid_biome_growth_rate(){
+        return fertilizer_invalid_biome_growth_rate;
     }
 
     public double getFertilizer_invalid_biome_death_chance(){
         return fertilizer_invalid_biome_death_chance;
+    }
+
+    public double getFertilizer_boost_growth_rate() {
+        return fertilizer_boost_growth_rate;
     }
 
     public boolean isFertilizer_allow_growth_rate_above_100() {

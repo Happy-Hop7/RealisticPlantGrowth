@@ -73,15 +73,6 @@ fertilizer_radius: 5
 # false: Players must actively fill the composter to achieve fertilization effects.
 fertilizer_passiv: true
 
-# true: Fertilizer enables the use of plants in 'bad' biomes.
-# false: Restricts growth in biomes not listed under GrowthModifiers.yml 'Biome' list.
-fertilizer_enables_growth_in_bad_biomes: true
-
-# Death Chance of a plant in an invalid biome with fertilizer supply
-# only active if 'fertilizer_enables_growth_in_bad_biomes' is set to 'true', and the plant is
-# in an invalid biome.
-fertilizer_invalid_biome_death_chance: 25.0
-
 # The 'fertilizer_boost_growth_rate' is a percentage added to biome-specific growth rates,
 # if a composter is within the configured 'fertilizer_radius'.
 # For example, a biome-specific growth rate of wheat in a desert is 20%. A 'fertilizer_boost_growth_rate' of 25.0%
@@ -93,7 +84,23 @@ fertilizer_boost_growth_rate: 20.0
 # If a plant has a biome-specific growth rate of 100.0% and this is set to true,
 # the resulting growth rate can exceed 100.0% (e.g., 125.0%).
 # Otherwise, the growth rate is capped at 100.0%.
-fertilizer_allow_growth_rate_above_100: true;
+fertilizer_allow_growth_rate_above_100: true
+
+# true: Fertilizer enables the use of plants in 'bad' biomes.
+# false: Restricts growth in biomes not listed under GrowthModifiers.yml 'Biome' list.
+fertilizer_enables_growth_in_invalid_biomes: true
+
+# Growth rate of plants in invalid biomes with fertilizer access.
+# Only active if 'fertilizer_enables_growth_in_bad_biomes' is set to 'true', and the plant is
+# in an invalid biome.
+fertilizer_invalid_biome_growth_rate: 35.0
+
+# Death Chance of a plant in an invalid biome with fertilizer supply.
+# Only active if 'fertilizer_enables_growth_in_bad_biomes' is set to 'true', and the plant is
+# in an invalid biome.
+# If a plant is an instance of the Ageable interface, death-rate is divided by maxAge!
+fertilizer_invalid_biome_death_chance: 25.0
+
 
 ########################################################################################################################
 #|                                                                                                                    |#

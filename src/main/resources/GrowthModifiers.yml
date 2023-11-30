@@ -397,9 +397,9 @@ WHEAT:
     Groups:
       - Jungle
   Default:
-    GrowthRate: 50
+    GrowthRate: 80
     UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
+    NaturalDeathChance: 5
+    UVLightDeathChance: 10
     Biome: []
 

@@ -25,8 +25,12 @@ public class Surrounding {
     private final Modifier  modifier;
     private final Logger logger;
 
-    private final static HashMap<Material, List<String>> biomeGroupsCache = new HashMap<>();
+    // TODO: BiomeChecker should implement this cache
+    private final static HashMap<Biome, List<String>> biomeGroupsCache = new HashMap<>();
 
+    private final Route BASE_ROUTE;
+    private final Route BIOME_GROUPS_ROUTE;
+    private final Route DEFAULT_ROUTE;
 
     /**
      * The central block associated with the plant growth event.
@@ -75,6 +79,10 @@ public class Surrounding {
         this.plantType = centerBlock.getType();
         this.biome = centerBlock.getBiome();
         this.plantLocation = centerBlock.getLocation();
+
+        BASE_ROUTE = Route.from(plantType);
+        BIOME_GROUPS_ROUTE = Route.from(BASE_ROUTE, "BiomeGroup");
+        DEFAULT_ROUTE = Route.from(BASE_ROUTE, "Default");
 
         uvSources = uvBlocks;
         fertilizerSources = fertilizerBlocks;
@@ -162,14 +170,18 @@ public class Surrounding {
         return biome;
     }
 
+    /**
+     * Returns a List of BiomeGroups represented as String in which the plant can grow.
+     * @return List of BiomeGroup Names
+     */
     public List<String> getBiomeGroupList(){
         if(biomeGroupsCache.isEmpty())
             calcIsInValidBiome();
 
-        if(!biomeGroupsCache.containsKey(plantType))
+        if(!biomeGroupsCache.containsKey(biome))
             return new ArrayList<>(); // empty list
 
-        return biomeGroupsCache.get(plantType);
+        return biomeGroupsCache.get(biome);
     }
 
 
@@ -223,7 +235,7 @@ public class Surrounding {
             }
 
             logger.verbose(String.format("Plant '%s' is in an invalid Biome, but fertilizer effects can be applied.", plantType));
-            return new Modifier(configManager.getFertilizer_boost_growth_rate(),
+            return new Modifier(configManager.getFertilizer_invalid_biome_growth_rate(),
                     configManager.getFertilizer_invalid_biome_death_chance(), true);
         }
 
@@ -274,36 +286,54 @@ public class Surrounding {
     // TODO: let config manager make file accesses
     // TODO: FOR SCHLEIFE FÜR ALLE BIOMEGROUPS AUS DER LISTE
     private Modifier processBiomeGroupSection(String growthModifierType, String deathModifierType){
-        Route biomeGroupsRoute = Route.from(plantType, "BiomeGroup", "Groups");
-        Optional<List<String>> biomeGroupList = configManager.getGrowthModifiersFile().getOptionalStringList(biomeGroupsRoute);
+        Route biomeGroupsListRoute = Route.from(BIOME_GROUPS_ROUTE, "Groups");
+        Optional<List<String>> biomeGroupsList = configManager.getGrowthModifiersFile().getOptionalStringList(biomeGroupsListRoute);
 
         // If false: no further checks needed. -> using values defined under 'Default'.
-        if(biomeGroupList.isEmpty() || biomeGroupList.get().isEmpty())
+        if(biomeGroupsList.isEmpty() || biomeGroupsList.get().isEmpty())
             return null;
 
         logger.verbose("StringList of BiomeGroup.Groups is present and not empty.");
-        String selectedBiomeGroup = biomeChecker.getOneBiomeGroupOf(biomeGroupList.get(), biome);
 
-        if(selectedBiomeGroup == null)
+        List<String> biomeGroupsOfBiome = getBiomeGroupList();
+        if(biomeGroupsOfBiome == null || biomeGroupsOfBiome.isEmpty()) {
             return null;
-
-        Route growthModifierRoute = Route.from(selectedBiomeGroup, growthModifierType);
-        Route deathModifierRoute = Route.from(selectedBiomeGroup, deathModifierType);
-
-        logger.verbose(growthModifierRoute.toString());
-        logger.verbose(deathModifierRoute.toString());
-
-        Optional<Double> optionalGrowthModifier = configManager.getGrowthModifiersFile().getOptionalDouble(growthModifierRoute);
-        Optional<Double> optionalDeathModifier = configManager.getGrowthModifiersFile().getOptionalDouble(deathModifierRoute);
-
-        // config error handling
-        if(optionalGrowthModifier.isEmpty() || optionalDeathModifier.isEmpty()) {
-            logger.error("Couldn't read BiomeGroup modifier values from GrowthModifiers.yml!");
-            throw new YAMLException("Check your GrowthModifiers.yml!");
         }
 
-        return new Modifier(optionalGrowthModifier.get(), optionalDeathModifier.get(), false);
+        // check only relevant BiomeGroups
+        List<String> relevantBiomeGroups = new ArrayList<>();
+        for (String biomeGroup : biomeGroupsOfBiome){
+            if(biomeGroupsList.get().contains(biomeGroup)){
+                relevantBiomeGroups.add(biomeGroup);
+                logger.verbose("BiomeGroup '" + biomeGroup + "' added to the relevant List.");
+            }
+        }
 
+        logger.verbose("BiomeGroups cache has valid entries.");
+
+        for (String selectedBiomeGroup : relevantBiomeGroups) {
+
+
+            Route growthModifierRoute = Route.from(BIOME_GROUPS_ROUTE, selectedBiomeGroup, growthModifierType);
+            Route deathModifierRoute = Route.from(BIOME_GROUPS_ROUTE, selectedBiomeGroup, deathModifierType);
+
+            logger.verbose(growthModifierRoute.toString());
+            logger.verbose(deathModifierRoute.toString());
+
+            Optional<Double> optionalGrowthModifier = configManager.getGrowthModifiersFile().getOptionalDouble(growthModifierRoute);
+            Optional<Double> optionalDeathModifier = configManager.getGrowthModifiersFile().getOptionalDouble(deathModifierRoute);
+
+            // config error handling
+            if (optionalGrowthModifier.isEmpty() || optionalDeathModifier.isEmpty()) {
+                logger.error("Couldn't read BiomeGroup modifier values from GrowthModifiers.yml!");
+                throw new YAMLException("Check your GrowthModifiers.yml!");
+            }
+
+            return new Modifier(optionalGrowthModifier.get(), optionalDeathModifier.get(), false);
+
+        }
+
+        return null;
     }
 
     private boolean calcIsInValidBiome(){
@@ -332,20 +362,20 @@ public class Surrounding {
         }
         // -----
 
-        if(biomeGroupsCache.containsKey(plantType)){
+        if(biomeGroupsCache.containsKey(biome)){
 
-            if(biomeGroupsCache.get(plantType).isEmpty()){
+            if(biomeGroupsCache.get(biome).isEmpty()){
                 logger.verbose("Plant: " + plantType + " is NOT in a valid biome");
                 return false;
             }
 
-            for (String biomeGroup : biomeGroupsCache.get(plantType)){
-                Optional<Set<Biome>> biomeSet = biomeChecker.getBiomeListOf(biomeGroup);
-                if (biomeSet.isPresent() && biomeSet.get().contains(biome)){
+            //for (String biomeGroup : biomeGroupsCache.get(biome)){
+                Set<Biome> biomeSet = biomeChecker.getValidBiomesFor(plantType);
+                if (!biomeSet.isEmpty() && biomeSet.contains(biome)){
                     logger.verbose("Plant: " + plantType + " is in a valid biome");
                     return true;
                 }
-            }
+            //}
             return false;
         } // else search valid biome groups
 
@@ -353,14 +383,14 @@ public class Surrounding {
 
         if(allBiomeGroups.isEmpty() || allBiomeGroups.get().isEmpty()){
             // new cache entry
-            biomeGroupsCache.put(plantType, new ArrayList<>());
+            biomeGroupsCache.put(biome, new ArrayList<>());
             logger.verbose("No BiomeGroups found for: " + biome);
             return false;
         }
 
         // new cache entry
-        logger.verbose("New Cache entry for: " + plantType);
-        biomeGroupsCache.put(plantType, allBiomeGroups.get());
+        logger.verbose("New Cache entry for: " + biome);
+        biomeGroupsCache.put(biome, allBiomeGroups.get());
         return calcIsInValidBiome(); // recursive call of this method
     }
 
@@ -375,7 +405,7 @@ public class Surrounding {
             if (isInValidBiome()) { //TODO: Check closest Composter Fill level
                 return true;
             }
-            return configManager.isFertilizer_Enables_Growth_In_Bad_Biomes();
+            return configManager.isFertilizer_Enables_Growth_In_Invalid_Biomes();
         }
         return false;
     }

@@ -3,7 +3,6 @@ package de.nightevolution.utils;
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
 import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.route.Route;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -98,19 +97,21 @@ public class BiomeChecker {
 
         return biomeGroupsOfBiome;
     }
-    public Optional<Set<Biome>> getBiomeListOf(String biomeGroup){
+    public Set<Biome> getBiomeSetOf(String biomeGroup){
         Map<String, Object> roots = cm.getBiomeGroups();
-        Optional<Set<Biome>> biomeSet = Optional.of(new HashSet<>());
+        Set<Biome> biomeSet = new HashSet<>();
 
-        for (String rootEntry : roots.keySet()){
-            Route r = Route.from(rootEntry);
-            Optional<Section> biomeGroupSection = cm.getBiomeGroupSection(r);
-
-            if(biomeGroupSection.isPresent()){
-                Optional<List<String>> biomeStringList = biomeGroupSection.get().getOptionalStringList(r);
-                biomeStringList.ifPresent(strings -> biomeSet.get().addAll(getBiomesFromStringList(strings)));
+        //for (String biomeGroupName : roots.keySet()){
+            Route biomeGroupNameRoute = Route.from(biomeGroup);
+            logger.verbose(biomeGroupNameRoute.toString());
+            Optional<List<String>> biomeStringList = cm.getBiomeGroupStringList(biomeGroupNameRoute);
+            logger.verbose("BiomeStringList '" + biomeGroup + "' is present?: " + biomeStringList.isPresent());
+            if(biomeStringList.isEmpty() || biomeStringList.get().isEmpty()) {
+                return biomeSet; // empty set
             }
-        }
+            biomeSet.addAll(getBiomesFromStringList(biomeStringList.get()));
+
+       // }
 
         return biomeSet;
     }
@@ -177,7 +178,7 @@ public class BiomeChecker {
             }
         }
 
-
+        // TODO: Add default Biomes here
 
         return validBiomes;
     }
