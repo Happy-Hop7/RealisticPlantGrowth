@@ -48,7 +48,7 @@ public class PlantKiller {
      */
     public void reduceComposterFillLevelOf(Block composterToDrain){
         // Check if passive fertilizer passiv mode is enabled
-        if(configManager.isFertilizer_passiv()) {
+        if(configManager.isFertilizer_passiv() || composterToDrain == null) {
             return;
         }
 
@@ -67,7 +67,18 @@ public class PlantKiller {
 
         // Reduce the composter's fill level
         int oldFillLevel = composter.getLevel();
-        composter.setLevel(oldFillLevel-1);
+        int newFillLevel;
+
+
+        if (oldFillLevel == composter.getMaximumLevel()){
+            newFillLevel = oldFillLevel-2;
+        }else {
+            newFillLevel = oldFillLevel-1;
+        }
+
+        composter.setLevel(newFillLevel);
+        composterToDrain.setBlockData(composter);
+
     }
 
 }
