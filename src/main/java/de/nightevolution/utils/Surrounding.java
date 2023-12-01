@@ -148,10 +148,12 @@ public class Surrounding {
         // Sorting the List
         fertilizerSources.sort(blockComparator);
 
-        for (Block block : fertilizerSources){
-            logger.verbose("Sorted Distance List:" + block.getLocation());
+        if(configManager.isVerbose()) {
+            logger.verbose("Sorted fertilizer blocks location list:");
+            for (Block block : fertilizerSources) {
+                logger.verbose("  - " + block.getLocation());
+            }
         }
-
         if(configManager.isFertilizer_passiv()) {
             closestComposter = fertilizerSources.get(0);
             return closestComposter;
