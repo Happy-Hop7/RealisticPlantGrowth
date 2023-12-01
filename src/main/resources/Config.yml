@@ -38,8 +38,8 @@ bonemeal_limit: 3
 
 # Required natural sky light level for plant growth.
 # Sky light level: 0: allows underground growth. (Additional light sources are still necessary.)
-# Sky light level 10: corresponds to sunlight filtered through glass/leaves.
-# Sky light level 15: plants only grow in direct sunlight.
+# Sky light level 10-12: corresponds to sunlight filtered through leaves.
+# Sky light level 15: plants only grow in direct sunlight. (Allows glass ceilings.)
 min_natural_light: 10
 
 # When a player harvests a plant that has grown on farmland, the farmland is automatically replaced with a

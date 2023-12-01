@@ -160,7 +160,7 @@ public class Surrounding {
 
         for (Block composterBlock : fertilizerSources) {
             Levelled composter = (Levelled) composterBlock.getBlockData();
-            if (composter.getLevel() < composter.getMaximumLevel()) {
+            if (composter.getLevel() > 0) {
                 closestComposter = composterBlock;
                 return closestComposter;
             }
