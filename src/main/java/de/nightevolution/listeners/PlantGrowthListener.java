@@ -132,7 +132,7 @@ public abstract class PlantGrowthListener  implements Listener{
      */
     protected boolean cancelDueToDeathChance(){
 
-        if(eventBlock instanceof Ageable crop){
+        if(eventBlock.getBlockData() instanceof Ageable crop){
             double partialDeathChance = (deathChance / crop.getMaximumAge());
 
             logger.verbose("Using Ageable Interface for DeathChance.");
