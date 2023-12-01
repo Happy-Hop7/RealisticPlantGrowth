@@ -63,11 +63,11 @@ report_growth: false
 #|                                                                                                                    |#
 ########################################################################################################################
 # Enables the use of composters to fertilize crops in the surrounding area.
-fertilizer_enabled: false
+fertilizer_enabled: true
 
 # Plants within this block radius will grow at the 'fertilizer_growth_rate' (see below).
 # Higher values may increase server resource consumption and cause lag (Maximum 15 blocks).
-fertilizer_radius: 5
+fertilizer_radius: 10
 
 # true: Fertilizer effects do not deplete composters to fertilize the surroundings.
 # false: Players must actively fill the composter to achieve fertilization effects.
@@ -114,7 +114,7 @@ fertilizer_invalid_biome_death_chance: 25.0
 #|                                                                                                                    |#
 ########################################################################################################################
 # Enable use of UV-Light Blocks
-uv_enabled: false
+uv_enabled: true
 
 # List of blocks that can function as UV-Light sources; they don't need to emit light.
 uv_blocks:
@@ -129,7 +129,7 @@ require_all_uv_blocks: true
 
 # Radius around a UV-Light block that affects growth.
 # Higher values consume more server resources and may lead to server lag. (Maximum 15 blocks)
-uv_radius: 5
+uv_radius: 10
 
 # List of plants that grow without requiring natural sky light, allowing growth
 # in artificial light sources like torches and lanterns (not the same as UV-Light).
