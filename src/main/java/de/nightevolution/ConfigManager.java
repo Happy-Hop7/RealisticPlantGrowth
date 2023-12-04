@@ -506,6 +506,9 @@ public class ConfigManager {
             selectedLanguageFile.update();
             logger.debug("Language files reloaded.");
 
+            uv_blocks.clear();
+            grow_in_dark.clear();
+
             // Get updated config data and store new data in global variables.
             readConfigData();
             registerSupportedLanguages();
