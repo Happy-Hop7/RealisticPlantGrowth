@@ -12,7 +12,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -131,6 +133,7 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
 
     public void reload(){
         cm.reloadAllYAMLFiles();
+        HandlerList.unregisterAll((Plugin) RealisticPlantGrowth.getInstance());
         updateVariables();
     }
 
