@@ -51,6 +51,7 @@ public class BlockGrowListener extends PlantGrowthListener{
             logger.verbose("Double Growth!");
         }
 
+
         checkFertilizerUsage();
         logger.verbose("Normal event");
 

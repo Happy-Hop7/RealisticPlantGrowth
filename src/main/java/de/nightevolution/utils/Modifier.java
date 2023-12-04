@@ -14,6 +14,7 @@ public class Modifier {
     private double growthModifier;
     private double deathChance;
     private boolean fertilizerUsed;
+    private boolean specialCase = false;
 
     /**
      * Constructs a Modifier object with specified growthModifier, deathChance, and fertilizer usage.
@@ -26,6 +27,26 @@ public class Modifier {
         this.growthModifier = getCheckedGrowthModifier(growthModifier);
         this.deathChance = getCheckedDeathChance(deathChance);
         this.fertilizerUsed = fertilizerUsed;
+    }
+
+    /**
+     * Applies fertilizer effects to the provided modifier if fertilizer boost can be applied.
+     *
+     */
+    public void applyFertilizerEffects(){
+            double fertilizerBoost;
+
+            if(specialCase){
+                fertilizerBoost = (getGrowthModifier()/100) * (cm.getFertilizer_invalid_biome_growth_rate()/100) * 100;
+                deathChance += cm.getFertilizer_invalid_biome_death_chance();
+            }
+
+            else {
+               fertilizerBoost = getGrowthModifier() + cm.getFertilizer_boost_growth_rate();
+            }
+
+            setGrowthModifier(fertilizerBoost);
+            setFertilizerUsed(true);
     }
 
     /**
@@ -80,6 +101,15 @@ public class Modifier {
      */
     public void setFertilizerUsed(boolean fertilizerUsed){
         this.fertilizerUsed = fertilizerUsed;
+    }
+
+
+    public void setSpecialCase(boolean specialCase){
+        this.specialCase = specialCase;
+    }
+
+    public boolean getSpecialCase(){
+        return specialCase;
     }
 
     /**
