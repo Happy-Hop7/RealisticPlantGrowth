@@ -3,9 +3,12 @@ package de.nightevolution.listeners;
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
-import org.bukkit.*;
+import de.nightevolution.utils.PlantKiller;
+import org.bukkit.Bukkit;
+import org.bukkit.EntityEffect;
+import org.bukkit.GameMode;
+import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -73,7 +76,7 @@ public class BlockBreakListener implements Listener {
 
             // Destroy Farmland
             if (configManager.isDestroy_Farmland() && !b.getType().isSolid()) {
-                destroyFarmland(e);
+                new PlantKiller().destroyFarmland(e.getBlock());
             }
 
         }
@@ -103,22 +106,7 @@ public class BlockBreakListener implements Listener {
     }
 
 
-    /**
-     * Destroys farmland below the broken block, replacing it with coarse dirt after a 1-tick delay.
-     *
-     * @param e BlockBreakEvent containing information about the event.
-     */
-    private void destroyFarmland(BlockBreakEvent e){
-        Block u = e.getBlock().getRelative(BlockFace.DOWN);
-        if (u.getType().equals(Material.FARMLAND)) {
 
-            // Schedule the replacement of farmland with coarse dirt with a 1-tick delay
-            scheduler.runTaskLater(instance, () ->{
-                logger.verbose("Replacing Farmland.");
-                u.setType(Material.COARSE_DIRT);
-            },1 ); // 1 Tick delay
-        }
-    }
 
     /**
      * Calculates and applies durability changes to the provided hoe used for harvesting.

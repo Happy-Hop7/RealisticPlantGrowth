@@ -2,9 +2,12 @@ package de.nightevolution.utils;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
+import org.bukkit.scheduler.BukkitScheduler;
 
 public class PlantKiller {
 
@@ -12,29 +15,93 @@ public class PlantKiller {
     private final ConfigManager configManager;
     private final Logger logger;
 
+    private final BukkitScheduler scheduler;
+
     public PlantKiller(){
         this.instance = RealisticPlantGrowth.getInstance();
         configManager = instance.getConfigManager();
         logger = new Logger(this.getClass().getSimpleName(), instance,
                 RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        scheduler = Bukkit.getScheduler();
     }
 
     public void killPlant (Block plantToKill){
         Material plantType = plantToKill.getType();
 
         if(instance.isAPlant(plantToKill)){
-            plantToKill.setType(Material.DEAD_BUSH);
+
             // Bamboo
 
             // Melon / Pumpkin
 
             // farmland plants
+            if (instance.isAgriculturalPlant(plantToKill)){
+                logger.verbose("Killing Agricultural Plant.");
+                plantToKill.setType(Material.AIR);
+
+
+                double randomMaterial = Math.random()*100;
+
+                if(randomMaterial < 5){
+                    randomDestroyFarmland(plantToKill, 0.85);
+                    replacePlantWith(plantToKill, Material.TALL_GRASS);
+                }
+
+                else if (randomMaterial < 25) {
+                    destroyFarmland(plantToKill);
+                    plantToKill.setType(Material.DEAD_BUSH);
+                }
+
+                else if (randomMaterial < 27) {
+                    randomDestroyFarmland(plantToKill, 0.5);
+                    // The plant is already replaced with AIR
+                }
+
+                else {
+                    randomDestroyFarmland(plantToKill, 0.85);
+                    plantToKill.setType(Material.GRASS);
+                }
+            }
 
             // ...
 
         } else if (instance.isAnAquaticPlant(plantToKill)) {
 
         }
+    }
+
+
+    /**
+     * Destroys farmland below the broken block, replacing it with coarse dirt after a 1-tick delay.
+     *
+     * @param blockAboveFarmland Block above the Farmland to be destroyed.
+     */
+    public void destroyFarmland(Block blockAboveFarmland){
+        Block u = blockAboveFarmland.getRelative(BlockFace.DOWN);
+        if (u.getType().equals(Material.FARMLAND)) {
+            double random = Math.random();
+            // Schedule the replacement of farmland with coarse dirt with a 1-tick delay
+            scheduler.runTaskLater(instance, () ->{
+                logger.verbose("Replacing Farmland.");
+                if(random < 0.65)
+                    u.setType(Material.COARSE_DIRT);
+                else
+                    u.setType(Material.DIRT);
+            },1 ); // 1 Tick delay
+        }
+    }
+
+    public void randomDestroyFarmland(Block blockAboveFarmland, double destroyChance){
+        double farmlandDestroyChance = Math.random();
+        if(farmlandDestroyChance < destroyChance){
+            destroyFarmland(blockAboveFarmland);
+        }
+    }
+
+    public void replacePlantWith(Block plant, Material replaceWith){
+        scheduler.runTaskLater(instance, () ->{
+           plant.setType(replaceWith);
+        },3 ); // 3 Ticks delay
     }
 
     /**

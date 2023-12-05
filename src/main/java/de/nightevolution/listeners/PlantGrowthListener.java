@@ -6,7 +6,6 @@ import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.PlantKiller;
 import de.nightevolution.utils.SpecialBlockSearch;
 import de.nightevolution.utils.Surrounding;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -103,7 +102,7 @@ public abstract class PlantGrowthListener  implements Listener{
             if(deathChance == 100.0 || growthRate == 0.0){
                 // Kill plant
                 logger.verbose("Super-Event: Kill plant.");
-                e.getBlock().setType(Material.DEAD_BUSH); // TODO: kill plant
+                killPlant();
                 return false;
             }
 
