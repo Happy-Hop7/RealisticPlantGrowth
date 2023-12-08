@@ -71,7 +71,7 @@ public abstract class PlantGrowthListener  implements Listener{
         eventBiome = eventBlock.getBiome();
 
         // Check if the world is enabled for plant growth modification
-        if(instance.isWorldEnabled(eventWorld))
+        if(!instance.isWorldEnabled(eventWorld))
             return false;
 
         // Check if the event block is a plant eligible for growth modification
