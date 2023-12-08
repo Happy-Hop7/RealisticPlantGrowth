@@ -84,8 +84,8 @@ public class ConfigManager {
     private static boolean uv_enabled;
     private static int uv_radius;
     private static boolean require_all_uv_blocks;
-    private static ArrayList<Material> uv_blocks = new ArrayList<>();
-    private static ArrayList<Material> grow_in_dark = new ArrayList<>();
+    private static HashSet<Material> uv_blocks = new HashSet<>();
+    private static HashSet<Material> grow_in_dark = new HashSet<>();
 
 
     /**
@@ -360,10 +360,10 @@ public class ConfigManager {
             require_all_uv_blocks = config.getBoolean("require_all_uv_blocks");
 
             List<String> uv_blocks_string = config.getStringList("uv_blocks");
-            uv_blocks = getCheckedMaterialList(uv_blocks_string);
+            uv_blocks = getCheckedMaterialSet(uv_blocks_string);
 
             List<String> grow_in_dark_string = config.getStringList("grow_in_dark");
-            grow_in_dark = getCheckedMaterialList(grow_in_dark_string);
+            grow_in_dark = getCheckedMaterialSet(grow_in_dark_string);
 
 
             printConfigData();
@@ -557,12 +557,12 @@ public class ConfigManager {
     }
 
 
-    private ArrayList<Material> getCheckedMaterialList(List<String> stringMaterialList){
-        ArrayList<Material> materialList = new ArrayList<>(stringMaterialList.size());
+    private HashSet<Material> getCheckedMaterialSet(List<String> stringMaterialList){
+        HashSet<Material> materialSet = new HashSet<>(stringMaterialList.size());
         for (String materialName : stringMaterialList){
             Material material = Material.getMaterial(materialName);
             if(material != null){
-                materialList.add(material);
+                materialSet.add(material);
             }
             else {
                 logger.warn("uv_blocks: '" + materialName + "' is not an Bukkit Material!" );
@@ -570,7 +570,7 @@ public class ConfigManager {
             }
         }
 
-        return materialList;
+        return materialSet;
     }
 
 
@@ -670,7 +670,7 @@ public class ConfigManager {
         return uv_radius;
     }
 
-    public ArrayList<Material> getUV_Blocks() {
+    public HashSet<Material> getUV_Blocks() {
         return uv_blocks;
     }
 
@@ -678,7 +678,7 @@ public class ConfigManager {
         return require_all_uv_blocks;
     }
 
-    public ArrayList<Material> getGrow_In_Dark() {
+    public HashSet<Material> getGrow_In_Dark() {
         return grow_in_dark;
     }
 
