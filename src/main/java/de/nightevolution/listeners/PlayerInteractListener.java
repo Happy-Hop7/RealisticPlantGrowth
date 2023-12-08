@@ -64,7 +64,7 @@ public class PlayerInteractListener implements Listener {
 
 
         Block clickedBlock = e.getClickedBlock();
-        if (!e.hasItem() || clickedBlock == null){
+        if (!e.hasItem() || clickedBlock == null || instance.isAPlant(clickedBlock)){
             return;
         }
 
@@ -121,7 +121,7 @@ public class PlayerInteractListener implements Listener {
         p.sendMessage("deathChance: " + deathChance);
         p.sendMessage("Biome: " + surrounding.getBiome());
 
-        if (e.getPlayer().getGameMode() == GameMode.CREATIVE && e.getAction() == Action.LEFT_CLICK_BLOCK)
+        if (e.getPlayer().getGameMode() == GameMode.CREATIVE)
             e.setCancelled(true);
     }
 
