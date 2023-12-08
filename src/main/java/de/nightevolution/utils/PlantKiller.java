@@ -33,34 +33,14 @@ public class PlantKiller {
             // Bamboo
 
             // Melon / Pumpkin
-
+            if (plantType == Material.MELON_STEM || plantType == Material.PUMPKIN_STEM) {
+                logger.verbose("Melon / Pumpkin Stem");
+                replacePlantWithRandomReplacementMaterial(plantToKill, 5, 7, 85);
+            }
             // farmland plants
-            if (instance.isAgriculturalPlant(plantToKill)){
+            else if (instance.isAgriculturalPlant(plantToKill)){
                 logger.verbose("Killing Agricultural Plant.");
-                plantToKill.setType(Material.AIR);
-
-
-                double randomMaterial = Math.random()*100;
-
-                if(randomMaterial < 5){
-                    randomDestroyFarmland(plantToKill, 0.85);
-                    replacePlantWith(plantToKill, Material.TALL_GRASS);
-                }
-
-                else if (randomMaterial < 25) {
-                    destroyFarmland(plantToKill);
-                    plantToKill.setType(Material.DEAD_BUSH);
-                }
-
-                else if (randomMaterial < 27) {
-                    randomDestroyFarmland(plantToKill, 0.5);
-                    // The plant is already replaced with AIR
-                }
-
-                else {
-                    randomDestroyFarmland(plantToKill, 0.85);
-                    plantToKill.setType(Material.GRASS);
-                }
+                replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 50);
             }
 
             // ...
@@ -70,6 +50,30 @@ public class PlantKiller {
         }
     }
 
+    private void replacePlantWithRandomReplacementMaterial(Block plantToKill,
+                                                           double tallGrass,  double air, double deadBush){
+        double randomMaterial = Math.random()*100;
+
+        if(randomMaterial < tallGrass){
+            randomDestroyFarmland(plantToKill, 0.85);
+            replacePlantWith(plantToKill, Material.TALL_GRASS);
+        }
+
+        else if (randomMaterial < air) {
+            destroyFarmland(plantToKill);
+            plantToKill.setType(Material.AIR);
+        }
+
+        else if (randomMaterial < deadBush) {
+            destroyFarmland(plantToKill);
+            plantToKill.setType(Material.DEAD_BUSH);
+        }
+
+        else {
+            randomDestroyFarmland(plantToKill, 0.75);
+            plantToKill.setType(Material.GRASS);
+        }
+    }
 
     /**
      * Destroys farmland below the broken block, replacing it with coarse dirt after a 1-tick delay.
@@ -83,7 +87,7 @@ public class PlantKiller {
             // Schedule the replacement of farmland with coarse dirt with a 1-tick delay
             scheduler.runTaskLater(instance, () ->{
                 logger.verbose("Replacing Farmland.");
-                if(random < 0.65)
+                if(random < 0.75)
                     u.setType(Material.COARSE_DIRT);
                 else
                     u.setType(Material.DIRT);

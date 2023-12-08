@@ -6,12 +6,15 @@ import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.PlantKiller;
 import de.nightevolution.utils.SpecialBlockSearch;
 import de.nightevolution.utils.Surrounding;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockEvent;
+import org.bukkit.event.block.BlockGrowEvent;
 
 
 public abstract class PlantGrowthListener  implements Listener{
@@ -25,11 +28,19 @@ public abstract class PlantGrowthListener  implements Listener{
     // Block Data
     protected String coords;
     protected Block eventBlock;
+    protected Material eventBlockType;
     protected World eventWorld;
     protected Biome eventBiome;
 
     protected double growthRate;
     protected double deathChance;
+
+    protected BlockFace[] blockFaceArray = {
+            BlockFace.NORTH,
+            BlockFace.SOUTH,
+            BlockFace.WEST,
+            BlockFace.EAST
+    };
 
 
     /**
@@ -69,46 +80,74 @@ public abstract class PlantGrowthListener  implements Listener{
         eventBlock = e.getBlock();
         eventWorld = eventBlock.getWorld();
         eventBiome = eventBlock.getBiome();
+        eventBlockType = eventBlock.getType();
 
         // Check if the world is enabled for plant growth modification
         if(!instance.isWorldEnabled(eventWorld))
             return false;
 
-        // Check if the event block is a plant eligible for growth modification
-        if(instance.getGrowthModifiedPlants().contains(eventBlock.getType()) &&
-                (instance.isAPlant(eventBlock) || instance.isAnAquaticPlant(eventBlock))) {
+        if (e instanceof BlockGrowEvent && eventBlockType == Material.AIR) {
+            logger.verbose("AIR Block Grow Event!");
+            eventBlock = getAttachedStem();
 
-            // Log coordinates if logging is enabled
-            if (configManager.isLog_Coords()) {
-                coords = "[ " +
-                        eventBlock.getLocation().getBlockX() + ", " +
-                        eventBlock.getLocation().getBlockY() + ", " +
-                        eventBlock.getLocation().getBlockZ() + "] ";
-                logString += coords;
-            }
-
-            // Retrieve surrounding environment data
-            surrounding = specialBlockSearch.surroundingOf(eventBlock);
-
-            // Get death chance and growth rate from the surrounding environment
-            deathChance = surrounding.getDeathChance();
-            growthRate = surrounding.getGrowthRate();
-
-            logger.verbose("EventBiome: " + eventBiome);
-            logger.verbose("DeathChance: " + deathChance);
-            logger.verbose("GrowthRate: " + growthRate);
-
-            // Check if the plant should be killed due to high death chance or zero growth rates
-            if(deathChance == 100.0 || growthRate == 0.0){
-                // Kill plant
-                logger.verbose("Super-Event: Kill plant.");
-                killPlant();
+            if(eventBlock == null)
                 return false;
-            }
+            logger.verbose("eventBlock not null");
 
-            return true;
+            eventBlockType = eventBlock.getType();
         }
 
+        if(!instance.getGrowthModifiedPlants().contains(eventBlockType))
+            return false;
+
+        // Check if the event block is a plant eligible for growth modification
+        if(instance.isAPlant(eventBlock) || instance.isAnAquaticPlant(eventBlock)) {
+            logger.verbose("Plant Grow Event!");
+        }
+
+        calculateSurroundingOf(eventBlock);
+
+        if(isDeathChanceTooHigh()) {
+            return false;
+        }
+
+        logEvent();
+
+        return true;
+    }
+
+    protected Block getAttachedStem() {
+        for (BlockFace blockFace : blockFaceArray){
+            Block relativeEventBlock = eventBlock.getRelative(blockFace);
+            if(relativeEventBlock.getType() == Material.MELON_STEM){
+                return relativeEventBlock;
+            }
+            if(relativeEventBlock.getType() == Material.PUMPKIN_STEM){
+                return relativeEventBlock;
+            }
+        }
+        return null;
+    }
+
+    protected void calculateSurroundingOf(Block eventBlock){
+        // Retrieve surrounding environment data
+        surrounding = specialBlockSearch.surroundingOf(eventBlock);
+
+        // Get death chance and growth rate from the surrounding environment
+        deathChance = surrounding.getDeathChance();
+        growthRate = surrounding.getGrowthRate();
+    }
+
+    /**
+     * Check if the plant should be killed due to high death chance or zero growth rates.
+     * @return true if, plant should be killed. false otherwise.
+     */
+    protected boolean isDeathChanceTooHigh(){
+        if(deathChance >= 100.0 || growthRate <= 0.0){
+            logger.verbose("Super-Event: Kill plant.");
+            killPlant();
+            return true;
+        }
         return false;
     }
 
@@ -132,13 +171,19 @@ public abstract class PlantGrowthListener  implements Listener{
     protected boolean cancelDueToDeathChance(){
 
         if(eventBlock.getBlockData() instanceof Ageable crop){
-            double partialDeathChance = (deathChance / crop.getMaximumAge());
+            if(crop.getAge() != crop.getMaximumAge()) {
+                deathChance = (deathChance / crop.getMaximumAge());
+                logger.verbose("Using Ageable Interface for DeathChance.");
+                logger.verbose("Partial DeathChance: " + deathChance);
+                logger.verbose("Max Age of crop: " + (crop.getMaximumAge()));
+            }
 
-            logger.verbose("Using Ageable Interface for DeathChance.");
-            logger.verbose("Partial DeathChance: " + partialDeathChance);
-            logger.verbose("Max Age of crop: " + (crop.getMaximumAge()));
+            else{
+                logger.verbose("Using full DeathChance for fully grown plants.");
+                logger.verbose("DeathChance: " + deathChance);
+                logger.verbose("Max Age of crop: " + (crop.getMaximumAge()));
+            }
 
-            return ((Math.random() * 100) < partialDeathChance);
         }
 
         return ((Math.random() * 100) < deathChance);
@@ -169,6 +214,21 @@ public abstract class PlantGrowthListener  implements Listener{
             PlantKiller pk = new PlantKiller();
             pk.reduceComposterFillLevelOf(surrounding.getClosestComposter());
         }
+    }
+
+    protected void logEvent(){
+        // Log coordinates if logging is enabled
+        if (configManager.isLog_Coords()) {
+            coords = "[ " +
+                    eventBlock.getLocation().getBlockX() + ", " +
+                    eventBlock.getLocation().getBlockY() + ", " +
+                    eventBlock.getLocation().getBlockZ() + "] ";
+            logString += coords;
+        }
+        logger.verbose(logString);
+        logger.verbose("EventBiome: " + eventBiome);
+        logger.verbose("DeathChance: " + deathChance);
+        logger.verbose("GrowthRate: " + growthRate);
     }
 
 }
