@@ -9,6 +9,7 @@ import de.nightevolution.utils.Surrounding;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockEvent;
@@ -71,7 +72,7 @@ public abstract class PlantGrowthListener  implements Listener{
         eventBiome = eventBlock.getBiome();
 
         // Check if the world is enabled for plant growth modification
-        if(!isWorldEnabled(eventWorld))
+        if(instance.isWorldEnabled(eventWorld))
             return false;
 
         // Check if the event block is a plant eligible for growth modification
@@ -88,7 +89,8 @@ public abstract class PlantGrowthListener  implements Listener{
             }
 
             // Retrieve surrounding environment data
-            surrounding = specialBlockSearch.surroundingOf(eventBlock);
+            BlockState blockState = eventBlock.getBlockData().createBlockState();
+            surrounding = specialBlockSearch.surroundingOf(blockState, eventBlock.getWorld());
 
             // Get death chance and growth rate from the surrounding environment
             deathChance = surrounding.getDeathChance();
@@ -169,16 +171,6 @@ public abstract class PlantGrowthListener  implements Listener{
             PlantKiller pk = new PlantKiller();
             pk.reduceComposterFillLevelOf(surrounding.getClosestComposter());
         }
-    }
-
-    /**
-     * Checks if plant growth modification is enabled for the specified world.
-     *
-     * @param world The World to check for plant growth modification.
-     * @return True if growth modification is enabled for the world, false otherwise.
-     */
-    protected boolean isWorldEnabled(World world){
-        return(configManager.getEnabled_worlds().contains(world.getName()));
     }
 
 }

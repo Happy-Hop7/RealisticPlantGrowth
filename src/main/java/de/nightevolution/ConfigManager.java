@@ -68,7 +68,7 @@ public class ConfigManager {
     private static int min_natural_light;
     private static boolean destroy_farmland;
     private static boolean require_hoe;
-    private static boolean report_growth;
+    private static boolean display_growth_rates;
 
     // Fertilizer config values
     private static boolean fertilizer_enabled;
@@ -84,8 +84,8 @@ public class ConfigManager {
     private static boolean uv_enabled;
     private static int uv_radius;
     private static boolean require_all_uv_blocks;
-    private static final ArrayList<Material> uv_blocks = new ArrayList<>();
-    private static final ArrayList<Material> grow_in_dark = new ArrayList<>();
+    private static ArrayList<Material> uv_blocks = new ArrayList<>();
+    private static ArrayList<Material> grow_in_dark = new ArrayList<>();
 
 
     /**
@@ -342,7 +342,7 @@ public class ConfigManager {
             min_natural_light = config.getInt("min_natural_light");
             destroy_farmland = config.getBoolean("destroy_farmland");
             require_hoe = config.getBoolean("require_hoe");
-            report_growth = config.getBoolean("report_growth");
+            display_growth_rates = config.getBoolean("display_growth_rates");
 
             // Fertilizer settings
             fertilizer_enabled = config.getBoolean("fertilizer_enabled");
@@ -360,14 +360,10 @@ public class ConfigManager {
             require_all_uv_blocks = config.getBoolean("require_all_uv_blocks");
 
             List<String> uv_blocks_string = config.getStringList("uv_blocks");
-            uv_blocks_string.forEach((materialName) -> {
-                uv_blocks.add(Material.getMaterial(materialName));
-            });
+            uv_blocks = getCheckedMaterialList(uv_blocks_string);
 
             List<String> grow_in_dark_string = config.getStringList("grow_in_dark");
-            grow_in_dark_string.forEach((materialName) -> {
-                grow_in_dark.add(Material.getMaterial(materialName));
-            });
+            grow_in_dark = getCheckedMaterialList(grow_in_dark_string);
 
 
             printConfigData();
@@ -453,7 +449,7 @@ public class ConfigManager {
             logger.logToFile("min_natural_light: " + min_natural_light, logFile);
             logger.logToFile("destroy_farmland: " + destroy_farmland, logFile);
             logger.logToFile("require_hoe: " + require_hoe, logFile);
-            logger.logToFile("report_growth: " + report_growth, logFile);
+            logger.logToFile("display_growth_rates: " + display_growth_rates, logFile);
 
             logger.logToFile("fertilizer_enabled: " + fertilizer_enabled, logFile);
             logger.logToFile("fertilizer_radius: " + fertilizer_radius, logFile);
@@ -560,54 +556,22 @@ public class ConfigManager {
         return optionalDouble.get();
     }
 
-    // Setters for config values
 
-    public static void setEnabled_worlds(List<String> enabled_worlds) {
-        ConfigManager.enabled_worlds = enabled_worlds;
+    private ArrayList<Material> getCheckedMaterialList(List<String> stringMaterialList){
+        ArrayList<Material> materialList = new ArrayList<>(stringMaterialList.size());
+        for (String materialName : stringMaterialList){
+            Material material = Material.getMaterial(materialName);
+            if(material != null){
+                materialList.add(material);
+            }
+            else {
+                logger.warn("uv_blocks: '" + materialName + "' is not an Bukkit Material!" );
+                logger.warn("Please check your sections in config.yml!" );
+            }
+        }
+
+        return materialList;
     }
-
-    public static void setBonemeal_limit(int bonemeal_limit) {
-        ConfigManager.bonemeal_limit = bonemeal_limit;
-    }
-
-    public static void setMin_natural_light(int min_natural_light) {
-        ConfigManager.min_natural_light = min_natural_light;
-    }
-
-    public static void setReport_growth(boolean report_growth) {
-        ConfigManager.report_growth = report_growth;
-    }
-
-    public static void setFertilizer_enabled(boolean fertilizer_enabled) {
-        ConfigManager.fertilizer_enabled = fertilizer_enabled;
-    }
-
-    public static void setFertilizer_radius(int fertilizer_radius) {
-        ConfigManager.fertilizer_radius = fertilizer_radius;
-    }
-
-    public static void setFertilizer_passiv(boolean fertilizer_passiv) {
-        ConfigManager.fertilizer_passiv = fertilizer_passiv;
-    }
-
-    public static void setFertilizer_boost_growth_rate(double fertilizer_boost_growth_rate) {
-        ConfigManager.fertilizer_boost_growth_rate = fertilizer_boost_growth_rate;
-    }
-
-    public static void setFertilizer_allow_growth_rate_above_100(boolean fertilizer_allow_growth_rate_above_100) {
-        ConfigManager.fertilizer_allow_growth_rate_above_100 = fertilizer_allow_growth_rate_above_100;
-    }
-
-    public static void setUv_enabled(boolean uv_enabled) {
-        ConfigManager.uv_enabled = uv_enabled;
-    }
-
-    public static void setUv_radius(int uv_radius) {
-        ConfigManager.uv_radius = uv_radius;
-    }
-
-
-
 
 
     // Getters for config values
@@ -662,8 +626,8 @@ public class ConfigManager {
         return require_hoe;
     }
 
-    public boolean isReport_growth() {
-        return report_growth;
+    public boolean isDisplay_growth_rates() {
+        return display_growth_rates;
     }
 
     public boolean isFertilizer_enabled() {

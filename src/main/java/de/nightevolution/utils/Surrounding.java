@@ -490,7 +490,7 @@ public class Surrounding {
     public boolean isInDarkness(){
         int skyLightLevel = centerBlock.getLightFromSky();
         boolean hasNotMinSkyLight =  (configManager.getMin_Natural_Light() > skyLightLevel);
-        return (hasNotMinSkyLight && !instance.canGrowInDark(centerBlock));
+        return (hasNotMinSkyLight && !instance.canGrowInDark(centerBlock.getType()));
     }
 
     /**

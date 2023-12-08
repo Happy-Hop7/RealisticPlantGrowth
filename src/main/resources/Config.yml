@@ -53,7 +53,7 @@ require_hoe: true
 
 # Displays potential growth rates for an item in hand when a player left-clicks the ground.
 # Only shows growth rates for the biome the player is currently in.
-report_growth: false
+display_growth_rates: true
 
 ########################################################################################################################
 #|                                                                                                                    |#
@@ -137,7 +137,7 @@ uv_radius: 10
 grow_in_dark:
   - RED_MUSHROOM
   - BROWN_MUSHROOM
-  - NETHER_WARTS
+  - NETHER_WART
   - COCOA
 
 

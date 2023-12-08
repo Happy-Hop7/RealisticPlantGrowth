@@ -11,6 +11,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Tag;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -18,6 +19,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -99,6 +101,9 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     ));
 
     private static HashSet<Material> growthModifiedPlants;
+
+    // (Key) Clickable Seed -> (Value) Plant
+    private static HashMap<Material, Material> clickableSeedsMap;
     private static HashSet<Material> clickableSeeds;
 
     @Override
@@ -127,7 +132,7 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
         new StructureGrowListener(instance);
         new BlockSpreadListener(instance);
         new BlockFertilizeListener(instance);
-        new PlayerListener(instance);
+        new PlayerInteractListener(instance);
         new BlockBreakListener(instance);
     }
 
@@ -232,8 +237,8 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     public boolean isAnAquaticPlant(@NotNull Block b){
         return aquaticPlants.contains(b.getType());
     }
-    public boolean canGrowInDark(@NotNull Block b){
-        return cm.getGrow_In_Dark().contains(b.getType());
+    public boolean canGrowInDark(@NotNull Material m){
+        return cm.getGrow_In_Dark().contains(m);
     }
 
 
@@ -283,14 +288,19 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
      * Iterates through "growthModifiedPlants" Set
      */
     private void updateClickableSeeds() {
+        clickableSeedsMap = new HashMap<>();
         clickableSeeds = new HashSet<>();
+
         for (Material plant : plants) {
-            clickableSeeds.add(plant.createBlockData().getPlacementMaterial());
+            clickableSeedsMap.put(plant.createBlockData().getPlacementMaterial(), plant);
         }
 
         for (Material plant : aquaticPlants) {
-            clickableSeeds.add(plant.createBlockData().getPlacementMaterial());
+            clickableSeedsMap.put(plant.createBlockData().getPlacementMaterial(), plant);
         }
+
+        clickableSeeds.addAll(clickableSeedsMap.keySet());
+
 
         // getPlacementMaterial() returns AIR for e.g. BAMBOO_SAPLING
         clickableSeeds.remove(Material.AIR);
@@ -349,13 +359,30 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     public static boolean isVerbose() {
         return verbose;
     }
+@Nullable
+    public Material getMaterialFromSeed(Material seed){
+        if(clickableSeeds.contains(seed))
+            return clickableSeedsMap.get(seed);
+        return null;
+    }
+
+    public boolean isClickableSeed(Material material){
+        return clickableSeeds.contains(material);
+    }
+
+    /**
+     * Checks if plant growth modification is enabled for the specified world.
+     *
+     * @param world The World to check for plant growth modification.
+     * @return True if growth modification is enabled for the world, false otherwise.
+     */
+    public boolean isWorldEnabled(World world){
+        return(cm.getEnabled_worlds().contains(world.getName()));
+    }
 
     public HashSet<Material> getGrowthModifiedPlants(){
         return growthModifiedPlants;
     }
 
-    public HashSet<Material> getClickableSeeds(){
-        return clickableSeeds;
-    }
 
 }
