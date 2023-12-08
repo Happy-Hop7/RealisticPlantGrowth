@@ -69,6 +69,7 @@ public class ConfigManager {
     private static boolean destroy_farmland;
     private static boolean require_hoe;
     private static boolean display_growth_rates;
+    private static int display_cooldown;
 
     // Fertilizer config values
     private static boolean fertilizer_enabled;
@@ -343,6 +344,7 @@ public class ConfigManager {
             destroy_farmland = config.getBoolean("destroy_farmland");
             require_hoe = config.getBoolean("require_hoe");
             display_growth_rates = config.getBoolean("display_growth_rates");
+            display_cooldown = config.getInt("display_cooldown");
 
             // Fertilizer settings
             fertilizer_enabled = config.getBoolean("fertilizer_enabled");
@@ -450,6 +452,7 @@ public class ConfigManager {
             logger.logToFile("destroy_farmland: " + destroy_farmland, logFile);
             logger.logToFile("require_hoe: " + require_hoe, logFile);
             logger.logToFile("display_growth_rates: " + display_growth_rates, logFile);
+            logger.logToFile("display_cooldown: " + display_cooldown, logFile);
 
             logger.logToFile("fertilizer_enabled: " + fertilizer_enabled, logFile);
             logger.logToFile("fertilizer_radius: " + fertilizer_radius, logFile);
@@ -628,6 +631,10 @@ public class ConfigManager {
 
     public boolean isDisplay_growth_rates() {
         return display_growth_rates;
+    }
+
+    public int getDisplay_cooldown(){
+        return display_cooldown;
     }
 
     public boolean isFertilizer_enabled() {

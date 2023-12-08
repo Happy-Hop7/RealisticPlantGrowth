@@ -159,7 +159,7 @@ public abstract class PlantGrowthListener  implements Listener{
      * Checks if fertilizer was used in the surrounding environment
      * and reduces the fill level of the corresponding composter.
      * <p>
-     * If fertilizer was used and passive fertilizer mode is not enabled,
+     * If a fertilizer was used and passive fertilizer mode is not enabled,
      * this method initiates the process to reduce the fill level of the composter closest to the event block.
      * </p>
      */

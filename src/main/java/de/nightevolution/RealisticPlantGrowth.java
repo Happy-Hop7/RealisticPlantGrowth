@@ -132,8 +132,9 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
         new StructureGrowListener(instance);
         new BlockSpreadListener(instance);
         new BlockFertilizeListener(instance);
-        new PlayerInteractListener(instance);
         new BlockBreakListener(instance);
+        new PlayerInteractListener(instance);
+        new PlayerQuitListener(instance);
     }
 
     public void reload(){
@@ -359,7 +360,7 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     public static boolean isVerbose() {
         return verbose;
     }
-@Nullable
+    @Nullable
     public Material getMaterialFromSeed(Material seed){
         if(clickableSeeds.contains(seed))
             return clickableSeedsMap.get(seed);

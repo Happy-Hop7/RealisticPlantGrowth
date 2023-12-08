@@ -18,6 +18,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 /**
  * Listens to player block interactions in order to give information
  * about crops growing rates in the current biome.
@@ -27,6 +30,7 @@ public class PlayerInteractListener implements Listener {
     private final RealisticPlantGrowth instance;
     private final ConfigManager cm;
     private final Logger logger;
+    private static final HashMap<UUID, Long> playerCooldownMap = new HashMap<>();
 
 
     public PlayerInteractListener(RealisticPlantGrowth instance){
@@ -42,38 +46,61 @@ public class PlayerInteractListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteractEventWithClickableSeeds(PlayerInteractEvent e){
         logger.verbose("Interact-Event");
-        World eventWorld = e.getPlayer().getWorld();
 
-        // Check if the world is enabled for plant growth modification
-        if (!instance.isWorldEnabled(eventWorld))
-            return;
-
-        logger.verbose("World is valid");
         if (!cm.isDisplay_growth_rates())
             return;
 
-        logger.verbose("Display growth rates is activated.");
-        if ((e.getAction() != Action.RIGHT_CLICK_BLOCK) && (e.getAction() != Action.LEFT_CLICK_BLOCK))
+        // Check if the world is enabled for plant growth modification
+        World eventWorld = e.getPlayer().getWorld();
+        if (!instance.isWorldEnabled(eventWorld))
+            return;
+
+        if (!instance.isClickableSeed(e.getMaterial())){
+            return;
+        }
+
+        if ((e.getAction() != Action.LEFT_CLICK_BLOCK))
             return;
 
 
-        logger.verbose("CLICK_BLOCK Action.");
         Block clickedBlock = e.getClickedBlock();
         if (!e.hasItem() || clickedBlock == null){
             return;
         }
 
-        logger.verbose("Item and block involved.");
-        if (!instance.isClickableSeed(e.getMaterial())){
-            return;
-        }
+        logger.verbose("All checks passed.");
+        logger.verbose("Getting Block Data...");
 
-        logger.verbose("Getting Block Data.");
+        // Using block above the clicked Block to avoid a SkyLight-Level of zero.
         Block eventBlock = clickedBlock.getRelative(BlockFace.UP);
+
+        // Using a BlockState to "change" the Block type without actually changing the Block type in the world.
         BlockState eventBlockState = eventBlock.getBlockData().createBlockState();
         Material blockMaterial = instance.getMaterialFromSeed(e.getMaterial());
+
+        // getMaterialFromSeed is nullable.
         if(blockMaterial == null)
             return;
+
+
+        // Adding a cooldown to stop click spamming which prevents unnecessary heavy area calculations.
+        Long lastTime = playerCooldownMap.get(e.getPlayer().getUniqueId());
+        long currentTime = System.currentTimeMillis();
+
+        // cooldown in milliseconds
+        int cooldown = (cm.getDisplay_cooldown() * 1000);
+        if (lastTime != null) {
+            logger.verbose("lastTime: " + lastTime);
+            logger.verbose("currentTime: " + currentTime);
+            logger.verbose("cooldown: " + cooldown);
+            if((currentTime - lastTime) < cooldown) {
+                logger.verbose("PlayerInteractEvent-Cooldown.");
+                return;
+            }
+
+        }
+
+        playerCooldownMap.put(e.getPlayer().getUniqueId(), currentTime);
 
         eventBlockState.setType(blockMaterial);
 
@@ -96,6 +123,10 @@ public class PlayerInteractListener implements Listener {
 
         if (e.getPlayer().getGameMode() == GameMode.CREATIVE && e.getAction() == Action.LEFT_CLICK_BLOCK)
             e.setCancelled(true);
+    }
+
+    public static void clearPlayerCooldownData(UUID uuid){
+        playerCooldownMap.remove(uuid);
     }
 
 }

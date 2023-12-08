@@ -55,6 +55,11 @@ require_hoe: true
 # Only shows growth rates for the biome the player is currently in.
 display_growth_rates: true
 
+# Only active, if display_growth_rates is enabled.
+# Time in seconds before the growth rates are shown to the player again.
+# Prevents spam clicking and therefore heavy area scans.
+display_cooldown: 30
+
 ########################################################################################################################
 #|                                                                                                                    |#
 #| Fertilizer                                                                                                         |#

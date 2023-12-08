@@ -42,7 +42,7 @@ public class SpecialBlockSearch {
     private static int radiusFertilizer;
 
     /**
-     * Private constructor to enforce Singleton pattern.
+     * Private constructor to enforce a Singleton pattern.
      */
     private SpecialBlockSearch() {
         specialBlockSearch = this;
@@ -77,6 +77,7 @@ public class SpecialBlockSearch {
      * in the area around the block, which may be inefficient for large radii.
      *
      * @param startingBlock The block from which the search radius extends.
+     * @param blockState The (not placed) {@link BlockState} of startingBlock. (Used for growth rate checks.)
      * @return A {@link Surrounding} object containing all found UV light sources and fertilizer blocks within the radius.
      */
     public Surrounding surroundingOf(Block startingBlock, BlockState blockState) {
