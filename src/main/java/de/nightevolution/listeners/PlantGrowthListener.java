@@ -9,7 +9,6 @@ import de.nightevolution.utils.Surrounding;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockEvent;
@@ -89,8 +88,7 @@ public abstract class PlantGrowthListener  implements Listener{
             }
 
             // Retrieve surrounding environment data
-            BlockState blockState = eventBlock.getBlockData().createBlockState();
-            surrounding = specialBlockSearch.surroundingOf(blockState, eventBlock.getWorld());
+            surrounding = specialBlockSearch.surroundingOf(eventBlock);
 
             // Get death chance and growth rate from the surrounding environment
             deathChance = surrounding.getDeathChance();

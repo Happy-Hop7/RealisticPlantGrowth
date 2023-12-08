@@ -5,9 +5,11 @@ import de.nightevolution.RealisticPlantGrowth;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class is responsible for finding special blocks like UV light sources and composters (as fertilizer sources)
@@ -77,14 +79,14 @@ public class SpecialBlockSearch {
      * @param startingBlock The block from which the search radius extends.
      * @return A {@link Surrounding} object containing all found UV light sources and fertilizer blocks within the radius.
      */
-    public Surrounding surroundingOf(Block startingBlock) {
+    public Surrounding surroundingOf(Block startingBlock, BlockState blockState) {
 
         int radius;
 
         boolean uvEnabled = configManager.isUV_Enabled();
         boolean fertilizerEnabled = configManager.isFertilizer_enabled();
 
-        List<Material> uvMaterials = configManager.getUV_Blocks();
+        Set<Material> uvMaterials = configManager.getUV_Blocks();
 
         // Determine the search radius
         if (uvEnabled && fertilizerEnabled) {
@@ -95,7 +97,7 @@ public class SpecialBlockSearch {
             radius = radiusFertilizer;
         } else {
             // No special block search required.
-            return new Surrounding(startingBlock, null, null);
+            return new Surrounding(startingBlock, blockState, null, null);
         }
 
         List<Block> fertilizerSources = new ArrayList<>();
@@ -131,11 +133,23 @@ public class SpecialBlockSearch {
             }
         }
 
-        Surrounding s = new Surrounding(startingBlock, uvSources, fertilizerSources);
+        Surrounding s = new Surrounding(startingBlock, blockState, uvSources, fertilizerSources);
         if (debug_log)
             logger.logToFile(s.toString(), logFile);
 
         return s;
+    }
+
+    /**
+     * Searches for UV light source and fertilizer blocks within a configured radius around the provided center block.
+     * The search radius is determined by the configuration settings. This method performs an O(n^3) search
+     * in the area around the block, which may be inefficient for large radii.
+     *
+     * @param startingBlock The block from which the search radius extends.
+     * @return A {@link Surrounding} object containing all found UV light sources and fertilizer blocks within the radius.
+     */
+    public Surrounding surroundingOf(Block startingBlock) {
+        return surroundingOf(startingBlock, startingBlock.getBlockData().createBlockState());
     }
 
     /**

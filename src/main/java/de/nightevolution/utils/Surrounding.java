@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Levelled;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -76,9 +77,9 @@ public class Surrounding {
      * @param uvBlocks         The list of blocks representing UV light sources in the surrounding area.
      * @param fertilizerBlocks The list of blocks representing fertilizer sources in the surrounding area.
      */
-    public Surrounding(Block centerBlock, List<Block> uvBlocks, List<Block> fertilizerBlocks) {
+    public Surrounding(Block centerBlock, BlockState blockState, List<Block> uvBlocks, List<Block> fertilizerBlocks) {
         this.centerBlock = centerBlock;
-        this.plantType = centerBlock.getType();
+        this.plantType = blockState.getType();
         this.biome = centerBlock.getBiome();
         this.plantLocation = centerBlock.getLocation();
 
@@ -97,6 +98,10 @@ public class Surrounding {
 
         modifier = getModifier();
 
+    }
+
+    public Surrounding(Block centerBlock, List<Block> uvBlocks, List<Block> fertilizerBlocks) {
+        this(centerBlock, centerBlock.getBlockData().createBlockState(), uvBlocks, fertilizerBlocks);
     }
 
     public static void clearCache(){
@@ -207,7 +212,7 @@ public class Surrounding {
     }
 
     public boolean hasUVLightAccess(){
-        List<Material> allValidUVBlocks = configManager.getUV_Blocks();
+        Set<Material> allValidUVBlocks = configManager.getUV_Blocks();
 
         if(uvSources == null || uvSources.isEmpty()){
             logger.verbose("No UV-Light access!");
@@ -489,8 +494,11 @@ public class Surrounding {
      */
     public boolean isInDarkness(){
         int skyLightLevel = centerBlock.getLightFromSky();
+        logger.verbose("skyLightLevel: " + skyLightLevel);
         boolean hasNotMinSkyLight =  (configManager.getMin_Natural_Light() > skyLightLevel);
-        return (hasNotMinSkyLight && !instance.canGrowInDark(centerBlock.getType()));
+        logger.verbose("hasNotMinSkyLight: " + hasNotMinSkyLight);
+        logger.verbose("canGrowInDark: " + instance.canGrowInDark(plantType));
+        return (hasNotMinSkyLight && !instance.canGrowInDark(plantType));
     }
 
     /**

@@ -5,14 +5,17 @@ import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.SpecialBlockSearch;
 import de.nightevolution.utils.Surrounding;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
@@ -50,13 +53,13 @@ public class PlayerInteractListener implements Listener {
             return;
 
         logger.verbose("Display growth rates is activated.");
-        /*if (!(e.getAction() == Action.RIGHT_CLICK_BLOCK) || !(e.getAction() == Action.LEFT_CLICK_BLOCK))
+        if ((e.getAction() != Action.RIGHT_CLICK_BLOCK) && (e.getAction() != Action.LEFT_CLICK_BLOCK))
             return;
-        */
+
 
         logger.verbose("CLICK_BLOCK Action.");
-        Block eventBlock = e.getClickedBlock();
-        if (!e.hasItem() || eventBlock == null){
+        Block clickedBlock = e.getClickedBlock();
+        if (!e.hasItem() || clickedBlock == null){
             return;
         }
 
@@ -66,6 +69,7 @@ public class PlayerInteractListener implements Listener {
         }
 
         logger.verbose("Getting Block Data.");
+        Block eventBlock = clickedBlock.getRelative(BlockFace.UP);
         BlockState eventBlockState = eventBlock.getBlockData().createBlockState();
         Material blockMaterial = instance.getMaterialFromSeed(e.getMaterial());
         if(blockMaterial == null)
@@ -74,7 +78,7 @@ public class PlayerInteractListener implements Listener {
         eventBlockState.setType(blockMaterial);
 
         logger.verbose("Calculating Data.");
-        Surrounding surrounding = SpecialBlockSearch.get().surroundingOf(eventBlockState, eventBlock.getWorld());
+        Surrounding surrounding = SpecialBlockSearch.get().surroundingOf(eventBlock, eventBlockState);
 
 
         double growthRate = surrounding.getGrowthRate();
@@ -90,6 +94,8 @@ public class PlayerInteractListener implements Listener {
         p.sendMessage("deathChance: " + deathChance);
         p.sendMessage("Biome: " + surrounding.getBiome());
 
+        if (e.getPlayer().getGameMode() == GameMode.CREATIVE && e.getAction() == Action.LEFT_CLICK_BLOCK)
+            e.setCancelled(true);
     }
 
 }
