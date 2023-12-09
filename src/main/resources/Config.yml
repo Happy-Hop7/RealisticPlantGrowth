@@ -148,6 +148,31 @@ grow_in_dark:
 
 ########################################################################################################################
 #|                                                                                                                    |#
+#| Sounds & Effects                                                                                                   |#
+#|                                                                                                                    |#
+#| Configure played sounds or particle effects used by this plugin.                                                   |#
+#|                                                                                                                    |#
+#| Available sounds and effects:                                                                                      |#
+#| Sound:            https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html                                   |#
+#| Particle Effect:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Effect.html                                  |#
+#|                                                                                                                    |#
+########################################################################################################################
+plant_death_sound_effect:
+  # Enables the sound and particle effects for dying plants.
+  enabled: true
+  # The sound played when a plant dies. Choose from available sounds (link provided above).
+  sound: BLOCK_CROP_BREAK
+  # Adjust the volume (0.0 to 1.0).
+  volume: 0.5
+  # Adjust the pitch (0.5 to 2.0, 1.0 is normal pitch).
+  pitch: 0.5
+  # The particle effect played when a plant dies. Choose from available particle effects (link provided above).
+  effect: SMOKE
+  # Adjust effect data if applicable.
+  data: 1
+
+########################################################################################################################
+#|                                                                                                                    |#
 #| Logging & Debugging                                                                                                |#
 #|                                                                                                                    |#
 #| Provides various debug logs to offer additional plugin data for troubleshooting and configuration.                 |#
@@ -168,7 +193,7 @@ bonemeal_log: false
 
 ########################################################################################################################
 #| Spooky internal settings.                                                                                          |#
-#| Please do not modify. =)                                                                                            |#
+#| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
 config-version: 1
 verbose: true

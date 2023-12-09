@@ -9,7 +9,9 @@ import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
@@ -87,6 +89,9 @@ public class ConfigManager {
     private static boolean require_all_uv_blocks;
     private static HashSet<Material> uv_blocks = new HashSet<>();
     private static HashSet<Material> grow_in_dark = new HashSet<>();
+
+    // Sound and Effects Sections
+    private static Section plant_death_sound_effect;
 
 
     /**
@@ -367,6 +372,10 @@ public class ConfigManager {
             List<String> grow_in_dark_string = config.getStringList("grow_in_dark");
             grow_in_dark = getCheckedMaterialSet(grow_in_dark_string);
 
+            // Sound & Effects
+            plant_death_sound_effect = config.getSection("plant_death_sound_effect");
+            checkSoundEffectSection();
+
 
             printConfigData();
 
@@ -442,6 +451,8 @@ public class ConfigManager {
             logger.logToFile("plant_log: " + plant_log, logFile);
             logger.logToFile("bonemeal_log: " + bonemeal_log, logFile);
             logger.logToFile("log_coords: " + log_coords, logFile);
+
+            // General settings
             logger.logToFile("language_code: " + language_code, logFile);
             logger.logToFile("enabled worlds:", logFile);
             enabled_worlds.forEach((n) -> {
@@ -454,6 +465,7 @@ public class ConfigManager {
             logger.logToFile("display_growth_rates: " + display_growth_rates, logFile);
             logger.logToFile("display_cooldown: " + display_cooldown, logFile);
 
+            // Fertilizer settings
             logger.logToFile("fertilizer_enabled: " + fertilizer_enabled, logFile);
             logger.logToFile("fertilizer_radius: " + fertilizer_radius, logFile);
             logger.logToFile("fertilizer_passiv: " + fertilizer_passiv, logFile);
@@ -467,6 +479,8 @@ public class ConfigManager {
                     fertilizer_invalid_biome_growth_rate, logFile);
             logger.logToFile("fertilizer_invalid_biome_death_chance: " +
                     fertilizer_invalid_biome_death_chance, logFile);
+
+            // UV-Light settings
             logger.logToFile("uv_enabled: " + uv_enabled, logFile);
             logger.logToFile("uv_radius: " + uv_radius, logFile);
             logger.logToFile("require_all_uv_blocks: " + require_all_uv_blocks, logFile);
@@ -480,6 +494,16 @@ public class ConfigManager {
             grow_in_dark.forEach( (materialName) -> {
                 logger.logToFile("  - " + materialName, logFile);
             });
+
+            // Sound & Effects
+            logger.logToFile("plant_death_sound_effect: ", logFile);
+            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("enabled"), logFile);
+            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("sound"), logFile);
+            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("volume"), logFile);
+            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("pitch"), logFile);
+            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("effect"), logFile);
+            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("data"), logFile);
+
         }, 6 * 20);
     }
 
@@ -574,6 +598,40 @@ public class ConfigManager {
         }
 
         return materialSet;
+    }
+
+
+    private void checkSoundEffectSection(){
+        boolean soundEffectEnabled = plant_death_sound_effect.getBoolean("enabled");
+        boolean soundValid = false;
+        boolean effectValid = false;
+
+        if(!soundEffectEnabled)
+            return;
+
+        // Checking, if String is a Bukkit sound/effect
+        String sound = plant_death_sound_effect.getString("sound");
+        String effect = plant_death_sound_effect.getString("effect");
+
+        try {
+            Sound.valueOf(sound);
+            soundValid = true;
+        } catch (IllegalArgumentException e){
+            logger.warn(sound + " is not a valid Bukkit sound!");
+        }
+
+        try {
+            Effect.valueOf(effect);
+            effectValid = true;
+        } catch (IllegalArgumentException e){
+            logger.warn(effect + " is not a valid Bukkit effect!");
+        }
+
+        if(!(soundValid && effectValid)){
+            logger.warn("Using default values instead.");
+            plant_death_sound_effect = plant_death_sound_effect.getDefaults();
+        }
+
     }
 
 
@@ -687,6 +745,10 @@ public class ConfigManager {
 
     public HashSet<Material> getGrow_In_Dark() {
         return grow_in_dark;
+    }
+
+    public Section getPlant_death_sound_effect() {
+        return plant_death_sound_effect;
     }
 
     public Map<String, Object> getBiomeGroups(){

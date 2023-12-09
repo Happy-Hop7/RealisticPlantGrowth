@@ -2,8 +2,8 @@ package de.nightevolution.utils;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
@@ -48,10 +48,14 @@ public class PlantKiller {
         } else if (instance.isAnAquaticPlant(plantToKill)) {
 
         }
+
+        playPlantDeathSound(plantToKill);
     }
 
     private void replacePlantWithRandomReplacementMaterial(Block plantToKill,
                                                            double tallGrass,  double air, double deadBush){
+        plantToKill.setType(Material.AIR);
+
         double randomMaterial = Math.random()*100;
 
         if(randomMaterial < tallGrass){
@@ -73,6 +77,9 @@ public class PlantKiller {
             randomDestroyFarmland(plantToKill, 0.75);
             plantToKill.setType(Material.GRASS);
         }
+
+
+
     }
 
     /**
@@ -106,6 +113,24 @@ public class PlantKiller {
         scheduler.runTaskLater(instance, () ->{
            plant.setType(replaceWith);
         },3 ); // 3 Ticks delay
+    }
+
+    public void playPlantDeathSound (Block plantToKill){
+        Section soundEffectSection = configManager.getPlant_death_sound_effect();
+        if (soundEffectSection.getBoolean("enabled")) {
+            Location loc = plantToKill.getLocation();
+            World world = loc.getWorld();
+            if (world == null) return;
+
+            Sound sound = Sound.valueOf(soundEffectSection.getString("sound"));
+            Effect effect = Effect.valueOf(soundEffectSection.getString("effect"));
+            Float volume = soundEffectSection.getFloat("volume");
+            Float pitch = soundEffectSection.getFloat("pitch");
+            int data = soundEffectSection.getInt("data");
+
+            world.playSound(loc, sound, volume, pitch);
+            world.playEffect(loc, effect, data);
+        }
     }
 
     /**
