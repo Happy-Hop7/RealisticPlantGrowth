@@ -1,6 +1,7 @@
 package de.nightevolution.listeners;
 
 import de.nightevolution.RealisticPlantGrowth;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockGrowEvent;
@@ -25,13 +26,28 @@ public class BlockGrowListener extends PlantGrowthListener{
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlantGrow(BlockGrowEvent e){
 
-        if(!initEventData(e)) {
-            e.setCancelled(true);
-            return;
-        }
+        if(!initEventData(e)) return;
 
         logger.verbose("BlockGrowEvent:");
 
+        if (eventBlockType == Material.AIR) {
+            logger.verbose("AIR Block Grow Event!");
+            eventBlock = getAttachedStem();
+
+            if(eventBlock == null) {
+                e.setCancelled(true);
+                return;
+            }
+            eventBlockType = eventBlock.getType();
+        }
+
+        if(!processEvent())
+            return;
+
+        if(isDeathChanceTooHigh()) {
+            e.setCancelled(true);
+            return;
+        }
 
         if(cancelDueToGrowthRate()){
             e.setCancelled(true);

@@ -14,7 +14,6 @@ import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -198,7 +197,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      */
     public void reload(){
         cm.reloadAllYAMLFiles();
-        HandlerList.unregisterAll((Plugin) RealisticPlantGrowth.getInstance());
+        HandlerList.unregisterAll(instance);
         updateVariables();
     }
 

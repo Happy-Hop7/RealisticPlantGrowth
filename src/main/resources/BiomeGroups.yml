@@ -16,7 +16,6 @@
 ########################################################################################################################
 #
 # BiomeGroups.yml defines groups of biomes categorized for specific plant growth modifications.
-# Plants in Minecraft may have varied growth rates based on the biome they're planted in.
 # This configuration allows you to tailor growth rates for different sets of biomes,
 # creating diverse environmental conditions for your in-game plants.
 #

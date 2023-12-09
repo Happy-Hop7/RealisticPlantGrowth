@@ -14,7 +14,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockEvent;
-import org.bukkit.event.block.BlockGrowEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
 public abstract class PlantGrowthListener  implements Listener{
@@ -25,7 +26,7 @@ public abstract class PlantGrowthListener  implements Listener{
     protected SpecialBlockSearch specialBlockSearch;
     protected Surrounding surrounding;
 
-    // Block Data
+    // Event Data
     protected String coords;
     protected Block eventBlock;
     protected Material eventBlockType;
@@ -75,7 +76,7 @@ public abstract class PlantGrowthListener  implements Listener{
      * @param e The BlockEvent representing the growth-related event.
      * @return True if the event data is successfully initialized and the plant is eligible for growth modification, false otherwise.
      */
-    protected boolean initEventData(BlockEvent e){
+    protected boolean initEventData(@NotNull BlockEvent e) {
         // Get coordinates and information of the event block for logging
         eventBlock = e.getBlock();
         eventWorld = eventBlock.getWorld();
@@ -83,39 +84,27 @@ public abstract class PlantGrowthListener  implements Listener{
         eventBlockType = eventBlock.getType();
 
         // Check if the world is enabled for plant growth modification
-        if(instance.isWorldDisabled(eventWorld))
-            return false;
+        return !instance.isWorldDisabled(eventWorld);
+    }
 
-        if (e instanceof BlockGrowEvent && eventBlockType == Material.AIR) {
-            logger.verbose("AIR Block Grow Event!");
-            eventBlock = getAttachedStem();
-
-            if(eventBlock == null)
-                return false;
-            logger.verbose("eventBlock not null");
-
-            eventBlockType = eventBlock.getType();
-        }
-
+    /**
+     * @return
+     * -1 = return and cancel event
+     * 0 = normal event
+     * 1 = return without canceling the event
+     */
+    protected boolean processEvent(){
+        // this check needs to be here because the eventBlock can be changed from child classes.
         if(!instance.getGrowthModifiedPlants().contains(eventBlockType))
             return false;
 
-        // Check if the event block is a plant eligible for growth modification
-        if(instance.isAPlant(eventBlock) || instance.isAnAquaticPlant(eventBlock)) {
-            logger.verbose("Plant Grow Event!");
-        }
-
         calculateSurroundingOf(eventBlock);
-
-        if(isDeathChanceTooHigh()) {
-            return false;
-        }
-
         logEvent();
 
         return true;
     }
 
+    @Nullable
     protected Block getAttachedStem() {
         for (BlockFace blockFace : blockFaceArray){
             Block relativeEventBlock = eventBlock.getRelative(blockFace);
@@ -129,7 +118,7 @@ public abstract class PlantGrowthListener  implements Listener{
         return null;
     }
 
-    protected void calculateSurroundingOf(Block eventBlock){
+    protected void calculateSurroundingOf(@NotNull Block eventBlock){
         // Retrieve surrounding environment data
         surrounding = specialBlockSearch.surroundingOf(eventBlock);
 
