@@ -498,11 +498,11 @@ public class ConfigManager {
             // Sound & Effects
             logger.logToFile("plant_death_sound_effect: ", logFile);
             logger.logToFile("  - " + plant_death_sound_effect.getBoolean("enabled"), logFile);
-            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("sound"), logFile);
-            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("volume"), logFile);
-            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("pitch"), logFile);
-            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("effect"), logFile);
-            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("data"), logFile);
+            logger.logToFile("  - " + plant_death_sound_effect.getString("sound"), logFile);
+            logger.logToFile("  - " + plant_death_sound_effect.getFloat("volume"), logFile);
+            logger.logToFile("  - " + plant_death_sound_effect.getFloat("pitch"), logFile);
+            logger.logToFile("  - " + plant_death_sound_effect.getString("effect"), logFile);
+            logger.logToFile("  - " + plant_death_sound_effect.getInt("data"), logFile);
 
         }, 6 * 20);
     }
