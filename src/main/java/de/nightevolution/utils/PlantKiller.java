@@ -8,7 +8,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * The PlantKiller class is responsible for managing the destruction and replacement of plants
+ * based on specified configurations and probabilities. It is part of the RealisticPlantGrowth plugin.
+ */
 public class PlantKiller {
 
     private final RealisticPlantGrowth instance;
@@ -17,6 +22,9 @@ public class PlantKiller {
 
     private final BukkitScheduler scheduler;
 
+    /**
+     * Constructs a new PlantKiller instance, initializing necessary dependencies.
+     */
     public PlantKiller(){
         this.instance = RealisticPlantGrowth.getInstance();
         configManager = instance.getConfigManager();
@@ -25,33 +33,47 @@ public class PlantKiller {
         scheduler = Bukkit.getScheduler();
     }
 
+    /**
+     * Kills a plant by replacing it with a random {@link Material} based on its type.
+     * Different replacement probabilities are applied based on the plant type.
+     *
+     * @param plantToKill The {@link Block} representing the plant to be killed.
+     */
     public void killPlant (Block plantToKill){
         Material plantType = plantToKill.getType();
 
         if(instance.isAPlant(plantToKill)){
 
-            // Bamboo
-
-            // Melon / Pumpkin
+            // For Melon or Pumpkin stems, replace with a random material (5% tall grass, 2% air, 78% dead bush, 22% grass)
             if (plantType == Material.MELON_STEM || plantType == Material.PUMPKIN_STEM) {
                 logger.verbose("Melon / Pumpkin Stem");
                 replacePlantWithRandomReplacementMaterial(plantToKill, 5, 7, 85);
             }
-            // farmland plants
+            // For agricultural plants, replace with a random material (10% tall grass, 2% air, 38% dead bush, 62% grass)
             else if (instance.isAgriculturalPlant(plantToKill)){
                 logger.verbose("Killing Agricultural Plant.");
                 replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 50);
             }
 
-            // ...
+            // Bamboo
+            // Additional plant type checks and replacements can be added as needed...
 
         } else if (instance.isAnAquaticPlant(plantToKill)) {
-
+            // Handle aquatic plants if implemented...
         }
 
+        // Play the death sound for the plant
         playPlantDeathSound(plantToKill);
     }
 
+    /**
+     * Replaces a plant {@link Block} with a random replacement {@link Material} based on specified probabilities.
+     *
+     * @param plantToKill The Block representing the plant to be replaced.
+     * @param tallGrass The probability of replacing with tall grass (0 to air).
+     * @param air The probability of removing the plant (setting to AIR) (tallGrass to deadBush).
+     * @param deadBush The probability of replacing with a dead bush (air to 100).
+     */
     private void replacePlantWithRandomReplacementMaterial(Block plantToKill,
                                                            double tallGrass,  double air, double deadBush){
         plantToKill.setType(Material.AIR);
@@ -78,14 +100,12 @@ public class PlantKiller {
             plantToKill.setType(Material.GRASS);
         }
 
-
-
     }
 
     /**
-     * Destroys farmland below the broken block, replacing it with coarse dirt after a 1-tick delay.
+     * Destroys farmland by replacing it with either coarse dirt or dirt based on a random chance.
      *
-     * @param blockAboveFarmland Block above the Farmland to be destroyed.
+     * @param blockAboveFarmland The {@link Block} representing the plant above the farmland to be destroyed.
      */
     public void destroyFarmland(Block blockAboveFarmland){
         Block u = blockAboveFarmland.getRelative(BlockFace.DOWN);
@@ -102,6 +122,12 @@ public class PlantKiller {
         }
     }
 
+    /**
+     * Randomly destroys farmland based on the specified destroy chance.
+     *
+     * @param blockAboveFarmland The {@link Block} representing the block above the farmland to be destroyed.
+     * @param destroyChance The probability of destroying the farmland, ranging from 0.0 to 1.0.
+     */
     public void randomDestroyFarmland(Block blockAboveFarmland, double destroyChance){
         double farmlandDestroyChance = Math.random();
         if(farmlandDestroyChance < destroyChance){
@@ -109,26 +135,47 @@ public class PlantKiller {
         }
     }
 
+    /**
+     * Replaces a plant block with the specified material after a delay.
+     *
+     * @param plant The {@link Block} representing the plant to be replaced.
+     * @param replaceWith The {@link Material} to replace the plant block with.
+     */
     public void replacePlantWith(Block plant, Material replaceWith){
         scheduler.runTaskLater(instance, () ->{
            plant.setType(replaceWith);
         },3 ); // 3 Ticks delay
     }
 
-    public void playPlantDeathSound (Block plantToKill){
+    /**
+     * Plays a {@link Sound} and a visual {@link Effect} when a plant dies.
+     * <p>
+     * Only active, if plant_death_sound_effect is enabled in the configuration.
+     * </p>
+     * @param plantToKill The {@link Block} representing the plant that is about to be killed.
+     */
+    public void playPlantDeathSound(@NotNull Block plantToKill) {
+
         Section soundEffectSection = configManager.getPlant_death_sound_effect();
+
+        // Check if the sound effect is enabled in the configuration
         if (soundEffectSection.getBoolean("enabled")) {
+
             Location loc = plantToKill.getLocation();
             World world = loc.getWorld();
             if (world == null) return;
 
+            // Extract sound effect parameters from the configuration file
             Sound sound = Sound.valueOf(soundEffectSection.getString("sound"));
             Effect effect = Effect.valueOf(soundEffectSection.getString("effect"));
             Float volume = soundEffectSection.getFloat("volume");
             Float pitch = soundEffectSection.getFloat("pitch");
             int data = soundEffectSection.getInt("data");
 
+            // Play the sound effect at the specified location with the given parameters
             world.playSound(loc, sound, volume, pitch);
+
+            // Play the visual effect at the specified location with the given parameters
             world.playEffect(loc, effect, data);
         }
     }
