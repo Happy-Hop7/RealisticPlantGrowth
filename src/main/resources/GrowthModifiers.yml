@@ -65,6 +65,7 @@
 # Therefore, as the specifications for the 'Jungle' biome are not defined, the 'Default' values
 # are applied to all biomes in the Jungle group.
 # Since 'Biome' is an empty list, every other biome is considered as 'BAD'.
+# Remember modifying BAMBOO_SAPLINGS (Bamboo in first growth stage).
 BAMBOO:
   BiomeGroup:
     Groups:
@@ -74,19 +75,6 @@ BAMBOO:
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-# Bamboo saplings share identical growth specifications with mature bamboo plants.
-BAMBOO_SAPLING:
-  BiomeGroup:
-    Groups:
-      - Jungle
   Default:
     GrowthRate: 50
     UVLightGrowthRate: 25
@@ -403,3 +391,176 @@ WHEAT:
     UVLightDeathChance: 10
     Biome: []
 
+
+########################################################################################################################
+#| SAPLINGS                                                                                                           |#
+########################################################################################################################
+
+ACACIA_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+AZALEA:
+  BiomeGroup:
+    Groups:
+      - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+BAMBOO_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+BIRCH_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+DARK_OAK_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+FLOWERING_AZALEA:
+  BiomeGroup:
+    Groups:
+      - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+JUNGLE_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+MANGROVE_PROPAGULE:
+  BiomeGroup:
+    Groups:
+      - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+OAK_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+
+SPRUCE_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
