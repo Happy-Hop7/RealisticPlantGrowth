@@ -52,7 +52,7 @@ public class PlayerInteractListener implements Listener {
 
         // Check if the world is enabled for plant growth modification
         World eventWorld = e.getPlayer().getWorld();
-        if (!instance.isWorldEnabled(eventWorld))
+        if (instance.isWorldDisabled(eventWorld))
             return;
 
         if (!instance.isClickableSeed(e.getMaterial())){

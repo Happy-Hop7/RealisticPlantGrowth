@@ -14,8 +14,8 @@ import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -23,26 +23,61 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
+/**
+ * The main class for the {@link RealisticPlantGrowth} plugin.
+ * This class serves as the entry point for the plugin and handles initialization, configuration, and event listening.
+ */
+public final class RealisticPlantGrowth extends JavaPlugin {
 
-    // For convenience, a reference to the instance of this plugin
+    /**
+     * The main class for the {@link RealisticPlantGrowth} plugin, serving as a singleton instance.
+     */
     private static RealisticPlantGrowth instance;
 
+    /**
+     * Prefix used in logging messages to identify the {@link RealisticPlantGrowth} plugin.
+     */
     private static final String classPrefix = "RealisticPlantGrowth: ";
+
+    /**
+     * The name of the debug log file used by the {@link RealisticPlantGrowth} plugin.
+     */
     private static final String logFile = "debug";
 
+    /**
+     * A flag indicating whether verbose logging is enabled in the {@link RealisticPlantGrowth} plugin.
+     */
     private static boolean verbose = false;
+
+    /**
+     * A flag indicating whether debug mode is enabled in the {@link RealisticPlantGrowth} plugin.
+     */
     private static boolean debug = false;
 
+    /**
+     * The {@link ConfigManager} used by the {@link RealisticPlantGrowth} plugin.
+     */
     private static ConfigManager cm;
+
+    /**
+     * The {@link MessageManager} used by the {@link RealisticPlantGrowth} plugin.
+     */
     private MessageManager mm;
+
+    /**
+     * The {@link BukkitAudiences} instance for managing Adventure API interactions in the {@link RealisticPlantGrowth} plugin.
+     */
     private BukkitAudiences bukkitAudiences;
 
+    /**
+     * The {@link Logger} instance for recording log messages in the {@link RealisticPlantGrowth} plugin.
+     */
     private Logger logger;
 
 
     /**
-     * Used for 'require_hoe_to_harvest' setting
+     * A set of plant materials used for the 'require_hoe_to_harvest' setting in the {@link RealisticPlantGrowth} plugin.
+     * These {@link Material}s represent agricultural plants that require a hoe to be harvested.
      */
     private static final Set<Material> agriculturalPlants = new HashSet<>(Arrays.asList(
             Material.ATTACHED_MELON_STEM,
@@ -60,8 +95,9 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     ));
 
     /**
-     * All supported land plants
-     * #saplings are added later to this List.
+     * A set of all supported land plants in the {@link RealisticPlantGrowth} plugin.
+     * This set includes various plant {@link Material}s found on land.
+     * Saplings are added later to this set.
      */
     private static final Set<Material> plants = new HashSet<>(Arrays.asList(
             Material.BAMBOO,
@@ -91,7 +127,8 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     ));
 
     /**
-     * All supported aquatic plants
+     * A set of all supported aquatic plants in the {@link RealisticPlantGrowth} plugin.
+     * These {@link Material} represent plant {@link Block}s typically found in aquatic environments.
      */
     private static final Set<Material> aquaticPlants = new HashSet<>(Arrays.asList(
             Material.KELP,
@@ -100,14 +137,19 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
             Material.TALL_SEAGRASS
     ));
 
+    /** Set of materials representing plants with growth modifications. */
     private static HashSet<Material> growthModifiedPlants;
 
-    // (Key) Clickable Seed -> (Value) Plant
+    /**
+     * Mapping of clickable seeds to their corresponding plant materials.
+     * Key: Clickable Seed ({@link Material}) , Value: Plant {@link Material}
+     */
     private static HashMap<Material, Material> clickableSeedsMap;
+
+    /** Set of materials representing clickable seeds. */
     private static HashSet<Material> clickableSeeds;
 
     @Override
-    //TODO: Add Startup Messages
     public void onEnable() {
         // Create an instance of this Plugin
         instance = this;
@@ -117,16 +159,29 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
 
         updateVariables();
         drawLogo();
-
     }
 
+    /**
+     * Registers the primary command executor for the {@link RealisticPlantGrowth} plugin.
+     * Associates the "{@code /rpg}" command with the corresponding {@link CommandManager}.
+     */
     private void registerCommands(){
         Objects.requireNonNull(instance.getCommand("rpg")).setExecutor(CommandManager.get());
     }
+
+    /**
+     * Registers the tab completer for the {@link RealisticPlantGrowth} plugin's primary command.
+     * Associates the "{@code /rpg}" command with the provided {@link TabCompleterImpl} implementation.
+     */
     private void registerTabCompleter(){
         Objects.requireNonNull(instance.getCommand("rpg")).setTabCompleter(new TabCompleterImpl());
     }
 
+    /**
+     * Registers various event listeners to handle plant growth, structure growth, block spread,
+     * fertilization, block breaking, player interactions, and player quit events.
+     * Each listener is associated with the provided instance of the {@link RealisticPlantGrowth} plugin.
+     */
     private void registerListeners(){
         new BlockGrowListener(instance);
         new StructureGrowListener(instance);
@@ -137,12 +192,21 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
         new PlayerQuitListener(instance);
     }
 
+    /**
+     * Reloads the plugin by refreshing YAML files, unregistering event handlers, and updating variables.
+     * This method is intended for use when reloading plugin configurations or making runtime adjustments.
+     */
     public void reload(){
         cm.reloadAllYAMLFiles();
         HandlerList.unregisterAll((Plugin) RealisticPlantGrowth.getInstance());
         updateVariables();
     }
 
+    /**
+     * Updates the plugin variables and configurations based on the latest settings.
+     * This method refreshes the {@link ConfigManager}, {@link MessageManager}, logging settings,
+     * and various cached data used by the plugin.
+     */
     public void updateVariables(){
         cm = ConfigManager.get();
         mm = MessageManager.get();
@@ -164,7 +228,7 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
 
     /**
      * Method used by error used, if critical error appears.
-     * Disables this plugin via the Bukkit plugin manager.
+     * Disables this plugin via the {@link Bukkit} {@link PluginManager}.
      */
     void disablePlugin(){
         logger.log("");
@@ -181,28 +245,6 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
             this.bukkitAudiences = null;
         }
     }
-
-
-
-    public @NonNull BukkitAudiences getBukkitAudiences() {
-        if (this.bukkitAudiences == null) {
-            throw new IllegalStateException(classPrefix + "Tried to access Adventure API when the plugin was disabled!");
-        }
-        return this.bukkitAudiences;
-    }
-
-
-    // Getters
-    public static RealisticPlantGrowth getInstance(){
-        return instance;
-    }
-    public ConfigManager getConfigManager(){
-        return cm;
-    }
-    public MessageManager getMessageManager(){
-        return this.mm;
-    }
-
 
 
     /**
@@ -229,19 +271,6 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
             }, 20);
         }
     }
-    public boolean isAPlant(@NotNull Block b){
-        return plants.contains(b.getType());
-    }
-    public boolean isAgriculturalPlant(@NotNull Block b){
-        return agriculturalPlants.contains(b.getType());
-    }
-    public boolean isAnAquaticPlant(@NotNull Block b){
-        return aquaticPlants.contains(b.getType());
-    }
-    public boolean canGrowInDark(@NotNull Material m){
-        return cm.getGrow_In_Dark().contains(m);
-    }
-
 
     /**
      * Identifies and collects plants with modified growth behavior from the root entries of GrowthModifiers.
@@ -283,10 +312,8 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
     }
 
     /**
-     * Retrieves the items, which the player can click to show information
-     * about the growth rates for that seed.
-     * Should be executed AFTER updateGrowthModifiedPlants() and getSaplingsTag()
-     * Iterates through "growthModifiedPlants" Set
+     * Updates the set of clickable seeds based on the specified plant and aquatic plant {@link Material}s.
+     * Additionally, performs debug logging if the debug mode is enabled.
      */
     private void updateClickableSeeds() {
         clickableSeedsMap = new HashMap<>();
@@ -354,36 +381,147 @@ public final class RealisticPlantGrowth extends JavaPlugin implements Listener {
         logger.log(logo);
 
     }
-    public static boolean isDebug() {
-        return debug;
+
+    // Getters
+
+    /**
+     * Provides access to the singleton instance of the {@link RealisticPlantGrowth} plugin.
+     *
+     * @return The singleton instance of the {@link RealisticPlantGrowth} plugin.
+     */
+    public static RealisticPlantGrowth getInstance() {
+        return instance;
     }
-    public static boolean isVerbose() {
-        return verbose;
+
+    /**
+     * Retrieves the configuration manager associated with the {@link RealisticPlantGrowth} plugin.
+     *
+     * @return The {@link ConfigManager} instance managing plugin configurations.
+     */
+    public ConfigManager getConfigManager() {
+        return cm;
     }
+
+    /**
+     * Retrieves the message manager associated with the {@link RealisticPlantGrowth} plugin.
+     *
+     * @return The {@link MessageManager} instance handling plugin messages.
+     */
+    public MessageManager getMessageManager() {
+        return this.mm;
+    }
+
+    /**
+     * Retrieves the {@link BukkitAudiences} instance associated with the plugin.
+     *
+     * @return The {@link BukkitAudiences} instance for managing Adventure API interactions.
+     * @throws IllegalStateException If attempting to access the Adventure API when the plugin is disabled.
+     */
+    public @NonNull BukkitAudiences getBukkitAudiences() {
+        if (this.bukkitAudiences == null) {
+            throw new IllegalStateException(classPrefix + "Tried to access Adventure API when the plugin was disabled!");
+        }
+        return this.bukkitAudiences;
+    }
+
+    /**
+     * Retrieves the corresponding {@link Material} that a seed converts to if the seed is placed.
+     *
+     * @param seed {@link Material} representing the seed to inquire about.
+     * @return The {@link Material} that the provided seed can grow into, or {@code null} if not applicable.
+     */
     @Nullable
-    public Material getMaterialFromSeed(Material seed){
+    public Material getMaterialFromSeed(@NotNull Material seed){
         if(clickableSeeds.contains(seed))
             return clickableSeedsMap.get(seed);
         return null;
     }
 
-    public boolean isClickableSeed(Material material){
+    /**
+     * Checks if the given {@link Block} represents a plant.
+     *
+     * @param b The {@link Block} to check.
+     * @return {@code true} if the block is a plant, {@code false} otherwise.
+     */
+    public boolean isAPlant(@NotNull Block b) {
+        return plants.contains(b.getType());
+    }
+
+    /**
+     * Checks if the given {@link Block} represents an agricultural plant.
+     *
+     * @param b The {@link Block} to check.
+     * @return {@code true} if the block is an agricultural plant, {@code false} otherwise.
+     */
+    public boolean isAgriculturalPlant(@NotNull Block b) {
+        return agriculturalPlants.contains(b.getType());
+    }
+
+    /**
+     * Checks if the given {@link Block} represents an aquatic plant.
+     *
+     * @param b The {@link Block} to check.
+     * @return {@code true} if the block is an aquatic plant, {@code false} otherwise.
+     */
+    public boolean isAnAquaticPlant(@NotNull Block b) {
+        return aquaticPlants.contains(b.getType());
+    }
+
+    /**
+     * Checks if the specified material can grow in the dark based on configuration.
+     *
+     * @param m The {@link Material} to check.
+     * @return {@code true} if the {@link Material} m can grow in the dark, {@code false} otherwise.
+     */
+    public boolean canGrowInDark(@NotNull Material m) {
+        return cm.getGrow_In_Dark().contains(m);
+    }
+
+    /**
+     * Checks if a given {@link Material} represents a clickable seed.
+     *
+     * @param material The {@link Material} to check for clickability.
+     * @return {@code true} if the material is a clickable seed, {@code false} otherwise.
+     */
+    public boolean isClickableSeed(@NotNull Material material){
         return clickableSeeds.contains(material);
     }
 
     /**
-     * Checks if plant growth modification is enabled for the specified world.
+     * Checks if plant growth modification is disabled for the specified world.
      *
-     * @param world The World to check for plant growth modification.
-     * @return True if growth modification is enabled for the world, false otherwise.
+     * @param world The {@link World} to check for plant growth modification.
+     * @return {@code true} if growth modification is enabled for the world, {@code false} otherwise.
      */
-    public boolean isWorldEnabled(World world){
-        return(cm.getEnabled_worlds().contains(world.getName()));
+    public boolean isWorldDisabled(@NotNull World world){
+        return (!cm.getEnabled_worlds().contains(world.getName()));
     }
 
+    /**
+     * Retrieves a HashSet containing {@link Material}s of plants that have growth modifications applied.
+     *
+     * @return A HashSet of Material objects representing plants with growth modifications.
+     */
     public HashSet<Material> getGrowthModifiedPlants(){
         return growthModifiedPlants;
     }
 
+    /**
+     * Checks whether the debug mode is enabled.
+     *
+     * @return {@code true} if debug mode is enabled, {@code false} otherwise.
+     */
+    public static boolean isDebug() {
+        return debug;
+    }
+
+    /**
+     * Checks whether the verbose mode is enabled.
+     *
+     * @return {@code true} if verbose mode is enabled, {@code false} otherwise.
+     */
+    public static boolean isVerbose() {
+        return verbose;
+    }
 
 }

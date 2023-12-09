@@ -83,7 +83,7 @@ public abstract class PlantGrowthListener  implements Listener{
         eventBlockType = eventBlock.getType();
 
         // Check if the world is enabled for plant growth modification
-        if(!instance.isWorldEnabled(eventWorld))
+        if(instance.isWorldDisabled(eventWorld))
             return false;
 
         if (e instanceof BlockGrowEvent && eventBlockType == Material.AIR) {
