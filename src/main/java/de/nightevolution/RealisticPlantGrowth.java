@@ -101,6 +101,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private static final Set<Material> plants = new HashSet<>(Arrays.asList(
             Material.BAMBOO,
             Material.BAMBOO_SAPLING,
+            Material.BROWN_MUSHROOM,
             Material.BEETROOTS,
             Material.CARROTS,
             Material.CAVE_VINES,
@@ -114,6 +115,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
             Material.PITCHER_CROP,
             Material.POTATOES,
             Material.PUMPKIN_STEM,
+            Material.RED_MUSHROOM,
             Material.SWEET_BERRY_BUSH,
             Material.TALL_GRASS,
             Material.TORCHFLOWER,

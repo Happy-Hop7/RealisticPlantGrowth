@@ -70,6 +70,14 @@ public class PlantKiller {
             // Handle aquatic plants if implemented...
         }
 
+        else if (instance.isAPlant(plantToKill)) {
+            if(plantType == Material.BROWN_MUSHROOM || plantType == Material.RED_MUSHROOM){
+                // For saplings, replace always with dead bush (10% tall grass, 2% air, 73% dead bush, 15% grass)
+                logger.verbose("Killing Mushroom");
+                replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 85);
+            }
+        }
+
         // Play the death sound for the plant
         playPlantDeathSound(plantToKill);
     }
