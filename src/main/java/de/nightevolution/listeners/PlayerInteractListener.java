@@ -79,7 +79,7 @@ public class PlayerInteractListener implements Listener {
         Material blockMaterial = instance.getMaterialFromSeed(e.getMaterial());
 
         // getMaterialFromSeed is nullable.
-        if(blockMaterial == null)
+        if(blockMaterial == null || !instance.getGrowthModifiedPlants().contains(blockMaterial))
             return;
 
 
