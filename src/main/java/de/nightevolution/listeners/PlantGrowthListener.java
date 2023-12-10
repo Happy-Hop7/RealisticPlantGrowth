@@ -6,6 +6,7 @@ import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.PlantKiller;
 import de.nightevolution.utils.SpecialBlockSearch;
 import de.nightevolution.utils.Surrounding;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -30,6 +31,7 @@ public abstract class PlantGrowthListener  implements Listener{
     protected String coords;
     protected Block eventBlock;
     protected Material eventBlockType;
+    protected Location eventLocation;
     protected World eventWorld;
     protected Biome eventBiome;
 
@@ -67,14 +69,6 @@ public abstract class PlantGrowthListener  implements Listener{
 
     /**
      * Initializes event-related data for plant growth modification.
-     * <p>
-     * This method extracts and stores information about the event block, world, biome, and surrounding environment.
-     * It checks if the provided event block is a plant eligible for growth modification, and if so,
-     * retrieves additional data such as death chance and growth rate from the surrounding environment.
-     * </p>
-     *
-     * @param e The BlockEvent representing the growth-related event.
-     * @return True if the event data is successfully initialized and the plant is eligible for growth modification, false otherwise.
      */
     protected boolean initEventData(@NotNull BlockEvent e) {
         // Get coordinates and information of the event block for logging
@@ -82,10 +76,12 @@ public abstract class PlantGrowthListener  implements Listener{
         eventWorld = eventBlock.getWorld();
         eventBiome = eventBlock.getBiome();
         eventBlockType = eventBlock.getType();
+        eventLocation = eventBlock.getLocation();
 
         // Check if the world is enabled for plant growth modification
         return !instance.isWorldDisabled(eventWorld);
     }
+
 
     /**
      * @return
@@ -102,6 +98,28 @@ public abstract class PlantGrowthListener  implements Listener{
         logEvent();
 
         return true;
+    }
+
+    protected boolean shouldEventBeCancelled(){
+
+        if(deathChance >= 100.0 || growthRate <= 0.0){
+            logger.verbose("Super-Event: Kill plant.");
+            killPlant();
+            return true;
+        }
+
+        if(cancelDueToGrowthRate()){
+            logger.verbose("Event cancelled due to growth rate.");
+            return true;
+        }
+
+        if(cancelDueToDeathChance()){
+            logger.verbose("Event cancelled due to death chance.");
+            killPlant();
+            return true;
+        }
+
+        return false;
     }
 
     @Nullable
@@ -127,18 +145,6 @@ public abstract class PlantGrowthListener  implements Listener{
         growthRate = surrounding.getGrowthRate();
     }
 
-    /**
-     * Check if the plant should be killed due to high death chance or zero growth rates.
-     * @return true if, plant should be killed. false otherwise.
-     */
-    protected boolean isDeathChanceTooHigh(){
-        if(deathChance >= 100.0 || growthRate <= 0.0){
-            logger.verbose("Super-Event: Kill plant.");
-            killPlant();
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Checks if the growth event should be canceled based on the configured growth rate.

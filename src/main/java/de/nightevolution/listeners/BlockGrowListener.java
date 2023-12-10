@@ -17,7 +17,6 @@ import org.bukkit.event.block.BlockGrowEvent;
  * Used to manipulate growth rates of plants.
  */
 public class BlockGrowListener extends PlantGrowthListener{
-
     public BlockGrowListener(RealisticPlantGrowth instance) {
         super(instance);
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
@@ -25,10 +24,11 @@ public class BlockGrowListener extends PlantGrowthListener{
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlantGrow(BlockGrowEvent e){
+        logger.verbose("BlockGrowEvent:");
 
         if(!initEventData(e)) return;
 
-        logger.verbose("BlockGrowEvent:");
+        logger.verbose("initialized BlockGrowEvent");
 
         if (eventBlockType == Material.AIR) {
             logger.verbose("AIR Block Grow Event!");
@@ -44,21 +44,8 @@ public class BlockGrowListener extends PlantGrowthListener{
         if(!processEvent())
             return;
 
-        if(isDeathChanceTooHigh()) {
+        if(shouldEventBeCancelled()){
             e.setCancelled(true);
-            return;
-        }
-
-        if(cancelDueToGrowthRate()){
-            e.setCancelled(true);
-            logger.verbose("Event cancelled due to growth rate.");
-            return;
-        }
-
-        if(cancelDueToDeathChance()){
-            e.setCancelled(true);
-            logger.verbose("Event cancelled due to death chance.");
-            killPlant();
             return;
         }
 

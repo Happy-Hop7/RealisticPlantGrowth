@@ -79,9 +79,8 @@ public class PlayerInteractListener implements Listener {
         Material blockMaterial = instance.getMaterialFromSeed(e.getMaterial());
 
         // getMaterialFromSeed is nullable.
-        if(blockMaterial == null || !instance.getGrowthModifiedPlants().contains(blockMaterial))
+        if(blockMaterial == null)
             return;
-
 
         // Adding a cooldown to stop click spamming which prevents unnecessary heavy area calculations.
         Long lastTime = playerCooldownMap.get(e.getPlayer().getUniqueId());
@@ -102,6 +101,17 @@ public class PlayerInteractListener implements Listener {
 
         playerCooldownMap.put(e.getPlayer().getUniqueId(), currentTime);
 
+        if (e.getPlayer().getGameMode() == GameMode.CREATIVE)
+            e.setCancelled(true);
+
+        if (!instance.isGrowthModifiedPlant(blockMaterial)){
+            logger.verbose("Vanilla behavior for: " + blockMaterial);
+            e.getPlayer().sendMessage("Vanilla behavior for: " + blockMaterial);
+            return;
+        }
+
+
+
         eventBlockState.setType(blockMaterial);
 
         logger.verbose("Calculating Data.");
@@ -121,8 +131,7 @@ public class PlayerInteractListener implements Listener {
         p.sendMessage("deathChance: " + deathChance);
         p.sendMessage("Biome: " + surrounding.getBiome());
 
-        if (e.getPlayer().getGameMode() == GameMode.CREATIVE)
-            e.setCancelled(true);
+
     }
 
     public static void clearPlayerCooldownData(UUID uuid){

@@ -463,6 +463,21 @@ BIRCH_SAPLING:
     UVLightDeathChance: 5
     Biome: []
 
+CHERRY_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Jungle
+    Jungle:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
 
 DARK_OAK_SAPLING:
   BiomeGroup:

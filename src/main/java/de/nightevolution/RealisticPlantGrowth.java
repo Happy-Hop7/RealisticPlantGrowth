@@ -136,6 +136,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
             Material.TALL_SEAGRASS
     ));
 
+    private static Set<Material> saplings;
+
     /** Set of materials representing plants with growth modifications. */
     private static HashSet<Material> growthModifiedPlants;
 
@@ -257,9 +259,19 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
         logger.verbose("Adding saplings to plant list...");
         plants.addAll(saplingSet);
+        saplings = saplingSet;
 
         if(verbose){
             Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
+                logger.logToFile("", logFile);
+                logger.logToFile("---------------------- Saplings ----------------------", logFile);
+                logger.logToFile("", logFile);
+
+                for (Material material : saplings){
+                    logger.logToFile("  - " + material, logFile);
+                }
+
+
                 logger.logToFile("", logFile);
                 logger.logToFile("---------------------- All Plants ----------------------", logFile);
                 logger.logToFile("", logFile);
@@ -440,7 +452,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Checks if the given {@link Block} represents a plant.
      *
      * @param b The {@link Block} to check.
-     * @return {@code true} if the block is a plant, {@code false} otherwise.
+     * @return {@code true} if the {@link Block} b is a plant, {@code false} otherwise.
      */
     public boolean isAPlant(@NotNull Block b) {
         return plants.contains(b.getType());
@@ -450,7 +462,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Checks if the given {@link Block} represents an agricultural plant.
      *
      * @param b The {@link Block} to check.
-     * @return {@code true} if the block is an agricultural plant, {@code false} otherwise.
+     * @return {@code true} if the {@link Block} b is an agricultural plant, {@code false} otherwise.
      */
     public boolean isAgriculturalPlant(@NotNull Block b) {
         return agriculturalPlants.contains(b.getType());
@@ -460,12 +472,31 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Checks if the given {@link Block} represents an aquatic plant.
      *
      * @param b The {@link Block} to check.
-     * @return {@code true} if the block is an aquatic plant, {@code false} otherwise.
+     * @return {@code true} if the {@link Block} b is an aquatic plant, {@code false} otherwise.
      */
     public boolean isAnAquaticPlant(@NotNull Block b) {
         return aquaticPlants.contains(b.getType());
     }
 
+    /**
+     * Checks if the given {@link Block} represents a sapling.
+     *
+     * @param b The {@link Block} to check.
+     * @return {@code true} if the {@link Block} b is a sapling, {@code false} otherwise.
+     */
+    public boolean isSapling(@NotNull Block b){
+        return saplings.contains(b.getType());
+    }
+
+    /**
+     * Checks if the given {@link Material} is a growth-modified plant.
+     *
+     * @param m The {@link Material} to check.
+     * @return {@code true} if the {@link Material} m is a growth-modified plant, {@code false} otherwise.
+     */
+    public boolean isGrowthModifiedPlant(@NotNull Material m){
+        return growthModifiedPlants.contains(m);
+    }
     /**
      * Checks if the specified material can grow in the dark based on configuration.
      *
@@ -480,7 +511,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Checks if a given {@link Material} represents a clickable seed.
      *
      * @param material The {@link Material} to check for clickability.
-     * @return {@code true} if the material is a clickable seed, {@code false} otherwise.
+     * @return {@code true} if the {@link Material} is a clickable seed, {@code false} otherwise.
      */
     public boolean isClickableSeed(@NotNull Material material){
         return clickableSeeds.contains(material);

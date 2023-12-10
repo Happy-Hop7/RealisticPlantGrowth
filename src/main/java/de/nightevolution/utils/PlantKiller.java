@@ -42,23 +42,31 @@ public class PlantKiller {
     public void killPlant (Block plantToKill){
         Material plantType = plantToKill.getType();
 
-        if(instance.isAPlant(plantToKill)){
+        if(instance.isAgriculturalPlant(plantToKill)){
 
             // For Melon or Pumpkin stems, replace with a random material (5% tall grass, 2% air, 78% dead bush, 22% grass)
             if (plantType == Material.MELON_STEM || plantType == Material.PUMPKIN_STEM) {
-                logger.verbose("Melon / Pumpkin Stem");
+                logger.verbose("Killing Melon / Pumpkin Stem");
                 replacePlantWithRandomReplacementMaterial(plantToKill, 5, 7, 85);
             }
+
             // For agricultural plants, replace with a random material (10% tall grass, 2% air, 38% dead bush, 62% grass)
-            else if (instance.isAgriculturalPlant(plantToKill)){
-                logger.verbose("Killing Agricultural Plant.");
-                replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 50);
-            }
+            logger.verbose("Killing Agricultural Plant.");
+            replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 50);
+
 
             // Bamboo
             // Additional plant type checks and replacements can be added as needed...
 
-        } else if (instance.isAnAquaticPlant(plantToKill)) {
+        }
+
+        else if (instance.isSapling(plantToKill)) {
+            // For saplings, replace always with dead bush (0% tall grass, 0% air, 100% dead bush, 0% grass)
+            logger.verbose("Killing Sapling");
+            replacePlantWithRandomReplacementMaterial(plantToKill, 0, 0, 100);
+        }
+
+        else if (instance.isAnAquaticPlant(plantToKill)) {
             // Handle aquatic plants if implemented...
         }
 
