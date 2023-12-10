@@ -50,10 +50,11 @@ public class PlantKiller {
                 replacePlantWithRandomReplacementMaterial(plantToKill, 5, 7, 85);
             }
 
-            // For agricultural plants, replace with a random material (10% tall grass, 2% air, 38% dead bush, 62% grass)
-            logger.verbose("Killing Agricultural Plant.");
-            replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 50);
-
+            else {
+                // For agricultural plants, replace with a random material (10% tall grass, 2% air, 38% dead bush, 62% grass)
+                logger.verbose("Killing Agricultural Plant.");
+                replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 50);
+            }
 
             // Bamboo
             // Additional plant type checks and replacements can be added as needed...
@@ -70,12 +71,15 @@ public class PlantKiller {
             // Handle aquatic plants if implemented...
         }
 
-        else if (instance.isAPlant(plantToKill)) {
-            if(plantType == Material.BROWN_MUSHROOM || plantType == Material.RED_MUSHROOM){
-                // For saplings, replace always with dead bush (10% tall grass, 2% air, 73% dead bush, 15% grass)
-                logger.verbose("Killing Mushroom");
-                replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 85);
-            }
+        else if (plantType == Material.BROWN_MUSHROOM || plantType == Material.RED_MUSHROOM) {
+            // For mushrooms, replace with a random material (10% tall grass, 2% air, 73% dead bush, 15% grass)
+            logger.verbose("Killing Mushroom");
+            replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 85);
+        }
+
+        else if (plantType == Material.BAMBOO || plantType == Material.BAMBOO_SAPLING) {
+            logger.verbose("Killing Bamboo");
+            replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 85);
         }
 
         // Play the death sound for the plant
@@ -162,6 +166,7 @@ public class PlantKiller {
            plant.setType(replaceWith);
         },3 ); // 3 Ticks delay
     }
+
 
     /**
      * Plays a {@link Sound} and a visual {@link Effect} when a plant dies.
