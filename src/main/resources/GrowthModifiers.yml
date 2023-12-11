@@ -202,8 +202,21 @@ GLOW_LICHEN:
     UVLightDeathChance: 5
     Biome: []
 
-
+# only relevant for the first growth stage
+# keep this if you want plant growth information when left licking with the item
 KELP:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+# plant stem
+KELP_PLANT:
   BiomeGroup:
     Groups:
       - Jungle

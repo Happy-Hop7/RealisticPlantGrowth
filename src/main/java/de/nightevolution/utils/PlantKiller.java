@@ -67,6 +67,7 @@ public class PlantKiller {
 
         else if (instance.isAnAquaticPlant(plantToKill)) {
             logger.verbose("Killing AquaticPlant");
+            replacePlantWithRandomAquaticReplacementMaterial(plantToKill, 5, 45);
             // Handle aquatic plants if implemented...
         }
 
@@ -87,6 +88,7 @@ public class PlantKiller {
 
     /**
      * Replaces a plant {@link Block} with a random replacement {@link Material} based on specified probabilities.
+     * TODO: Make this method more flexible
      *
      * @param plantToKill The Block representing the plant to be replaced.
      * @param tallGrass The probability of replacing with tall grass (0 to air).
@@ -117,6 +119,37 @@ public class PlantKiller {
         else {
             randomDestroyFarmland(plantToKill, 0.75);
             plantToKill.setType(Material.SHORT_GRASS);
+        }
+
+
+        Block supportingBlock = plantToKill.getRelative(BlockFace.DOWN);
+        if(!supportingBlock.canPlace(plantToKill.getBlockData())){
+            plantToKill.setType(Material.AIR);
+        }
+
+    }
+
+    private void replacePlantWithRandomAquaticReplacementMaterial(Block plantToKill,
+                                                           double tallSeeGrass, double seaGrass){
+        plantToKill.setType(Material.WATER);
+
+        double randomMaterial = Math.random()*100;
+
+        if(randomMaterial < tallSeeGrass){
+            replacePlantWith(plantToKill, Material.TALL_SEAGRASS);
+        }
+
+        else if (randomMaterial < seaGrass) {
+            plantToKill.setType(Material.SEAGRASS);
+        }
+
+        else {
+            plantToKill.setType(Material.WATER);
+        }
+
+        Block supportingBlock = plantToKill.getRelative(BlockFace.DOWN);
+        if(!supportingBlock.canPlace(plantToKill.getBlockData())){
+            plantToKill.setType(Material.WATER);
         }
 
     }
