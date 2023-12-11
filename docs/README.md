@@ -3,7 +3,7 @@ description: Enhance your Minecraft server with more realistic plant growth!
 coverY: 0
 ---
 
-# 👋 Welcome to Realistic Plant Growth
+# 👋 Welcome to the Realistic Plant Growth Wiki
 
 
 
