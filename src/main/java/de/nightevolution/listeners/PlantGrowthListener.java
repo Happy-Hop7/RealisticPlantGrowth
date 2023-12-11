@@ -14,7 +14,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.event.Listener;
-import org.jetbrains.annotations.NotNull;
 
 
 public abstract class PlantGrowthListener  implements Listener{
@@ -78,7 +77,13 @@ public abstract class PlantGrowthListener  implements Listener{
         if(!instance.getGrowthModifiedPlants().contains(eventBlockType))
             return false;
 
-        calculateSurroundingOf(eventBlock);
+        // Retrieve surrounding environment data
+        surrounding = specialBlockSearch.surroundingOf(eventBlock);
+
+        // Get death chance and growth rate from the surrounding environment
+        deathChance = surrounding.getDeathChance();
+        growthRate = surrounding.getGrowthRate();
+
         logEvent();
 
         return true;
@@ -107,13 +112,54 @@ public abstract class PlantGrowthListener  implements Listener{
     }
 
 
-    protected void calculateSurroundingOf(@NotNull Block eventBlock){
-        // Retrieve surrounding environment data
-        surrounding = specialBlockSearch.surroundingOf(eventBlock);
+    /**
+     * Used for:
+     *   - Bamboo
+     *   - All Vine Types
+     *   - Kelp
+     *
+     * @param plantBlock
+     * @return
+     */
+    public Block getRootBlockOf(Block plantBlock){
+        Material plantBlockType = plantBlock.getType();
+        Block returnBlock;
+        logger.verbose("getRootBlockOf(): plantBlock: " + plantBlock.toString());
 
-        // Get death chance and growth rate from the surrounding environment
-        deathChance = surrounding.getDeathChance();
-        growthRate = surrounding.getGrowthRate();
+        if (instance.isUpwardsGrowingPlant(plantBlockType)) {
+            logger.verbose("SearchDirection: UP");
+            returnBlock = iterateThroughPlantBlocks(plantBlock, BlockFace.DOWN);
+        }
+
+        else if (instance.isDownwardsGrowingPlant(plantBlockType)) {
+            logger.verbose("SearchDirection: DOWN");
+            returnBlock = iterateThroughPlantBlocks(plantBlock, BlockFace.UP);
+        }
+
+        else
+            returnBlock = plantBlock;
+
+        logger.verbose("getRootBlockOf(): returnBlock: " + returnBlock.toString());
+        logger.verbose(returnBlock.toString());
+        return returnBlock;
+    }
+
+    private Block iterateThroughPlantBlocks (Block plantBlock, BlockFace searchDirection){
+        Block currentBlock = plantBlock;
+        Block tempBlock;
+        String plantBlockTypeName = plantBlock.getType().name();
+
+
+        while (currentBlock.getType().name().startsWith(plantBlockTypeName)){
+            tempBlock = currentBlock.getRelative(searchDirection);
+
+            if (tempBlock.getType().name().startsWith(plantBlockTypeName))
+                currentBlock = tempBlock;
+
+            else break;
+        }
+
+        return currentBlock;
     }
 
 

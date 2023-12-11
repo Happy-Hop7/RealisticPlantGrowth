@@ -1,9 +1,7 @@
 package de.nightevolution.listeners;
 
 import de.nightevolution.RealisticPlantGrowth;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockSpreadEvent;
@@ -43,7 +41,7 @@ public class BlockSpreadListener extends PlantGrowthListener{
 
     private boolean initEventData(BlockSpreadEvent e){
         // Get coordinates and information of the event block for logging
-        eventBlock = getSourceBlock(e.getSource());
+        eventBlock = getRootBlockOf(e.getSource());
         eventLocation = eventBlock.getLocation();
         eventWorld = eventBlock.getWorld();
         eventBiome = eventBlock.getBiome();
@@ -53,22 +51,4 @@ public class BlockSpreadListener extends PlantGrowthListener{
         return !instance.isWorldDisabled(eventWorld);
     }
 
-    /**
-     * Used if planttype == Bamboo || planttype == Kelp
-     * @param leaveBlock
-     * @return
-     */
-    public Block getSourceBlock(Block leaveBlock){
-        Material leaveBlockType = leaveBlock.getType();
-        if (leaveBlockType == Material.BAMBOO || leaveBlockType == Material.KELP){
-            Block currentBlock = leaveBlock;
-            while (leaveBlockType == currentBlock.getRelative(BlockFace.DOWN).getType()){
-                currentBlock = currentBlock.getRelative(BlockFace.DOWN);
-            }
-            return currentBlock;
-        }
-
-        else
-            return leaveBlock;
-    }
 }
