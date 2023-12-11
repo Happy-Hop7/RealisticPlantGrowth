@@ -89,6 +89,13 @@ public abstract class PlantGrowthListener  implements Listener{
         return true;
     }
 
+    /**
+     * Determines whether the plant growth event should be cancelled based on configured parameters.
+     * This method checks conditions such as death chance, growth rate, and specific cancellation rules
+     * to decide if the event should be cancelled, and takes appropriate actions if necessary.
+     *
+     * @return {@code true} if the event should be cancelled, {@code false} otherwise.
+     */
     protected boolean shouldEventBeCancelled(){
 
         if(deathChance >= 100.0 || growthRate <= 0.0){
@@ -113,13 +120,12 @@ public abstract class PlantGrowthListener  implements Listener{
 
 
     /**
-     * Used for:
-     *   - Bamboo
-     *   - All Vine Types
-     *   - Kelp
+     * Retrieves the root {@link Block} of a specified plant block, considering the growth direction of the plant.
+     * This method is designed for plants that grow either upwards (e.g., bamboo, kelp) or downwards
+     * (e.g., twisted vines).
      *
-     * @param plantBlock
-     * @return
+     * @param plantBlock The {@link Block} representing the plant.
+     * @return The root {@link Block} of the specified plant.
      */
     public Block getRootBlockOf(Block plantBlock){
         Material plantBlockType = plantBlock.getType();
@@ -144,6 +150,13 @@ public abstract class PlantGrowthListener  implements Listener{
         return returnBlock;
     }
 
+    /**
+     * Iterates through plant {@link Block} in the specified search direction to find the root block.
+     *
+     * @param plantBlock      The current {@link Block} representing the plant.
+     * @param searchDirection The direction ({@link BlockFace}) to search for the root block.
+     * @return The root {@link Block} of the specified plant.
+     */
     private Block iterateThroughPlantBlocks (Block plantBlock, BlockFace searchDirection){
         Block currentBlock = plantBlock;
         Block tempBlock;
@@ -224,6 +237,10 @@ public abstract class PlantGrowthListener  implements Listener{
         }
     }
 
+    /**
+     * Logs details of the plant growth event, including coordinates, biome, death chance, and growth rate.
+     * If coordinate logging is enabled in the configuration, it includes the block's X, Y, and Z coordinates in the log.
+     */
     protected void logEvent(){
         // Log coordinates if logging is enabled
         if (configManager.isLog_Coords()) {
