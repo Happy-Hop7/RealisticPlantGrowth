@@ -14,9 +14,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 
 public abstract class PlantGrowthListener  implements Listener{
@@ -39,6 +37,8 @@ public abstract class PlantGrowthListener  implements Listener{
     protected double deathChance;
 
     protected BlockFace[] blockFaceArray = {
+            BlockFace.UP,
+            BlockFace.DOWN,
             BlockFace.NORTH,
             BlockFace.SOUTH,
             BlockFace.WEST,
@@ -66,22 +66,6 @@ public abstract class PlantGrowthListener  implements Listener{
         configManager = instance.getConfigManager();
 
     }
-
-    /**
-     * Initializes event-related data for plant growth modification.
-     */
-    protected boolean initEventData(@NotNull BlockEvent e) {
-        // Get coordinates and information of the event block for logging
-        eventBlock = e.getBlock();
-        eventWorld = eventBlock.getWorld();
-        eventBiome = eventBlock.getBiome();
-        eventBlockType = eventBlock.getType();
-        eventLocation = eventBlock.getLocation();
-
-        // Check if the world is enabled for plant growth modification
-        return !instance.isWorldDisabled(eventWorld);
-    }
-
 
     /**
      * @return
@@ -122,19 +106,6 @@ public abstract class PlantGrowthListener  implements Listener{
         return false;
     }
 
-    @Nullable
-    protected Block getAttachedStem() {
-        for (BlockFace blockFace : blockFaceArray){
-            Block relativeEventBlock = eventBlock.getRelative(blockFace);
-            if(relativeEventBlock.getType() == Material.MELON_STEM){
-                return relativeEventBlock;
-            }
-            if(relativeEventBlock.getType() == Material.PUMPKIN_STEM){
-                return relativeEventBlock;
-            }
-        }
-        return null;
-    }
 
     protected void calculateSurroundingOf(@NotNull Block eventBlock){
         // Retrieve surrounding environment data
@@ -166,21 +137,17 @@ public abstract class PlantGrowthListener  implements Listener{
     protected boolean cancelDueToDeathChance(){
 
         if(eventBlock.getBlockData() instanceof Ageable crop){
-            if(crop.getAge() != crop.getMaximumAge()) {
+            if((crop.getAge() != crop.getMaximumAge()) && (instance.isAgriculturalPlant(eventBlock))) {
                 deathChance = (deathChance / crop.getMaximumAge());
-                logger.verbose("Using Ageable Interface for DeathChance.");
-                logger.verbose("Partial DeathChance: " + deathChance);
-                logger.verbose("Max Age of crop: " + (crop.getMaximumAge()));
+                logger.verbose("Using Ageable Interface for partial DeathChance.");
             }
 
-            else{
-                logger.verbose("Using full DeathChance for fully grown plants.");
-                logger.verbose("DeathChance: " + deathChance);
-                logger.verbose("Max Age of crop: " + (crop.getMaximumAge()));
-            }
+            else logger.verbose("Using Ageable Interface with full DeathChance.");
 
+            logger.verbose("Age of crop: " + crop.getAge() + " / " + crop.getMaximumAge());
         }
 
+        logger.verbose("DeathChance: " + deathChance);
         return ((Math.random() * 100) < deathChance);
     }
 

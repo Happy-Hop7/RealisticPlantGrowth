@@ -130,7 +130,21 @@ CARROT:
     UVLightDeathChance: 5
     Biome: []
 
+# only relevant for the first growth stage
+# keep this if you want plant growth information when left licking with the item
 CAVE_VINES:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+# Plant stem
+CAVE_VINES_PLANT:
   BiomeGroup:
     Groups:
       - Jungle
@@ -344,7 +358,8 @@ VINE:
     UVLightDeathChance: 5
     Biome: []
 
-
+# only relevant for the first growth stage
+# keep this if you want plant growth information when left licking with the item
 TWISTING_VINES:
   BiomeGroup:
     Groups:
@@ -355,6 +370,19 @@ TWISTING_VINES:
     NaturalDeathChance: 0
     UVLightDeathChance: 5
     Biome: []
+
+# Plant stem
+TWISTING_VINES_PLANT:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
 
 WARPED_FUNGUS:
   BiomeGroup:
@@ -367,8 +395,21 @@ WARPED_FUNGUS:
     UVLightDeathChance: 5
     Biome: []
 
-
+# only relevant for the first growth stage
+# keep this if you want plant growth information when left licking with the item
 WEEPING_VINES:
+  BiomeGroup:
+    Groups:
+      - Jungle
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 0
+    UVLightDeathChance: 5
+    Biome: []
+
+# Plant stem
+WEEPING_VINES_PLANT:
   BiomeGroup:
     Groups:
       - Jungle

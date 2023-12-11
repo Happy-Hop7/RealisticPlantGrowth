@@ -56,8 +56,6 @@ public class PlantKiller {
                 replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 50);
             }
 
-            // Bamboo
-            // Additional plant type checks and replacements can be added as needed...
 
         }
 
@@ -68,6 +66,7 @@ public class PlantKiller {
         }
 
         else if (instance.isAnAquaticPlant(plantToKill)) {
+            logger.verbose("Killing AquaticPlant");
             // Handle aquatic plants if implemented...
         }
 
@@ -77,8 +76,8 @@ public class PlantKiller {
             replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 85);
         }
 
-        else if (plantType == Material.BAMBOO || plantType == Material.BAMBOO_SAPLING) {
-            logger.verbose("Killing Bamboo");
+        else {
+            logger.verbose("No specific killing modifier for: " + plantType);
             replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 85);
         }
 
@@ -117,7 +116,7 @@ public class PlantKiller {
 
         else {
             randomDestroyFarmland(plantToKill, 0.75);
-            plantToKill.setType(Material.GRASS);
+            plantToKill.setType(Material.SHORT_GRASS);
         }
 
     }

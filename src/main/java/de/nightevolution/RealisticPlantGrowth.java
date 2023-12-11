@@ -103,27 +103,32 @@ public final class RealisticPlantGrowth extends JavaPlugin {
             Material.BAMBOO_SAPLING,
             Material.BROWN_MUSHROOM,
             Material.BEETROOTS,
+            Material.CACTUS,
             Material.CARROTS,
             Material.CAVE_VINES,
+            Material.CAVE_VINES_PLANT,
             Material.CHORUS_FLOWER,
             Material.COCOA,
             Material.CRIMSON_FUNGUS,
             Material.GLOW_LICHEN,
-            Material.GRASS,
+            Material.SHORT_GRASS,
             Material.MELON_STEM,
             Material.NETHER_WART,
             Material.PITCHER_CROP,
             Material.POTATOES,
             Material.PUMPKIN_STEM,
             Material.RED_MUSHROOM,
+            Material.SUGAR_CANE,
             Material.SWEET_BERRY_BUSH,
             Material.TALL_GRASS,
             Material.TORCHFLOWER,
             Material.TORCHFLOWER_CROP,
             Material.TWISTING_VINES,
+            Material.TWISTING_VINES_PLANT,
             Material.VINE,
             Material.WARPED_FUNGUS,
             Material.WEEPING_VINES,
+            Material.WEEPING_VINES_PLANT,
             Material.WHEAT
     ));
 
@@ -138,6 +143,30 @@ public final class RealisticPlantGrowth extends JavaPlugin {
             Material.TALL_SEAGRASS
     ));
 
+    private static final Set<Material> upwardsGrowingPlants = new HashSet<>(Arrays.asList(
+            Material.BAMBOO,
+            Material.BAMBOO_SAPLING,
+            Material.KELP,
+            Material.KELP_PLANT,
+            Material.SUGAR_CANE,
+            Material.CACTUS,
+            Material.TWISTING_VINES,
+            Material.TWISTING_VINES_PLANT
+    ));
+
+    private static final Set<Material> downwardsGrowingPlants = new HashSet<>(Arrays.asList(
+            Material.CAVE_VINES,
+            Material.CAVE_VINES_PLANT,
+            Material.WEEPING_VINES,
+            Material.WEEPING_VINES_PLANT
+    ));
+
+    private static final Set<Material> growEventReturnsAirBlockPlants = new HashSet<>(Arrays.asList(
+            Material.MELON_STEM,
+            Material.PUMPKIN_STEM,
+            Material.SUGAR_CANE,
+            Material.CACTUS
+    ));
     private static Set<Material> saplings;
 
     /** Set of materials representing plants with growth modifications. */
@@ -517,6 +546,18 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      */
     public boolean isClickableSeed(@NotNull Material material){
         return clickableSeeds.contains(material);
+    }
+
+    public boolean isUpwardsGrowingPlant(@NotNull Material material){
+        return upwardsGrowingPlants.contains(material);
+    }
+
+    public boolean isDownwardsGrowingPlant(@NotNull Material material){
+        return downwardsGrowingPlants.contains(material);
+    }
+
+    public boolean isGrowEventReturnsAirBlockPlant(@NotNull Material material){
+        return growEventReturnsAirBlockPlants.contains(material);
     }
 
     /**

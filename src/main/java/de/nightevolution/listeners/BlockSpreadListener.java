@@ -24,7 +24,7 @@ public class BlockSpreadListener extends PlantGrowthListener{
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlantGrow(BlockSpreadEvent e){
-        logger.verbose("BlockSpreadEvent:");
+        logger.verbose("-------------------- BEGIN BlockSpreadEvent --------------------");
 
         if(!initEventData(e)) return;
 
@@ -38,7 +38,7 @@ public class BlockSpreadListener extends PlantGrowthListener{
             return;
         }
         checkFertilizerUsage();
-        logger.verbose("Normal event");
+        logger.verbose("-------------------- Normal END BlockSpreadEvent --------------------");
     }
 
     private boolean initEventData(BlockSpreadEvent e){
