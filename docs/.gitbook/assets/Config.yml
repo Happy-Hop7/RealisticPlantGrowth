@@ -1,0 +1,199 @@
+# RealisticPlantGrowth Configuration File
+#
+# For additional configuration details, visit the RealisticPlantGrowth page at http://dev.bukkit.org.
+#
+# A complete list of biomes can be found at the Spigot API documentation:
+# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
+#
+# Information on plants and crops can be referenced in the "Material" list at:
+# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+#
+# If you appreciate this plugin, please consider showing your support with a donation.
+# Your contributions help maintain and develop the plugin further. Thank you! ❤️
+#
+# Donation link: https://www.buymeacoffee.com/TheRealPredator
+#
+########################################################################################################################
+#|                                                                                                                    |#
+#| General Settings                                                                                                   |#
+#|                                                                                                                    |#
+########################################################################################################################
+# Language setting for the plugin. Language files are located in /RealisticPlantGrowth/local
+language_code: en-US
+
+# Plugin prefix for console logs. Does not affect chat messages.
+# Supports miniMessage format and legacy &-color codes (Details at https://docs.advntr.dev/minimessage/format.html)
+plugin_prefix: "[RealisticPlantGrowth] "
+
+# List of worlds where this plugin is active. Worlds not listed here will use default growth behavior.
+enabled_worlds:
+  - world
+  - world_nether
+  - world_end
+
+# Limits the use of bonemeal on plants to the specified amount.
+# Setting 'bonemeal_limit: 0' completely disables the use of bone meal.
+# Negative numbers deactivate this feature (e.g., 'bonemeal_limit: -1').
+bonemeal_limit: 3
+
+# Required natural sky light level for plant growth.
+# Sky light level: 0: allows underground growth. (Additional light sources are still necessary.)
+# Sky light level 10-12: corresponds to sunlight filtered through leaves.
+# Sky light level 15: plants only grow in direct sunlight. (Allows glass ceilings.)
+min_natural_light: 10
+
+# When a player harvests a plant that has grown on farmland, the farmland is automatically replaced with a
+# coarse dirt block. Consequently, the player is required to re-hoe the area to prepare it for seeding new plants.
+# Setting 'destroy_farmland' to 'true' enables this feature.
+destroy_farmland: true
+
+# Determines whether a player needs a hoe to harvest plants. If set to 'true', players must use a hoe for harvesting.
+# If 'require_hoe' is set to 'true' and a plant is harvested without a hoe, the plant will not drop anything.
+require_hoe: true
+
+# Displays potential growth rates for an item in hand when a player left-clicks the ground.
+# Only shows growth rates for the biome the player is currently in.
+display_growth_rates: true
+
+# Only active, if display_growth_rates is enabled.
+# Time in seconds before the growth rates are shown to the player again.
+# Prevents spam clicking and therefore heavy area scans.
+display_cooldown: 30
+
+########################################################################################################################
+#|                                                                                                                    |#
+#| Fertilizer                                                                                                         |#
+#|                                                                                                                    |#
+#| Enables Composters to fertilize crops in the surrounding area, allowing for growth in normally uninhabitable areas.|#
+#|                                                                                                                    |#
+########################################################################################################################
+# Enables the use of composters to fertilize crops in the surrounding area.
+fertilizer_enabled: true
+
+# Plants within this block radius will grow at the 'fertilizer_growth_rate' (see below).
+# Higher values may increase server resource consumption and cause lag (Maximum 15 blocks).
+fertilizer_radius: 10
+
+# true: Fertilizer effects do not deplete composters to fertilize the surroundings.
+# false: Players must actively fill the composter to achieve fertilization effects.
+fertilizer_passiv: true
+
+# The 'fertilizer_boost_growth_rate' is a percentage added to biome-specific growth rates,
+# if a composter is within the configured 'fertilizer_radius'.
+# For example, a biome-specific growth rate of wheat in a desert is 20%. A 'fertilizer_boost_growth_rate' of 25.0%
+# results in a growth rate of 45.0% for wheat plants.
+# Note that specific plant/biome growth and death rates take effect regardless of fertilizer.
+fertilizer_boost_growth_rate: 20.0
+
+# Allows a growth rate above 100.0%.
+# If a plant has a biome-specific growth rate of 100.0% and this is set to be true,
+# the resulting growth rate can exceed 100.0% (e.g., 125.0%).
+# Otherwise, the growth rate is capped at 100.0%.
+fertilizer_allow_growth_rate_above_100: true
+
+# If set to true, Fertilizer allows plants to thrive in 'invalid' biomes.
+# If set to false, plant growth is limited to biomes explicitly listed in 'Biome' within GrowthModifiers.yml.
+fertilizer_enables_growth_in_invalid_biomes: true
+
+# Growth rate of plants in invalid biomes with fertilizer access.
+# Only active if 'fertilizer_enables_growth_in_invalid_biomes' is set to 'true',
+# and the plant is in an invalid biome.
+fertilizer_invalid_biome_growth_rate: 35.0
+
+# Probability of plant death in an invalid biome despite fertilizer supply.
+# This rule is effective only when 'fertilizer_enables_growth_in_invalid_biomes'
+# is set to 'true' and the plant is located in an inappropriate biome.
+# If the Growth process of the plant consists of multiple growth stages, the death rate is internally
+# adjusted by dividing it by the number of growth stages
+fertilizer_invalid_biome_death_chance: 25.0
+
+
+########################################################################################################################
+#|                                                                                                                    |#
+#| UV-Light                                                                                                           |#
+#|                                                                                                                    |#
+#| Artificial light source that allows plants within its radius to grow where the sky light level is lower            |#
+#| than the 'min_natural_light' value. This allows the cultivation of plants underground or in buildings without      |#
+#| direct sky light access.                                                                                           |#
+#| Note: Plants still require a certain light level to grow.                                                          |#
+#|                                                                                                                    |#
+########################################################################################################################
+# Enable use of UV-Light Blocks
+uv_enabled: true
+
+# List of blocks that can function as UV-Light sources; they don't need to emit light.
+uv_blocks:
+  - OCHRE_FROGLIGHT
+  - PEARLESCENT_FROGLIGHT
+  - VERDANT_FROGLIGHT
+
+# Determines whether a plant requires all UV-Light Blocks listed above to grow.
+#   true: All blocks in 'uv_blocks' are necessary for plant growth.
+#   false: Only one of the blocks listed in 'uv_blocks' is required for plant growth.
+require_all_uv_blocks: true
+
+# Radius around a UV-Light block that affects growth.
+# Higher values consume more server resources and may lead to server lag. (Maximum 15 blocks)
+uv_radius: 10
+
+# List of plants that grow without requiring natural sky light, allowing growth
+# in artificial light sources like torches and lanterns (not the same as UV-Light).
+# Use official MATERIAL_NAMES to add items to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
+grow_in_dark:
+  - RED_MUSHROOM
+  - BROWN_MUSHROOM
+  - NETHER_WART
+  - COCOA
+
+
+########################################################################################################################
+#|                                                                                                                    |#
+#| Sounds & Effects                                                                                                   |#
+#|                                                                                                                    |#
+#| Configure played sounds or particle effects used by this plugin.                                                   |#
+#|                                                                                                                    |#
+#| Available sounds and effects:                                                                                      |#
+#| Sound:            https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html                                   |#
+#| Particle Effect:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Effect.html                                  |#
+#|                                                                                                                    |#
+########################################################################################################################
+plant_death_sound_effect:
+  # Enables the sound and particle effects for dying plants.
+  enabled: true
+  # The sound played when a plant dies. Choose from available sounds (link provided above).
+  sound: BLOCK_CROP_BREAK
+  # Adjust the volume (0.0 to 1.0).
+  volume: 0.5
+  # Adjust the pitch (0.5 to 2.0, 1.0 is normal pitch).
+  pitch: 0.5
+  # The particle effect played when a plant dies. Choose from available particle effects (link provided above).
+  effect: SMOKE
+  # Adjust effect data if applicable.
+  data: 1
+
+########################################################################################################################
+#|                                                                                                                    |#
+#| Logging & Debugging                                                                                                |#
+#|                                                                                                                    |#
+#| Provides various debug logs to offer additional plugin data for troubleshooting and configuration.                 |#
+#|                                                                                                                    |#
+########################################################################################################################
+# Enables Debug-Mode. Can get spammy, use for only for debugging.
+debug_log:    true
+
+# Logs Tree Growing Events in a separate log file.
+tree_log:     false
+
+# Logs Plant Growing Events in a separate log file.
+plant_log:    false
+
+# Logs Bonemeal Usage Events in a separate log file.
+bonemeal_log: false
+
+
+########################################################################################################################
+#| Spooky internal settings.                                                                                          |#
+#| Please do not modify. =)                                                                                           |#
+########################################################################################################################
+config-version: 1
+verbose: true

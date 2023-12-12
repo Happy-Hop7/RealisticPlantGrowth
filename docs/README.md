@@ -3,30 +3,26 @@ description: Enhance your Minecraft server with more realistic plant growth!
 coverY: 0
 ---
 
-# 👋 Welcome to the Realistic Plant Growth Wiki
+# 👋 Welcome to Realistic Plant Growth
 
-
-
-{% hint style="danger" %}
-**Note:** `Realistic Plant Growth` is still in an early phase of development. If you encounter any problems, please open an issue on our GitHub page. We will investigate the occurring problem and try to fix it as soon as possible.
+{% hint style="warning" %}
+RealisticPlantGrowth is still in an early phase of development. \
+If you encounter any problems, please open an issue with a detailed error description. \
+I will investigate the occurring problem and try to fix it as soon as possible.
 {% endhint %}
 
 ## Overview
 
-`Realistic Plant Growth` offers a seamless way to simulate lifelike plant growth, allowing you to tweak growth rates and even limit plant growth to specific biomes.
-
-Tailor its customizable settings to suit your server's unique needs and bring a touch of realism to your virtual world.
-
-
+Realistic Plant Growth is a powerful Spigot/Paper plugin that brings a new level of realism to the Minecraft flora, allowing you to fine-tune growth parameters on a per-biome basis.
 
 ## Quick links
 
-{% content-ref url="for-contributors/support-me.md" %}
-[support-me.md](for-contributors/support-me.md)
-{% endcontent-ref %}
-
 {% content-ref url="overview/features/" %}
 [features](overview/features/)
+{% endcontent-ref %}
+
+{% content-ref url="for-contributors/support-me.md" %}
+[support-me.md](for-contributors/support-me.md)
 {% endcontent-ref %}
 
 ## Get Started

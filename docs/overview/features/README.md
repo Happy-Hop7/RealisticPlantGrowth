@@ -1,7 +1,9 @@
 # ✨ Features
 
-{% hint style="danger" %}
-**Note:** RealisticPlantGrowth is still in an early phase of development. If you encounter any problems, please open an issue on our GitHub page. We will investigate the occurring problem and try to fix it as soon as possible.
+{% hint style="warning" %}
+RealisticPlantGrowth is still in an early phase of development. \
+If you encounter any problems, please open an issue with a detailed error description. \
+I will investigate the occurring problem and try to fix it as soon as possible.
 {% endhint %}
 
 ## 1. Agricultural Crops Require Hoe
