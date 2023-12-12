@@ -129,7 +129,7 @@ public abstract class PlantGrowthListener  implements Listener{
      */
     public Block getRootBlockOf(Block plantBlock){
         Material plantBlockType = plantBlock.getType();
-        Block returnBlock;
+        Block returnBlock = plantBlock;
         logger.verbose("getRootBlockOf(): plantBlock: " + plantBlock);
 
         if (instance.isUpwardsGrowingPlant(plantBlockType)) {
@@ -142,8 +142,9 @@ public abstract class PlantGrowthListener  implements Listener{
             returnBlock = iterateThroughPlantBlocks(plantBlock, BlockFace.UP);
         }
 
-        else
-            returnBlock = plantBlock;
+        if (plantBlockType == Material.VINE || plantBlockType == Material.GLOW_LICHEN) {
+            // implement floodfill search algorithm
+        }
 
         logger.verbose("getRootBlockOf(): returnBlock: " + returnBlock.toString());
         logger.verbose(returnBlock.toString());
