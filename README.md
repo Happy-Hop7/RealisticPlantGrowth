@@ -3,29 +3,37 @@
 Realistic Plant Growth is a powerful Spigot/Paper plugin that brings a new level of realism to
 the Minecraft flora, allowing you to fine-tune growth parameters on a per-biome basis.
 
-This Plugin is inspired by the plugin: [PwnPlantGrowth](https://github.com/Pwn9/PwnPlantGrowth) by [Pwn9](https://github.com/Pwn9).
+This plugin draws inspiration from [PwnPlantGrowth](https://github.com/Pwn9/PwnPlantGrowth) by [Pwn9](https://github.com/Pwn9). <br>
 
-In my version, I've updated the plugin to adhere to current Minecraft plugin standards, fixed various bugs, and restored features that were previously not working as intended.
+Compared to the PwnPlantGrowth plugin, this iteration has been elevated to meet current Minecraft plugin standards, with various issues addressed and functionalities restored to their intended operation. <br>
+Additionally, I've introduced more configurable plants, integrated plant death sounds and effects, implemented random replacement materials upon plant death, <br>
+and improved the mechanics of UV-light and fertilizer for a more robust and immersive experience.
+
+It's important to note that development is ongoing, and additional features are planned for the future.
 
 Plugin development by: PredatorG7
 
+> [!WARNING]
+> RealisticPlantGrowth is still in an early phase of development. <br>
+> If you encounter any problems, please open an issue with a detailed error description. <br>
+> I will investigate the occurring problem and try to fix it as soon as possible.
 
-# Wiki
-Our wiki is here
+## Wiki
+Check out our [wiki](#) for detailed documentation.
 
-> [!IMPORTANT]
+> [!CAUTION]
 > Add Wiki Link when this plugin is published.
 
 
 
-# License
+## License
 
 Realistic Plant Growth is licensed under the terms of the GNU General Public License (GPL) version 3 
 or any later versions, as published by the Free Software Foundation. 
 This means you are free to redistribute and modify the program, subject to the conditions outlined 
 in the license.
 
-## Warranty Disclaimer 
+### Warranty Disclaimer 
 Realistic Plant Growth is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
 without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 See the GNU General Public License for more details.
@@ -33,16 +41,16 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with Realistic Plant Growth. <br>
 If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
 
-## Contribution and Collaboration
+### Contribution and Collaboration
 Contributions to Realistic Plant Growth are welcome under the terms of the GPL. 
 If you choose to contribute, you agree that your contributions will also be subject to the license terms outlined in the GPL.
 
 
 
 
-# Useful Bukkit/Spigot Resources
+## Useful Bukkit/Spigot Resources
 
-Item/Plant Materials: [https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html). <br>
-All available Biomes: [https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html). <br>
-Sounds: [https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html). <br> 
-Effects: [https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Effect.html](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Effect.html).
+- Item/Plant Materials: [Material Documentation](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
+- All available Biomes: [Biome Documentation](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html)
+- Sounds: [Sound Documentation](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html)
+- Effects: [Effect Documentation](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Effect.html)
