@@ -130,15 +130,15 @@ public abstract class PlantGrowthListener  implements Listener{
     public Block getRootBlockOf(Block plantBlock){
         Material plantBlockType = plantBlock.getType();
         Block returnBlock;
-        logger.verbose("getRootBlockOf(): plantBlock: " + plantBlock.toString());
+        logger.verbose("getRootBlockOf(): plantBlock: " + plantBlock);
 
         if (instance.isUpwardsGrowingPlant(plantBlockType)) {
-            logger.verbose("SearchDirection: UP");
+            logger.verbose("SearchDirection: DOWN");
             returnBlock = iterateThroughPlantBlocks(plantBlock, BlockFace.DOWN);
         }
 
         else if (instance.isDownwardsGrowingPlant(plantBlockType)) {
-            logger.verbose("SearchDirection: DOWN");
+            logger.verbose("SearchDirection: UP");
             returnBlock = iterateThroughPlantBlocks(plantBlock, BlockFace.UP);
         }
 

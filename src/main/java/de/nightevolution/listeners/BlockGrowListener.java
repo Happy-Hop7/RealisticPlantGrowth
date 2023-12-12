@@ -37,6 +37,7 @@ public class BlockGrowListener extends PlantGrowthListener{
         if (eventBlockType == Material.AIR) {
             logger.verbose("AIR Block Grow Event!");
             eventBlock = getSoureFromAirBlock();
+            eventBlock = getRootBlockOf(eventBlock);
             eventBlockType = eventBlock.getType();
         }
 
@@ -88,6 +89,7 @@ public class BlockGrowListener extends PlantGrowthListener{
         for (BlockFace blockFace : blockFaceArray){
             Block relativeEventBlock = eventBlock.getRelative(blockFace);
             if (instance.isGrowEventReturnsAirBlockPlant(relativeEventBlock.getType())){
+                logger.verbose("getSourceFromAir(): " + relativeEventBlock);
                 return relativeEventBlock;
             }
         }

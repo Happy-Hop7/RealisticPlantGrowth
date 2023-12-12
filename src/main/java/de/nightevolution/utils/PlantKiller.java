@@ -10,6 +10,10 @@ import org.bukkit.block.data.Levelled;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * The PlantKiller class is responsible for managing the destruction and replacement of plants
  * based on specified configurations and probabilities. It is part of the RealisticPlantGrowth plugin.
@@ -19,8 +23,14 @@ public class PlantKiller {
     private final RealisticPlantGrowth instance;
     private final ConfigManager configManager;
     private final Logger logger;
-
     private final BukkitScheduler scheduler;
+
+    private final Set<Material> plantReplacementMaterials = new HashSet<>(Arrays.asList(
+            Material.SHORT_GRASS,
+            Material.TALL_GRASS,
+            Material.DEAD_BUSH,
+            Material.AIR
+    ));
 
     /**
      * Constructs a new PlantKiller instance, initializing necessary dependencies.
@@ -47,39 +57,36 @@ public class PlantKiller {
             // For Melon or Pumpkin stems, replace with a random material (5% tall grass, 2% air, 78% dead bush, 22% grass)
             if (plantType == Material.MELON_STEM || plantType == Material.PUMPKIN_STEM) {
                 logger.verbose("Killing Melon / Pumpkin Stem");
-                replacePlantWithRandomReplacementMaterial(plantToKill, 5, 7, 85);
+                replaceWithRandomMaterial(plantToKill, 5, 7, 85, 3);
             }
 
             else {
                 // For agricultural plants, replace with a random material (10% tall grass, 2% air, 38% dead bush, 62% grass)
                 logger.verbose("Killing Agricultural Plant.");
-                replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 50);
+                replaceWithRandomMaterial(plantToKill, 32, 3, 30, 1);
             }
 
 
         }
 
         else if (instance.isSapling(plantToKill)) {
-            // For saplings, replace always with dead bush (0% tall grass, 0% air, 100% dead bush, 0% grass)
             logger.verbose("Killing Sapling");
-            replacePlantWithRandomReplacementMaterial(plantToKill, 0, 0, 100);
+            replaceWithRandomMaterial(plantToKill, 0, 0, 1, 0);
         }
 
         else if (instance.isAnAquaticPlant(plantToKill)) {
             logger.verbose("Killing AquaticPlant");
-            replacePlantWithRandomAquaticReplacementMaterial(plantToKill, 5, 45);
-            // Handle aquatic plants if implemented...
+            replaceWithRandomAquaticMaterial(plantToKill, 35, 15, 1);
         }
 
         else if (plantType == Material.BROWN_MUSHROOM || plantType == Material.RED_MUSHROOM) {
-            // For mushrooms, replace with a random material (10% tall grass, 2% air, 73% dead bush, 15% grass)
             logger.verbose("Killing Mushroom");
-            replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 85);
+            replaceWithRandomMaterial(plantToKill, 15, 1, 20, 1);
         }
 
         else {
             logger.verbose("No specific killing modifier for: " + plantType);
-            replacePlantWithRandomReplacementMaterial(plantToKill, 10, 12, 85);
+            replaceWithRandomMaterial(plantToKill, 7, 2, 30, 3);
         }
 
         // Play the death sound for the plant
@@ -87,72 +94,112 @@ public class PlantKiller {
     }
 
     /**
-     * Replaces a plant {@link Block} with a random replacement {@link Material} based on specified probabilities.
-     * TODO: Make this method more flexible
+     * Replaces a specified plant {@link Block} with a randomly chosen {@link Material} based on configured weights.
+     * The replacement {@link Material} can be short grass, tall grass, dead bush, or air, and the choice is influenced
+     * by the specified weights.
+     * The replacement also considers the type of the supporting {@link Block} beneath the plant.
      *
-     * @param plantToKill The Block representing the plant to be replaced.
-     * @param tallGrass The probability of replacing with tall grass (0 to air).
-     * @param air The probability of removing the plant (setting to AIR) (tallGrass to deadBush).
-     * @param deadBush The probability of replacing with a dead bush (air to 100).
+     * @param plantToKill      The {@link Block} representing the plant to be replaced.
+     * @param shortGrassWeight The weight for short grass replacement.
+     * @param tallGrassWeight  The weight for tall grass replacement.
+     * @param deadBushWeight   The weight for dead bush replacement.
+     * @param airWeight        The weight for air replacement.
      */
-    private void replacePlantWithRandomReplacementMaterial(Block plantToKill,
-                                                           double tallGrass,  double air, double deadBush){
+    private void replaceWithRandomMaterial(@NotNull Block plantToKill,
+                                           double shortGrassWeight, double tallGrassWeight,
+                                           double deadBushWeight, double airWeight){
+
         plantToKill.setType(Material.AIR);
 
-        double randomMaterial = Math.random()*100;
-
-        if(randomMaterial < tallGrass){
-            randomDestroyFarmland(plantToKill, 0.85);
-            replacePlantWith(plantToKill, Material.TALL_GRASS);
-        }
-
-        else if (randomMaterial < air) {
-            destroyFarmland(plantToKill);
-            plantToKill.setType(Material.AIR);
-        }
-
-        else if (randomMaterial < deadBush) {
-            destroyFarmland(plantToKill);
-            plantToKill.setType(Material.DEAD_BUSH);
-        }
-
-        else {
-            randomDestroyFarmland(plantToKill, 0.75);
-            plantToKill.setType(Material.SHORT_GRASS);
-        }
-
-
         Block supportingBlock = plantToKill.getRelative(BlockFace.DOWN);
-        if(!supportingBlock.canPlace(plantToKill.getBlockData())){
-            plantToKill.setType(Material.AIR);
+        Material supportingBlockType = supportingBlock.getType();
+
+        double maxWight = (shortGrassWeight + tallGrassWeight + airWeight + deadBushWeight);
+        double randomMaterial = Math.random()*maxWight;
+
+        // Using switch for a more readable structure
+        Material selectedMaterial;
+
+        if (randomMaterial < shortGrassWeight) {
+            selectedMaterial = Material.SHORT_GRASS;
+        } else if (randomMaterial < (shortGrassWeight + tallGrassWeight)) {
+            selectedMaterial = Material.TALL_GRASS;
+        } else if (randomMaterial < (shortGrassWeight + tallGrassWeight + deadBushWeight)) {
+            selectedMaterial = Material.DEAD_BUSH;
+        } else {
+            selectedMaterial = Material.AIR;
+        }
+
+        switch (selectedMaterial) {
+            case SHORT_GRASS:
+
+                if (supportingBlockType == Material.FARMLAND || Tag.DIRT.getValues().contains(supportingBlockType)) {
+                    replacePlantWith(plantToKill, Material.SHORT_GRASS);
+                    randomDestroyFarmland(plantToKill, 0.75);
+                } else {
+                    // Recursive call
+                    replaceWithRandomMaterial(plantToKill, 0, 0, airWeight, deadBushWeight);
+                }
+                break;
+            case TALL_GRASS:
+
+                if (supportingBlockType == Material.FARMLAND || Tag.DIRT.getValues().contains(supportingBlockType)) {
+                    replacePlantWith(plantToKill, Material.TALL_GRASS);
+                    randomDestroyFarmland(plantToKill, 0.85);
+                } else {
+                    // Recursive call
+                    replaceWithRandomMaterial(plantToKill, 0, 0, airWeight, deadBushWeight);
+                }
+                break;
+
+            case DEAD_BUSH:
+                if (supportingBlockType == Material.FARMLAND || Tag.DEAD_BUSH_MAY_PLACE_ON.getValues().contains(supportingBlockType)) {
+                    replacePlantWith(plantToKill, Material.DEAD_BUSH);
+                    destroyFarmland(plantToKill);
+                } else {
+                    // Recursive call
+                    replaceWithRandomMaterial(plantToKill, shortGrassWeight, tallGrassWeight, airWeight, 0);
+                }
+                break;
+
+            default:
+                replacePlantWith(plantToKill, Material.AIR);
+                destroyFarmland(plantToKill);
+                break;
         }
 
     }
 
-    private void replacePlantWithRandomAquaticReplacementMaterial(Block plantToKill,
-                                                           double tallSeeGrass, double seaGrass){
-        plantToKill.setType(Material.WATER);
+    /**
+     * Replaces a specified aquatic plant {@link Block} with a randomly chosen {@link Material} based on configured weights.
+     * The replacement {@link Material} can be sea grass, tall sea grass, or water, and the choice is influenced
+     * by the specified weights.
+     *
+     * @param plantToKill        The {@link Block} representing the aquatic plant to be replaced.
+     * @param seaGrassWeight     The weight for sea grass replacement.
+     * @param tallSeaGrassWeight The weight for tall sea grass replacement.
+     * @param waterWeight        The weight for water replacement.
+     */
+    private void replaceWithRandomAquaticMaterial(Block plantToKill,
+                                                  double seaGrassWeight, double tallSeaGrassWeight, double waterWeight) {
 
-        double randomMaterial = Math.random()*100;
+        double maxWeight = (seaGrassWeight + tallSeaGrassWeight + waterWeight);
+        double randomMaterial = Math.random() * maxWeight;
 
-        if(randomMaterial < tallSeeGrass){
-            replacePlantWith(plantToKill, Material.TALL_SEAGRASS);
+        Material selectedMaterial;
+
+        if (randomMaterial < seaGrassWeight) {
+            selectedMaterial = Material.SEAGRASS;
+        } else if (randomMaterial < (seaGrassWeight + tallSeaGrassWeight)) {
+            selectedMaterial = Material.TALL_SEAGRASS;
+        } else {
+            selectedMaterial = Material.WATER;
         }
 
-        else if (randomMaterial < seaGrass) {
-            plantToKill.setType(Material.SEAGRASS);
-        }
-
-        else {
-            plantToKill.setType(Material.WATER);
-        }
-
-        Block supportingBlock = plantToKill.getRelative(BlockFace.DOWN);
-        if(!supportingBlock.canPlace(plantToKill.getBlockData())){
-            plantToKill.setType(Material.WATER);
-        }
+        replacePlantWith(plantToKill, selectedMaterial);
 
     }
+
 
     /**
      * Destroys farmland by replacing it with either coarse dirt or dirt based on a random chance.
@@ -175,7 +222,7 @@ public class PlantKiller {
     }
 
     /**
-     * Randomly destroys farmland based on the specified destroy chance.
+     * Randomly destroys farmland based on the specified destroy-chance.
      *
      * @param blockAboveFarmland The {@link Block} representing the block above the farmland to be destroyed.
      * @param destroyChance The probability of destroying the farmland, ranging from 0.0 to 1.0.
@@ -194,9 +241,7 @@ public class PlantKiller {
      * @param replaceWith The {@link Material} to replace the plant block with.
      */
     public void replacePlantWith(Block plant, Material replaceWith){
-        scheduler.runTaskLater(instance, () ->{
-           plant.setType(replaceWith);
-        },3 ); // 3 Ticks delay
+        scheduler.runTaskLater(instance, () -> plant.setType(replaceWith),2 ); // 2 Ticks delay
     }
 
 
