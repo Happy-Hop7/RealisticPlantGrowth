@@ -11,7 +11,11 @@
 
     <name>RealisticPlantGrowth</name>
 
-    <description>A Spigot/Paper Plugin for Minecraft that makes plant growth more configurable, per biome.</description>
+    <description>
+        A powerful Spigot/Paper plugin that brings a new level of realism to the Minecraft flora,
+        allowing you to fine-tune growth parameters on a per-biome basis.
+    </description>
+
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
