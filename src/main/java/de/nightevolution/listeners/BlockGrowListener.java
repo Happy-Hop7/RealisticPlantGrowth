@@ -12,25 +12,25 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Listens to calls when a block grows naturally in the world.
- *  Examples:
- *     Wheat,
- *     Sugar Cane,
- *     Cactus,
- *     Watermelon,
- *     Pumpkin,
+ * Examples:
+ * Wheat,
+ * Sugar Cane,
+ * Cactus,
+ * Watermelon,
+ * Pumpkin,
  * Used to manipulate growth rates of plants.
  */
-public class BlockGrowListener extends PlantGrowthListener{
+public class BlockGrowListener extends PlantGrowthListener {
     public BlockGrowListener(RealisticPlantGrowth instance) {
         super(instance);
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlantGrow(BlockGrowEvent e){
+    public void onPlantGrow(BlockGrowEvent e) {
         logger.verbose("-------------------- BEGIN BlockGrowEvent: --------------------");
 
-        if(!initEventData(e)) return;
+        if (!initEventData(e)) return;
 
         logger.verbose("initialized BlockGrowEvent");
 
@@ -41,15 +41,15 @@ public class BlockGrowListener extends PlantGrowthListener{
             eventBlockType = eventBlock.getType();
         }
 
-        if(!processEvent())
+        if (!processEvent())
             return;
 
-        if(shouldEventBeCancelled()){
+        if (shouldEventBeCancelled()) {
             e.setCancelled(true);
             return;
         }
 
-        if(growthRate > 100){
+        if (growthRate > 100) {
             // double growth
             logger.verbose("Double Growth!");
         }
@@ -86,9 +86,9 @@ public class BlockGrowListener extends PlantGrowthListener{
      * @throws IllegalStateException If no source block is found.
      */
     private Block getSoureFromAirBlock() {
-        for (BlockFace blockFace : blockFaceArray){
+        for (BlockFace blockFace : blockFaceArray) {
             Block relativeEventBlock = eventBlock.getRelative(blockFace);
-            if (instance.isGrowEventReturnsAirBlockPlant(relativeEventBlock.getType())){
+            if (instance.isGrowEventReturnsAirBlockPlant(relativeEventBlock.getType())) {
                 logger.verbose("getSourceFromAir(): " + relativeEventBlock);
                 return relativeEventBlock;
             }

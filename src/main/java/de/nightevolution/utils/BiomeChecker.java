@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class BiomeChecker {
-    
+
     private final RealisticPlantGrowth instance;
     private final ConfigManager cm;
     private final Logger logger;
@@ -23,8 +23,7 @@ public class BiomeChecker {
     private static Map<Biome, String> biomeGroupsCache = new HashMap<>();
 
 
-
-    public BiomeChecker(@NotNull RealisticPlantGrowth instance){
+    public BiomeChecker(@NotNull RealisticPlantGrowth instance) {
         this.instance = instance;
         this.cm = instance.getConfigManager();
         verbose = cm.isVerbose();
@@ -34,60 +33,61 @@ public class BiomeChecker {
         logger.verbose("Creating new Biome Checker.");
     }
 
-    public static void clearCache(){
+    public static void clearCache() {
         biomeGroupsCache.clear();
     }
 
     /**
      * Checks to which BiomeGroup from biomeList a biome belongs.
+     *
      * @param biomeList
      * @return
      */
     // TODO: implement biomeGroup caching
-    public List<String> getBiomeGroupsOf(@NotNull List<String> biomeList, @NotNull Biome biome, boolean returnAfterFirstHit ){
+    public List<String> getBiomeGroupsOf(@NotNull List<String> biomeList, @NotNull Biome biome, boolean returnAfterFirstHit) {
         List<String> biomeGroupsOfBiome = new ArrayList<>();
 
         outerLoop:
-        for (String biomeGroup : biomeList){
+        for (String biomeGroup : biomeList) {
 
             Route r = Route.from(biomeGroup);
             Optional<List<String>> biomesOfBiomeGroup = cm.getBiomeGroupsFile().getOptionalStringList(r);
 
-            if(biomesOfBiomeGroup.isEmpty() || biomesOfBiomeGroup.get().isEmpty()){
+            if (biomesOfBiomeGroup.isEmpty() || biomesOfBiomeGroup.get().isEmpty()) {
                 logger.warn("BiomeGroup '" + biomeGroup + "' is empty! Please check your BiomeGroups.yml");
                 continue;
             }
 
             for (String biomeInGroup : biomesOfBiomeGroup.get()) {
-                if(biomeInGroup.equalsIgnoreCase(biome.name())){
+                if (biomeInGroup.equalsIgnoreCase(biome.name())) {
                     biomeGroupsOfBiome.add(biomeGroup);
-                    if(returnAfterFirstHit)
+                    if (returnAfterFirstHit)
                         break outerLoop;
                     break;
                 }
             }
 
         }
-        if(verbose){
+        if (verbose) {
             logger.verbose("BiomeGroups for '" + biome + "': ");
             biomeGroupsOfBiome.forEach((bG) -> logger.verbose("  - " + bG));
         }
         return biomeGroupsOfBiome;
     }
 
-    public String getOneBiomeGroupOf(@NotNull List<String> biomeList, @NotNull Biome biome){
+    public String getOneBiomeGroupOf(@NotNull List<String> biomeList, @NotNull Biome biome) {
         List<String> incompleteBiomeList = getBiomeGroupsOf(biomeList, biome, true);
         if (incompleteBiomeList.isEmpty())
             return null;
-       return incompleteBiomeList.getFirst();
+        return incompleteBiomeList.getFirst();
     }
 
-    public Optional<List<String>> getAllBiomeGroupsOf(@NotNull Biome biome){
+    public Optional<List<String>> getAllBiomeGroupsOf(@NotNull Biome biome) {
         Optional<List<String>> biomeGroupsOfBiome;
         Map<String, Object> roots = cm.getBiomeGroups();
 
         // TODO: NullCheck belongs to ConfigManager
-        if(roots == null || roots.isEmpty()){
+        if (roots == null || roots.isEmpty()) {
             logger.warn("No BiomeGroups defined in BiomeGroups.yml!");
             return Optional.empty();
         }
@@ -97,21 +97,22 @@ public class BiomeChecker {
 
         return biomeGroupsOfBiome;
     }
-    public Set<Biome> getBiomeSetOf(String biomeGroup){
+
+    public Set<Biome> getBiomeSetOf(String biomeGroup) {
         Map<String, Object> roots = cm.getBiomeGroups();
         Set<Biome> biomeSet = new HashSet<>();
 
         //for (String biomeGroupName : roots.keySet()){
-            Route biomeGroupNameRoute = Route.from(biomeGroup);
-            logger.verbose(biomeGroupNameRoute.toString());
-            Optional<List<String>> biomeStringList = cm.getBiomeGroupStringList(biomeGroupNameRoute);
-            logger.verbose("BiomeStringList '" + biomeGroup + "' is present?: " + biomeStringList.isPresent());
-            if(biomeStringList.isEmpty() || biomeStringList.get().isEmpty()) {
-                return biomeSet; // empty set
-            }
-            biomeSet.addAll(getBiomesFromStringList(biomeStringList.get()));
+        Route biomeGroupNameRoute = Route.from(biomeGroup);
+        logger.verbose(biomeGroupNameRoute.toString());
+        Optional<List<String>> biomeStringList = cm.getBiomeGroupStringList(biomeGroupNameRoute);
+        logger.verbose("BiomeStringList '" + biomeGroup + "' is present?: " + biomeStringList.isPresent());
+        if (biomeStringList.isEmpty() || biomeStringList.get().isEmpty()) {
+            return biomeSet; // empty set
+        }
+        biomeSet.addAll(getBiomesFromStringList(biomeStringList.get()));
 
-       // }
+        // }
 
         return biomeSet;
     }
@@ -124,14 +125,14 @@ public class BiomeChecker {
      * Only used by admin commands
      * TODO: Use Optional and Sections before Release!
      */
-    public Set<Biome> getValidBiomesFor(@NotNull Material plant){
+    public Set<Biome> getValidBiomesFor(@NotNull Material plant) {
         YamlDocument biomeGroupFile = cm.getBiomeGroupsFile();
         YamlDocument growthModFile = cm.getGrowthModifiersFile();
         Set<Biome> validBiomes = new HashSet<>();
         Set<Material> growthModifiedPlants = instance.getGrowthModifiedPlants();
 
         logger.verbose("getValidBiomesFor(" + plant + ")");
-        if(!growthModifiedPlants.contains(plant)){
+        if (!growthModifiedPlants.contains(plant)) {
             logger.verbose(plant + " is not listed in GrowthModifiers.yml!");
             return null;
         }
@@ -141,29 +142,29 @@ public class BiomeChecker {
 
 
         List<String> biomeGroupStingList = growthModFile.getStringList(biomeGroupsRoute);
-        if(biomeGroupStingList == null) {
+        if (biomeGroupStingList == null) {
             logger.verbose("No BiomeGroups: NULL");
             return null;
         }
 
-        if(biomeGroupStingList.isEmpty()) {
+        if (biomeGroupStingList.isEmpty()) {
             logger.verbose("No BiomeGroups: isEmpty");
             return null;
         }
 
         logger.verbose("Biome Groups:");
-        for (String biomeGroup : biomeGroupStingList){
+        for (String biomeGroup : biomeGroupStingList) {
             Route biomeRoute = Route.fromString(biomeGroup);
             List<String> resolvedBiomeGroupList = biomeGroupFile.getStringList(biomeRoute);
 
-            if(resolvedBiomeGroupList.isEmpty()) {
+            if (resolvedBiomeGroupList.isEmpty()) {
                 logger.warn("BiomeGroup '" + biomeGroup + "' not defined or empty!");
                 continue;
             }
 
-            if(verbose){
+            if (verbose) {
                 logger.verbose(biomeGroup);
-                for (String s : resolvedBiomeGroupList){
+                for (String s : resolvedBiomeGroupList) {
                     logger.verbose("  - " + s);
                 }
             }
@@ -171,7 +172,7 @@ public class BiomeChecker {
             validBiomes.addAll(getBiomesFromStringList(resolvedBiomeGroupList));
         }
 
-        if(verbose) {
+        if (verbose) {
             logger.verbose("Valid Biomes Set:");
             for (Biome b : validBiomes) {
                 logger.verbose("  - " + b);
@@ -183,17 +184,17 @@ public class BiomeChecker {
         return validBiomes;
     }
 
-    public Set<Biome> getBiomesFromStringList(@NotNull List<String> biomeStringList){
+    public Set<Biome> getBiomesFromStringList(@NotNull List<String> biomeStringList) {
         Set<Biome> biomeList = new HashSet<>();
-        if(biomeStringList.isEmpty()){
+        if (biomeStringList.isEmpty()) {
             return biomeList;
         }
 
-        for (String biomeName : biomeStringList){
-            try{
+        for (String biomeName : biomeStringList) {
+            try {
                 Biome b = Biome.valueOf(biomeName);
                 biomeList.add(b);
-            }catch (IllegalArgumentException e){
+            } catch (IllegalArgumentException e) {
                 logger.warn("Biome '" + biomeName + "' is not a valid Biome!");
                 logger.warn("Please check your BiomeGroups.yml!");
             }
@@ -203,5 +204,4 @@ public class BiomeChecker {
     }
 
 
-    
 }

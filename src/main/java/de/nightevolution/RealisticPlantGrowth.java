@@ -166,7 +166,9 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     ));
     private static Set<Material> saplings;
 
-    /** Set of materials representing plants with growth modifications. */
+    /**
+     * Set of materials representing plants with growth modifications.
+     */
     private static HashSet<Material> growthModifiedPlants;
 
     /**
@@ -175,7 +177,9 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      */
     private static HashMap<Material, Material> clickableSeedsMap;
 
-    /** Set of materials representing clickable seeds. */
+    /**
+     * Set of materials representing clickable seeds.
+     */
     private static HashSet<Material> clickableSeeds;
 
     @Override
@@ -191,7 +195,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Registers the primary command executor for the {@link RealisticPlantGrowth} plugin.
      * Associates the "{@code /rpg}" command with the corresponding {@link CommandManager}.
      */
-    private void registerCommands(){
+    private void registerCommands() {
         Objects.requireNonNull(instance.getCommand("rpg")).setExecutor(cmdManager);
     }
 
@@ -199,7 +203,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Registers the tab completer for the {@link RealisticPlantGrowth} plugin's primary command.
      * Associates the "{@code /rpg}" command with the provided {@link TabCompleterImpl} implementation.
      */
-    private void registerTabCompleter(){
+    private void registerTabCompleter() {
         Objects.requireNonNull(instance.getCommand("rpg")).setTabCompleter(new TabCompleterImpl());
     }
 
@@ -208,7 +212,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * fertilization, block-breaking, player interactions, and player quit events.
      * Each listener is associated with the provided instance of the {@link RealisticPlantGrowth} plugin.
      */
-    private void registerListeners(){
+    private void registerListeners() {
         new BlockGrowListener(instance);
         new StructureGrowListener(instance);
         new BlockSpreadListener(instance);
@@ -222,7 +226,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Reloads the plugin by refreshing YAML files, unregistering event handlers, and updating variables.
      * This method is intended for use when reloading plugin configurations or making runtime adjustments.
      */
-    public void reload(){
+    public void reload() {
         cm.reloadAllYAMLFiles();
         HandlerList.unregisterAll(instance);
         updateVariables();
@@ -233,7 +237,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * This method refreshes the {@link ConfigManager}, {@link MessageManager}, logging settings,
      * and various cached data used by the plugin.
      */
-    public void updateVariables(){
+    public void updateVariables() {
         cm = ConfigManager.get();
 
         verbose = cm.isVerbose();
@@ -243,7 +247,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
         cmdManager = new CommandManager();
 
-        if(this.bukkitAudiences != null) {
+        if (this.bukkitAudiences != null) {
             this.bukkitAudiences.close();
             this.bukkitAudiences = null;
         }
@@ -266,7 +270,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Method used by error used, if critical error appears.
      * Disables this plugin via the {@link Bukkit} {@link PluginManager}.
      */
-    void disablePlugin(){
+    void disablePlugin() {
         logger.log("");
         logger.error("&cDisabling " + this.getClass().getSimpleName() + "...");
         logger.log("");
@@ -276,7 +280,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        if(this.bukkitAudiences != null) {
+        if (this.bukkitAudiences != null) {
             this.bukkitAudiences.close();
             this.bukkitAudiences = null;
         }
@@ -288,7 +292,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Saplings are chosen by vanilla {@code saplings} tag.
      * AZALEA and FLOWERING_AZALEA are also included.
      */
-    private void getSaplingsTag(){
+    private void getSaplingsTag() {
         logger.logToFile("Getting saplings tag...", logFile);
         Set<Material> saplingSet = (Tag.SAPLINGS.getValues());
 
@@ -296,13 +300,13 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         plants.addAll(saplingSet);
         saplings = saplingSet;
 
-        if(verbose){
+        if (verbose) {
             Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
                 logger.logToFile("", logFile);
                 logger.logToFile("---------------------- Saplings ----------------------", logFile);
                 logger.logToFile("", logFile);
 
-                for (Material material : saplings){
+                for (Material material : saplings) {
                     logger.logToFile("  - " + material, logFile);
                 }
 
@@ -311,7 +315,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
                 logger.logToFile("---------------------- All Plants ----------------------", logFile);
                 logger.logToFile("", logFile);
 
-                for (Material material : plants){
+                for (Material material : plants) {
                     logger.logToFile("  - " + material, logFile);
                 }
             }, 20);
@@ -323,38 +327,38 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Each root entry corresponds to a plant with modified growth characteristics.
      * The method extracts these plants and adds them to the collection of modified growth rate plants.
      */
-    private void updateGrowthModifiedPlants(){
+    private void updateGrowthModifiedPlants() {
         Map<String, Object> growthModData = cm.getGrowthModifiers();
         Set<String> keys = growthModData.keySet();
         growthModifiedPlants = new HashSet<>();
 
-        for (String key: keys){
+        for (String key : keys) {
             Route r = Route.fromString(key);
 
-            if(r.length() == 1){
+            if (r.length() == 1) {
                 Material m = Material.getMaterial(key);
 
-                if(m == null){
-                    logger.warn("Material '" + key + "' is not a Bukkit Material!" );
+                if (m == null) {
+                    logger.warn("Material '" + key + "' is not a Bukkit Material!");
                     logger.warn("Plant growth modifiers for '" + key + "' are ignored.");
-                }else {
+                } else {
                     growthModifiedPlants.add(m);
                 }
             }
         }
-        
-        if(debug){
-            Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () ->{
+
+        if (debug) {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
                 logger.logToFile("", logFile);
                 logger.logToFile("---------------------- Growth modified plants ----------------------", logFile);
                 logger.logToFile("", logFile);
 
-                for (Material m :growthModifiedPlants){
+                for (Material m : growthModifiedPlants) {
                     logger.logToFile("  - " + m, logFile);
                 }
             }, 2 * 20);
         }
-        
+
     }
 
     /**
@@ -389,7 +393,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
                 logger.logToFile("---------------------- Material --> Clickable Seed ----------------------", logFile);
                 logger.logToFile("", logFile);
 
-                for(Material plant : plants) {
+                for (Material plant : plants) {
                     logger.logToFile(plant.toString(), logFile);
                     logger.logToFile("  -> " + plant.createBlockData().getPlacementMaterial(), logFile);
                 }
@@ -404,12 +408,12 @@ public final class RealisticPlantGrowth extends JavaPlugin {
                 for (Material seed : clickableSeeds) {
                     logger.logToFile("  - " + seed, logFile);
                 }
-            },3 * 20);
+            }, 3 * 20);
         }
     }
 
 
-    private void drawLogo(){
+    private void drawLogo() {
         String logo = System.lineSeparator() +
                 System.lineSeparator() +
                 "&2     .{{}}}}}}." + System.lineSeparator() +
@@ -419,7 +423,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
                 "&2  }}}}{{{{(`)}}{{{{" + "&b       by &6TheRealPredator" + System.lineSeparator() +
                 "&2 {{{(`)}}}}}}}{}}}}}" + System.lineSeparator() +
                 "&2{{{{{{{{(`)}}}}}}}}}}" + System.lineSeparator() +
-                "&2{{{{{{{}{{{{(`)}}}}}}" + "&a    ... successfully enabled." +System.lineSeparator() +
+                "&2{{{{{{{}{{{{(`)}}}}}}" + "&a    ... successfully enabled." + System.lineSeparator() +
                 "&2 {{{{{(`&r)   {&2{{{(`)}'" + System.lineSeparator() +
                 "&2  `\"\"'\" &r|   | &2\"'\"'`" + System.lineSeparator() +
                 "       &r/     \\" + System.lineSeparator() +
@@ -468,8 +472,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * @return The {@link Material} that the provided seed can grow into, or {@code null} if not applicable.
      */
     @Nullable
-    public Material getMaterialFromSeed(@NotNull Material seed){
-        if(clickableSeeds.contains(seed))
+    public Material getMaterialFromSeed(@NotNull Material seed) {
+        if (clickableSeeds.contains(seed))
             return clickableSeedsMap.get(seed);
         return null;
     }
@@ -510,7 +514,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * @param b The {@link Block} to check.
      * @return {@code true} if the {@link Block} b is a sapling, {@code false} otherwise.
      */
-    public boolean isSapling(@NotNull Block b){
+    public boolean isSapling(@NotNull Block b) {
         return saplings.contains(b.getType());
     }
 
@@ -520,9 +524,10 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * @param m The {@link Material} to check.
      * @return {@code true} if the {@link Material} m is a growth-modified plant, {@code false} otherwise.
      */
-    public boolean isGrowthModifiedPlant(@NotNull Material m){
+    public boolean isGrowthModifiedPlant(@NotNull Material m) {
         return growthModifiedPlants.contains(m);
     }
+
     /**
      * Checks if the specified material can grow in the dark based on configuration.
      *
@@ -539,19 +544,19 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * @param material The {@link Material} to check for clickability.
      * @return {@code true} if the {@link Material} is a clickable seed, {@code false} otherwise.
      */
-    public boolean isClickableSeed(@NotNull Material material){
+    public boolean isClickableSeed(@NotNull Material material) {
         return clickableSeeds.contains(material);
     }
 
-    public boolean isUpwardsGrowingPlant(@NotNull Material material){
+    public boolean isUpwardsGrowingPlant(@NotNull Material material) {
         return upwardsGrowingPlants.contains(material);
     }
 
-    public boolean isDownwardsGrowingPlant(@NotNull Material material){
+    public boolean isDownwardsGrowingPlant(@NotNull Material material) {
         return downwardsGrowingPlants.contains(material);
     }
 
-    public boolean isGrowEventReturnsAirBlockPlant(@NotNull Material material){
+    public boolean isGrowEventReturnsAirBlockPlant(@NotNull Material material) {
         return growEventReturnsAirBlockPlants.contains(material);
     }
 
@@ -561,7 +566,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * @param world The {@link World} to check for plant growth modification.
      * @return {@code true} if growth modification is enabled for the world, {@code false} otherwise.
      */
-    public boolean isWorldDisabled(@NotNull World world){
+    public boolean isWorldDisabled(@NotNull World world) {
         return (!cm.getEnabled_worlds().contains(world.getName()));
     }
 
@@ -570,7 +575,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      *
      * @return A HashSet of Material objects representing plants with growth modifications.
      */
-    public HashSet<Material> getGrowthModifiedPlants(){
+    public HashSet<Material> getGrowthModifiedPlants() {
         return growthModifiedPlants;
     }
 

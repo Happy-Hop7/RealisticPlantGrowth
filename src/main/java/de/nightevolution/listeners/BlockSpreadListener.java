@@ -12,7 +12,7 @@ import java.util.List;
  * Listens for plant growth from block spread.
  * Used by chorus plant, bamboo, red- and brown-mushrooms.
  */
-public class BlockSpreadListener extends PlantGrowthListener{
+public class BlockSpreadListener extends PlantGrowthListener {
     private List<Block> plantStem;
 
     public BlockSpreadListener(RealisticPlantGrowth instance) {
@@ -21,17 +21,17 @@ public class BlockSpreadListener extends PlantGrowthListener{
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlantGrow(BlockSpreadEvent e){
+    public void onPlantGrow(BlockSpreadEvent e) {
         logger.verbose("-------------------- BEGIN BlockSpreadEvent --------------------");
 
-        if(!initEventData(e)) return;
+        if (!initEventData(e)) return;
 
         logger.verbose("initialized BlockSpreadEvent");
 
-        if(!processEvent())
+        if (!processEvent())
             return;
 
-        if(shouldEventBeCancelled()){
+        if (shouldEventBeCancelled()) {
             e.setCancelled(true);
             return;
         }
@@ -39,7 +39,7 @@ public class BlockSpreadListener extends PlantGrowthListener{
         logger.verbose("-------------------- Normal END BlockSpreadEvent --------------------");
     }
 
-    private boolean initEventData(BlockSpreadEvent e){
+    private boolean initEventData(BlockSpreadEvent e) {
         // Get coordinates and information of the event block for logging
         eventBlock = getRootBlockOf(e.getSource());
         eventLocation = eventBlock.getLocation();

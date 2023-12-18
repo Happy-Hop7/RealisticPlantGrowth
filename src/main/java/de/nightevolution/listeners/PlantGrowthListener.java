@@ -16,7 +16,7 @@ import org.bukkit.block.data.Ageable;
 import org.bukkit.event.Listener;
 
 
-public abstract class PlantGrowthListener  implements Listener{
+public abstract class PlantGrowthListener implements Listener {
     protected RealisticPlantGrowth instance;
     protected Logger logger;
     protected String logString = "";
@@ -67,14 +67,13 @@ public abstract class PlantGrowthListener  implements Listener{
     }
 
     /**
-     * @return
-     * -1 = return and cancel event
+     * @return -1 = return and cancel event
      * 0 = normal event
      * 1 = return without canceling the event
      */
-    protected boolean processEvent(){
+    protected boolean processEvent() {
         // this check needs to be here because the eventBlock can be changed from child classes.
-        if(!instance.getGrowthModifiedPlants().contains(eventBlockType))
+        if (!instance.getGrowthModifiedPlants().contains(eventBlockType))
             return false;
 
         // Retrieve surrounding environment data
@@ -96,20 +95,20 @@ public abstract class PlantGrowthListener  implements Listener{
      *
      * @return {@code true} if the event should be cancelled, {@code false} otherwise.
      */
-    protected boolean shouldEventBeCancelled(){
+    protected boolean shouldEventBeCancelled() {
 
-        if(deathChance >= 100.0 || growthRate <= 0.0){
+        if (deathChance >= 100.0 || growthRate <= 0.0) {
             logger.verbose("Super-Event: Kill plant.");
             killPlant();
             return true;
         }
 
-        if(cancelDueToGrowthRate()){
+        if (cancelDueToGrowthRate()) {
             logger.verbose("Event cancelled due to growth rate.");
             return true;
         }
 
-        if(cancelDueToDeathChance()){
+        if (cancelDueToDeathChance()) {
             logger.verbose("Event cancelled due to death chance.");
             killPlant();
             return true;
@@ -127,7 +126,7 @@ public abstract class PlantGrowthListener  implements Listener{
      * @param plantBlock The {@link Block} representing the plant.
      * @return The root {@link Block} of the specified plant.
      */
-    public Block getRootBlockOf(Block plantBlock){
+    public Block getRootBlockOf(Block plantBlock) {
         Material plantBlockType = plantBlock.getType();
         Block returnBlock = plantBlock;
         logger.verbose("getRootBlockOf(): plantBlock: " + plantBlock);
@@ -135,9 +134,7 @@ public abstract class PlantGrowthListener  implements Listener{
         if (instance.isUpwardsGrowingPlant(plantBlockType)) {
             logger.verbose("SearchDirection: DOWN");
             returnBlock = iterateThroughPlantBlocks(plantBlock, BlockFace.DOWN);
-        }
-
-        else if (instance.isDownwardsGrowingPlant(plantBlockType)) {
+        } else if (instance.isDownwardsGrowingPlant(plantBlockType)) {
             logger.verbose("SearchDirection: UP");
             returnBlock = iterateThroughPlantBlocks(plantBlock, BlockFace.UP);
         }
@@ -158,13 +155,13 @@ public abstract class PlantGrowthListener  implements Listener{
      * @param searchDirection The direction ({@link BlockFace}) to search for the root block.
      * @return The root {@link Block} of the specified plant.
      */
-    private Block iterateThroughPlantBlocks (Block plantBlock, BlockFace searchDirection){
+    private Block iterateThroughPlantBlocks(Block plantBlock, BlockFace searchDirection) {
         Block currentBlock = plantBlock;
         Block tempBlock;
         String plantBlockTypeName = plantBlock.getType().name();
 
 
-        while (currentBlock.getType().name().startsWith(plantBlockTypeName)){
+        while (currentBlock.getType().name().startsWith(plantBlockTypeName)) {
             tempBlock = currentBlock.getRelative(searchDirection);
 
             if (tempBlock.getType().name().startsWith(plantBlockTypeName))
@@ -182,7 +179,7 @@ public abstract class PlantGrowthListener  implements Listener{
      *
      * @return True if the event should be canceled due to the growth rate, false otherwise.
      */
-    protected boolean cancelDueToGrowthRate (){
+    protected boolean cancelDueToGrowthRate() {
         return ((Math.random() * 100) > growthRate);
     }
 
@@ -194,15 +191,13 @@ public abstract class PlantGrowthListener  implements Listener{
      *
      * @return True if the event should be canceled due to the death chance, false otherwise.
      */
-    protected boolean cancelDueToDeathChance(){
+    protected boolean cancelDueToDeathChance() {
 
-        if(eventBlock.getBlockData() instanceof Ageable crop){
-            if((crop.getAge() != crop.getMaximumAge()) && (instance.isAgriculturalPlant(eventBlock))) {
+        if (eventBlock.getBlockData() instanceof Ageable crop) {
+            if ((crop.getAge() != crop.getMaximumAge()) && (instance.isAgriculturalPlant(eventBlock))) {
                 deathChance = (deathChance / crop.getMaximumAge());
                 logger.verbose("Using Ageable Interface for partial DeathChance.");
-            }
-
-            else logger.verbose("Using Ageable Interface with full DeathChance.");
+            } else logger.verbose("Using Ageable Interface with full DeathChance.");
 
             logger.verbose("Age of crop: " + crop.getAge() + " / " + crop.getMaximumAge());
         }
@@ -217,7 +212,7 @@ public abstract class PlantGrowthListener  implements Listener{
      * Creates a new PlantKiller instance and uses it to initiate the plant killing process for the specified event block.
      * </p>
      */
-    protected void killPlant(){
+    protected void killPlant() {
         PlantKiller pk = new PlantKiller();
         pk.killPlant(eventBlock);
     }
@@ -230,8 +225,8 @@ public abstract class PlantGrowthListener  implements Listener{
      * this method initiates the process to reduce the fill level of the composter closest to the event block.
      * </p>
      */
-    protected void checkFertilizerUsage(){
-        if(surrounding.usedFertilizer() && !configManager.isFertilizer_passiv()){
+    protected void checkFertilizerUsage() {
+        if (surrounding.usedFertilizer() && !configManager.isFertilizer_passiv()) {
             logger.verbose("Fertilizer was used. Reducing fill level of particular Composter.");
             PlantKiller pk = new PlantKiller();
             pk.reduceComposterFillLevelOf(surrounding.getClosestComposter());
@@ -242,7 +237,7 @@ public abstract class PlantGrowthListener  implements Listener{
      * Logs details of the plant growth event, including coordinates, biome, death chance, and growth rate.
      * If coordinate logging is enabled in the configuration, it includes the block's X, Y, and Z coordinates in the log.
      */
-    protected void logEvent(){
+    protected void logEvent() {
         // Log coordinates if logging is enabled
         if (configManager.isLog_Coords()) {
             coords = "[ " +

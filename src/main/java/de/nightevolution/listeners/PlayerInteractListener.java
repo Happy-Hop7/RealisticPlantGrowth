@@ -47,12 +47,10 @@ public class PlayerInteractListener implements Listener {
     private final String IS_DARK_PLACEHOLDER = "{IS_DARK}";
 
 
-
-
     private static final HashMap<UUID, Long> playerCooldownMap = new HashMap<>();
 
 
-    public PlayerInteractListener(RealisticPlantGrowth instance){
+    public PlayerInteractListener(RealisticPlantGrowth instance) {
         this.instance = instance;
         this.cm = instance.getConfigManager();
         this.msgManager = instance.getMessageManager();
@@ -64,7 +62,7 @@ public class PlayerInteractListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerInteractEventWithClickableSeeds(PlayerInteractEvent e){
+    public void onPlayerInteractEventWithClickableSeeds(PlayerInteractEvent e) {
         logger.verbose("Interact-Event");
 
         if (!cm.isDisplay_growth_rates())
@@ -75,7 +73,7 @@ public class PlayerInteractListener implements Listener {
         if (instance.isWorldDisabled(eventWorld))
             return;
 
-        if (!instance.isClickableSeed(e.getMaterial())){
+        if (!instance.isClickableSeed(e.getMaterial())) {
             return;
         }
 
@@ -84,7 +82,7 @@ public class PlayerInteractListener implements Listener {
 
 
         Block clickedBlock = e.getClickedBlock();
-        if (!e.hasItem() || clickedBlock == null || instance.isAPlant(clickedBlock)){
+        if (!e.hasItem() || clickedBlock == null || instance.isAPlant(clickedBlock)) {
             return;
         }
 
@@ -101,7 +99,7 @@ public class PlayerInteractListener implements Listener {
         Material plantMaterial = instance.getMaterialFromSeed(e.getMaterial());
 
         // getMaterialFromSeed is nullable.
-        if(plantMaterial == null)
+        if (plantMaterial == null)
             return;
 
         // Adding a cooldown to stop click spamming which prevents unnecessary heavy area calculations.
@@ -114,7 +112,7 @@ public class PlayerInteractListener implements Listener {
             logger.verbose("lastTime: " + lastTime);
             logger.verbose("currentTime: " + currentTime);
             logger.verbose("cooldown: " + cooldown);
-            if((currentTime - lastTime) < cooldown) {
+            if ((currentTime - lastTime) < cooldown) {
                 logger.verbose("PlayerInteractEvent-Cooldown.");
                 return;
             }
@@ -126,7 +124,7 @@ public class PlayerInteractListener implements Listener {
         if (e.getPlayer().getGameMode() == GameMode.CREATIVE)
             e.setCancelled(true);
 
-        if (!instance.isGrowthModifiedPlant(plantMaterial)){
+        if (!instance.isGrowthModifiedPlant(plantMaterial)) {
             logger.verbose("Vanilla behavior for: " + plantMaterial);
 
             // send a player message
@@ -179,7 +177,7 @@ public class PlayerInteractListener implements Listener {
 
     }
 
-    public static void clearPlayerCooldownData(UUID uuid){
+    public static void clearPlayerCooldownData(UUID uuid) {
         playerCooldownMap.remove(uuid);
     }
 

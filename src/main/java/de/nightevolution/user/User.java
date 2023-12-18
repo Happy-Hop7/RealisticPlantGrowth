@@ -26,7 +26,7 @@ public class User {
         this.username = username;
     }
 
-      @Override
+    @Override
     public boolean equals(@NotNull Object obj) {
         if (obj instanceof User user) {
             return user.getUuid().equals(getUuid());

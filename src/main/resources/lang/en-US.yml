@@ -32,7 +32,7 @@ GROWTH_RATE_MSG: |-
     <dark_gray> » <gray>Death Chance:   <aqua>{DEATH_CHANCE}
     <dark_gray> » <gray>Is Dark Spot: <aqua>{IS_DARK}
     <dark_gray> » <gray>Influenced by Fertilizer: <aqua>{FERTILIZER_USED}
-    <dark_gray> » <gray>Influenced by UV Light: <aqua>{UV_LIGHT_USED}
+    <dark_gray> » <gray>Influenced by UV-Light: <aqua>{UV_LIGHT_USED}
     <dark_gray> » <gray>Can Grow in Darkness: <aqua>{CAN_GROW_IN_DARK}
     <dark_gray> » <gray>Can grow without fertilizer in <lang:biome.minecraft.{BIOME}>: <aqua>{IS_VALID_BIOME}
 

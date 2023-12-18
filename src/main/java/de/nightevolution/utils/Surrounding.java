@@ -25,7 +25,7 @@ public class Surrounding {
     private final static RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();
     private final static ConfigManager configManager = instance.getConfigManager();
     private final BiomeChecker biomeChecker;
-    private final Modifier  modifier;
+    private final Modifier modifier;
     private final Logger logger;
 
     // TODO: BiomeChecker should implement this cache
@@ -105,7 +105,7 @@ public class Surrounding {
         this(centerBlock, centerBlock.getBlockData().createBlockState(), uvBlocks, fertilizerBlocks);
     }
 
-    public static void clearCache(){
+    public static void clearCache() {
         biomeGroupsCache.clear();
     }
 
@@ -144,10 +144,10 @@ public class Surrounding {
      */
     public Block getClosestComposter() {
 
-        if(!(closestComposter == null))
+        if (!(closestComposter == null))
             return closestComposter;
 
-        if(fertilizerSources.isEmpty())
+        if (fertilizerSources.isEmpty())
             return null;
 
         Comparator<Block> blockComparator = getBlockDistanceComparator();
@@ -155,13 +155,13 @@ public class Surrounding {
         // Sorting the List
         fertilizerSources.sort(blockComparator);
 
-        if(configManager.isVerbose()) {
+        if (configManager.isVerbose()) {
             logger.verbose("Sorted fertilizer blocks location list:");
             for (Block block : fertilizerSources) {
                 logger.verbose("  - " + block.getLocation());
             }
         }
-        if(configManager.isFertilizer_passiv()) {
+        if (configManager.isFertilizer_passiv()) {
             closestComposter = fertilizerSources.get(0);
             return closestComposter;
 
@@ -184,19 +184,20 @@ public class Surrounding {
      *
      * @return The biome of the center block.
      */
-    public Biome getBiome(){
+    public Biome getBiome() {
         return biome;
     }
 
     /**
      * Returns a List of BiomeGroups represented as String in which the plant can grow.
+     *
      * @return List of BiomeGroup Names
      */
-    public List<String> getBiomeGroupList(){
-        if(biomeGroupsCache.isEmpty())
+    public List<String> getBiomeGroupList() {
+        if (biomeGroupsCache.isEmpty())
             calcIsInValidBiome();
 
-        if(!biomeGroupsCache.containsKey(biome))
+        if (!biomeGroupsCache.containsKey(biome))
             return new ArrayList<>(); // empty list
 
         return biomeGroupsCache.get(biome);
@@ -208,30 +209,29 @@ public class Surrounding {
      *
      * @return The material type of the center block.
      */
-    public Material getType(){
+    public Material getType() {
         return plantType;
     }
 
-    public boolean hasUVLightAccess(){
+    public boolean hasUVLightAccess() {
         Set<Material> allValidUVBlocks = configManager.getUV_Blocks();
 
-        if(uvSources == null || uvSources.isEmpty()){
+        if (uvSources == null || uvSources.isEmpty()) {
             logger.verbose("No UV-Light access!");
             return false;
         }
 
-        if(configManager.getRequire_All_UV_Blocks()){
+        if (configManager.getRequire_All_UV_Blocks()) {
             HashSet<Material> uvBlockMix = new HashSet<>();
-            for (Block b : uvSources){
+            for (Block b : uvSources) {
                 uvBlockMix.add(b.getType());
             }
             return uvBlockMix.containsAll(allValidUVBlocks);
 
-        }else{
+        } else {
             return true;
         }
     }
-
 
 
     /**
@@ -240,7 +240,7 @@ public class Surrounding {
      * @return A Modifier object representing the calculated growth and death modifiers for the plant.
      * @throws YAMLException If there is an error while reading modifier values from the configuration file.
      */
-    private Modifier getModifier(){
+    private Modifier getModifier() {
         boolean uvLightEnabled = configManager.isUV_Enabled();
         boolean fertilizerEnabled = configManager.isFertilizer_enabled();
         boolean isDark = isInDarkness();
@@ -248,7 +248,7 @@ public class Surrounding {
         Modifier deathModifier = new Modifier(0, 100, false);
         Modifier specialModifier = new Modifier(0, 0, false);
 
-        if(logger.isVerbose()){
+        if (logger.isVerbose()) {
             logger.verbose("CheckForSpecialCases:");
             logger.verbose("  - uvLightEnabled: " + uvLightEnabled);
             logger.verbose("  - fertilizerEnabled: " + fertilizerEnabled);
@@ -267,7 +267,7 @@ public class Surrounding {
         else if (!validBiome && !isDark && fertilizerEnabled) {
             logger.verbose("Invalid Biome Modifier selected.");
 
-            if(!canApplyFertilizerBoost()){
+            if (!canApplyFertilizerBoost()) {
                 return deathModifier;
             }
 
@@ -278,11 +278,10 @@ public class Surrounding {
         // UV-Light Case
         else if (validBiome && isDark && uvLightEnabled) {
             logger.verbose("UV-Light Modifier selected.");
-            if(hasUVLightAccess()){
+            if (hasUVLightAccess()) {
                 growthModifierType = "UVLightGrowthRate";
                 deathModifierType = "UVLightDeathChance";
-            }
-            else {
+            } else {
                 return deathModifier;
             }
         }
@@ -290,11 +289,11 @@ public class Surrounding {
         // Special Case
         else if (!validBiome && isDark && uvLightEnabled && fertilizerEnabled) {
             logger.verbose("Special Case Modifier selected.");
-            if(hasUVLightAccess() && canApplyFertilizerBoost()) {
+            if (hasUVLightAccess() && canApplyFertilizerBoost()) {
                 growthModifierType = "UVLightGrowthRate";
                 deathModifierType = "UVLightDeathChance";
                 specialModifier.setSpecialCase(true);
-            }else
+            } else
                 return deathModifier;
         }
 
@@ -310,23 +309,23 @@ public class Surrounding {
 
         Modifier tempModifier = processBiomeGroupSection(specialModifier, growthModifierType, deathModifierType);
 
-        if(tempModifier == null){
+        if (tempModifier == null) {
             // Using the default Section
             logger.verbose("Using default modifier section!");
             Optional<Double> growth = configManager.getDefaultModifierSection(plantType).getOptionalDouble(growthModifierType);
             Optional<Double> death = configManager.getDefaultModifierSection(plantType).getOptionalDouble(deathModifierType);
 
-            if(growth.isPresent() && death.isPresent()){
+            if (growth.isPresent() && death.isPresent()) {
                 tempModifier = new Modifier(growth.get(), death.get(), false);
                 tempModifier.setSpecialCase(specialModifier.getSpecialCase());
-            }else {
+            } else {
                 // throws exception
                 logger.error("Couldn't read default modifier values from GrowthModifiers.yml!");
                 throw new YAMLException("Check your GrowthModifiers.yml!");
             }
         }
 
-        if(canApplyFertilizerBoost()) {
+        if (canApplyFertilizerBoost()) {
             logger.verbose("Applying fertilizer effects.");
             tempModifier.applyFertilizerEffects();
         }
@@ -336,6 +335,7 @@ public class Surrounding {
     }
 
     // TODO: let config manager make file accesses
+
     /**
      * Processes the configuration for a specific biome group and retrieves the growth and death modifiers.
      *
@@ -344,25 +344,25 @@ public class Surrounding {
      * @return A Modifier object with the processed growth and death modifiers, or null if no valid configuration is found.
      * @throws YAMLException If there is an error reading the BiomeGroup modifier values from GrowthModifiers.yml.
      */
-    private Modifier processBiomeGroupSection(Modifier m, String growthModifierType, String deathModifierType){
+    private Modifier processBiomeGroupSection(Modifier m, String growthModifierType, String deathModifierType) {
         Route biomeGroupsListRoute = Route.from(BIOME_GROUPS_ROUTE, "Groups");
         Optional<List<String>> biomeGroupsList = configManager.getGrowthModifiersFile().getOptionalStringList(biomeGroupsListRoute);
 
         // If false: no further checks needed. -> using values defined under 'Default'.
-        if(biomeGroupsList.isEmpty() || biomeGroupsList.get().isEmpty())
+        if (biomeGroupsList.isEmpty() || biomeGroupsList.get().isEmpty())
             return null;
 
         logger.verbose("StringList of BiomeGroup.Groups is present and not empty.");
 
         List<String> biomeGroupsOfBiome = getBiomeGroupList();
-        if(biomeGroupsOfBiome == null || biomeGroupsOfBiome.isEmpty()) {
+        if (biomeGroupsOfBiome == null || biomeGroupsOfBiome.isEmpty()) {
             return null;
         }
 
         // check only relevant BiomeGroups
         List<String> relevantBiomeGroups = new ArrayList<>();
-        for (String biomeGroup : biomeGroupsOfBiome){
-            if(biomeGroupsList.get().contains(biomeGroup)){
+        for (String biomeGroup : biomeGroupsOfBiome) {
+            if (biomeGroupsList.get().contains(biomeGroup)) {
                 relevantBiomeGroups.add(biomeGroup);
                 logger.verbose("BiomeGroup '" + biomeGroup + "' added to the relevant List.");
             }
@@ -403,14 +403,14 @@ public class Surrounding {
      *
      * @return True if the current biome is valid for plant growth, false otherwise.
      */
-    private boolean calcIsInValidBiome(){
+    private boolean calcIsInValidBiome() {
 
         // This section should be in BiomeChecker class getValidBiomesFor(Material plantType)
         Section defaultSection = configManager.getDefaultModifierSection(plantType);
         Optional<List<String>> defaultBiomeList = defaultSection.getOptionalStringList("Biome");
-        if(defaultBiomeList.isPresent() && !defaultBiomeList.get().isEmpty()){
-            if(defaultBiomeList.get().size() == 1){
-                switch (defaultBiomeList.get().getFirst()){
+        if (defaultBiomeList.isPresent() && !defaultBiomeList.get().isEmpty()) {
+            if (defaultBiomeList.get().size() == 1) {
+                switch (defaultBiomeList.get().getFirst()) {
                     case "ALL":
                         logger.verbose("ALL Biomes are valid!");
                         return true;
@@ -422,33 +422,33 @@ public class Surrounding {
                 }
             }
 
-            if(defaultBiomeList.get().contains(biome.toString())){
+            if (defaultBiomeList.get().contains(biome.toString())) {
                 return true;
             }
             // TODO: Cache valid default biomes
         }
         // -----
 
-        if(biomeGroupsCache.containsKey(biome)){
+        if (biomeGroupsCache.containsKey(biome)) {
 
-            if(biomeGroupsCache.get(biome).isEmpty()){
+            if (biomeGroupsCache.get(biome).isEmpty()) {
                 logger.verbose("Plant: " + plantType + " is NOT in a valid biome");
                 return false;
             }
 
             //for (String biomeGroup : biomeGroupsCache.get(biome)){
-                Set<Biome> biomeSet = biomeChecker.getValidBiomesFor(plantType);
-                if (!biomeSet.isEmpty() && biomeSet.contains(biome)){
-                    logger.verbose("Plant: " + plantType + " is in a valid biome");
-                    return true;
-                }
+            Set<Biome> biomeSet = biomeChecker.getValidBiomesFor(plantType);
+            if (!biomeSet.isEmpty() && biomeSet.contains(biome)) {
+                logger.verbose("Plant: " + plantType + " is in a valid biome");
+                return true;
+            }
             //}
             return false;
         } // else search valid biome groups
 
         Optional<List<String>> allBiomeGroups = biomeChecker.getAllBiomeGroupsOf(biome);
 
-        if(allBiomeGroups.isEmpty() || allBiomeGroups.get().isEmpty()){
+        if (allBiomeGroups.isEmpty() || allBiomeGroups.get().isEmpty()) {
             // new cache entry
             biomeGroupsCache.put(biome, new ArrayList<>());
             logger.verbose("No BiomeGroups found for: " + biome);
@@ -462,18 +462,16 @@ public class Surrounding {
     }
 
 
-
-
     /**
      * Checks whether a fertilizer boost can be applied based on the plugin's configuration and surrounding conditions.
      *
      * @return True if a fertilizer boost can be applied, false otherwise.
      */
-    public boolean canApplyFertilizerBoost(){
-        if(configManager.isFertilizer_enabled() && !getFertilizerSources().isEmpty()) {
+    public boolean canApplyFertilizerBoost() {
+        if (configManager.isFertilizer_enabled() && !getFertilizerSources().isEmpty()) {
 
             if (configManager.isFertilizer_passiv()) {
-                if(isInValidBiome())
+                if (isInValidBiome())
                     return true;
 
                 return configManager.isFertilizer_Enables_Growth_In_Invalid_Biomes();
@@ -493,10 +491,10 @@ public class Surrounding {
      *
      * @return {@code true} if the environment is dark; {@code false} otherwise.
      */
-    public boolean isInDarkness(){
+    public boolean isInDarkness() {
         int skyLightLevel = centerBlock.getRelative(BlockFace.UP).getLightFromSky();
         logger.verbose("skyLightLevel: " + skyLightLevel);
-        boolean hasNotMinSkyLight =  (configManager.getMin_Natural_Light() > skyLightLevel);
+        boolean hasNotMinSkyLight = (configManager.getMin_Natural_Light() > skyLightLevel);
         logger.verbose("hasNotMinSkyLight: " + hasNotMinSkyLight);
         logger.verbose("canGrowInDark: " + instance.canGrowInDark(plantType));
         return (hasNotMinSkyLight && !instance.canGrowInDark(plantType));
@@ -505,9 +503,10 @@ public class Surrounding {
     /**
      * If Fertilizer was used to calculate the GrowthRate and DeathChance, this method return true.
      * Use this method to check, when to drain the composter fill level.
+     *
      * @return true if fertilizer was used false if not
      */
-    public boolean usedFertilizer(){
+    public boolean usedFertilizer() {
         return modifier.isFertilizerUsed();
     }
 
@@ -516,7 +515,7 @@ public class Surrounding {
      *
      * @return True if the current location is in a valid biome, false otherwise.
      */
-    public boolean isInValidBiome(){
+    public boolean isInValidBiome() {
         return validBiome;
     }
 
@@ -525,7 +524,7 @@ public class Surrounding {
      *
      * @return The growth rate modifier value.
      */
-    public double getGrowthRate(){
+    public double getGrowthRate() {
         return modifier.getGrowthModifier();
     }
 
@@ -534,7 +533,7 @@ public class Surrounding {
      *
      * @return The death chance modifier value.
      */
-    public double getDeathChance(){
+    public double getDeathChance() {
         return modifier.getDeathChance();
     }
 
@@ -555,7 +554,7 @@ public class Surrounding {
                     b2.getLocation().distanceSquared(centerBlockLocation));
 
             // If 2 Blocks have the same distance to the centerBlock, a random one is chosen to prioritize.
-            if(comparison == 0) {
+            if (comparison == 0) {
                 logger.verbose("Fertilizer at same distance -> random decision.");
                 return Math.random() < 0.5 ? -1 : 1;
             }
@@ -583,7 +582,7 @@ public class Surrounding {
         builder.append(System.lineSeparator());
 
         builder.append(", uvSources=[");
-        for(Block uvSource : uvSources) {
+        for (Block uvSource : uvSources) {
             builder.append(uvSource).append(", ");
         }
         if (!uvSources.isEmpty()) {
@@ -592,7 +591,7 @@ public class Surrounding {
         builder.append("]");
 
         builder.append(", fertilizerSources=[");
-        for(Block fertilizerSource : fertilizerSources) {
+        for (Block fertilizerSource : fertilizerSources) {
             builder.append(fertilizerSource).append(", ");
         }
         if (!fertilizerSources.isEmpty()) {
@@ -600,7 +599,7 @@ public class Surrounding {
         }
         builder.append("]");
 
-        if(closestComposter != null) {
+        if (closestComposter != null) {
             builder.append(", closestComposter=").append(closestComposter);
         } else {
             builder.append(", closestComposter=None");

@@ -8,6 +8,7 @@ import org.bukkit.permissions.Permission;
 public class Info extends SubCommand {
 
     private final Permission PERMISSION = new Permission("rpg.info");
+
     public Info(CommandSender commandSender, String[] args, RealisticPlantGrowth instance) {
         super(commandSender, args, instance);
         permission = PERMISSION;
@@ -15,7 +16,7 @@ public class Info extends SubCommand {
 
     @Override
     public boolean executeCommand() {
-        if(!super.executeCommand())
+        if (!super.executeCommand())
             return false;
 
         // TODO: Implement Command logic

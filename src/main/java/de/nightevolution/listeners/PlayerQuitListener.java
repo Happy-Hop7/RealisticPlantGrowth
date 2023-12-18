@@ -26,7 +26,7 @@ public class PlayerQuitListener implements Listener {
      *
      * @param instance The main plugin instance of {@link RealisticPlantGrowth}.
      */
-    public PlayerQuitListener(RealisticPlantGrowth instance){
+    public PlayerQuitListener(RealisticPlantGrowth instance) {
         this.instance = instance;
         logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         instance.getServer().getPluginManager().registerEvents(this, instance);
@@ -40,11 +40,11 @@ public class PlayerQuitListener implements Listener {
      * @param e A {@link PlayerQuitEvent} instance.
      */
     @EventHandler
-    public void onPlayerQuitEvent(PlayerQuitEvent e){
+    public void onPlayerQuitEvent(PlayerQuitEvent e) {
         UUID quittingPlayer = e.getPlayer().getUniqueId();
         logger.verbose("Clearing '" + e.getPlayer().getName() + "'s cooldown.");
         scheduler.runTaskAsynchronously(instance, () -> {
-           PlayerInteractListener.clearPlayerCooldownData(quittingPlayer);
+            PlayerInteractListener.clearPlayerCooldownData(quittingPlayer);
         });
     }
 }

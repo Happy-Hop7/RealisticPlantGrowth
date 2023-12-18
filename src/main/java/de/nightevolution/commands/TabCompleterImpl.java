@@ -11,7 +11,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The TabCompleterImpl class handles tab completion for plugin commands.
+ */
 public class TabCompleterImpl implements TabCompleter {
+
+    /**
+     * Handles tab completion for plugin commands.
+     *
+     * @param commandSender The sender of the command.
+     * @param command       The executed command.
+     * @param s             The alias used for the command.
+     * @param args          The arguments provided with the command.
+     * @return A list of tab-completed options for the current input.
+     */
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command,
                                       @NotNull String s, @Nullable String[] args) {
@@ -29,16 +42,16 @@ public class TabCompleterImpl implements TabCompleter {
         boolean hasAtLeastOnePermission = false;
 
         // Checks if the CommandSender has at least one Permission
-        for (String permission : allPermissions){
-            if(commandSender.hasPermission(permission)){
+        for (String permission : allPermissions) {
+            if (commandSender.hasPermission(permission)) {
                 hasAtLeastOnePermission = true;
                 break;
             }
         }
 
         // Show plugin base command if commandSender has at least one rpg permission
-        if(args == null || args.length == 0){
-            if(hasAtLeastOnePermission) {
+        if (args == null || args.length == 0) {
+            if (hasAtLeastOnePermission) {
                 commands.add("realisticPlantGrowth");
                 commands.add("rpg");
             }
@@ -46,18 +59,17 @@ public class TabCompleterImpl implements TabCompleter {
         }
 
         // Show sub commands of the base command
-        else if(args.length == 1){
-            if(commandSender.hasPermission("rpg.help")){
+        else if (args.length == 1) {
+            if (commandSender.hasPermission("rpg.help")) {
                 commands.add("help");
             }
-            if(commandSender.hasPermission("rpg.info")){
+            if (commandSender.hasPermission("rpg.info")) {
                 commands.add("info");
             }
-            if(commandSender.hasPermission("rpg.admin")){
+            if (commandSender.hasPermission("rpg.admin")) {
                 commands.add("reload");
             }
             StringUtil.copyPartialMatches(args[0], commands, shownTabs);
-
         }
 
         Collections.sort(shownTabs);

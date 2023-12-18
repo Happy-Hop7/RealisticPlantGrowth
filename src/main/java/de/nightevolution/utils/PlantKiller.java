@@ -35,7 +35,7 @@ public class PlantKiller {
     /**
      * Constructs a new PlantKiller instance, initializing necessary dependencies.
      */
-    public PlantKiller(){
+    public PlantKiller() {
         this.instance = RealisticPlantGrowth.getInstance();
         configManager = instance.getConfigManager();
         logger = new Logger(this.getClass().getSimpleName(), instance,
@@ -49,42 +49,32 @@ public class PlantKiller {
      *
      * @param plantToKill The {@link Block} representing the plant to be killed.
      */
-    public void killPlant (@NotNull Block plantToKill){
+    public void killPlant(@NotNull Block plantToKill) {
         Material plantType = plantToKill.getType();
 
-        if(instance.isAgriculturalPlant(plantToKill)){
+        if (instance.isAgriculturalPlant(plantToKill)) {
 
             // For Melon or Pumpkin stems, replace with a random material (5% tall grass, 2% air, 78% dead bush, 22% grass)
             if (plantType == Material.MELON_STEM || plantType == Material.PUMPKIN_STEM) {
                 logger.verbose("Killing Melon / Pumpkin Stem");
                 replaceWithRandomMaterial(plantToKill, 5, 7, 85, 3);
-            }
-
-            else {
+            } else {
                 // For agricultural plants, replace with a random material (10% tall grass, 2% air, 38% dead bush, 62% grass)
                 logger.verbose("Killing Agricultural Plant.");
                 replaceWithRandomMaterial(plantToKill, 32, 3, 30, 1);
             }
 
 
-        }
-
-        else if (instance.isSapling(plantToKill)) {
+        } else if (instance.isSapling(plantToKill)) {
             logger.verbose("Killing Sapling");
             replaceWithRandomMaterial(plantToKill, 0, 0, 1, 0);
-        }
-
-        else if (instance.isAnAquaticPlant(plantToKill)) {
+        } else if (instance.isAnAquaticPlant(plantToKill)) {
             logger.verbose("Killing AquaticPlant");
             replaceWithRandomAquaticMaterial(plantToKill, 35, 15, 1);
-        }
-
-        else if (plantType == Material.BROWN_MUSHROOM || plantType == Material.RED_MUSHROOM) {
+        } else if (plantType == Material.BROWN_MUSHROOM || plantType == Material.RED_MUSHROOM) {
             logger.verbose("Killing Mushroom");
             replaceWithRandomMaterial(plantToKill, 15, 1, 20, 1);
-        }
-
-        else {
+        } else {
             logger.verbose("No specific killing modifier for: " + plantType);
             replaceWithRandomMaterial(plantToKill, 7, 2, 30, 3);
         }
@@ -107,7 +97,7 @@ public class PlantKiller {
      */
     private void replaceWithRandomMaterial(@NotNull Block plantToKill,
                                            double shortGrassWeight, double tallGrassWeight,
-                                           double deadBushWeight, double airWeight){
+                                           double deadBushWeight, double airWeight) {
 
         plantToKill.setType(Material.AIR);
 
@@ -115,7 +105,7 @@ public class PlantKiller {
         Material supportingBlockType = supportingBlock.getType();
 
         double maxWight = (shortGrassWeight + tallGrassWeight + airWeight + deadBushWeight);
-        double randomMaterial = Math.random()*maxWight;
+        double randomMaterial = Math.random() * maxWight;
 
         // Using switch for a more readable structure
         Material selectedMaterial;
@@ -206,18 +196,18 @@ public class PlantKiller {
      *
      * @param blockAboveFarmland The {@link Block} representing the plant above the farmland to be destroyed.
      */
-    public void destroyFarmland(Block blockAboveFarmland){
+    public void destroyFarmland(Block blockAboveFarmland) {
         Block u = blockAboveFarmland.getRelative(BlockFace.DOWN);
         if (u.getType().equals(Material.FARMLAND)) {
             double random = Math.random();
             // Schedule the replacement of farmland with coarse dirt with a 1-tick delay
-            scheduler.runTaskLater(instance, () ->{
+            scheduler.runTaskLater(instance, () -> {
                 logger.verbose("Replacing Farmland.");
-                if(random < 0.75)
+                if (random < 0.75)
                     u.setType(Material.COARSE_DIRT);
                 else
                     u.setType(Material.DIRT);
-            },1 ); // 1 Tick delay
+            }, 1); // 1 Tick delay
         }
     }
 
@@ -225,11 +215,11 @@ public class PlantKiller {
      * Randomly destroys farmland based on the specified destroy-chance.
      *
      * @param blockAboveFarmland The {@link Block} representing the block above the farmland to be destroyed.
-     * @param destroyChance The probability of destroying the farmland, ranging from 0.0 to 1.0.
+     * @param destroyChance      The probability of destroying the farmland, ranging from 0.0 to 1.0.
      */
-    public void randomDestroyFarmland(Block blockAboveFarmland, double destroyChance){
+    public void randomDestroyFarmland(Block blockAboveFarmland, double destroyChance) {
         double farmlandDestroyChance = Math.random();
-        if(farmlandDestroyChance < destroyChance){
+        if (farmlandDestroyChance < destroyChance) {
             destroyFarmland(blockAboveFarmland);
         }
     }
@@ -237,11 +227,11 @@ public class PlantKiller {
     /**
      * Replaces a plant block with the specified material after a delay.
      *
-     * @param plant The {@link Block} representing the plant to be replaced.
+     * @param plant       The {@link Block} representing the plant to be replaced.
      * @param replaceWith The {@link Material} to replace the plant block with.
      */
-    public void replacePlantWith(Block plant, Material replaceWith){
-        scheduler.runTaskLater(instance, () -> plant.setType(replaceWith),2 ); // 2 Ticks delay
+    public void replacePlantWith(Block plant, Material replaceWith) {
+        scheduler.runTaskLater(instance, () -> plant.setType(replaceWith), 2); // 2 Ticks delay
     }
 
 
@@ -250,6 +240,7 @@ public class PlantKiller {
      * <p>
      * Only active, if plant_death_sound_effect is enabled in the configuration.
      * </p>
+     *
      * @param plantToKill The {@link Block} representing the plant that is about to be killed.
      */
     public void playPlantDeathSound(@NotNull Block plantToKill) {
@@ -287,21 +278,21 @@ public class PlantKiller {
      *
      * @param composterToDrain The composter block to reduce the fill level.
      */
-    public void reduceComposterFillLevelOf(Block composterToDrain){
+    public void reduceComposterFillLevelOf(Block composterToDrain) {
         // Check if passive fertilizer passiv mode is enabled
-        if(configManager.isFertilizer_passiv() || composterToDrain == null) {
+        if (configManager.isFertilizer_passiv() || composterToDrain == null) {
             return;
         }
 
         // Check if the provided block is a composter
-        if(composterToDrain.getType() != Material.COMPOSTER) {
+        if (composterToDrain.getType() != Material.COMPOSTER) {
             logger.warn("Could not reduce fill level on Block: " + composterToDrain.getType());
             return;
         }
 
         // Check if the composter's fill level is already at 0
         Levelled composter = (Levelled) composterToDrain.getBlockData();
-        if(composter.getLevel() == 0){
+        if (composter.getLevel() == 0) {
             logger.warn("Composter fill level already at 0!");
             return;
         }
@@ -311,10 +302,10 @@ public class PlantKiller {
         int newFillLevel;
 
 
-        if (oldFillLevel == composter.getMaximumLevel()){
-            newFillLevel = oldFillLevel-2;
-        }else {
-            newFillLevel = oldFillLevel-1;
+        if (oldFillLevel == composter.getMaximumLevel()) {
+            newFillLevel = oldFillLevel - 2;
+        } else {
+            newFillLevel = oldFillLevel - 1;
         }
 
         composter.setLevel(newFillLevel);

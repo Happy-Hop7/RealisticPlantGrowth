@@ -13,7 +13,7 @@ public abstract class SubCommand {
     protected String[] args;
     protected Permission permission;
 
-    public SubCommand(CommandSender commandSender, String[] args, RealisticPlantGrowth instance){
+    public SubCommand(CommandSender commandSender, String[] args, RealisticPlantGrowth instance) {
         this.instance = instance;
         this.msgManager = instance.getMessageManager();
         this.commandSender = commandSender;
@@ -21,7 +21,7 @@ public abstract class SubCommand {
     }
 
     public boolean executeCommand() {
-        if(!commandSender.hasPermission(permission)) {
+        if (!commandSender.hasPermission(permission)) {
             msgManager.sendNoPermissionMessage(commandSender);
             return false;
         }

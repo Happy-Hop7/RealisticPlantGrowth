@@ -9,6 +9,7 @@ import org.bukkit.permissions.Permission;
 public class Reload extends SubCommand {
 
     private final Permission PERMISSION = new Permission("rpg.reload");
+
     public Reload(CommandSender commandSender, String[] args, RealisticPlantGrowth instance) {
         super(commandSender, args, instance);
         permission = PERMISSION;
@@ -16,7 +17,7 @@ public class Reload extends SubCommand {
 
     @Override
     public boolean executeCommand() {
-        if(!super.executeCommand())
+        if (!super.executeCommand())
             return false;
 
         instance.reload();

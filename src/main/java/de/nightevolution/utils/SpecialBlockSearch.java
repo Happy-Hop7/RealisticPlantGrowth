@@ -77,7 +77,7 @@ public class SpecialBlockSearch {
      * in the area around the block, which may be inefficient for large radii.
      *
      * @param startingBlock The block from which the search radius extends.
-     * @param blockState The (not placed) {@link BlockState} of startingBlock. (Used for growth rate checks.)
+     * @param blockState    The (not placed) {@link BlockState} of startingBlock. (Used for growth rate checks.)
      * @return A {@link Surrounding} object containing all found UV light sources and fertilizer blocks within the radius.
      */
     public Surrounding surroundingOf(Block startingBlock, BlockState blockState) {
@@ -120,14 +120,14 @@ public class SpecialBlockSearch {
 
                     if (uvEnabled && isBlockWithinRadius(startingBlockLocation, relativeBlockLocation, radiusUV) && uvMaterials.contains(relativeBlock.getType())) {
                         uvSources.add(startingBlock.getRelative(x, y, z));
-                        if(debug_log)
+                        if (debug_log)
                             logger.logToFile("[" + relativeBlockLocation + "] Located UV-Source: " + relativeBlock.getType(), logFile);
                     }
 
                     // TODO: Check Composter for fertilizer nbt tag
-                    if (fertilizerEnabled && isBlockWithinRadius(startingBlockLocation,relativeBlockLocation, radiusFertilizer) && relativeBlock.getType() == Material.COMPOSTER) {
+                    if (fertilizerEnabled && isBlockWithinRadius(startingBlockLocation, relativeBlockLocation, radiusFertilizer) && relativeBlock.getType() == Material.COMPOSTER) {
                         fertilizerSources.add(startingBlock.getRelative(x, y, z));
-                        if(debug_log)
+                        if (debug_log)
                             logger.logToFile("[" + relativeBlockLocation + "] Located Fertilizer-Source: " + relativeBlock.getType(), logFile);
                     }
                 }
@@ -155,6 +155,7 @@ public class SpecialBlockSearch {
 
     /**
      * Method only used for debugging purpose
+     *
      * @param startingBlock
      * @param radius
      * @return
@@ -173,9 +174,8 @@ public class SpecialBlockSearch {
      * @param relativeLocation The location of the block to check.
      * @param radius           The search radius to compare against, which can be for either UV or fertilizer.
      * @return true if the block is within or equal the specified radius, false otherwise.
-     *
      */
-    private boolean isBlockWithinRadius(Location startingLocation, Location relativeLocation, int radius){
+    private boolean isBlockWithinRadius(Location startingLocation, Location relativeLocation, int radius) {
         double betterRadius = radius + 0.33;
         double radiusSquared = betterRadius * betterRadius;
         return startingLocation.distanceSquared(relativeLocation) <= radiusSquared;

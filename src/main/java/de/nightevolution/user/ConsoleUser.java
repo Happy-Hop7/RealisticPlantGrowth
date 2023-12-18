@@ -1,7 +1,6 @@
 package de.nightevolution.user;
 
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 public final class ConsoleUser implements CommandUser {
@@ -15,6 +14,7 @@ public final class ConsoleUser implements CommandUser {
 
     /**
      * Get an Audience object in order to send messages to the console.
+     *
      * @return an Audience object representing the console.
      */
     @NotNull
@@ -25,6 +25,7 @@ public final class ConsoleUser implements CommandUser {
 
     /**
      * Checks, if console has given permission.
+     *
      * @param permission String to check.
      * @return always true.
      */

@@ -35,7 +35,7 @@ public class BlockBreakListener implements Listener {
      *
      * @param instance The main plugin instance.
      */
-    public BlockBreakListener(RealisticPlantGrowth instance){
+    public BlockBreakListener(RealisticPlantGrowth instance) {
         this.instance = instance;
         logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         configManager = instance.getConfigManager();
@@ -51,16 +51,16 @@ public class BlockBreakListener implements Listener {
      * @param e BlockBreakEvent containing information about the event.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBlockBreakEvent (BlockBreakEvent e) {
+    public void onBlockBreakEvent(BlockBreakEvent e) {
         Block b = e.getBlock();
         World world = b.getWorld();
 
-        if(!configManager.getEnabled_worlds().contains(world.getName())){
+        if (!configManager.getEnabled_worlds().contains(world.getName())) {
             return;
         }
 
         // basically every crop planted on farmland + nether warts
-        if(instance.isAgriculturalPlant(b) && !(e.getPlayer().getGameMode() == GameMode.CREATIVE)){
+        if (instance.isAgriculturalPlant(b) && !(e.getPlayer().getGameMode() == GameMode.CREATIVE)) {
             Player p = e.getPlayer();
             ItemStack usedHOE = p.getInventory().getItemInMainHand();
 
@@ -70,7 +70,7 @@ public class BlockBreakListener implements Listener {
             logger.verbose("isSolid: " + b.getType().isSolid());
             logger.verbose("isAPlant: " + instance.isAPlant(b));
 
-            if(configManager.isRequire_Hoe()) {
+            if (configManager.isRequire_Hoe()) {
                 requireHoeToHarvest(e, p, usedHOE);
             }
 
@@ -92,20 +92,18 @@ public class BlockBreakListener implements Listener {
      * @param p       The player who caused the BlockBreakEvent.
      * @param usedHoe The hoe used to harvest the plant.
      */
-    private void requireHoeToHarvest(BlockBreakEvent e, Player p, ItemStack usedHoe){
+    private void requireHoeToHarvest(BlockBreakEvent e, Player p, ItemStack usedHoe) {
         // If not using a hoe: cancel DropItems
 
-        if(!usedHoe.getType().name().endsWith("_HOE")) {
+        if (!usedHoe.getType().name().endsWith("_HOE")) {
             logger.verbose("Block drops cancelled: true");
             e.setDropItems(false);
-        }else{
+        } else {
             scheduler.runTaskLater(instance, () -> {
                 damageHoe(p, usedHoe);
-            },1 ); // 1 Tick delay
+            }, 1); // 1 Tick delay
         }
     }
-
-
 
 
     /**
@@ -115,13 +113,13 @@ public class BlockBreakListener implements Listener {
      * will not decrease with each use. Additionally, the method handles the removal of
      * the hoe if it reaches its maximum durability.
      *
-     * @param p          The player who caused the BlockBreakEvent.
-     * @param usedHoe   The hoe used to harvest the plant.
+     * @param p       The player who caused the BlockBreakEvent.
+     * @param usedHoe The hoe used to harvest the plant.
      */
-    private void damageHoe(Player p, ItemStack usedHoe){
+    private void damageHoe(Player p, ItemStack usedHoe) {
 
         Damageable hoe = (Damageable) usedHoe.getItemMeta();
-        if(hoe == null)
+        if (hoe == null)
             return;
 
         if (usedHoe.getEnchantments().containsKey(Enchantment.DURABILITY)) {
@@ -129,13 +127,13 @@ public class BlockBreakListener implements Listener {
                 hoe.setDamage(hoe.getDamage() + 1);
                 usedHoe.setItemMeta(hoe);
             }
-        }else{
+        } else {
             hoe.setDamage(hoe.getDamage() + 1);
             usedHoe.setItemMeta(hoe);
         }
 
         // Remove the hoe if it reaches maximum durability
-        if(hoe.getDamage() >= usedHoe.getType().getMaxDurability()) {
+        if (hoe.getDamage() >= usedHoe.getType().getMaxDurability()) {
             p.playEffect(EntityEffect.BREAK_EQUIPMENT_MAIN_HAND);
             p.getInventory().remove(usedHoe);
         }

@@ -20,10 +20,10 @@ public class Modifier {
      * Constructs a Modifier object with specified growthModifier, deathChance, and fertilizer usage.
      *
      * @param growthModifier The growth modifier value.
-     * @param deathChance The death chance value.
+     * @param deathChance    The death chance value.
      * @param fertilizerUsed Indicates whether fertilizer is used.
      */
-    public Modifier(double growthModifier, double deathChance, boolean fertilizerUsed){
+    public Modifier(double growthModifier, double deathChance, boolean fertilizerUsed) {
         this.growthModifier = getCheckedGrowthModifier(growthModifier);
         this.deathChance = getCheckedDeathChance(deathChance);
         this.fertilizerUsed = fertilizerUsed;
@@ -31,22 +31,19 @@ public class Modifier {
 
     /**
      * Applies fertilizer effects to the provided modifier if fertilizer boost can be applied.
-     *
      */
-    public void applyFertilizerEffects(){
-            double fertilizerBoost;
+    public void applyFertilizerEffects() {
+        double fertilizerBoost;
 
-            if(specialCase){
-                fertilizerBoost = (getGrowthModifier()/100) * (cm.getFertilizer_invalid_biome_growth_rate()/100) * 100;
-                deathChance += cm.getFertilizer_invalid_biome_death_chance();
-            }
+        if (specialCase) {
+            fertilizerBoost = (getGrowthModifier() / 100) * (cm.getFertilizer_invalid_biome_growth_rate() / 100) * 100;
+            deathChance += cm.getFertilizer_invalid_biome_death_chance();
+        } else {
+            fertilizerBoost = getGrowthModifier() + cm.getFertilizer_boost_growth_rate();
+        }
 
-            else {
-               fertilizerBoost = getGrowthModifier() + cm.getFertilizer_boost_growth_rate();
-            }
-
-            setGrowthModifier(fertilizerBoost);
-            setFertilizerUsed(true);
+        setGrowthModifier(fertilizerBoost);
+        setFertilizerUsed(true);
     }
 
     /**
@@ -54,7 +51,7 @@ public class Modifier {
      *
      * @return The growth modifier value.
      */
-    public double getGrowthModifier(){
+    public double getGrowthModifier() {
         return growthModifier;
     }
 
@@ -63,7 +60,7 @@ public class Modifier {
      *
      * @return The death chance value.
      */
-    public double getDeathChance(){
+    public double getDeathChance() {
         return deathChance;
     }
 
@@ -72,7 +69,7 @@ public class Modifier {
      *
      * @return True if fertilizer was used, false otherwise.
      */
-    public boolean isFertilizerUsed(){
+    public boolean isFertilizerUsed() {
         return fertilizerUsed;
     }
 
@@ -81,7 +78,7 @@ public class Modifier {
      *
      * @param growthModifier The new growth modifier value.
      */
-    public void setGrowthModifier(double growthModifier){
+    public void setGrowthModifier(double growthModifier) {
         this.growthModifier = getCheckedGrowthModifier(growthModifier);
     }
 
@@ -90,7 +87,7 @@ public class Modifier {
      *
      * @param deathChance The new death chance value.
      */
-    public void setDeathChance(double deathChance){
+    public void setDeathChance(double deathChance) {
         this.deathChance = getCheckedDeathChance(deathChance);
     }
 
@@ -99,16 +96,16 @@ public class Modifier {
      *
      * @param fertilizerUsed True if fertilizer was used, false otherwise.
      */
-    public void setFertilizerUsed(boolean fertilizerUsed){
+    public void setFertilizerUsed(boolean fertilizerUsed) {
         this.fertilizerUsed = fertilizerUsed;
     }
 
 
-    public void setSpecialCase(boolean specialCase){
+    public void setSpecialCase(boolean specialCase) {
         this.specialCase = specialCase;
     }
 
-    public boolean getSpecialCase(){
+    public boolean getSpecialCase() {
         return specialCase;
     }
 
@@ -118,10 +115,10 @@ public class Modifier {
      * @param growthModifier The growth modifier to be checked.
      * @return The corrected growth modifier value.
      */
-    private double getCheckedGrowthModifier(double growthModifier){
-        if(growthModifier <= 0.0)
+    private double getCheckedGrowthModifier(double growthModifier) {
+        if (growthModifier <= 0.0)
             return 0.0;
-        if(growthModifier > 100.0 && !cm.isFertilizer_allow_growth_rate_above_100()){
+        if (growthModifier > 100.0 && !cm.isFertilizer_allow_growth_rate_above_100()) {
             return 100.0;
         }
         return growthModifier;
@@ -133,8 +130,8 @@ public class Modifier {
      * @param deathChance The death chance to be checked.
      * @return The corrected death chance value.
      */
-    private double getCheckedDeathChance(double deathChance){
-        if(deathChance < 0.0)
+    private double getCheckedDeathChance(double deathChance) {
+        if (deathChance < 0.0)
             return 0.0;
 
         return Math.min(deathChance, 100.0);

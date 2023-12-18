@@ -15,7 +15,7 @@ public class Help extends SubCommand {
 
     @Override
     public boolean executeCommand() {
-        if(!super.executeCommand())
+        if (!super.executeCommand())
             return false;
 
         msgManager.sendHelpMenu(commandSender);

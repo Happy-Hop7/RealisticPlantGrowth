@@ -99,7 +99,7 @@ public class ConfigManager {
      * Get an instance of ConfigManager with ConfigManager.get().
      * ConfigManager uses BoostedYAML API to perform file operations.
      */
-    private ConfigManager(){
+    private ConfigManager() {
 
         configManager = this;
         instance = RealisticPlantGrowth.getInstance();
@@ -110,38 +110,36 @@ public class ConfigManager {
         pluginFolder = instance.getDataFolder();
         languageFolder = new File(pluginFolder + File.separator + "lang");
 
-        
+
         registerYamlConfigs();
         readConfigData();
 
 
-
-
-        if(!languageFolder.exists()){
+        if (!languageFolder.exists()) {
             logger.warn("&eLanguage directory doesn't exist!");
             logger.log("Creating new directory...");
-            
+
             try {
-                if(languageFolder.mkdir()){
+                if (languageFolder.mkdir()) {
                     logger.log("New language directory created.");
                 }
 
-            }catch (SecurityException e){
+            } catch (SecurityException e) {
                 logger.error("&cCouldn't create language directory!");
                 instance.disablePlugin();
             }
 
-        }else
+        } else
             logger.logToFile("Language directory already exist.", logFile);
 
         logger.log("Loading supported languages...");
         registerSupportedLanguages();
         registerSelectedLanguage();
         readLanguageData();
-        
+
         logger.log("Loading BiomeGroups data...");
         readBiomeGroupsData();
-        
+
         logger.log("Loading GrowthModifiers ...");
         readGrowthModifierData();
 
@@ -150,10 +148,11 @@ public class ConfigManager {
     /**
      * Get a Singleton instance from ConfigManager.
      * Creates a new instance if no instance already exists.
+     *
      * @return ConfigManager Singleton instance
      */
-    protected static ConfigManager get(){
-        if(configManager == null)
+    protected static ConfigManager get() {
+        if (configManager == null)
             new ConfigManager();
         return configManager;
     }
@@ -164,17 +163,17 @@ public class ConfigManager {
      * Creates new one if no config exists.
      * Uses BoostedYAML API for config operations.
      */
-    private void registerYamlConfigs(){
+    private void registerYamlConfigs() {
         // Main Config
         // -> should use default values if something is missing.
-        try{
+        try {
             config = YamlDocument.create(new File(pluginFolder, "Config.yml"),
                     Objects.requireNonNull(instance.getResource("Config.yml")),
                     GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
             config.update();
             logger.log("Config.yml loaded.");
 
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.error("&cCouldn't load YAML configuration!");
             instance.disablePlugin();
         }
@@ -182,27 +181,27 @@ public class ConfigManager {
         // BiomeGroups Config
         // don't use defaults here
         GeneralSettings gs = GeneralSettings.builder().setUseDefaults(false).build();
-        try{
+        try {
             biomeGroupsFile = YamlDocument.create(new File(pluginFolder, "BiomeGroups.yml"),
                     Objects.requireNonNull(instance.getResource("BiomeGroups.yml")),
                     gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
 
             logger.log("BiomeGroups.yml loaded.");
 
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.error("&cCouldn't load BiomeGroups YAML configuration!");
             instance.disablePlugin();
         }
 
         // GrowthModifiers Config
-        try{
+        try {
             growthModifiersFile = YamlDocument.create(new File(pluginFolder, "GrowthModifiers.yml"),
                     Objects.requireNonNull(instance.getResource("GrowthModifiers.yml")),
                     gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
 
             logger.log("GrowthModifiers.yml loaded.");
 
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.error("&cCouldn't load GrowthModifiers YAML configuration!");
             instance.disablePlugin();
         }
@@ -224,15 +223,15 @@ public class ConfigManager {
             for (String languageCode : supportedLanguageCodes) {
                 logger.logToFile("Language: " + languageCode, logFile);
 
-                if(languageCode.equalsIgnoreCase(getLanguage_code())){
-                    logger.logToFile( "Loading selected language File: " + languageFolder + File.separator + languageCode + ".yml", logFile);
+                if (languageCode.equalsIgnoreCase(getLanguage_code())) {
+                    logger.logToFile("Loading selected language File: " + languageFolder + File.separator + languageCode + ".yml", logFile);
 
                     selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
                             Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")),
                             GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
 
-                }else {
-                    logger.logToFile( "Loading language File: " + languageFolder + File.separator + languageCode + ".yml", logFile);
+                } else {
+                    logger.logToFile("Loading language File: " + languageFolder + File.separator + languageCode + ".yml", logFile);
                     YamlDocument temp = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
                             Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")),
                             GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
@@ -242,14 +241,14 @@ public class ConfigManager {
                 logger.logToFile(languageCode + ".yml loaded.", logFile);
 
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.error("&cCouldn't load language files!");
             instance.disablePlugin();
             return;
         }
 
         // Search for custom files in lang directory.
-        if (selectedLanguageFile == null){
+        if (selectedLanguageFile == null) {
             // lese daten von ordner
             File[] allFiles = languageFolder.listFiles();
 
@@ -280,14 +279,14 @@ public class ConfigManager {
         }
 
         // Setting the default language if selected 'language_code' file not found.
-        if (selectedLanguageFile == null){
+        if (selectedLanguageFile == null) {
             try {
                 logger.warn("No custom language file with language_code '" + getLanguage_code() + "' located in 'lang' directory!");
                 logger.warn("Using default language file: en-US");
                 selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, "en-US.yml"),
                         Objects.requireNonNull(instance.getResource("lang/" + "en-US.yml")),
                         GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
-            }catch (IOException e){
+            } catch (IOException e) {
                 logger.error("&cCouldn't load custom language file!");
                 instance.disablePlugin();
             }
@@ -302,14 +301,14 @@ public class ConfigManager {
      * Creates new one if no config exists.
      * Uses BoostedYAML API for config operations.
      */
-    private void registerSelectedLanguage(){
+    private void registerSelectedLanguage() {
 
-        try{
+        try {
             selectedLanguageFile.update();
             logger.log("Language files loaded.");
             logger.log("Selected language: " + language_code);
 
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.error("&cCouldn't load YAML configuration!");
             instance.disablePlugin();
         }
@@ -320,7 +319,7 @@ public class ConfigManager {
      * Todo: Make this call asynchronous
      * Todo: Add parameter check !!!
      */
-    private void readConfigData(){
+    private void readConfigData() {
 
         try {
 
@@ -379,7 +378,7 @@ public class ConfigManager {
 
             printConfigData();
 
-        }catch (YAMLException e){
+        } catch (YAMLException e) {
             logger.error("&cAn Error occurred while reading config.yml data!");
             logger.log(e.getLocalizedMessage());
 
@@ -387,15 +386,15 @@ public class ConfigManager {
         }
     }
 
-    private void readLanguageData(){
+    private void readLanguageData() {
         languageFileData = selectedLanguageFile.getStringRouteMappedValues(true);
 
-        if(debug_log) {
+        if (debug_log) {
             Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
                 logger.logToFile("", logFile);
-                logger.logToFile( "-------------------- " +
+                logger.logToFile("-------------------- " +
                         Objects.requireNonNull(selectedLanguageFile.getFile()).getName() +
-                        "-------------------- " , logFile);
+                        "-------------------- ", logFile);
                 logger.logToFile("", logFile);
 
                 printMap(languageFileData);
@@ -405,10 +404,10 @@ public class ConfigManager {
     }
 
     // TODO: Check user modified data
-    private void readBiomeGroupsData(){
+    private void readBiomeGroupsData() {
         biomeGroupsData = biomeGroupsFile.getStringRouteMappedValues(true);
 
-        if(debug_log) {
+        if (debug_log) {
             Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
                 logger.logToFile("", logFile);
                 logger.logToFile("-------------------- BiomeGroups --------------------", logFile);
@@ -419,10 +418,10 @@ public class ConfigManager {
     }
 
     // TODO: Check user modified data
-    private void readGrowthModifierData(){
+    private void readGrowthModifierData() {
         growthModifierData = growthModifiersFile.getStringRouteMappedValues(true);
 
-        if(debug_log) {
+        if (debug_log) {
             Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
                 logger.logToFile("", logFile);
                 logger.logToFile("-------------------- GrowthModifiers --------------------", logFile);
@@ -432,14 +431,14 @@ public class ConfigManager {
         }
     }
 
-    private void printMap(Map<String, Object> data){
+    private void printMap(Map<String, Object> data) {
         Set<String> keys = data.keySet();
         keys.forEach((key) -> {
             logger.logToFile(key, logFile);
         });
     }
 
-    private void printConfigData(){
+    private void printConfigData() {
         Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
             logger.logToFile("", logFile);
             logger.logToFile("-------------------- Config.yml Data --------------------", logFile);
@@ -485,12 +484,12 @@ public class ConfigManager {
             logger.logToFile("require_all_uv_blocks: " + require_all_uv_blocks, logFile);
 
             logger.logToFile("uv_blocks:", logFile);
-            uv_blocks.forEach( (materialName) -> {
+            uv_blocks.forEach((materialName) -> {
                 logger.logToFile("  - " + materialName, logFile);
             });
 
             logger.logToFile("grow_in_dark:", logFile);
-            grow_in_dark.forEach( (materialName) -> {
+            grow_in_dark.forEach((materialName) -> {
                 logger.logToFile("  - " + materialName, logFile);
             });
 
@@ -542,34 +541,36 @@ public class ConfigManager {
             logger.log("&2All configuration files reloaded.");
 
 
-        }catch (YAMLException | IOException e){
+        } catch (YAMLException | IOException e) {
             logger.log(e.getLocalizedMessage());
             logger.error("&cError while reloading config files.");
             instance.disablePlugin();
         }
     }
 
-    public Optional<Section> getConfigSection(Route routeToSection){
+    public Optional<Section> getConfigSection(Route routeToSection) {
         return config.getOptionalSection(routeToSection);
     }
-    public Optional<Section> getGrowthModifierSection(Route routeToSection){
+
+    public Optional<Section> getGrowthModifierSection(Route routeToSection) {
         return growthModifiersFile.getOptionalSection(routeToSection);
     }
-    public Optional<List<String>> getBiomeGroupStringList(Route routeToSection){
+
+    public Optional<List<String>> getBiomeGroupStringList(Route routeToSection) {
         return biomeGroupsFile.getOptionalStringList(routeToSection);
     }
 
-    public Section getDefaultModifierSection(Material plantType){
+    public Section getDefaultModifierSection(Material plantType) {
         Route r = Route.from(plantType, "Default");
         Optional<Section> defaultSection = growthModifiersFile.getOptionalSection(r);
-        if(defaultSection.isPresent()){
+        if (defaultSection.isPresent()) {
             return defaultSection.get();
         }
         logger.error("Check your GrowthModifiers.yml and make sure every entry has a 'Default' Section!");
         throw new NullPointerException("Default Section for '" + plantType + "' is missing!");
     }
 
-    public double getModifierOnRoute(Route route){
+    public double getModifierOnRoute(Route route) {
         Optional<Double> optionalDouble = growthModifiersFile.getOptionalDouble(route);
 
         if (optionalDouble.isEmpty()) {
@@ -583,16 +584,15 @@ public class ConfigManager {
     }
 
 
-    private HashSet<Material> getCheckedMaterialSet(List<String> stringMaterialList){
+    private HashSet<Material> getCheckedMaterialSet(List<String> stringMaterialList) {
         HashSet<Material> materialSet = new HashSet<>(stringMaterialList.size());
-        for (String materialName : stringMaterialList){
+        for (String materialName : stringMaterialList) {
             Material material = Material.getMaterial(materialName);
-            if(material != null){
+            if (material != null) {
                 materialSet.add(material);
-            }
-            else {
-                logger.warn("uv_blocks: '" + materialName + "' is not an Bukkit Material!" );
-                logger.warn("Please check your sections in config.yml!" );
+            } else {
+                logger.warn("uv_blocks: '" + materialName + "' is not an Bukkit Material!");
+                logger.warn("Please check your sections in config.yml!");
             }
         }
 
@@ -600,12 +600,12 @@ public class ConfigManager {
     }
 
 
-    private void checkSoundEffectSection(){
+    private void checkSoundEffectSection() {
         boolean soundEffectEnabled = plant_death_sound_effect.getBoolean("enabled");
         boolean soundValid = false;
         boolean effectValid = false;
 
-        if(!soundEffectEnabled)
+        if (!soundEffectEnabled)
             return;
 
         // Checking, if String is a Bukkit sound/effect
@@ -615,18 +615,18 @@ public class ConfigManager {
         try {
             Sound.valueOf(sound);
             soundValid = true;
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             logger.warn(sound + " is not a valid Bukkit sound!");
         }
 
         try {
             Effect.valueOf(effect);
             effectValid = true;
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             logger.warn(effect + " is not a valid Bukkit effect!");
         }
 
-        if(!(soundValid && effectValid)){
+        if (!(soundValid && effectValid)) {
             logger.warn("Using default values instead.");
             plant_death_sound_effect = plant_death_sound_effect.getDefaults();
         }
@@ -642,6 +642,7 @@ public class ConfigManager {
     public String getPluginPrefix() {
         return plugin_prefix;
     }
+
     public boolean isVerbose() {
         return verbose;
     }
@@ -678,7 +679,7 @@ public class ConfigManager {
         return min_natural_light;
     }
 
-    public boolean isDestroy_Farmland(){
+    public boolean isDestroy_Farmland() {
         return destroy_farmland;
     }
 
@@ -690,7 +691,7 @@ public class ConfigManager {
         return display_growth_rates;
     }
 
-    public int getDisplay_cooldown(){
+    public int getDisplay_cooldown() {
         return display_cooldown;
     }
 
@@ -706,15 +707,15 @@ public class ConfigManager {
         return fertilizer_passiv;
     }
 
-    public boolean isFertilizer_Enables_Growth_In_Invalid_Biomes(){
-        return  fertilizer_enables_growth_in_invalid_biomes;
+    public boolean isFertilizer_Enables_Growth_In_Invalid_Biomes() {
+        return fertilizer_enables_growth_in_invalid_biomes;
     }
 
-    public double getFertilizer_invalid_biome_growth_rate(){
+    public double getFertilizer_invalid_biome_growth_rate() {
         return fertilizer_invalid_biome_growth_rate;
     }
 
-    public double getFertilizer_invalid_biome_death_chance(){
+    public double getFertilizer_invalid_biome_death_chance() {
         return fertilizer_invalid_biome_death_chance;
     }
 
@@ -738,7 +739,7 @@ public class ConfigManager {
         return uv_blocks;
     }
 
-    public boolean getRequire_All_UV_Blocks(){
+    public boolean getRequire_All_UV_Blocks() {
         return require_all_uv_blocks;
     }
 
@@ -750,31 +751,31 @@ public class ConfigManager {
         return plant_death_sound_effect;
     }
 
-    public Map<String, Object> getBiomeGroups(){
+    public Map<String, Object> getBiomeGroups() {
         return biomeGroupsData;
     }
 
-    public Map<String, Object> getGrowthModifiers(){
+    public Map<String, Object> getGrowthModifiers() {
         return growthModifierData;
     }
 
-    public Map<String, Object> getLanguageFileData(){
+    public Map<String, Object> getLanguageFileData() {
         return languageFileData;
     }
 
-    public YamlDocument getConfigFile(){
+    public YamlDocument getConfigFile() {
         return config;
     }
 
-    public String getSelectedLanguageString(String s){
+    public String getSelectedLanguageString(String s) {
         return selectedLanguageFile.getString(s);
     }
 
-    public YamlDocument getBiomeGroupsFile(){
+    public YamlDocument getBiomeGroupsFile() {
         return biomeGroupsFile;
     }
 
-    public YamlDocument getGrowthModifiersFile(){
+    public YamlDocument getGrowthModifiersFile() {
         return growthModifiersFile;
     }
 
