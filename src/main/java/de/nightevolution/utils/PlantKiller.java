@@ -49,7 +49,7 @@ public class PlantKiller {
      *
      * @param plantToKill The {@link Block} representing the plant to be killed.
      */
-    public void killPlant (Block plantToKill){
+    public void killPlant (@NotNull Block plantToKill){
         Material plantType = plantToKill.getType();
 
         if(instance.isAgriculturalPlant(plantToKill)){

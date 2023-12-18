@@ -16,7 +16,6 @@ import org.bukkit.block.Block;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,11 +31,6 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * The main class for the {@link RealisticPlantGrowth} plugin, serving as a singleton instance.
      */
     private static RealisticPlantGrowth instance;
-
-    /**
-     * Prefix used in logging messages to identify the {@link RealisticPlantGrowth} plugin.
-     */
-    private static final String classPrefix = "RealisticPlantGrowth: ";
 
     /**
      * The name of the debug log file used by the {@link RealisticPlantGrowth} plugin.
@@ -59,9 +53,9 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private static ConfigManager cm;
 
     /**
-     * The {@link MessageManager} used by the {@link RealisticPlantGrowth} plugin.
+     * The {@link CommandManager} used by the {@link RealisticPlantGrowth} plugin.
      */
-    private MessageManager mm;
+    private CommandManager cmdManager;
 
     /**
      * The {@link BukkitAudiences} instance for managing Adventure API interactions in the {@link RealisticPlantGrowth} plugin.
@@ -108,6 +102,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
             Material.CAVE_VINES,
             Material.CAVE_VINES_PLANT,
             Material.CHORUS_FLOWER,
+            Material.CHORUS_PLANT,
             Material.COCOA,
             Material.CRIMSON_FUNGUS,
             Material.GLOW_LICHEN,
@@ -186,9 +181,6 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         // Create an instance of this Plugin
         instance = this;
 
-        // Initialize an audiences instance for the plugin
-        this.bukkitAudiences = BukkitAudiences.create(this);
-
         updateVariables();
         drawLogo();
     }
@@ -198,7 +190,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Associates the "{@code /rpg}" command with the corresponding {@link CommandManager}.
      */
     private void registerCommands(){
-        Objects.requireNonNull(instance.getCommand("rpg")).setExecutor(CommandManager.get());
+        Objects.requireNonNull(instance.getCommand("rpg")).setExecutor(cmdManager);
     }
 
     /**
@@ -210,8 +202,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     }
 
     /**
-     * Registers various event listeners to handle plant growth, structure growth, block spread,
-     * fertilization, block breaking, player interactions, and player quit events.
+     * Registers various event-listeners to handle plant growth, structure growth, block spread,
+     * fertilization, block-breaking, player interactions, and player quit events.
      * Each listener is associated with the provided instance of the {@link RealisticPlantGrowth} plugin.
      */
     private void registerListeners(){
@@ -241,12 +233,21 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      */
     public void updateVariables(){
         cm = ConfigManager.get();
-        mm = MessageManager.get();
 
         verbose = cm.isVerbose();
         debug = cm.isDebug_log();
 
         logger = new Logger(this.getClass().getSimpleName(), this, verbose, debug);
+
+        cmdManager = new CommandManager();
+
+        if(this.bukkitAudiences != null) {
+            this.bukkitAudiences.close();
+            this.bukkitAudiences = null;
+        }
+
+        // Initialize an audiences instance for the plugin
+        this.bukkitAudiences = BukkitAudiences.create(this);
 
         getSaplingsTag();
         updateGrowthModifiedPlants();
@@ -256,6 +257,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         Surrounding.clearCache();
         BiomeChecker.clearCache();
         registerListeners();
+
     }
 
     /**
@@ -431,6 +433,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      *
      * @return The singleton instance of the {@link RealisticPlantGrowth} plugin.
      */
+    @NotNull
     public static RealisticPlantGrowth getInstance() {
         return instance;
     }
@@ -440,6 +443,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      *
      * @return The {@link ConfigManager} instance managing plugin configurations.
      */
+    @NotNull
     public ConfigManager getConfigManager() {
         return cm;
     }
@@ -449,22 +453,11 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      *
      * @return The {@link MessageManager} instance handling plugin messages.
      */
+    @NotNull
     public MessageManager getMessageManager() {
-        return this.mm;
+        return MessageManager.get();
     }
 
-    /**
-     * Retrieves the {@link BukkitAudiences} instance associated with the plugin.
-     *
-     * @return The {@link BukkitAudiences} instance for managing Adventure API interactions.
-     * @throws IllegalStateException If attempting to access the Adventure API when the plugin is disabled.
-     */
-    public @NonNull BukkitAudiences getBukkitAudiences() {
-        if (this.bukkitAudiences == null) {
-            throw new IllegalStateException(classPrefix + "Tried to access Adventure API when the plugin was disabled!");
-        }
-        return this.bukkitAudiences;
-    }
 
     /**
      * Retrieves the corresponding {@link Material} that a seed converts to if the seed is placed.

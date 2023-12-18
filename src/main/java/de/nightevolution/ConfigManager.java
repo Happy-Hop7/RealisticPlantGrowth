@@ -387,7 +387,6 @@ public class ConfigManager {
         }
     }
 
-    // TODO: Check user modified data
     private void readLanguageData(){
         languageFileData = selectedLanguageFile.getStringRouteMappedValues(true);
 
@@ -526,7 +525,7 @@ public class ConfigManager {
             biomeGroupsFile.reload();
             logger.debug("BiomeGroups.yml reloaded.");
 
-            selectedLanguageFile.update();
+            selectedLanguageFile.reload();
             logger.debug("Language files reloaded.");
 
             uv_blocks.clear();
@@ -765,6 +764,10 @@ public class ConfigManager {
 
     public YamlDocument getConfigFile(){
         return config;
+    }
+
+    public String getSelectedLanguageString(String s){
+        return selectedLanguageFile.getString(s);
     }
 
     public YamlDocument getBiomeGroupsFile(){

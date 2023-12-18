@@ -2,6 +2,7 @@ package de.nightevolution.commands.sub;
 
 
 import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.utils.MessageType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
@@ -19,6 +20,8 @@ public class Reload extends SubCommand {
             return false;
 
         instance.reload();
+
+        msgManager.sendLocalizedMsg(commandSender, MessageType.RELOAD_COMPLETE_MSG, false);
         return true;
     }
 }

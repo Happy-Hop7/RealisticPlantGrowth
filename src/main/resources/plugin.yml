@@ -11,7 +11,7 @@ website: '${project.url}'
 commands:
    rpg:
       description: Execute a RealisticPlantGrowth command.
-      usage: /ppg <reload|debug>
+      usage: /rpg <help|info|reload>
       permission: rpg.help
       aliases: [realisticPlantGrowth, realisticplantgrowth]
 
@@ -21,5 +21,19 @@ permissions:
     default: op
     children:
         rpg.help: true
+        rpg.info: true
         rpg.reload: true
-        rpg.debug: true
+
+  rpg.help:
+    description: Base-Permission to access /rpg command.
+    default: op
+
+  rpg.info:
+    description: Gives access to the /rpg info command.
+    default: op
+    children:
+      rpg.info.interact: true
+
+  rpg.info.interact:
+    description: Gives growth information of plants when interacting with them.
+    default: op
