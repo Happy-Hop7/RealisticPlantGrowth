@@ -20,12 +20,9 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 
 ## 4. Plants Require Natural Sky Light
 
+***
+
 ## Planned Features
 
-* [ ] Implement Fertilizer to speed up growth.
-* [ ] Implement UV-Light Blocks to allow growth underground.
-* [ ] Make the required harvesting tool configurable.
-* [ ] Crop Spoilage Configuration.
-* [ ] Enable configurable replacement block(s) for dead plants.
-* [ ] Allow configuration of replacement blocks of destroyed farmland.
-* [ ] Take weather cycle into account for plant growth.
+
+
