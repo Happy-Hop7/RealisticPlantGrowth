@@ -27,9 +27,9 @@ plugin_prefix: "[RealisticPlantGrowth] "
 
 # List of worlds where this plugin is active. Worlds not listed here will use default growth behavior.
 enabled_worlds:
-  - world
-  - world_nether
-  - world_end
+  - your_world
+  - your_world_nether
+  - your_world_end
 
 # Limits the use of bonemeal on plants to the specified amount.
 # Setting 'bonemeal_limit: 0' completely disables the use of bone meal.
@@ -40,7 +40,7 @@ bonemeal_limit: 3
 # Sky light level: 0: allows underground growth. (Additional light sources are still necessary.)
 # Sky light level 10-12: corresponds to sunlight filtered through leaves.
 # Sky light level 15: plants only grow in direct sunlight. (Allows glass ceilings.)
-min_natural_light: 10
+min_natural_light: 15
 
 # When a player harvests a plant that has grown on farmland, the farmland is automatically replaced with a
 # coarse dirt block. Consequently, the player is required to re-hoe the area to prepare it for seeding new plants.
@@ -58,7 +58,7 @@ display_growth_rates: true
 # Only active, if display_growth_rates is enabled.
 # Time in seconds before the growth rates are shown to the player again.
 # Prevents spam clicking and therefore heavy area scans.
-display_cooldown: 30
+display_cooldown: 5
 
 ########################################################################################################################
 #|                                                                                                                    |#
@@ -68,11 +68,11 @@ display_cooldown: 30
 #|                                                                                                                    |#
 ########################################################################################################################
 # Enables the use of composters to fertilize crops in the surrounding area.
-fertilizer_enabled: true
+fertilizer_enabled: false
 
 # Plants within this block radius will grow at the 'fertilizer_growth_rate' (see below).
 # Higher values may increase server resource consumption and cause lag (Maximum 15 blocks).
-fertilizer_radius: 10
+fertilizer_radius: 8
 
 # true: Fertilizer effects do not deplete composters to fertilize the surroundings.
 # false: Players must actively fill the composter to achieve fertilization effects.
@@ -119,7 +119,7 @@ fertilizer_invalid_biome_death_chance: 25.0
 #|                                                                                                                    |#
 ########################################################################################################################
 # Enable use of UV-Light Blocks
-uv_enabled: true
+uv_enabled: false
 
 # List of blocks that can function as UV-Light sources; they don't need to emit light.
 uv_blocks:
@@ -134,7 +134,7 @@ require_all_uv_blocks: true
 
 # Radius around a UV-Light block that affects growth.
 # Higher values consume more server resources and may lead to server lag. (Maximum 15 blocks)
-uv_radius: 10
+uv_radius: 5
 
 # List of plants that grow without requiring natural sky light, allowing growth
 # in artificial light sources like torches and lanterns (not the same as UV-Light).
@@ -179,7 +179,7 @@ plant_death_sound_effect:
 #|                                                                                                                    |#
 ########################################################################################################################
 # Enables Debug-Mode. Can get spammy, use for only for debugging.
-debug_log:    true
+debug_log:    false
 
 # Logs Tree Growing Events in a separate log file.
 tree_log:     false
@@ -196,4 +196,4 @@ bonemeal_log: false
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
 config-version: 1
-verbose: true
+verbose: false

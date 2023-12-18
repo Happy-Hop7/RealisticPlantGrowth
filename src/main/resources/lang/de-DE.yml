@@ -1,6 +1,48 @@
-# German Language-File (coming soon)
-# Message format - set how the plugin displays messages to users
-player_msg_format: "&2PwnPlantGrowth: &r"
+# German Language-File
+# See https://docs.advntr.dev/minimessage/format.html for formatting infos.
+# Legacy color-codes (& and §) are not supported in this file!
 
-# No Permission message
-no_permissions: ""
+# Nachrichten-Header
+# Wird als Abtrennung für Plugin-Chatnachrichten verwendet.
+MSG_HEADER: "<newline><gray>---------------- <green>Realistic Plant Growth <gray>----------------"
+
+# Keine Berechtigungen
+# Wird an den Spieler gesendet, wenn dieser keine Berechtigungen für einen eingegebenen Plugin-Befehl hat.
+NO_PERMISSIONS: "<red>You don't have the required permissions to perform this command!"
+
+# Das Hilfe-Menü
+# Wird dem Nutzer angezeigt, wenn dieser den Befehl '/rpg help' ausführt oder einen unbekannten Unterbefehl verwendet.
+HELP_CMD_MSG: |-
+  <aqua>/rpg help <dark_gray>- <gray>Zeigt dir dieses Hilfe-Menü an.
+INFO_CMD_MSG: |-
+  <aqua>/rpg info <dark_gray>- <gray>Zeigt Informationen zur aktuell in der Hand<newline>               gehaltenen Pflanze an.
+RELOAD_CMD_MSG: |-
+  <aqua>/rpg reload <dark_gray>- <gray>Neuladen aller Konfigurationsdateien.
+
+# Wird nach einem erfolgreichen reload des Plugins angezeigt.
+RELOAD_COMPLETE_MSG: "<green>Realistic Plant Growth erfolgreich neu geladen."
+
+# Wachstumsinformationsnachricht.
+# Nachricht an den Spieler, wenn dieser mit Saatgut einen Linksklick auf eine Stelle im Boden macht.
+# Nur aktiv, wenn 'display_growth_rates' in der Konfigurationsdatei (Config.yml) aktiviert ist.
+GROWTH_RATE_MSG: |-
+  <gray> Wachstumsinformationen für<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
+    <dark_gray> » <gray>Biom: <aqua><lang:biome.minecraft.{BIOME}>
+    <dark_gray> » <gray>Wachstumsrate: <aqua>{GROWTH_RATE}
+    <dark_gray> » <gray>Todeschance:   <aqua>{DEATH_CHANCE}
+    <dark_gray> » <gray>Ist stelle in Dunkelheit: <aqua>{IS_DARK}
+    <dark_gray> » <gray>Beeinflusst durch Dünger: <aqua>{FERTILIZER_USED}
+    <dark_gray> » <gray>Beeinflusst durch UV-Licht: <aqua>{UV_LIGHT_USED}
+    <dark_gray> » <gray>Kann in Dunkelheit wachsen: <aqua>{CAN_GROW_IN_DARK}
+    <dark_gray> » <gray>Kann ohne Dünger in <lang:biome.minecraft.{BIOME}> wachsen: <aqua>{IS_VALID_BIOME}
+
+# Nachricht an den Spieler, wenn 'display_growth_rates' in der Konfigurationsdatei (Config.yml) aktiviert ist und
+# das Saatgut keine veränderten Eigenschaften gegenüber Minecraft-Vanilla verhalten aufweist.
+PLANT_NOT_MODIFIED_MSG: |-
+  <hover:show_item:"minecraft:{PLANT}"> <aqua><lang:block.minecraft.{PLANT}></hover> <gray>besitzt keine veränderten Wachstumseigenschaften.
+    » <yellow><italic>Normales Minecraft Vanilla-Verhalten.
+
+# Version der Konfigurationsdatei.
+# Bitte nicht selbständig ändern :)
+version: 1
+

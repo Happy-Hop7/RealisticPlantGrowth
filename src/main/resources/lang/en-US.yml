@@ -1,11 +1,47 @@
-# English Language-File (coming soon)
-# Message format - set how the plugin displays messages to users
-player_msg_format: "&2PwnPlantGrowth: &r"
+# English Language File
+# See https://docs.advntr.dev/minimessage/format.html for formatting infos.
+# Legacy color-codes (& and §) are not supported in this file!
 
-# No Permission message
-no_permissions: "You don't have the required permissions to perform this command!"
+# Message Header
+# Used as a separator for plugin chat messages.
+MSG_HEADER: "<newline><gray>---------------- <green>Realistic Plant Growth <gray>----------------"
 
-# Help menu which shows up at wrong command usage and /rpg help
-rpg_help: "/rpg help - Shows this help message"
-rpg_info: "/rpg info - Gives information about plant currently in holding in hand"
-rpg_reload:  "/rpg reload - Reloads the plugin and all related configs"
+# No Permissions
+# Sent to the player when they don't have the required permissions for a given plugin command.
+NO_PERMISSIONS: "<red>You don't have the required permissions to perform this command!"
+
+# Help Menu
+# Displayed to the user when they execute the '/rpg help' command or use an unknown subcommand.
+HELP_CMD_MSG: |-
+  <aqua>/rpg help <dark_gray>- <gray>Shows this help menu.
+INFO_CMD_MSG: |-
+  <aqua>/rpg info <dark_gray>- <gray>Shows information about the plant currently held in hand.
+RELOAD_CMD_MSG: |-
+  <aqua>/rpg reload <dark_gray>- <gray>Reloads all configuration files.
+
+# Displayed after successfully reloading the plugin.
+RELOAD_COMPLETE_MSG: "<green>Realistic Plant Growth successfully reloaded."
+
+# Growth Information Message.
+# Sent to the player when they left-click on a spot in the ground with seeds.
+# Active only if 'display_growth_rates' is enabled in the configuration file (Config.yml).
+GROWTH_RATE_MSG: |-
+  <gray>Growth information for<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
+    <dark_gray> » <gray>Biome: <aqua><lang:biome.minecraft.{BIOME}>
+    <dark_gray> » <gray>Growth Rate: <aqua>{GROWTH_RATE}
+    <dark_gray> » <gray>Death Chance:   <aqua>{DEATH_CHANCE}
+    <dark_gray> » <gray>Is Dark Spot: <aqua>{IS_DARK}
+    <dark_gray> » <gray>Influenced by Fertilizer: <aqua>{FERTILIZER_USED}
+    <dark_gray> » <gray>Influenced by UV Light: <aqua>{UV_LIGHT_USED}
+    <dark_gray> » <gray>Can Grow in Darkness: <aqua>{CAN_GROW_IN_DARK}
+    <dark_gray> » <gray>Can grow without fertilizer in <lang:biome.minecraft.{BIOME}>: <aqua>{IS_VALID_BIOME}
+
+# Sent to the player when 'display_growth_rates' is enabled in the configuration file (Config.yml) and
+# the seed has no modified properties compared to Minecraft vanilla behavior.
+PLANT_NOT_MODIFIED_MSG: |-
+  <hover:show_item:"minecraft:{PLANT}"> <aqua><lang:block.minecraft.{PLANT}></hover> <gray>has no modified growth properties.
+    » <yellow><italic>Normal Minecraft Vanilla behavior.
+
+# Configuration File Version.
+# Please do not modify on your own :)
+version: 1
