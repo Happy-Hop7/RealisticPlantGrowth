@@ -157,6 +157,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     ));
 
     private static final Set<Material> growEventReturnsAirBlockPlants = new HashSet<>(Arrays.asList(
+            Material.CHORUS_FLOWER,
+            Material.CHORUS_PLANT,
             Material.MELON_STEM,
             Material.PUMPKIN_STEM,
             Material.SUGAR_CANE,

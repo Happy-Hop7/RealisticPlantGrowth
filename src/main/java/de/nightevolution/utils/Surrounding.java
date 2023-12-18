@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Levelled;
 import org.jetbrains.annotations.NotNull;
@@ -493,7 +494,7 @@ public class Surrounding {
      * @return {@code true} if the environment is dark; {@code false} otherwise.
      */
     public boolean isInDarkness(){
-        int skyLightLevel = centerBlock.getLightFromSky();
+        int skyLightLevel = centerBlock.getRelative(BlockFace.UP).getLightFromSky();
         logger.verbose("skyLightLevel: " + skyLightLevel);
         boolean hasNotMinSkyLight =  (configManager.getMin_Natural_Light() > skyLightLevel);
         logger.verbose("hasNotMinSkyLight: " + hasNotMinSkyLight);
