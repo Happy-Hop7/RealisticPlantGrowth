@@ -93,6 +93,9 @@ public class PlayerInteractListener implements Listener {
         Block eventBlock = clickedBlock.getRelative(BlockFace.UP);
 
         Player ePlayer = e.getPlayer();
+        if (!ePlayer.hasPermission("rpg.info.interact")) {
+            return;
+        }
 
         // Using a BlockState to "change" the Block type without actually changing the Block type in the world.
         BlockState eventBlockState = eventBlock.getBlockData().createBlockState();

@@ -36,4 +36,4 @@ permissions:
 
   rpg.info.interact:
     description: Gives growth information of plants when interacting with them.
-    default: op
+    default: true

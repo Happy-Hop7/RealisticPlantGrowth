@@ -37,7 +37,7 @@ public class TabCompleterImpl implements TabCompleter {
         allPermissions.add("rpg.help");
         allPermissions.add("rpg.info");
         allPermissions.add("rpg.info.interact");
-        allPermissions.add("rpg.admin");
+        allPermissions.add("rpg.reload");
 
         boolean hasAtLeastOnePermission = false;
 
@@ -66,7 +66,7 @@ public class TabCompleterImpl implements TabCompleter {
             if (commandSender.hasPermission("rpg.info")) {
                 commands.add("info");
             }
-            if (commandSender.hasPermission("rpg.admin")) {
+            if (commandSender.hasPermission("rpg.reload")) {
                 commands.add("reload");
             }
             StringUtil.copyPartialMatches(args[0], commands, shownTabs);
