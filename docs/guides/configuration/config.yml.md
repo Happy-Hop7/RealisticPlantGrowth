@@ -4,13 +4,17 @@
 Default Config File
 {% endfile %}
 
+{% hint style="danger" %}
+Add link to Config.yml in Github
+{% endhint %}
+
 ***
 
 ## General Settings
 
 ### language\_code
 
-#### default: _en-GB_
+#### default: `en-GB`
 
 Language setting for the user plugin messages.\
 The language files are located in your server's "plugins" directory:\
@@ -19,25 +23,26 @@ The language files are located in your server's "plugins" directory:\
 Upon the first plugin start, all supported languages for your version should be available in this directory.\
 If you wish to change the language, you'll need to identify and select the `.yml` file with the desired language. You also have the option to create your own language files and use them .
 
-In cases where specific translations are missing, the default strings from the default language (`en-GB`) will be automatically selected.
+In cases where specific translations are missing, the default strings from the default language \
+(`en-US`) will be automatically selected.
 
 ***
 
 ### plugin\_prefix
 
-#### default: _'\[RealisticPlantGrowth] '_
+#### default: `'[RealisticPlantGrowth] '`
 
 Plugin prefix for console logs. Does not affect chat messages.\
-You can customize the prefix using miniMessage format and legacy &-color codes.\
+You can customize the prefix using MiniMessage format and legacy &-color codes.\
 For details, refer to: [MiniMessage Format](https://docs.advntr.dev/minimessage/format.html)
 
 ### enabled\_worlds
 
 #### default:
 
-* your\_world
-* your\_world\_nether
-* your\_world\_end
+* `your_world`
+* `your_world_nether`
+* `your_world_end`
 
 List of worlds where this plugin is active.\
 To customize, modify this list to include your desired worlds.\
@@ -47,7 +52,7 @@ Any worlds not listed here will use the default growth behavior.
 
 ### bonemeal\_limit
 
-#### default: _3_
+#### default: `3`
 
 Limits the use of bonemeal on plants to the specified amount.\
 Setting 'bonemeal\_limit: 0' completely disables the use of bone meal.\
@@ -61,7 +66,7 @@ Negative numbers deactivate this feature (e.g., 'bonemeal\_limit: -1').
 
 ### min\_natural\_light
 
-#### default: _12_
+#### default: `15`
 
 Required natural sky light level for plant growth.
 
@@ -75,7 +80,7 @@ Required natural sky light level for plant growth.
 
 ### destroy\_farmland
 
-#### default: _true_
+#### default: `true`
 
 When a player harvests a plant that has grown on farmland, the farmland is automatically replaced with a coarse dirt block.\
 Consequently, the player is required to re-hoe the area to prepare it for seeding new plants.\
@@ -85,7 +90,7 @@ Setting '`destroy_farmland`' to '`true`' enables this feature.
 
 ### require\_hoe
 
-#### default: true
+#### default: `true`
 
 Determines whether a player needs a hoe to harvest plants. If set to `true`, players must use a hoe for harvesting.\
 If `require_hoe` is set to 'true' and a plant is harvested without a hoe, the plant will not drop anything.
@@ -94,7 +99,7 @@ If `require_hoe` is set to 'true' and a plant is harvested without a hoe, the pl
 
 ### display\_growth\_rates
 
-#### default: true
+#### default: `true`
 
 Displays potential growth rates for an item in hand when a player left-clicks the ground.\
 Only shows growth rates for the biome the player is currently in.
@@ -103,7 +108,7 @@ Only shows growth rates for the biome the player is currently in.
 
 ### display\_cooldown
 
-#### default: 3
+#### default: `5`
 
 Only active, if `display_growth_rates` is enabled.\
 Time in seconds before the growth rates are shown to the player again.\
@@ -119,7 +124,7 @@ Fertilizer enables Composters to fertilize crops in the surrounding area, allowi
 
 ### fertilizer\_enabled
 
-#### default: false
+#### default: `false`
 
 Enables the use of composters to fertilize crops in the surrounding area.
 
@@ -127,7 +132,7 @@ Enables the use of composters to fertilize crops in the surrounding area.
 
 ### fertilizer\_radius
 
-#### default: 10
+#### default: `8`
 
 Plants within this block radius will grow at the `fertilizer_growth_rate` (see below).\
 Higher values may increase server resource consumption and cause lag (Maximum 15 blocks).
@@ -136,7 +141,7 @@ Higher values may increase server resource consumption and cause lag (Maximum 15
 
 ### fertilizer\_passiv
 
-#### default: true
+#### default: `true`
 
 `true`: Fertilizer effects do not deplete composters to fertilize the surroundings.\
 `false`: Players must actively fill the composter to achieve fertilization effects.
@@ -145,7 +150,7 @@ Higher values may increase server resource consumption and cause lag (Maximum 15
 
 ### fertilizer\_boost\_growth\_rate
 
-#### default: 20.0
+#### default: `20.0`
 
 The `fertilizer_boost_growth_rate` is a ~~percentage~~ value added to biome-specific growth rates, if a composter is within the configured `fertilizer_radius`.\
 For example, a biome-specific growth rate of wheat in a desert is 20%. A 'fertilizer\_boost\_growth\_rate' of 25.0% results in a growth rate of 45.0% for wheat plants.
@@ -154,7 +159,7 @@ For example, a biome-specific growth rate of wheat in a desert is 20%. A 'fertil
 
 ### fertilizer\_allow\_growth\_rate\_above\_100
 
-#### default: false
+#### default: `false`
 
 Allows a growth rate above 100.0%.\
 If a plant has a biome-specific growth rate of 100.0% and this is set to be true, the resulting growth rate can exceed 100.0% (e.g., 125.0%). Otherwise, the growth rate is capped at 100.0%.
@@ -167,7 +172,7 @@ If a plant has a biome-specific growth rate of 100.0% and this is set to be true
 
 ### fertilizer\_enables\_growth\_in\_invalid\_biomes
 
-#### default: false
+#### default: `false`
 
 If set to `true`, Fertilizer allows plants to thrive in invalid biomes.\
 If set to `false`, plant growth is limited to biomes explicitly listed in `Biome: []` section within `GrowthModifiers.yml`.
@@ -176,7 +181,7 @@ If set to `false`, plant growth is limited to biomes explicitly listed in `Biome
 
 ### fertilizer\_invalid\_biome\_growth\_rate
 
-#### default: 35.0
+#### default: `35.0`
 
 Growth rate of plants in invalid biomes with fertilizer access.\
 Only active if `fertilizer_enables_growth_in_invalid_biomes` is set to `true`, and the plant is in an invalid biome.
@@ -185,7 +190,7 @@ Only active if `fertilizer_enables_growth_in_invalid_biomes` is set to `true`, a
 
 ### fertilizer\_invalid\_biome\_death\_chance
 
-#### default: 25.0
+#### default: `25.0`
 
 Probability of plant death in an invalid biome despite fertilizer supply.\
 This rule is effective only when `fertilizer_enables_growth_in_invalid_biomes` is set to `true` and the plant is located in an inappropriate biome.
@@ -207,7 +212,7 @@ This allows the cultivation of plants underground or in buildings without direct
 
 ### uv\_enabled
 
-#### default: false
+#### default: `false`
 
 Enable the use of UV-Light Blocks.
 
@@ -217,9 +222,9 @@ Enable the use of UV-Light Blocks.
 
 #### default:
 
-* OCHRE\_FROGLIGHT
-* PEARLESCENT\_FROGLIGHT
-* VERDANT\_FROGLIGHT
+* `OCHRE_FROGLIGHT`
+* `PEARLESCENT_FROGLIGHT`
+* `VERDANT_FROGLIGHT`
 
 List of blocks that can function as UV-Light sources.\
 Use the official [MATERIAL\_NAMES](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html) to add items to this list.
@@ -232,7 +237,7 @@ Use the official [MATERIAL\_NAMES](https://hub.spigotmc.org/javadocs/spigot/org/
 
 ### require\_all\_uv\_blocks
 
-#### default: false
+#### default: `false`
 
 Determines whether a plant requires all UV-Light Blocks listed above to grow.
 
@@ -243,7 +248,7 @@ Determines whether a plant requires all UV-Light Blocks listed above to grow.
 
 ### uv\_radius
 
-#### default: 7
+#### default: `5`
 
 Radius around a UV-Light block that affects growth.\
 Higher values consume more server resources and may lead to server lag. _(Maximum 15 blocks)_\
@@ -253,10 +258,10 @@ Use the official [MATERIAL\_NAMES](https://hub.spigotmc.org/javadocs/spigot/org/
 
 #### default:
 
-* RED\_MUSHROOM
-* BROWN\_MUSHROOM
-* NETHER\_WART
-* COCOA
+* `RED_MUSHROOM`
+* `BROWN_MUSHROOM`
+* `NETHER_WART`
+* `COCOA`
 
 List of plants that grow without requiring natural sky light, allowing growth in artificial light sources like torches and lanterns _(not the same as UV-Light)_.\
 Use the official [MATERIAL\_NAMES](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html) to add items to this list.
@@ -273,12 +278,16 @@ Configure played sounds or particle effects used by this plugin.
 
 #### defaults:
 
-* enabled:
-* sound:
-* volume:
-* pitch:
-* effect:
-* data:
+* enabled: `true` - Enables the sound and particle effects for dying plants.
+* sound: `BLOCK_CROP_BREAK` - The sound played when a plant dies.
+* volume: `0.5` - Adjust the volume _(0.0 to 1.0)_.
+* pitch: `0.5` - Adjust the pitch _(0.5 to 2.0, 1.0 is normal pitch)_.
+* effect: `SMOKE` - The particle effect played when a plant dies.
+* data: `1` - Adjust effect data if applicable.
+
+Available sounds and effects:\
+Sound: [https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html)\
+Particle Effects: [https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Effect.html](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Effect.html)
 
 ***
 
@@ -290,7 +299,7 @@ Provides various debug logs to offer additional plugin data for troubleshooting 
 
 ### debug\_log
 
-#### default: false
+#### default: `false`
 
 Enables Debug-Mode. Can get spammy, use for only for debugging.
 
@@ -298,7 +307,7 @@ Enables Debug-Mode. Can get spammy, use for only for debugging.
 
 ### tree\_log
 
-#### default: false
+#### default: `false`
 
 Logs Tree Growing Events in a separate log file.
 
@@ -310,7 +319,7 @@ Not implemented yet.
 
 ### plant\_log
 
-#### default: false
+#### default: `false`
 
 Logs Plant Growing Events in a separate log file.
 
@@ -322,7 +331,7 @@ Not implemented yet.
 
 ### bonemeal\_log
 
-#### default: false
+#### default: `false`
 
 Logs Bonemeal Usage Events in a separate log file.
 
