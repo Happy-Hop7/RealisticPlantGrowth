@@ -3,6 +3,7 @@ package de.nightevolution;
 import de.nightevolution.utils.Logger;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
 import dev.dejvokep.boostedyaml.route.Route;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
@@ -169,7 +170,8 @@ public class ConfigManager {
         try {
             config = YamlDocument.create(new File(pluginFolder, "Config.yml"),
                     Objects.requireNonNull(instance.getResource("Config.yml")),
-                    GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
+                    GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT,
+                    UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
             config.update();
             logger.log("Config.yml loaded.");
 
@@ -228,13 +230,15 @@ public class ConfigManager {
 
                     selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
                             Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")),
-                            GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
+                            GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT,
+                            UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build());
 
                 } else {
                     logger.logToFile("Loading language File: " + languageFolder + File.separator + languageCode + ".yml", logFile);
                     YamlDocument temp = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
                             Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")),
-                            GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
+                            GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT,
+                            UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build());
                     temp.update();
                 }
 
@@ -266,7 +270,8 @@ public class ConfigManager {
                     if (fileName.equalsIgnoreCase(language_code + ".yml")) {
                         try {
                             selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, language_code + ".yml"),
-                                    gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
+                                    gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT,
+                                    UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build());
                             logger.log(fileName + " loaded.");
                         } catch (IOException e) {
                             logger.warn("Couldn't load language_code: " + language_code);
@@ -285,7 +290,8 @@ public class ConfigManager {
                 logger.warn("Using default language file: en-US");
                 selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, "en-US.yml"),
                         Objects.requireNonNull(instance.getResource("lang/" + "en-US.yml")),
-                        GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
+                        GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT,
+                        UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build());
             } catch (IOException e) {
                 logger.error("&cCouldn't load custom language file!");
                 instance.disablePlugin();
