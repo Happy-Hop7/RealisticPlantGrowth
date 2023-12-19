@@ -13,9 +13,9 @@
 
 * [🖥 Installation](guides/installation.md)
 * [🛠 Configuration](guides/configuration/README.md)
-  * [Config.yml](guides/configuration/config.yml.md)
-  * [BiomeGroups.yml](guides/configuration/biomegroups.yml.md)
-  * [GrowthModifiers.yml](guides/configuration/growthmodifiers.yml.md)
+  * [⚙ Config.yml](guides/configuration/config.yml.md)
+  * [🌅 BiomeGroups.yml](guides/configuration/biomegroups.yml.md)
+  * [📊 GrowthModifiers.yml](guides/configuration/growthmodifiers.yml.md)
 
 ## For Contributors
 
@@ -26,7 +26,8 @@
 
 ## Links
 
-* [🖥 GitHub](links/github.md)
-* [🗣 Discord](links/discord.md)
-* [📀 Modrinth](links/modrinth.md)
-* [🚰 Spigot](links/spigot.md)
+* [GitHub](https://github.com/Happy-Hop7)
+* [Modrinth](https://modrinth.com/mod/realistic-plant-growth)
+* [Spigot](https://www.spigotmc.org/members/therealpredator.1915777/)
+* [Discord](https://discord.gg/4RdgdaNdhB)
+* [Buy Me a Coffee](https://www.buymeacoffee.com/TheRealPredator)

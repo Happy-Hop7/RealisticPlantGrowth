@@ -1,4 +1,4 @@
-# Config.yml
+# ⚙ Config.yml
 
 {% file src="../../.gitbook/assets/Config.yml" %}
 Default Config File
