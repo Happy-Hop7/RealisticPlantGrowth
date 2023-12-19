@@ -19,12 +19,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-//TODO: add config version system
+/**
+ * ConfigManager is a singleton class responsible for managing and handling the configuration
+ * of the Bukkit/Spigot plugin "RealisticPlantGrowth." It uses the BoostedYAML API for file operations
+ * and provides methods to access and update configuration values.
+ */
 public class ConfigManager {
 
     private static ConfigManager configManager;
     private static RealisticPlantGrowth instance;
-    private static MessageManager messageManager;
     private static Logger logger;
 
     private static String plugin_prefix;
@@ -96,7 +99,7 @@ public class ConfigManager {
 
 
     /**
-     * Constructor for a new Singleton ConfigManager instance, which creates, reads and updates the config file.
+     * Constructor for a new Singleton ConfigManager instance, which creates, reads, and updates the config file.
      * Get an instance of ConfigManager with ConfigManager.get().
      * ConfigManager uses BoostedYAML API to perform file operations.
      */
@@ -105,8 +108,7 @@ public class ConfigManager {
         configManager = this;
         instance = RealisticPlantGrowth.getInstance();
 
-        // TODO: Set verbose and debug values of logger to false
-        logger = new Logger(this.getClass().getSimpleName(), instance, true, true);
+        logger = new Logger(this.getClass().getSimpleName(), instance, false, false);
 
         pluginFolder = instance.getDataFolder();
         languageFolder = new File(pluginFolder + File.separator + "lang");
@@ -321,9 +323,8 @@ public class ConfigManager {
     }
 
     /**
-     * Reads the debug boolean from the config file.
-     * Todo: Make this call asynchronous
-     * Todo: Add parameter check !!!
+     * Reads the configuration data from the main config file (Config.yml) and initializes global variables
+     * with the values read from the file.
      */
     private void readConfigData() {
 
@@ -392,6 +393,10 @@ public class ConfigManager {
         }
     }
 
+    /**
+     * Reads the language data from the selected language file and initializes the languageFileData map
+     * with the values read from the file.
+     */
     private void readLanguageData() {
         languageFileData = selectedLanguageFile.getStringRouteMappedValues(true);
 
@@ -409,7 +414,10 @@ public class ConfigManager {
         }
     }
 
-    // TODO: Check user modified data
+    /**
+     * Reads the BiomeGroups data from the BiomeGroups.yml file and initializes the biomeGroupsData map
+     * with the values read from the file.
+     */
     private void readBiomeGroupsData() {
         biomeGroupsData = biomeGroupsFile.getStringRouteMappedValues(true);
 
@@ -423,7 +431,11 @@ public class ConfigManager {
         }
     }
 
-    // TODO: Check user modified data
+
+    /**
+     * Reads the GrowthModifiers data from the GrowthModifiers.yml file and initializes the growthModifierData map
+     * with the values read from the file.
+     */
     private void readGrowthModifierData() {
         growthModifierData = growthModifiersFile.getStringRouteMappedValues(true);
 
@@ -437,13 +449,19 @@ public class ConfigManager {
         }
     }
 
+    /**
+     * Prints the key set of a given map to the log file.
+     *
+     * @param data The map to be printed.
+     */
     private void printMap(Map<String, Object> data) {
         Set<String> keys = data.keySet();
-        keys.forEach((key) -> {
-            logger.logToFile(key, logFile);
-        });
+        keys.forEach((key) -> logger.logToFile(key, logFile));
     }
 
+    /**
+     * Prints the configuration data to the log file.
+     */
     private void printConfigData() {
         Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
             logger.logToFile("", logFile);
@@ -459,9 +477,8 @@ public class ConfigManager {
             // General settings
             logger.logToFile("language_code: " + language_code, logFile);
             logger.logToFile("enabled worlds:", logFile);
-            enabled_worlds.forEach((n) -> {
-                logger.logToFile("  - " + n, logFile);
-            });
+            enabled_worlds.forEach((n) -> logger.logToFile("  - " + n, logFile));
+
             logger.logToFile("bonemeal_limit: " + bonemeal_limit, logFile);
             logger.logToFile("min_natural_light: " + min_natural_light, logFile);
             logger.logToFile("destroy_farmland: " + destroy_farmland, logFile);
@@ -490,14 +507,10 @@ public class ConfigManager {
             logger.logToFile("require_all_uv_blocks: " + require_all_uv_blocks, logFile);
 
             logger.logToFile("uv_blocks:", logFile);
-            uv_blocks.forEach((materialName) -> {
-                logger.logToFile("  - " + materialName, logFile);
-            });
+            uv_blocks.forEach((materialName) -> logger.logToFile("  - " + materialName, logFile));
 
             logger.logToFile("grow_in_dark:", logFile);
-            grow_in_dark.forEach((materialName) -> {
-                logger.logToFile("  - " + materialName, logFile);
-            });
+            grow_in_dark.forEach((materialName) -> logger.logToFile("  - " + materialName, logFile));
 
             // Sound & Effects
             logger.logToFile("plant_death_sound_effect: ", logFile);
@@ -512,7 +525,7 @@ public class ConfigManager {
     }
 
     /**
-     * Reloads configuration files when the plugin is in a reloading state.
+     * Reloads all configuration files when the plugin is in a reloading state.
      * Reads values from the configuration files and updates global fields accordingly.
      * This method reloads the main configuration file (Config.yml), as well as other YAML files
      * responsible for growth modifiers (GrowthModifiers.yml), biome groups (BiomeGroups.yml),
@@ -554,18 +567,34 @@ public class ConfigManager {
         }
     }
 
-    public Optional<Section> getConfigSection(Route routeToSection) {
-        return config.getOptionalSection(routeToSection);
-    }
 
+    /**
+     * Gets the Section from the growth modifiers file based on the provided route.
+     *
+     * @param routeToSection The route to the desired section.
+     * @return An optional Section containing the data from the specified route.
+     */
     public Optional<Section> getGrowthModifierSection(Route routeToSection) {
         return growthModifiersFile.getOptionalSection(routeToSection);
     }
 
+    /**
+     * Gets the list of strings from the BiomeGroups file based on the provided route.
+     *
+     * @param routeToSection The route to the desired section.
+     * @return An optional list of strings containing the data from the specified route.
+     */
     public Optional<List<String>> getBiomeGroupStringList(Route routeToSection) {
         return biomeGroupsFile.getOptionalStringList(routeToSection);
     }
 
+    /**
+     * Gets the default modifier section for a given plant type from the growth modifiers file.
+     *
+     * @param plantType The material type of the plant.
+     * @return The default modifier section for the specified plant type.
+     * @throws NullPointerException If the default section for the plant type is missing.
+     */
     public Section getDefaultModifierSection(Material plantType) {
         Route r = Route.from(plantType, "Default");
         Optional<Section> defaultSection = growthModifiersFile.getOptionalSection(r);
@@ -576,20 +605,13 @@ public class ConfigManager {
         throw new NullPointerException("Default Section for '" + plantType + "' is missing!");
     }
 
-    public double getModifierOnRoute(Route route) {
-        Optional<Double> optionalDouble = growthModifiersFile.getOptionalDouble(route);
 
-        if (optionalDouble.isEmpty()) {
-            logger.error("No value for modifier '" + route + "' found in default section!");
-            logger.error("Please assign a double value to this modifier in the default section.");
-            logger.error("For more information, check out GrowthModifiers in the wiki.");
-            throw new YAMLException("Check your GrowthModifiers.yml!");
-        }
-
-        return optionalDouble.get();
-    }
-
-
+    /**
+     * Gets a HashSet of Material from a list of material names.
+     *
+     * @param stringMaterialList The list of material names.
+     * @return The HashSet of Material.
+     */
     private HashSet<Material> getCheckedMaterialSet(List<String> stringMaterialList) {
         HashSet<Material> materialSet = new HashSet<>(stringMaterialList.size());
         for (String materialName : stringMaterialList) {
@@ -605,7 +627,10 @@ public class ConfigManager {
         return materialSet;
     }
 
-
+    /**
+     * Checks the validity of the sound and effect specified in the plant_death_sound_effect section.
+     * If not valid, reverts to default values.
+     */
     private void checkSoundEffectSection() {
         boolean soundEffectEnabled = plant_death_sound_effect.getBoolean("enabled");
         boolean soundValid = false;
@@ -643,10 +668,6 @@ public class ConfigManager {
     // Getters for config values
     public String getLanguage_code() {
         return language_code;
-    }
-
-    public String getPluginPrefix() {
-        return plugin_prefix;
     }
 
     public boolean isVerbose() {
@@ -763,14 +784,6 @@ public class ConfigManager {
 
     public Map<String, Object> getGrowthModifiers() {
         return growthModifierData;
-    }
-
-    public Map<String, Object> getLanguageFileData() {
-        return languageFileData;
-    }
-
-    public YamlDocument getConfigFile() {
-        return config;
     }
 
     public String getSelectedLanguageString(String s) {

@@ -1,12 +1,10 @@
-# RealisticPlantGrowth BiomeGroups File
+# Realistic Plant Growth BiomeGroups File
 #
-# For additional configuration details, visit the RealisticPlantGrowth page at [Link einfügen].
+# For additional configuration details and examples, visit the Realistic Plant Growth documentation at:
+# [Hier Link einfügen]
 #
 # A complete list of biomes can be found at the Spigot API documentation:
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
-#
-# Information on plants and crops can be referenced in the "Material" list at:
-# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
 #
 # If you appreciate this plugin, please consider showing your support with a donation.
 # Your contributions help maintain and develop the plugin further. Thank you! ❤️
@@ -28,221 +26,120 @@
 # I would greatly appreciate sharing well-configured versions of this file with the community :)
 #
 ########################################################################################################################
-# Overworld dimension biomes excluding oceans and caves
-Overworld:
-  - JAGGED_PEAKS
-  - FROZEN_PEAKS
-  - STONY_PEAKS
-  - MEADOW
-  - CHERRY_GROVE
-  - GROVE
-  - SNOWY_SLOPES
-  - WINDSWEPT_HILLS
-  - WINDSWEPT_GRAVELLY_HILLS
-  - WINDSWEPT_FOREST
-  - FOREST
-  - FLOWER_FOREST
-  - TAIGA
-  - OLD_GROWTH_PINE_TAIGA
-  - OLD_GROWTH_SPRUCE_TAIGA
-  - SNOWY_TAIGA
-  - BIRCH_FOREST
-  - OLD_GROWTH_BIRCH_FOREST
-  - DARK_FOREST
-  - JUNGLE
-  - SPARSE_JUNGLE
-  - BAMBOO_JUNGLE
-  - RIVER
-  - FROZEN_RIVER
-  - SWAMP
-  - MANGROVE_SWAMP
-  - BEACH
-  - SNOWY_BEACH
-  - STONY_SHORE
-  - PLAINS
-  - SUNFLOWER_PLAINS
-  - SNOWY_PLAINS
-  - ICE_SPIKES
+
+# === Biomes categorized by climate zones based on their temperature ===
+
+# Hot and dry biomes without rain/snow
+Arid:
+  - BADLANDS
   - DESERT
+  - ERODED_BADLANDS
+  - WOODED_BADLANDS
+
+# Savanna biomes
+Savanna:
   - SAVANNA
   - SAVANNA_PLATEAU
-  - WINDSWEPT_SAVANNA
-  - BADLANDS
-  - WOODED_BADLANDS
-  - ERODED_BADLANDS
-  - MUSHROOM_FIELDS
 
-# Nether dimension biomes
-Hell:
-  - NETHER_WASTES
-  - SOUL_SAND_VALLEY
-  - CRIMSON_FOREST
-  - WARPED_FOREST
-  - BASALT_DELTAS
-
-# End dimension biomes
-End:
-  - THE_END
-  - SMALL_END_ISLANDS
-  - END_MIDLANDS
-  - END_HIGHLANDS
-  - END_BARRENS
-  - THE_VOID
-
-# Various biome groups for specific climates
-Highland:
-  - JAGGED_PEAKS
-  - FROZEN_PEAKS
-  - STONY_PEAKS
-  - MEADOW
-  - CHERRY_GROVE
-  - GROVE
-  - SNOWY_SLOPES
-  - WINDSWEPT_HILLS
-  - WINDSWEPT_GRAVELLY HILLS
-  - WINDSWEPT_FOREST
-
-# Biomes considered as Woodland
-Woodland:
-  - FOREST
-  - FLOWER_FOREST
-  - TAIGA
-  - OLD_GROWTH_PINE_TAIGA
-  - OLD_GROWTH_SPRUCE_TAIGA
-  - SNOWY_TAIGA
-  - BIRCH_FOREST
-  - OLD_GROWTH_BIRCH_FOREST
-  - DARK_FOREST
-  - JUNGLE
-  - SPARSE_JUNGLE
-  - BAMBOO_JUNGLE
-
-# Biomes considered as Wetland
-Wetland:
-  - RIVER
-  - FROZEN_RIVER
-  - SWAMP
-  - MANGROVE_SWAMP
-  - BEACH
+# Frozen biomes where water freezes and ice generates
+Frozen:
+  # Beaches
   - SNOWY_BEACH
-  - STONY_SHORE
-
-# Biomes considered as Flatland
-Flatland:
-  - PLAINS
-  - SUNFLOWER_PLAINS
-  - SNOWY_PLAINS
-  - ICE_SPIKES
- # - MUSHROOM_FIELDS
-
-# All available Cave biomes
-Cave:
-  - DEEP_DARK
-  - DRIPSTONE_CAVES
-  - LUSH_CAVES
-
-# All available Ocean biomes
-Ocean:
-  - OCEAN
-  - DEEP_OCEAN
-  - WARM_OCEAN
-  - LUKEWARM_OCEAN
-  - DEEP_LUKEWARM_OCEAN
-  - COLD_OCEAN
-  - DEEP_COLD_OCEAN
+  # Oceans
+  - DEEP_FROZEN_OCEAN
   - FROZEN_OCEAN
-  - DEEP_FROZEN_OCEAN
-
-# ----------------------------------
-# Biomes categorized by climate zones based on temperature
-# Hot biomes without rain/snow
-Desert-Climate:
-  - DESERT
-  - SAVANNA
-  - SAVANNA_PLATEAU
-  - WINDSWEPT_SAVANNA
-  - BADLANDS
-  - WOODED_BADLANDS
-  - ERODED_BADLANDS
-
-# Ice-cold biomes where water freezes and ice generates
-Ice-Climate:
-  - FROZEN_PEAKS
-  - JAGGED_PEAKS
-  - SNOWY_TAIGA
-  - SNOWY_SLOPES
-  - GROVE
-  - DEEP_FROZEN_OCEAN
+  # Rivers
   - FROZEN_RIVER
-  - FROZEN_OCEAN
-  - SNOWY_PLAINS
+  # Snowy-type biomes
+  - FROZEN_PEAKS
+  - GROVE
   - ICE_SPIKES
-  - SNOWY_BEACH
+  - JAGGED_PEAKS
+  - SNOWY_PLAINS
+  - SNOWY_SLOPES
+  - SNOWY_TAIGA
+
 
 # Cold biomes
-Cold-Climate:
-  - WINDSWEPT_GRAVELLY_HILLS
-  - WINDSWEPT_FOREST
-  - WINDSWEPT_HILLS
+Chilly:
+  # Beaches
   - STONY_SHORE
-  - OLD_GROWTH_SPRUCE_TAIGA
-  - TAIGA
-  - OLD_GROWTH_PINE_TAIGA
-
-# neutral / warm biomes
-Warm-Climate:
-  - WARM_OCEAN
-  - LUKEWARM_OCEAN
-  - DEEP_LUKEWARM_OCEAN
-  - OCEAN
-  - DEEP_OCEAN
+  # Oceans
   - COLD_OCEAN
   - DEEP_COLD_OCEAN
-  - RIVER
-  - LUSH_CAVES
-  - MEADOW
-  - CHERRY_GROVE
+  # Chilly-type biomes
+  - OLD_GROWTH_PINE_TAIGA
+  - OLD_GROWTH_SPRUCE_TAIGA
+  - TAIGA
+
+
+# Neutral / warm biomes
+Temperate:
+  # Oceans
+  - OCEAN
+  - DEEP_OCEAN
+  - LUKEWARM_OCEAN
+  - DEEP_LUKEWARM_OCEAN
+  - WARM_OCEAN
+  # Temperate-type biomes
   - BIRCH_FOREST
-  - OLD_GROWTH_BIRCH_FOREST
-  - FOREST
-  - FLOWER_FOREST
+  - CHERRY_GROVE
   - DARK_FOREST
+  - FLOWER_FOREST
+  - FOREST
+  - MEADOW
+  - MUSHROOM_FIELDS
+  - OLD_GROWTH_BIRCH_FOREST
   - PLAINS
-  - BEACH
   - SUNFLOWER_PLAINS
-  - DEEP_DARK
-  - DRIPSTONE_CAVES
+
+
+# Tropical biomes
+Tropical:
+  # Jungle
+  - JUNGLE
+  - BAMBOO_JUNGLE
+  - SPARSE_JUNGLE
+  # Swamp
   - MANGROVE_SWAMP
   - SWAMP
-  - MUSHROOM_FIELDS
-  - JUNGLE
-  - BAMBOO_JUNGLE
-  - SPARSE_JUNGLE
 
-# ----------------------------------
-# More specific BiomeGroups
 
-Jungle:
-  - JUNGLE
-  - BAMBOO_JUNGLE
-  - SPARSE_JUNGLE
+# Temperate rivers and beaches
+RiverAndCoasts:
+  - RIVER
+  - BEACH
 
-Snowy:
-  - SNOWY_BEACH
-  - SNOWY_PLAINS
-  - SNOWY_SLOPES
-  - SNOWY_TAIGA
 
-# ----------------------------------
-# Generic BiomeGroups
-GreatGrowing:
-  -
+# All cave biomes
+Caves:
+  - DEEP_DARK
+  - DRIPSTONE_CAVES
+  - LUSH_CAVES
 
-GoodGrowing:
-  -
 
-MediumGrowing:
-  -
+# Biomes with bad plant growing on the surface
+Windy:
+  - WINDSWEPT_FOREST
+  - WINDSWEPT_GRAVELLY_HILLS
+  - WINDSWEPT_HILLS
+  - WINDSWEPT_SAVANNA
 
-BadGrowing:
-  -
+
+# All Nether dimension biomes
+Nether:
+  - BASALT_DELTAS
+  - CRIMSON_FOREST
+  - NETHER_WASTES
+  - SOUL_SAND_VALLEY
+  - WARPED_FOREST
+
+
+# All End dimension biomes
+End:
+  - END_BARRENS
+  - END_HIGHLANDS
+  - END_MIDLANDS
+  - SMALL_END_ISLANDS
+  - THE_END
+  - THE_VOID
