@@ -1,6 +1,7 @@
-# RealisticPlantGrowth Configuration File
+# Realistic Plant Growth Configuration File
 #
-# For additional configuration details, visit the RealisticPlantGrowth page at http://dev.bukkit.org.
+# For additional configuration details and examples, visit the Realistic Plant Growth documentation at:
+# [Hier Link einfügen]
 #
 # A complete list of biomes can be found at the Spigot API documentation:
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
@@ -76,7 +77,7 @@ fertilizer_radius: 8
 
 # true: Fertilizer effects do not deplete composters to fertilize the surroundings.
 # false: Players must actively fill the composter to achieve fertilization effects.
-fertilizer_passiv: true
+fertilizer_passiv: false
 
 # The 'fertilizer_boost_growth_rate' is a percentage added to biome-specific growth rates,
 # if a composter is within the configured 'fertilizer_radius'.
@@ -89,23 +90,23 @@ fertilizer_boost_growth_rate: 20.0
 # If a plant has a biome-specific growth rate of 100.0% and this is set to be true,
 # the resulting growth rate can exceed 100.0% (e.g., 125.0%).
 # Otherwise, the growth rate is capped at 100.0%.
-fertilizer_allow_growth_rate_above_100: true
+fertilizer_allow_growth_rate_above_100: false
 
 # If set to true, Fertilizer allows plants to thrive in 'invalid' biomes.
 # If set to false, plant growth is limited to biomes explicitly listed in 'Biome' within GrowthModifiers.yml.
-fertilizer_enables_growth_in_invalid_biomes: true
+fertilizer_enables_growth_in_invalid_biomes: false
 
 # Growth rate of plants in invalid biomes with fertilizer access.
 # Only active if 'fertilizer_enables_growth_in_invalid_biomes' is set to 'true',
 # and the plant is in an invalid biome.
-fertilizer_invalid_biome_growth_rate: 35.0
+fertilizer_invalid_biome_growth_rate: 20.0
 
 # Probability of plant death in an invalid biome despite fertilizer supply.
 # This rule is effective only when 'fertilizer_enables_growth_in_invalid_biomes'
 # is set to 'true' and the plant is located in an inappropriate biome.
 # If the Growth process of the plant consists of multiple growth stages, the death rate is internally
 # adjusted by dividing it by the number of growth stages
-fertilizer_invalid_biome_death_chance: 25.0
+fertilizer_invalid_biome_death_chance: 35.0
 
 
 ########################################################################################################################
@@ -140,10 +141,21 @@ uv_radius: 5
 # in artificial light sources like torches and lanterns (not the same as UV-Light).
 # Use official MATERIAL_NAMES to add items to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
 grow_in_dark:
+  # Overworld plants
   - RED_MUSHROOM
   - BROWN_MUSHROOM
+  - CAVE_VINES
+  - GLOW_LICHEN
+  # Ocean
+  - KELP
+  # End plants
+  - CHORUS_FLOWER
+  # Nether plants
+  - WEEPING_VINES
+  - TWISTING_VINES
   - NETHER_WART
-  - COCOA
+  - WARPED_FUNGUS
+  - CRIMSON_FUNGUS
 
 
 ########################################################################################################################
