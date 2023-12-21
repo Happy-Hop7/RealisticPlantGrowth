@@ -1,8 +1,9 @@
-# RealisticPlantGrowth GrowthModifiers File
+# Realistic Plant Growth Modifiers File
 #
-# For additional configuration details, visit the RealisticPlantGrowth page at http://dev.bukkit.org.
+# For additional configuration details and examples, visit the Realistic Plant Growth documentation at:
+# [Insert Link Here]
 #
-# A complete list of biomes can be found at the Spigot API documentation:
+# A complete list of biomes can be found in the Spigot API documentation:
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
 #
 # Information on plants and crops can be referenced in the "Material" list at:
@@ -21,32 +22,6 @@
 # possibility of plants skipping growth states or aging faster. Plants not specified in this
 # file adhere to the vanilla GrowthRate.
 #
-# Example:
-#
-# WHEAT:                          <-- Bukkit Material name of the plant to be modified.
-#   BiomeGroup:                       Settings related to BiomeGroups.
-#     Groups:                     <-- List of BiomeGroups defined in 'BiomeGroups.yml'
-#       - GreatGrowing                Example BiomeGroups with specific modifications for this plant.
-#       - GoodGrowing                 Values can be defined below.  '[]' indicates no special modifications.
-#     GreatGrowing:               <-- 1. BiomeGroup name (All listed BiomeGroups need to be specified!)
-#       GrowthRate: 100           <-- 100% of Minecraft vanilla growth rate.
-#       UVLightGrowthRate: 75     <-- 75% growth rate, if plant is in darkness and has only UV Light access.
-#       NaturalDeathChance: 0     <-- 0% chance of plant randomly dies.
-#       UVLightDeathChance: 5     <-- 5% change of plant randomly dies in darkness with only access to UV light.
-#     GoodGrowing:                <-- 2. BiomeGroup name (All above listet BiomeGroups need to be specified!)
-#       GrowthRate: 80
-#       UVLightGrowthRate: 55
-#       NaturalDeathChance: 5
-#       UVLightDeathChance: 10
-#   Default:                      <-- Default settings apply to all Biomes listed in 'Biome'
-#     GrowthRate: 50                  (not overriding specified BiomeGroups)
-#     UVLightGrowthRate: 25
-#     NaturalDeathChance: 5
-#     UVLightDeathChance: 25
-#     Biome: []                   <-- Default settings apply to this list of biomes.
-#                                     'ALL' means: apply to all vanilla biomes
-#                                     '[]' means: NO GROWTH in every biome (except BiomeGroups listed above)
-#
 # Note:
 # Every biome not listed under 'Groups' or in the 'Biome' list is considered a 'BAD' biome where the plant dies with
 # a 100% chance. Fertilizer in range can enable plant growth in 'BAD' biomes.
@@ -61,575 +36,902 @@
 # I would greatly appreciate sharing well-configured versions of this file with the community :)
 #
 ########################################################################################################################
-# Bamboo grows only in biomes within the 'Jungle' biome group.
-# Therefore, as the specifications for the 'Jungle' biome are not defined, the 'Default' values
-# are applied to all biomes in the Jungle group.
+# Bamboo grows only in biomes within the 'Tropical' biome group.
 # Since 'Biome' is an empty list, every other biome is considered as 'BAD'.
-# Remember modifying BAMBOO_SAPLINGS (Bamboo in first growth stage).
+# Remember modifying BAMBOO_SAPLINGS (Bamboo in the first growth stage).
 BAMBOO:
   BiomeGroup:
     Groups:
-      - Jungle
-    Jungle:
+      - Tropical
+    Tropical:
+      GrowthRate: 100
+      UVLightGrowthRate: 35
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    Biome: [ ] # No growth in other biomes
+
+
+# 1. Grow stage of Bamboo
+# (BAMBOO_SAPLING will be merged with BAMBOO in future updates)
+BAMBOO_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Tropical
+    Tropical:
+      GrowthRate: 100
+      UVLightGrowthRate: 35
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    Biome: [ ] # No growth in other biomes
+
+
+# Cactus growth is limited to arid Biomes
+CACTUS:
+  BiomeGroup:
+    Groups:
+      - Arid
+    Arid:
       GrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    Biome: [ ] # No growth in other biomes
 
 
-BEETROOTS:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-BROWN_MUSHROOM:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-CACTUS:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-CARROT:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-# only relevant for the first growth stage
-# keep this if you want plant growth information when left licking with the item
-CAVE_VINES:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-# Plant stem
-CAVE_VINES_PLANT:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
+# Not fully supported yet
 CHORUS_FLOWER:
   BiomeGroup:
     Groups:
-      - Jungle
+      - End
+      - Cold
+    End:
+      GrowthRate: 100
+      UVLightGrowthRate: 100
+      NaturalDeathChance: 5
+      UVLightDeathChance: 5
+    Cold:
+      GrowthRate: 50
+      UVLightGrowthRate: 50
+      NaturalDeathChance: 20
+      UVLightDeathChance: 20
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    Biome: [ ] # No growth in other biomes
 
 
+# Cocoa growth is limited to jungle biomes
 COCOA:
   BiomeGroup:
-    Groups:
-      - Jungle
+    Groups: [ ]
+  # The default section applies only to jungle biomes
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-CRIMSON_FUNGUS:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-GLOW_LICHEN:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-# only relevant for the first growth stage
-# keep this if you want plant growth information when left licking with the item
-KELP:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-# plant stem
-KELP_PLANT:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-MELON_STEM:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    GrowthRate: 100
+    UVLightGrowthRate: 55
+    NaturalDeathChance: 5
+    UVLightDeathChance: 25
+    Biome:
+      - JUNGLE
+      - BAMBOO_JUNGLE
+      - SPARSE_JUNGLE
 
 
 NETHER_WART:
   BiomeGroup:
     Groups:
-      - Jungle
+      - Nether
+      - Arid
+      - Savanna
+    Nether:
+      GrowthRate: 100
+      UVLightGrowthRate: 100
+      NaturalDeathChance: 5
+      UVLightDeathChance: 5
+    Arid:
+      GrowthRate: 60
+      UVLightGrowthRate: 70
+      NaturalDeathChance: 10
+      UVLightDeathChance: 20
+    Savanna:
+      GrowthRate: 20
+      UVLightGrowthRate: 30
+      NaturalDeathChance: 10
+      UVLightDeathChance: 20
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-PITCHER_CROP:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-POTATOES:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-PUMPKIN_STEM:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-RED_MUSHROOM:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-SEAGRASS:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-SEA_PICKLE:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    Biome: [ ] # No growth in other biomes
 
 
 SUGAR_CANE:
   BiomeGroup:
     Groups:
-      - Jungle
+      - Tropical
+      - RiverAndCoasts
+    Tropical:
+      GrowthRate: 100
+      UVLightGrowthRate: 75
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    RiverAndCoasts:
+      GrowthRate: 35
+      UVLightGrowthRate: 20
+      NaturalDeathChance: 25
+      UVLightDeathChance: 35
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    Biome: [ ] # No growth in other biomes
 
 
 SWEET_BERRY_BUSH:
   BiomeGroup:
     Groups:
-      - Jungle
+      - Chilly
+      - Temperate
+      - Cold
+    Chilly:
+      GrowthRate: 100
+      UVLightGrowthRate: 75
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Cold:
+      GrowthRate: 80
+      UVLightGrowthRate: 65
+      NaturalDeathChance: 35
+      UVLightDeathChance: 45
+    Temperate:
+      GrowthRate: 60
+      UVLightGrowthRate: 45
+      NaturalDeathChance: 10
+      UVLightDeathChance: 15
+  Default:
+    GrowthRate: 25
+    UVLightGrowthRate: 45
+    NaturalDeathChance: 35
+    UVLightDeathChance: 5
+    Biome:
+      - WINDSWEPT_FOREST
+      - WINDSWEPT_GRAVELLY_HILLS
+      - WINDSWEPT_HILLS
+
+
+########################################################################################################################
+#| Agricultural Plants (growing on Farmland)                                                                          |#
+########################################################################################################################
+
+BEETROOTS:
+  BiomeGroup:
+    Groups:
+      - Temperate
+      - Chilly
+      - Cold
+    Chilly:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Temperate:
+      GrowthRate: 75
+      UVLightGrowthRate: 60
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Cold:
+      GrowthRate: 60
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 35
+      UVLightDeathChance: 5
+  Default:
+    Biome: [ ]
+
+
+CARROT:
+  BiomeGroup:
+    Groups:
+      - Temperate
+      - Savanna
+      - Chilly
+    Temperate:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Savanna:
+      GrowthRate: 75
+      UVLightGrowthRate: 60
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Chilly:
+      GrowthRate: 60
+      UVLightGrowthRate: 60
+      NaturalDeathChance: 15
+      UVLightDeathChance: 5
   Default:
     GrowthRate: 50
     UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    NaturalDeathChance: 15
+    UVLightDeathChance: 25
+    Biome:
+      - ALL
+
+
+  MELON_STEM:
+    BiomeGroup:
+      Groups:
+        - Tropical
+        - Temperate
+      Tropical:
+        GrowthRate: 100
+        UVLightGrowthRate: 85
+        NaturalDeathChance: 5
+        UVLightDeathChance: 15
+      Temperate:
+        GrowthRate: 25
+        UVLightGrowthRate: 15
+        NaturalDeathChance: 15
+        UVLightDeathChance: 25
+    Default:
+      Biome: [ ] # No growth in other biomes
+
+
+PITCHER_CROP:
+  BiomeGroup:
+    Groups:
+      - Tropical
+      - Savanna
+    Tropical:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Savanna:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+  Default:
+    Biome: [ ] # No growth in other biomes
+
+
+POTATOES:
+  BiomeGroup:
+    Groups:
+      - Temperate
+      - Savanna
+      - Chilly
+      - Tropical
+    Temperate:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Savanna:
+      GrowthRate: 75
+      UVLightGrowthRate: 60
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Chilly:
+      GrowthRate: 50
+      UVLightGrowthRate: 60
+      NaturalDeathChance: 15
+      UVLightDeathChance: 5
+    Tropical:
+      GrowthRate: 50
+      UVLightGrowthRate: 35
+      NaturalDeathChance: 15
+      UVLightDeathChance: 20
+  Default:
+    Biome: [ ] # No growth in other biomes
+
+
+PUMPKIN_STEM:
+  BiomeGroup:
+    Groups:
+      - Chilly
+      - Temperate
+      - Cold
+    Chilly:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Temperate:
+      GrowthRate: 85
+      UVLightGrowthRate: 70
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Cold:
+      GrowthRate: 70
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 35
+      UVLightDeathChance: 5
+  Default:
+    GrowthRate: 50
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 15
+    UVLightDeathChance: 25
+    Biome:
+      - ALL
 
 
 TORCHFLOWER_CROP:
   BiomeGroup:
     Groups:
-      - Jungle
+      - Tropical
+      - Savanna
+    Tropical:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Savanna:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-VINE:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-# only relevant for the first growth stage
-# keep this if you want plant growth information when left licking with the item
-TWISTING_VINES:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-# Plant stem
-TWISTING_VINES_PLANT:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-WARPED_FUNGUS:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-# only relevant for the first growth stage
-# keep this if you want plant growth information when left licking with the item
-WEEPING_VINES:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-# Plant stem
-WEEPING_VINES_PLANT:
-  BiomeGroup:
-    Groups:
-      - Jungle
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    Biome: [ ] # No growth in other biomes
 
 
 WHEAT:
   BiomeGroup:
     Groups:
-      - Jungle
+      - Temperate
+      - Arid
+      - Cold
+    Temperate:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Arid:
+      GrowthRate: 0
+      UVLightGrowthRate: 50
+      NaturalDeathChance: 100
+      UVLightDeathChance: 5
+    Cold:
+      GrowthRate: 0
+      UVLightGrowthRate: 50
+      NaturalDeathChance: 100
+      UVLightDeathChance: 5
   Default:
-    GrowthRate: 80
-    UVLightGrowthRate: 25
+    GrowthRate: 50
+    UVLightGrowthRate: 35
     NaturalDeathChance: 5
+    UVLightDeathChance: 15
+    Biome:
+      - ALL
+
+
+########################################################################################################################
+#| Mushrooms                                                                                                          |#
+########################################################################################################################
+
+BROWN_MUSHROOM:
+  BiomeGroup:
+    Groups:
+      - Chilly
+      - Tropical
+      - Caves
+    Chilly:
+      GrowthRate: 100
+      UVLightGrowthRate: 100
+      NaturalDeathChance: 5
+      UVLightDeathChance: 5
+    Tropical:
+      GrowthRate: 100
+      UVLightGrowthRate: 100
+      NaturalDeathChance: 5
+      UVLightDeathChance: 5
+    Caves:
+      GrowthRate: 100
+      UVLightGrowthRate: 100
+      NaturalDeathChance: 5
+      UVLightDeathChance: 5
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 100
+    NaturalDeathChance: 5
+    UVLightDeathChance: 5
+    Biome:
+      - DARK_FOREST
+      - MUSHROOM_FIELDS
+      # Nether Biomes
+      - CRIMSON_FOREST
+      - WARPED_FOREST
+      - NETHER_WASTES
+
+RED_MUSHROOM:
+  Groups:
+    - Chilly
+    - Tropical
+    - Caves
+  Chilly:
+    GrowthRate: 80
+    UVLightGrowthRate: 80
+    NaturalDeathChance: 10
     UVLightDeathChance: 10
-    Biome: []
+  Tropical:
+    GrowthRate: 80
+    UVLightGrowthRate: 80
+    NaturalDeathChance: 10
+    UVLightDeathChance: 10
+  Caves:
+    GrowthRate: 100
+    UVLightGrowthRate: 100
+    NaturalDeathChance: 5
+    UVLightDeathChance: 5
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 100
+    NaturalDeathChance: 5
+    UVLightDeathChance: 5
+    Biome:
+      - DARK_FOREST
+      - MUSHROOM_FIELDS
+      # Nether Biomes
+      - CRIMSON_FOREST
+      - WARPED_FOREST
+      - NETHER_WASTES
+
+CRIMSON_FUNGUS:
+  BiomeGroup:
+    Groups:
+      - Arid
+    Arid:
+      GrowthRate: 50
+      UVLightGrowthRate: 50
+      NaturalDeathChance: 20
+      UVLightDeathChance: 20
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 100
+    NaturalDeathChance: 5
+    UVLightDeathChance: 5
+    Biome:
+      - CRIMSON_FOREST
+      - WARPED_FOREST
+
+WARPED_FUNGUS:
+  BiomeGroup:
+    Groups:
+      - Arid
+    Arid:
+      GrowthRate: 50
+      UVLightGrowthRate: 50
+      NaturalDeathChance: 20
+      UVLightDeathChance: 20
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 100
+    NaturalDeathChance: 5
+    UVLightDeathChance: 5
+    Biome:
+      - WARPED_FOREST
+      - CRIMSON_FOREST
+
+
+########################################################################################################################
+#| Vines                                                                                                              |#
+########################################################################################################################
+
+CAVE_VINES:
+  BiomeGroup:
+    Groups:
+      - Caves
+    Caves:
+      GrowthRate: 100
+      UVLightGrowthRate: 100
+      NaturalDeathChance: 5
+      UVLightDeathChance: 5
+  Default:
+    Biome: [ ] # No growth in other biomes
+
+# Plant stem
+# CAVE_VINES_PLANT will be merged with CAVE_VINES in future updates
+CAVE_VINES_PLANT:
+  BiomeGroup:
+    Groups:
+      - Caves
+    Caves:
+      GrowthRate: 100
+      UVLightGrowthRate: 100
+      NaturalDeathChance: 5
+      UVLightDeathChance: 5
+  Default:
+    Biome: [ ] # No growth in other biomes
+
+# Not fully supported yet
+#GLOW_LICHEN:
+#  BiomeGroup:
+#    Groups:
+#      - Caves
+#  Default:
+#    GrowthRate: 50
+#    UVLightGrowthRate: 25
+#    NaturalDeathChance: 0
+#    UVLightDeathChance: 5
+#    Biome: []
+#
+#VINE:
+#  BiomeGroup:
+#    Groups: []
+#  Default:
+#    GrowthRate: 50
+#    UVLightGrowthRate: 25
+#    NaturalDeathChance: 0
+#    UVLightDeathChance: 5
+#    Biome:
+#      - ALL
+
+
+TWISTING_VINES:
+  BiomeGroup:
+    Groups:
+      - Arid
+    Arid:
+      GrowthRate: 50
+      UVLightGrowthRate: 50
+      NaturalDeathChance: 20
+      UVLightDeathChance: 20
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 100
+    NaturalDeathChance: 5
+    UVLightDeathChance: 5
+    Biome:
+      - WARPED_FOREST
+      - CRIMSON_FOREST
+
+# Plant stem
+# TWISTING_VINES_PLANT will be merged with TWISTING_VINES in future updates
+TWISTING_VINES_PLANT:
+  BiomeGroup:
+    Groups:
+      - Arid
+    Arid:
+      GrowthRate: 50
+      UVLightGrowthRate: 50
+      NaturalDeathChance: 20
+      UVLightDeathChance: 20
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 100
+    NaturalDeathChance: 5
+    UVLightDeathChance: 5
+    Biome:
+      - WARPED_FOREST
+      - CRIMSON_FOREST
+
+
+WEEPING_VINES:
+  BiomeGroup:
+    Groups:
+      - Arid
+    Arid:
+      GrowthRate: 50
+      UVLightGrowthRate: 50
+      NaturalDeathChance: 20
+      UVLightDeathChance: 20
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 100
+    NaturalDeathChance: 5
+    UVLightDeathChance: 5
+    Biome:
+      - WARPED_FOREST
+      - CRIMSON_FOREST
+
+# Plant stem
+# WEEPING_VINES_PLANT will be merged with WEEPING_VINES in future updates
+WEEPING_VINES_PLANT:
+  Groups:
+    - Arid
+  Arid:
+    GrowthRate: 50
+    UVLightGrowthRate: 50
+    NaturalDeathChance: 20
+    UVLightDeathChance: 20
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 100
+    NaturalDeathChance: 5
+    UVLightDeathChance: 5
+    Biome:
+      - WARPED_FOREST
+      - CRIMSON_FOREST
+
+
+########################################################################################################################
+#| Aquatic Plants                                                                                                     |#
+########################################################################################################################
+# KELP can grow in ocean biomes except in frozen, deep-frozen and warm
+KELP:
+  BiomeGroup:
+    Groups: [ ]
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 100
+    NaturalDeathChance: 5
+    UVLightDeathChance: 5
+    Biome:
+      - OCEAN
+      - DEEP_OCEAN
+      - LUKEWARM_OCEAN
+      - DEEP_LUKEWARM_OCEAN
+      - COLD_OCEAN
+      - DEEP_COLD_OCEAN
+
+# plant stem
+# KELP_PLANT will be merged with KELP in future updates
+KELP_PLANT:
+  BiomeGroup:
+    Groups: [ ]
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 100
+    NaturalDeathChance: 5
+    UVLightDeathChance: 5
+    Biome:
+      - OCEAN
+      - DEEP_OCEAN
+      - LUKEWARM_OCEAN
+      - DEEP_LUKEWARM_OCEAN
+      - COLD_OCEAN
+      - DEEP_COLD_OCEAN
+
+
+# Not fully supported yet
+# SEA_PICKLE needs bone meal to grow (no random-tick growth chance)
+#SEA_PICKLE:
+#  BiomeGroup:
+#    Groups:
+#      - OCEAN
+#  Default:
+#    GrowthRate: 50
+#    UVLightGrowthRate: 25
+#    NaturalDeathChance: 0
+#    UVLightDeathChance: 5
+#    Biome: []
+
 
 
 ########################################################################################################################
 #| SAPLINGS                                                                                                           |#
 ########################################################################################################################
+# AZALEA needs bone meal to grow (no random-tick growth chance)
+AZALEA:
+  BiomeGroup:
+    Groups:
+      - Savanna
+      - Tropical
+      - Temperate
+      - Chilly
+    Temperate:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Savanna:
+      GrowthRate: 25
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 35
+      UVLightDeathChance: 5
+    Tropical:
+      GrowthRate: 25
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 35
+      UVLightDeathChance: 5
+    Chilly:
+      GrowthRate: 25
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 35
+      UVLightDeathChance: 5
+  Default:
+    GrowthRate: 40
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 35
+    UVLightDeathChance: 5
+    Biome:
+      - WOODED_BADLANDS
+
+
+# FLOWERING_AZALEA will be merged with AZALEA in future updates
+FLOWERING_AZALEA:
+  BiomeGroup:
+    Groups:
+      - Savanna
+      - Tropical
+      - Temperate
+      - Chilly
+    Temperate:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Savanna:
+      GrowthRate: 25
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 35
+      UVLightDeathChance: 5
+    Tropical:
+      GrowthRate: 25
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 35
+      UVLightDeathChance: 5
+    Chilly:
+      GrowthRate: 25
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 35
+      UVLightDeathChance: 5
+  Default:
+    GrowthRate: 40
+    UVLightGrowthRate: 25
+    NaturalDeathChance: 35
+    UVLightDeathChance: 5
+    Biome:
+      - WOODED_BADLANDS
+
 
 ACACIA_SAPLING:
   BiomeGroup:
     Groups:
-      - Jungle
-    Jungle:
+      - Arid
+      - Savanna
+    Savanna:
       GrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
+    Arid:
+      GrowthRate: 45
+      UVLightGrowthRate: 25
+      NaturalDeathChance: 15
+      UVLightDeathChance: 25
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    Biome: [ ] # No growth in other biomes
 
 
-AZALEA:
-  BiomeGroup:
-    Groups:
-      - Jungle
-    Jungle:
-      GrowthRate: 100
-      UVLightGrowthRate: 85
-      NaturalDeathChance: 5
-      UVLightDeathChance: 15
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-BAMBOO_SAPLING:
-  BiomeGroup:
-    Groups:
-      - Jungle
-    Jungle:
-      GrowthRate: 100
-      UVLightGrowthRate: 85
-      NaturalDeathChance: 5
-      UVLightDeathChance: 15
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
+# Birch Tree
 BIRCH_SAPLING:
   BiomeGroup:
     Groups:
-      - Jungle
-    Jungle:
+      - Chilly
+      - Temperate
+    Temperate:
       GrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
+    Chilly:
+      GrowthRate: 35
+      UVLightGrowthRate: 25
+      NaturalDeathChance: 25
+      UVLightDeathChance: 15
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    Biome: [ ] # No growth in other biomes
 
+# Cherry blossom trees only grow well in cherry groves
 CHERRY_SAPLING:
   BiomeGroup:
     Groups:
-      - Jungle
-    Jungle:
-      GrowthRate: 100
-      UVLightGrowthRate: 85
-      NaturalDeathChance: 5
+      - Temperate
+    Temperate:
+      GrowthRate: 20
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 10
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    GrowthRate: 100
+    UVLightGrowthRate: 85
+    NaturalDeathChance: 5
+    UVLightDeathChance: 15
+    Biome:
+      - CHERRY_GROVE
 
 DARK_OAK_SAPLING:
   BiomeGroup:
     Groups:
-      - Jungle
-    Jungle:
-      GrowthRate: 100
-      UVLightGrowthRate: 85
-      NaturalDeathChance: 5
+      - Temperate
+    Temperate:
+      GrowthRate: 20
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 10
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
-
-
-FLOWERING_AZALEA:
-  BiomeGroup:
-    Groups:
-      - Jungle
-    Jungle:
-      GrowthRate: 100
-      UVLightGrowthRate: 85
-      NaturalDeathChance: 5
-      UVLightDeathChance: 15
-  Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    GrowthRate: 100
+    UVLightGrowthRate: 85
+    NaturalDeathChance: 5
+    UVLightDeathChance: 15
+    Biome:
+      - DARK_FOREST
 
 
 JUNGLE_SAPLING:
   BiomeGroup:
     Groups:
-      - Jungle
-    Jungle:
+      - Tropical
+    Tropical:
       GrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    Biome: [ ] # No growth in other biomes
 
 
 MANGROVE_PROPAGULE:
   BiomeGroup:
     Groups:
-      - Jungle
-    Jungle:
-      GrowthRate: 100
-      UVLightGrowthRate: 85
-      NaturalDeathChance: 5
+      - RiverAndCoasts
+    RiverAndCoasts:
+      GrowthRate: 20
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 10
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    GrowthRate: 100
+    UVLightGrowthRate: 85
+    NaturalDeathChance: 5
+    UVLightDeathChance: 15
+    Biome:
+      - MANGROVE_SWAMP
+      - SWAMP
 
 
 OAK_SAPLING:
   BiomeGroup:
     Groups:
-      - Jungle
-    Jungle:
+      - Savanna
+      - Tropical
+      - Temperate
+      - Chilly
+    Temperate:
       GrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
+    Savanna:
+      GrowthRate: 25
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 35
+      UVLightDeathChance: 5
+    Tropical:
+      GrowthRate: 25
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 35
+      UVLightDeathChance: 5
+    Chilly:
+      GrowthRate: 25
+      UVLightGrowthRate: 10
+      NaturalDeathChance: 35
+      UVLightDeathChance: 5
   Default:
-    GrowthRate: 50
+    GrowthRate: 40
     UVLightGrowthRate: 25
-    NaturalDeathChance: 0
+    NaturalDeathChance: 35
     UVLightDeathChance: 5
-    Biome: []
+    Biome:
+      - WOODED_BADLANDS
 
 
 SPRUCE_SAPLING:
   BiomeGroup:
     Groups:
-      - Jungle
-    Jungle:
+      - Chilly
+      - Cold
+      - Temperate
+    Chilly:
       GrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
+    Cold:
+      GrowthRate: 75
+      UVLightGrowthRate: 55
+      NaturalDeathChance: 12
+      UVLightDeathChance: 7
+    Temperate:
+      GrowthRate: 60
+      UVLightGrowthRate: 45
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
   Default:
-    GrowthRate: 50
-    UVLightGrowthRate: 25
-    NaturalDeathChance: 0
-    UVLightDeathChance: 5
-    Biome: []
+    Biome: [ ] # No growth in other biomes
