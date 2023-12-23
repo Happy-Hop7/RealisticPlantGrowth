@@ -2,6 +2,17 @@ package de.nightevolution.utils;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.utils.enums.DeathChanceType;
+import de.nightevolution.utils.enums.GrowthModifierType;
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import dev.dejvokep.boostedyaml.route.Route;
+import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.error.YAMLException;
+
+import java.util.Optional;
+
 
 /**
  * The Modifier class represents modifiers for plant growth in the RealisticPlantGrowth plugin.
@@ -11,22 +22,102 @@ public class Modifier {
 
     private final RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();
     private final ConfigManager cm = instance.getConfigManager();
+    private final Logger logger;
+    private final GrowthModifierType growthModifierType;
+    private final DeathChanceType deathChanceType;
     private double growthModifier;
     private double deathChance;
     private boolean fertilizerUsed;
+    private final String biomeGroup;
     private boolean specialCase = false;
 
+    private final Section modifierSection;
+
+
     /**
-     * Constructs a Modifier object with specified growthModifier, deathChance, and fertilizer usage.
+     * Constructs a Modifier for a specific plant type, biome group, growth modifier type, and death chance type.
      *
-     * @param growthModifier The growth modifier value.
-     * @param deathChance    The death chance value.
-     * @param fertilizerUsed Indicates whether fertilizer is used.
+     * @param plantType          The material of the plant.
+     * @param biomeGroup         The biome group (nullable).
+     * @param growthModifierType The type of growth modifier.
+     * @param deathChanceType    The type of death chance.
      */
-    public Modifier(double growthModifier, double deathChance, boolean fertilizerUsed) {
-        this.growthModifier = getCheckedGrowthModifier(growthModifier);
-        this.deathChance = getCheckedDeathChance(deathChance);
-        this.fertilizerUsed = fertilizerUsed;
+    public Modifier(@NotNull Material plantType, @Nullable String biomeGroup,
+                    @NotNull GrowthModifierType growthModifierType,
+                    @NotNull DeathChanceType deathChanceType) {
+
+        this.biomeGroup = biomeGroup;
+        this.growthModifierType = growthModifierType;
+        this.deathChanceType = deathChanceType;
+
+        logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger.verbose("Created new " + this.getClass().getSimpleName() + ".");
+
+
+        Optional<Section> optionalSection = cm.getGrowthModifierSection(Route.from(plantType));
+        if (optionalSection.isEmpty()) {
+            logger.error("Section '" + plantType + "couldn't be obtained.");
+            throw new YAMLException("Check your GrowthModifiers.yml!");
+        }
+
+        this.modifierSection = optionalSection.get();
+
+        initModifier();
+    }
+
+    /**
+     * Creates a "Death" Modifier indicating a plant with no survival chance.
+     */
+    public Modifier() {
+        this.biomeGroup = null;
+        this.growthModifierType = null;
+        this.deathChanceType = null;
+        this.modifierSection = null;
+        this.fertilizerUsed = false;
+
+        logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger.verbose("Created new " + this.getClass().getSimpleName() + ".");
+
+        growthModifier = 0.0;
+        deathChance = 100.0;
+
+    }
+
+    /**
+     * Initializes the modifier properties based on the configuration.
+     */
+    private void initModifier() {
+
+        Route growthModifierRoute;
+        Route deathChanceRoute;
+
+        if (growthModifierType == GrowthModifierType.FERTILIZER_INVALID_BIOME ||
+                deathChanceType == DeathChanceType.FERTILIZER_INVALID_BIOME) {
+
+            growthModifier = getCheckedGrowthModifier(cm.getFertilizer_invalid_biome_growth_rate());
+            deathChance = getCheckedDeathChance(cm.getFertilizer_invalid_biome_death_chance());
+            return;
+
+        } else if (biomeGroup == null) {
+            growthModifierRoute = Route.from("Default", growthModifierType);
+            deathChanceRoute = Route.from("Default", deathChanceType);
+        } else {
+            growthModifierRoute = Route.from("BiomeGroup", biomeGroup, growthModifierType);
+            deathChanceRoute = Route.from("BiomeGroup", biomeGroup, deathChanceType);
+        }
+
+        logger.verbose("growthModifierRoute: " + growthModifierRoute);
+        logger.verbose("deathChanceRoute: " + deathChanceRoute);
+
+        Optional<Double> optionalGrowthDouble = modifierSection.getOptionalDouble(growthModifierRoute);
+        Optional<Double> optionalDeathDouble = modifierSection.getOptionalDouble(deathChanceRoute);
+
+        if (optionalDeathDouble.isEmpty() || optionalGrowthDouble.isEmpty()) {
+            throw new IllegalArgumentException("GrowthModifier couldn't be obtained!");
+        }
+
+        this.growthModifier = getCheckedGrowthModifier(optionalGrowthDouble.get());
+        this.deathChance = getCheckedDeathChance(optionalDeathDouble.get());
     }
 
     /**
@@ -36,11 +127,11 @@ public class Modifier {
         double fertilizerBoost;
 
         if (specialCase) {
-            fertilizerBoost = (getGrowthModifier() / 100) * (cm.getFertilizer_invalid_biome_growth_rate() / 100) * 100;
+            fertilizerBoost = ((getGrowthModifier() / 100) * (cm.getFertilizer_invalid_biome_growth_rate() / 100) * 100);
             deathChance += cm.getFertilizer_invalid_biome_death_chance();
-        } else {
+
+        } else
             fertilizerBoost = getGrowthModifier() + cm.getFertilizer_boost_growth_rate();
-        }
 
         setGrowthModifier(fertilizerBoost);
         setFertilizerUsed(true);
@@ -107,6 +198,14 @@ public class Modifier {
 
     public boolean getSpecialCase() {
         return specialCase;
+    }
+
+    public GrowthModifierType getGrowthModifierType() {
+        return growthModifierType;
+    }
+
+    public DeathChanceType getDeathChanceType() {
+        return deathChanceType;
     }
 
     /**

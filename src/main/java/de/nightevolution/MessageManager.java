@@ -1,7 +1,7 @@
 package de.nightevolution;
 
 import de.nightevolution.utils.Logger;
-import de.nightevolution.utils.MessageType;
+import de.nightevolution.utils.enums.MessageType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;

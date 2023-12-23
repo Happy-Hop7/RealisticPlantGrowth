@@ -197,6 +197,9 @@ public abstract class PlantGrowthListener implements Listener {
             if ((crop.getAge() != crop.getMaximumAge()) && (instance.isAgriculturalPlant(eventBlock))) {
                 deathChance = (deathChance / crop.getMaximumAge());
                 logger.verbose("Using Ageable Interface for partial DeathChance.");
+            } else if (eventBlockType == Material.BAMBOO) {
+                logger.verbose("Using Ageable Interface for Bamboo DeathChance.");
+                deathChance = (deathChance / 14);
             } else logger.verbose("Using Ageable Interface with full DeathChance.");
 
             logger.verbose("Age of crop: " + crop.getAge() + " / " + crop.getMaximumAge());

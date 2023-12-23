@@ -1,4 +1,4 @@
-package de.nightevolution.utils;
+package de.nightevolution.utils.enums;
 
 public enum MessageType {
     MSG_HEADER,

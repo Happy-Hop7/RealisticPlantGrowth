@@ -5,7 +5,6 @@ import de.nightevolution.commands.TabCompleterImpl;
 import de.nightevolution.listeners.*;
 import de.nightevolution.utils.BiomeChecker;
 import de.nightevolution.utils.Logger;
-import de.nightevolution.utils.Surrounding;
 import dev.dejvokep.boostedyaml.route.Route;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
@@ -260,7 +259,6 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         updateClickableSeeds();
         registerCommands();
         registerTabCompleter();
-        Surrounding.clearCache();
         BiomeChecker.clearCache();
         registerListeners();
 
@@ -342,6 +340,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
                     logger.warn("Material '" + key + "' is not a Bukkit Material!");
                     logger.warn("Plant growth modifiers for '" + key + "' are ignored.");
                 } else {
+                    // TODO: Name mapping of vines and bamboo (new function getMappedName)
                     growthModifiedPlants.add(m);
                 }
             }

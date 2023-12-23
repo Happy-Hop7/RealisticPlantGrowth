@@ -13,6 +13,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Biome;
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
@@ -579,38 +581,28 @@ public class ConfigManager {
     }
 
     /**
-     * Gets the list of strings from the BiomeGroups file based on the provided route.
+     * Gets a Set of Biomes from the BiomeGroups file based on the provided route.
      *
-     * @param routeToSection The route to the desired section.
-     * @return An optional list of strings containing the data from the specified route.
+     * @param biomeGroup The name of the desired biome group section.
+     * @return a HashSet containing Biomes from the specified route. (empty if route not valid)
      */
-    public Optional<List<String>> getBiomeGroupStringList(Route routeToSection) {
-        return biomeGroupsFile.getOptionalStringList(routeToSection);
-    }
-
-    /**
-     * Gets the default modifier section for a given plant type from the growth modifiers file.
-     *
-     * @param plantType The material type of the plant.
-     * @return The default modifier section for the specified plant type.
-     * @throws NullPointerException If the default section for the plant type is missing.
-     */
-    public Section getDefaultModifierSection(Material plantType) {
-        Route r = Route.from(plantType, "Default");
-        Optional<Section> defaultSection = growthModifiersFile.getOptionalSection(r);
-        if (defaultSection.isPresent()) {
-            return defaultSection.get();
-        }
-        logger.error("Check your GrowthModifiers.yml and make sure every entry has a 'Default' Section!");
-        throw new NullPointerException("Default Section for '" + plantType + "' is missing!");
+    @NotNull
+    public Set<Biome> getBiomeSetOfBiomeGroup(@NotNull String biomeGroup) {
+        Optional<List<String>> biomeList = biomeGroupsFile.getOptionalStringList(biomeGroup);
+        if (biomeList.isPresent() && !biomeList.get().isEmpty()) {
+            return getCheckedBiomeSet(biomeList.get());
+        } else
+            return new HashSet<>();
     }
 
 
     /**
-     * Gets a HashSet of Material from a list of material names.
+     * Gets a HashSet of Bukkit Material objects from a list of material names.
+     * This method converts a list of material names into a HashSet of corresponding Bukkit {@link Material} objects.
+     * If a material name is not recognized, a warning message is logged, and the invalid material is skipped.
      *
-     * @param stringMaterialList The list of material names.
-     * @return The HashSet of Material.
+     * @param stringMaterialList The list of material names to be converted.
+     * @return A HashSet containing Bukkit {@link Material} objects derived from the input material names.
      */
     private HashSet<Material> getCheckedMaterialSet(List<String> stringMaterialList) {
         HashSet<Material> materialSet = new HashSet<>(stringMaterialList.size());
@@ -619,13 +611,36 @@ public class ConfigManager {
             if (material != null) {
                 materialSet.add(material);
             } else {
-                logger.warn("uv_blocks: '" + materialName + "' is not an Bukkit Material!");
+                logger.warn("uv_blocks: '" + materialName + "' is not a recognized Bukkit Material!");
                 logger.warn("Please check your sections in config.yml!");
             }
         }
 
         return materialSet;
     }
+
+    /**
+     * Gets a HashSet of Bukkit {@link Biome} objects from a list of biome names.
+     * This method converts a list of biome names into a HashSet of corresponding Bukkit {@link Biome} objects.
+     * If a biome name is not recognized, a warning message is logged, and the invalid biome is skipped.
+     *
+     * @param stringBiomeList The list of biome names to be converted.
+     * @return A HashSet containing Bukkit {@link Biome} objects derived from the input biome names.
+     */
+    public HashSet<Biome> getCheckedBiomeSet(List<String> stringBiomeList) {
+        HashSet<Biome> biomeSet = new HashSet<>(stringBiomeList.size());
+        for (String biomeName : stringBiomeList) {
+            try {
+                Biome biome = Biome.valueOf(biomeName);
+                biomeSet.add(biome);
+            } catch (IllegalArgumentException e) {
+                logger.warn("Biome '" + biomeName + "' is not a valid Bukkit Biome name!");
+                logger.warn("Please check your BiomeGroups.yml!");
+            }
+        }
+        return biomeSet;
+    }
+
 
     /**
      * Checks the validity of the sound and effect specified in the plant_death_sound_effect section.

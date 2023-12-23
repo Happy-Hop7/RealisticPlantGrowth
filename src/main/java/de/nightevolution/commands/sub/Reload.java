@@ -2,7 +2,7 @@ package de.nightevolution.commands.sub;
 
 
 import de.nightevolution.RealisticPlantGrowth;
-import de.nightevolution.utils.MessageType;
+import de.nightevolution.utils.enums.MessageType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
