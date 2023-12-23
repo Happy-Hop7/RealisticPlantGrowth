@@ -19,10 +19,7 @@ Plugin development by: PredatorG7
 > I will investigate the occurring problem and try to fix it as soon as possible.
 
 ## Wiki
-Check out our [wiki](#) for detailed documentation.
-
-> [!CAUTION]
-> Add Wiki Link when this plugin is published.
+Check out our [wiki](https://docs.nightevolution.de/) for detailed documentation.
 
 
 
