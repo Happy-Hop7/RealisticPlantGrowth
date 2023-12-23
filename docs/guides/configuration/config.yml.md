@@ -1,12 +1,8 @@
 # ⚙ Config.yml
 
-{% file src="../../.gitbook/assets/Config.yml" %}
-Default Config File
-{% endfile %}
+Default Config:\
+[https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml](../../../src/main/resources/Config.yml)\
 
-{% hint style="danger" %}
-Add link to Config.yml in Github
-{% endhint %}
 
 ***
 
