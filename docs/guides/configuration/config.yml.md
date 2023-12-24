@@ -1,7 +1,7 @@
 # ⚙ Config.yml
 
 Default Config:\
-[https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml](../../../src/main/resources/Config.yml)\
+[https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml](https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml)\
 
 
 ***
