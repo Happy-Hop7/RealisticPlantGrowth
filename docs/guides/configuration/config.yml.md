@@ -10,7 +10,7 @@ Default Config:\
 
 ### language\_code
 
-#### default: `en-GB`
+#### default: `en-US`
 
 Language setting for the user plugin messages.\
 The language files are located in your server's "plugins" directory:\
@@ -137,7 +137,7 @@ Higher values may increase server resource consumption and cause lag (Maximum 15
 
 ### fertilizer\_passiv
 
-#### default: `true`
+#### default: `false`
 
 `true`: Fertilizer effects do not deplete composters to fertilize the surroundings.\
 `false`: Players must actively fill the composter to achieve fertilization effects.
@@ -233,7 +233,7 @@ Use the official [MATERIAL\_NAMES](https://hub.spigotmc.org/javadocs/spigot/org/
 
 ### require\_all\_uv\_blocks
 
-#### default: `false`
+#### default: `true`
 
 Determines whether a plant requires all UV-Light Blocks listed above to grow.
 
