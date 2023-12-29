@@ -23,7 +23,11 @@ commands:
 
 ## Overview
 
-<table><thead><tr><th width="254">Command</th><th>Permission</th><th align="center">Can be used in the console</th></tr></thead><tbody><tr><td><a href="commands.md#rpg-help"><code>/rpg help</code></a></td><td><a href="permissions.md#rpg.help"><code>rpg.help</code></a></td><td align="center"><mark style="color:green;">✓</mark></td></tr><tr><td><a href="commands.md#rpg-info"><code>/rpg info</code></a></td><td><a href="permissions.md#rpg.info"><code>rpg.info</code></a></td><td align="center">-</td></tr><tr><td><a href="commands.md#rpg-reload"><code>/rpg reload</code></a></td><td><a href="permissions.md#rpg.reload"><code>rpg.reload</code></a></td><td align="center"><mark style="color:green;">✓</mark></td></tr></tbody></table>
+<table><thead><tr><th width="254">Command</th><th>Permission</th><th align="center">Can be used in the console</th></tr></thead>
+<tbody><tr><td><a href="commands.md#rpg-help"><code>/rpg help</code></a></td><td><a href="permissions.md#rpg.help"><code>rpg.help</code></a></td>
+<td align="center"><mark style="color:green;">✓</mark></td></tr><tr><td><a href="commands.md#rpg-info"><code>/rpg info</code></a></td>
+<td><a href="permissions.md#rpg.info"><code>rpg.info</code></a></td><td align="center">-</td></tr><tr><td><a href="commands.md#rpg-reload"><code>/rpg reload</code></a></td>
+<td><a href="permissions.md#rpg.reload"><code>rpg.reload</code></a></td><td align="center"><mark style="color:green;">✓</mark></td></tr></tbody></table>
 
 
 

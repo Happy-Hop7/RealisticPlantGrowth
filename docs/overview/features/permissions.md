@@ -60,11 +60,12 @@ Recommended permissions for regular users.
 
 ### `rpg.help`
 
-This permission is necessary to receive a help message when either the `/rpg help` command or an unknown subcommand of the plugin is used.
+This permission is necessary to receive a help message when either the [`/rpg help`](commands.md#rpg-help) command or an
+unknown subcommand of the plugin is used.
 
 ### `rpg.info`
 
-This permission provides access to the `/rpg info` command.
+This permission provides access to the [`/rpg info`](commands.md#rpg-info) command.
 
 ### `rpg.info.interact`
 
@@ -72,7 +73,9 @@ This permission allows players to gather growth information about a plant by per
 To provide this information, a comprehensive area search is conducted to determine the exact modifiers applicable in the current environment.
 
 {% hint style="warning" %}
-Prevent server lag caused by players spam-clicking with seeds by utilizing the `display_cooldown` setting in the `Config.yml` file!
+Prevent server lag caused by players spam-clicking with seeds by utilizing
+the [`display_cooldown`](../../guides/configuration/config.yml.md#display_cooldown) setting in
+the [`Config.yml`](../../guides/configuration/config.yml.md) file!
 {% endhint %}
 
 
