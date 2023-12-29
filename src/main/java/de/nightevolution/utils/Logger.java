@@ -29,12 +29,12 @@ public class Logger {
 
     private final String classPrefix;
 
-    public Logger(String classPrefix, RealisticPlantGrowth instance, boolean verbose, boolean debug) {
+    public Logger(String classPrefix, boolean verbose, boolean debug) {
         this.classPrefix = classPrefix.strip() + ": ";
         Logger.verbose = verbose;
         Logger.debug = debug;
 
-        File pluginFolder = instance.getDataFolder();
+        File pluginFolder = RealisticPlantGrowth.getInstance().getDataFolder();
         logFolder = new File(pluginFolder + File.separator + "log");
     }
 

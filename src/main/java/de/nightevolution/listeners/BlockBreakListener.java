@@ -37,7 +37,7 @@ public class BlockBreakListener implements Listener {
      */
     public BlockBreakListener(RealisticPlantGrowth instance) {
         this.instance = instance;
-        logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         configManager = instance.getConfigManager();
         instance.getServer().getPluginManager().registerEvents(this, instance);
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");

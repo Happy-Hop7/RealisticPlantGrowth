@@ -28,7 +28,7 @@ public class PlayerQuitListener implements Listener {
      */
     public PlayerQuitListener(RealisticPlantGrowth instance) {
         this.instance = instance;
-        logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         instance.getServer().getPluginManager().registerEvents(this, instance);
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
         scheduler = Bukkit.getScheduler();

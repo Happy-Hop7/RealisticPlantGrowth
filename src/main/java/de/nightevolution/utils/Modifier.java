@@ -50,7 +50,7 @@ public class Modifier {
         this.growthModifierType = growthModifierType;
         this.deathChanceType = deathChanceType;
 
-        logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         logger.verbose("Created new " + this.getClass().getSimpleName() + ".");
 
 
@@ -75,7 +75,7 @@ public class Modifier {
         this.modifierSection = null;
         this.fertilizerUsed = false;
 
-        logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         logger.verbose("Created new " + this.getClass().getSimpleName() + ".");
 
         growthModifier = 0.0;

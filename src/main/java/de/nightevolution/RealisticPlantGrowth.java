@@ -242,7 +242,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         verbose = cm.isVerbose();
         debug = cm.isDebug_log();
 
-        logger = new Logger(this.getClass().getSimpleName(), this, verbose, debug);
+        logger = new Logger(this.getClass().getSimpleName(), verbose, debug);
 
         cmdManager = new CommandManager();
 

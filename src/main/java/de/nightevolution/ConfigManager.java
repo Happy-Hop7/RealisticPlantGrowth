@@ -110,7 +110,7 @@ public class ConfigManager {
         configManager = this;
         instance = RealisticPlantGrowth.getInstance();
 
-        logger = new Logger(this.getClass().getSimpleName(), instance, false, false);
+        logger = new Logger(this.getClass().getSimpleName(), false, false);
 
         pluginFolder = instance.getDataFolder();
         languageFolder = new File(pluginFolder + File.separator + "lang");

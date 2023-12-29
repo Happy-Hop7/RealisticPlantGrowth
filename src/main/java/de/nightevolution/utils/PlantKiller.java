@@ -38,8 +38,7 @@ public class PlantKiller {
     public PlantKiller() {
         this.instance = RealisticPlantGrowth.getInstance();
         configManager = instance.getConfigManager();
-        logger = new Logger(this.getClass().getSimpleName(), instance,
-                RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         scheduler = Bukkit.getScheduler();
     }
 

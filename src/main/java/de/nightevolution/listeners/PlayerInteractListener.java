@@ -55,7 +55,7 @@ public class PlayerInteractListener implements Listener {
         this.cm = instance.getConfigManager();
         this.msgManager = instance.getMessageManager();
 
-        logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         instance.getServer().getPluginManager().registerEvents(this, instance);
 
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
