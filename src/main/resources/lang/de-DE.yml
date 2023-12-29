@@ -2,15 +2,18 @@
 # See https://docs.advntr.dev/minimessage/format.html for formatting infos.
 # Legacy color-codes (& and §) are not supported in this file!
 
-# Nachrichten-Header
+# Nachrichten-Header.
 # Wird als Abtrennung für Plugin-Chatnachrichten verwendet.
 MSG_HEADER: "<newline><gray>---------------- <green>Realistic Plant Growth <gray>----------------"
 
 # Keine Berechtigungen
 # Wird an den Spieler gesendet, wenn dieser keine Berechtigungen für einen eingegebenen Plugin-Befehl hat.
-NO_PERMISSIONS: "<red>You don't have the required permissions to perform this command!"
+NO_PERMISSIONS: "<red>Du hast nicht die nötigen Berechtigungen diesen Befehl auszuführen!"
 
-# Das Hilfe-Menü
+# Wird in der Console geloggt, wenn ein Befehl verwendet wird, der nur von Spielern In-Game genutzt werden kann.
+NO_CONSOLE: "<red>Dieser Befehl kann nicht von der Konsole aus verwendet werden!"
+
+# Das Hilfe-Menü.
 # Wird dem Nutzer angezeigt, wenn dieser den Befehl '/rpg help' ausführt oder einen unbekannten Unterbefehl verwendet.
 HELP_CMD_MSG: |-
   <aqua>/rpg help <dark_gray>- <gray>Zeigt dir dieses Hilfe-Menü an.
@@ -42,7 +45,17 @@ PLANT_NOT_MODIFIED_MSG: |-
   <hover:show_item:"minecraft:{PLANT}"> <aqua><lang:block.minecraft.{PLANT}></hover> <gray>besitzt keine veränderten Wachstumseigenschaften.
     » <yellow><italic>Normales Minecraft Vanilla-Verhalten.
 
+# Pflanzeninformationen.
+# Wird dem Nutzer angezeigt, wenn dieser den Befehl '/rpg info' ausführt und dabei eine Pflanze in der Hand hält.
+INFO_CMD_RESULT: |-
+  <gray> Wachstumsinformationen für<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
+    <dark_gray> » <gray>Kann in Dunkelheit wachsen: <aqua>{CAN_GROW_IN_DARK}
+    <dark_gray> » <gray>Biomgruppen: <aqua>{BIOME_GROUP_LIST}
+    <dark_gray> » <gray>Gültige Biome: <aqua>{BIOME_LIST}
+
+# Wird dem Nutzer angezeigt, wenn dieser den Befehl '/rpg info' ausführt und kein Item (keine Pflanze) in der Hand hält.
+INFO_CMD_NO_ITEM: "<red>Du musst eine Pflanze in der Hand halten, um diesen Befehl ausführen zu können!"
+
 # Version der Konfigurationsdatei.
 # Bitte nicht selbständig ändern :)
-version: 1
-
+version: 2
