@@ -4,10 +4,10 @@
 
 ## Overview
 
-* [✨ Features](overview/features/README.md)
-  * [Commands](overview/features/commands.md)
-  * [Permissions](overview/features/permissions.md)
+* [✨ Features](overview/features.md)
 * [⁉ FAQ](overview/faq.md)
+* [Commands](overview/commands.md)
+* [Permissions](overview/permissions.md)
 
 ## Guides
 

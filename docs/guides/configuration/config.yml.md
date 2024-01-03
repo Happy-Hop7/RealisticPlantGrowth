@@ -112,6 +112,16 @@ Prevents spam clicking and therefore heavy area scans.
 
 ***
 
+### use\_metrics
+
+#### default: `true`
+
+When this configuration setting is set to true, your plugin will anonymously contribute usage data to bStats. bStats is a service that assists plugin developers in understanding how their creations are utilized in the wider community.
+
+This anonymized information is invaluable for enhancing and optimizing plugins based on real-world usage patterns. For additional details, please visit the [bStats page](https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634) of _**Realistic Plant Growth**_.
+
+***
+
 ## Fertilizer
 
 Fertilizer enables Composters to fertilize crops in the surrounding area, allowing for growth in normally uninhabitable areas.
