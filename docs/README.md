@@ -19,8 +19,8 @@ _**Realistic Plant Growth**_ is a powerful Spigot/Paper plugin that brings a new
 
 ## Quick links
 
-{% content-ref url="overview/features/" %}
-[features](overview/features/)
+{% content-ref url="overview/features.md" %}
+[features.md](overview/features.md)
 {% endcontent-ref %}
 
 {% content-ref url="for-contributors/support-me.md" %}
