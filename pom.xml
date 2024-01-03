@@ -6,7 +6,7 @@
 
     <groupId>de.nightevolution</groupId>
     <artifactId>RealisticPlantGrowth</artifactId>
-    <version>BETA-0.6.0-SNAPSHOT</version>
+    <version>BETA-0.6.0</version>
     <packaging>jar</packaging>
 
     <name>RealisticPlantGrowth</name>
@@ -118,15 +118,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <outputDirectory>SET YOUR BUILD PATH HERE</outputDirectory>
-                </configuration>
             </plugin>
 
         </plugins>
