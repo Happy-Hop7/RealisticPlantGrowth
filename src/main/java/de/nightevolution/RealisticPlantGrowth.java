@@ -193,6 +193,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         instance = this;
 
         updateVariables();
+        registerMetrics();
         drawLogo();
     }
 
@@ -242,7 +243,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
             // Create a new Metrics instance with the plugin and the unique plugin ID (20634)
             metrics = new Metrics(this, 20634);
-        }
+        } else
+            logger.log("bStats disabled.");
     }
 
     /**
@@ -285,7 +287,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         registerTabCompleter();
         BiomeChecker.clearCache();
         registerListeners();
-        registerMetrics();
+
     }
 
     /**
