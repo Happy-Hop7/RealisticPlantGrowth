@@ -228,11 +228,21 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     }
 
     /**
-     * Registers {@link Metrics} for bStats. <br>
+     * Registers metrics using bStats if the corresponding configuration setting is enabled.
+     * <p> bStats is a service that provides statistics and insights about plugin usage. </p>
+     * <p> For more information about bStats, visit the bStats page:
      * <a href="https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634">bStats Page</a>
+     * </p>
      */
     private void registerMetrics() {
-        metrics = new Metrics(this, 20634);
+        // Check if the use_metrics configuration setting is enabled
+        if (cm.use_metrics()) {
+            // Log that bStats is enabled
+            logger.log("bStats enabled.");
+
+            // Create a new Metrics instance with the plugin and the unique plugin ID (20634)
+            metrics = new Metrics(this, 20634);
+        }
     }
 
     /**
