@@ -7,6 +7,7 @@ import de.nightevolution.utils.BiomeChecker;
 import de.nightevolution.utils.Logger;
 import dev.dejvokep.boostedyaml.route.Route;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -65,6 +66,11 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * The {@link Logger} instance for recording log messages in the {@link RealisticPlantGrowth} plugin.
      */
     private Logger logger;
+
+    /**
+     * The {@link Metrics} instance for collecting anonymous usage data for the {@link RealisticPlantGrowth} plugin.
+     */
+    private Metrics metrics;
 
 
     /**
@@ -222,6 +228,14 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     }
 
     /**
+     * Registers {@link Metrics} for bStats. <br>
+     * <a href="https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634">bStats Page</a>
+     */
+    private void registerMetrics() {
+        metrics = new Metrics(this, 20634);
+    }
+
+    /**
      * Reloads the plugin by refreshing YAML files, unregistering event handlers, and updating variables.
      * This method is intended for use when reloading plugin configurations or making runtime adjustments.
      */
@@ -261,7 +275,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         registerTabCompleter();
         BiomeChecker.clearCache();
         registerListeners();
-
+        registerMetrics();
     }
 
     /**
