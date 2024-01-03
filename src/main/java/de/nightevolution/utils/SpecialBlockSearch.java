@@ -46,7 +46,7 @@ public class SpecialBlockSearch {
      */
     private SpecialBlockSearch() {
         specialBlockSearch = this;
-        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.getInstance(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
     }
 
     private static boolean debug_log = false;

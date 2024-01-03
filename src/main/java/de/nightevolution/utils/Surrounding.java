@@ -82,8 +82,7 @@ public class Surrounding {
         uvSources = uvBlocks;
         fertilizerSources = fertilizerBlocks;
 
-        logger = new Logger(this.getClass().getSimpleName(), instance,
-                RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
 
         biomeChecker = new BiomeChecker(plantType, biome);
         validBiome = biomeChecker.isValid();

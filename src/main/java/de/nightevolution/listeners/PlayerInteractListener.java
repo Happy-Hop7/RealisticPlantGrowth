@@ -7,6 +7,7 @@ import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.SpecialBlockSearch;
 import de.nightevolution.utils.Surrounding;
 import de.nightevolution.utils.enums.MessageType;
+import de.nightevolution.utils.enums.PlaceholderInterface;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -29,22 +30,12 @@ import java.util.UUID;
  * Listens to player block interactions in order to give information
  * about crops growing rates in the current biome.
  */
-public class PlayerInteractListener implements Listener {
+public class PlayerInteractListener implements Listener, PlaceholderInterface {
 
     private final RealisticPlantGrowth instance;
     private final ConfigManager cm;
     private final Logger logger;
     private final MessageManager msgManager;
-
-    private final String PLANT_PLACEHOLDER = "{PLANT}";
-    private final String GROWTH_RATE_PLACEHOLDER = "{GROWTH_RATE}";
-    private final String DEATH_CHANCE_PLACEHOLDER = "{DEATH_CHANCE}";
-    private final String BIOME_PLACEHOLDER = "{BIOME}";
-    private final String IS_VALID_BIOME_PLACEHOLDER = "{IS_VALID_BIOME}";
-    private final String FERTILIZER_USED_PLACEHOLDER = "{FERTILIZER_USED}";
-    private final String UV_LIGHT_USED_PLACEHOLDER = "{UV_LIGHT_USED}";
-    private final String CAN_GROW_IN_DARK_PLACEHOLDER = "{CAN_GROW_IN_DARK}";
-    private final String IS_DARK_PLACEHOLDER = "{IS_DARK}";
 
 
     private static final HashMap<UUID, Long> playerCooldownMap = new HashMap<>();
@@ -55,7 +46,7 @@ public class PlayerInteractListener implements Listener {
         this.cm = instance.getConfigManager();
         this.msgManager = instance.getMessageManager();
 
-        logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         instance.getServer().getPluginManager().registerEvents(this, instance);
 
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");

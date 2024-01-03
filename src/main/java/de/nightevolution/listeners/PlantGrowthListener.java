@@ -58,7 +58,7 @@ public abstract class PlantGrowthListener implements Listener {
     public PlantGrowthListener(RealisticPlantGrowth instance) {
         this.instance = instance;
 
-        logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
 
         instance.getServer().getPluginManager().registerEvents(this, instance);
         specialBlockSearch = SpecialBlockSearch.get();

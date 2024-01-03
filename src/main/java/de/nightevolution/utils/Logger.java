@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Logger {
-    private static RealisticPlantGrowth instance;
     private static File logFolder;
     private static boolean verbose;
     private static boolean debug;
@@ -30,13 +29,12 @@ public class Logger {
 
     private final String classPrefix;
 
-    public Logger(String classPrefix, RealisticPlantGrowth instance, boolean verbose, boolean debug) {
+    public Logger(String classPrefix, boolean verbose, boolean debug) {
         this.classPrefix = classPrefix.strip() + ": ";
-        Logger.instance = instance;
         Logger.verbose = verbose;
         Logger.debug = debug;
 
-        File pluginFolder = instance.getDataFolder();
+        File pluginFolder = RealisticPlantGrowth.getInstance().getDataFolder();
         logFolder = new File(pluginFolder + File.separator + "log");
     }
 

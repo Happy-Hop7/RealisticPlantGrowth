@@ -34,8 +34,7 @@ public class MessageManager {
         RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();
         configManager = instance.getConfigManager();
         this.miniMessage = MiniMessage.miniMessage();
-        logger = new Logger(this.getClass().getSimpleName(), instance,
-                RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         messageManager = this;
     }
 

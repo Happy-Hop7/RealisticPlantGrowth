@@ -10,6 +10,9 @@ MSG_HEADER: "<newline><gray>---------------- <green>Realistic Plant Growth <gray
 # Sent to the player when they don't have the required permissions for a given plugin command.
 NO_PERMISSIONS: "<red>You don't have the required permissions to perform this command!"
 
+# Logged in the console when a command is used that can only be used by in-game players.
+NO_CONSOLE: "<red>This command cannot be used from the console!"
+
 # Help Menu
 # Displayed to the user when they execute the '/rpg help' command or use an unknown subcommand.
 HELP_CMD_MSG: |-
@@ -42,6 +45,17 @@ PLANT_NOT_MODIFIED_MSG: |-
   <hover:show_item:"minecraft:{PLANT}"> <aqua><lang:block.minecraft.{PLANT}></hover> <gray>has no modified growth properties.
     » <yellow><italic>Normal Minecraft Vanilla behavior.
 
+# Plant Information
+# Displayed to the user when they execute the '/rpg info' command while holding a plant in hand.
+INFO_CMD_RESULT: |-
+  <gray>Growth information for<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
+    <dark_gray> » <gray>Can Grow in Darkness: <aqua>{CAN_GROW_IN_DARK}
+    <dark_gray> » <gray>Biome Groups: <aqua>{BIOME_GROUP_LIST}
+    <dark_gray> » <gray>Valid Biomes: <aqua>{BIOME_LIST}
+
+# Displayed to the user when they execute the '/rpg info' command and have no item (no plant) in hand.
+INFO_CMD_NO_ITEM: "<red>You must hold a plant in your hand to execute this command!"
+
 # Configuration File Version.
 # Please do not modify on your own :)
-version: 1
+version: 2

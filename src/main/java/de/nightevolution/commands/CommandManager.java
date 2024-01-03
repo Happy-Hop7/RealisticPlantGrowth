@@ -33,7 +33,7 @@ public class CommandManager implements CommandExecutor {
         this.instance = RealisticPlantGrowth.getInstance();
         this.msgManager = instance.getMessageManager();
 
-        this.logger = new Logger(this.getClass().getSimpleName(), instance, RealisticPlantGrowth.isVerbose(),
+        this.logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(),
                 RealisticPlantGrowth.isDebug());
 
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");

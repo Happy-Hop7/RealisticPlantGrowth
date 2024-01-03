@@ -242,7 +242,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         verbose = cm.isVerbose();
         debug = cm.isDebug_log();
 
-        logger = new Logger(this.getClass().getSimpleName(), this, verbose, debug);
+        logger = new Logger(this.getClass().getSimpleName(), verbose, debug);
 
         cmdManager = new CommandManager();
 
@@ -291,10 +291,9 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * AZALEA and FLOWERING_AZALEA are also included.
      */
     private void getSaplingsTag() {
-        logger.logToFile("Getting saplings tag...", logFile);
+        logger.verbose("Getting saplings tag...");
         Set<Material> saplingSet = (Tag.SAPLINGS.getValues());
 
-        logger.verbose("Adding saplings to plant list...");
         plants.addAll(saplingSet);
         saplings = saplingSet;
 

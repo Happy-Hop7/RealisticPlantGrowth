@@ -20,9 +20,13 @@ permissions:
     description: Gives access to all RealisticPlantGrowth features.
     default: op
     children:
-        rpg.help: true
-        rpg.info: true
-        rpg.reload: true
+      rpg.reload: true
+      rpg.help: true
+      rpg.info: true
+
+  rpg.reload:
+    description: Gives access to the /rpg reload command.
+    default: op
 
   rpg.help:
     description: Base-Permission to access /rpg command.

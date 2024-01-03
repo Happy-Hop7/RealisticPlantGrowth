@@ -13,8 +13,7 @@ Realistic Plant Growth is currently compatible only with Minecraft version 1.20.
 
 ## Step 1 - Download the Plugin
 
-You can download the Realistic Plant Growth Plugin from Modrinth:\
-[https://modrinth.com/plugin/realistic-plant-growth](https://modrinth.com/plugin/realistic-plant-growth)
+You can download the Realistic Plant Growth Plugin [here](https://modrinth.com/plugin/realistic-plant-growth)
 
 ## Step 2 - Place the .jar File in Your Plugins Folder
 

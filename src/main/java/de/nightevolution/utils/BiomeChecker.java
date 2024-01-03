@@ -9,10 +9,7 @@ import org.bukkit.block.Biome;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Utility class for checking if a given plant {@link Material} and {@link Biome} combination is valid
@@ -25,7 +22,7 @@ public class BiomeChecker {
     private final Material plantMaterial;
     private final Biome currentBiome;
 
-    private static final Route biomeListRoute = Route.from("BiomeGroup", "Groups");
+    private static final Route biomeGroupsListRoute = Route.from("BiomeGroup", "Groups");
     private static final Route defaultBiomeListRoute = Route.from("Default", "Biome");
     private final Route currentPlantRoute;
 
@@ -50,8 +47,7 @@ public class BiomeChecker {
 
         this.currentPlantRoute = Route.from(plantMaterial);
 
-        logger = new Logger(this.getClass().getSimpleName(), instance,
-                RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         logger.verbose("Creating new Biome Checker.");
 
         initPlantSection();
@@ -77,9 +73,9 @@ public class BiomeChecker {
      * @return true if the current {@link Biome} is in any BiomeGroup, false otherwise.
      */
     private boolean checkBiomeGroups() {
-        Optional<List<String>> biomeStringList = plantSection.getOptionalStringList(biomeListRoute);
-        if (biomeStringList.isPresent() && !biomeStringList.get().isEmpty()) {
-            for (String biomeGroup : biomeStringList.get()) {
+        List<String> biomeGroupStringList = getBiomeGroupStringList();
+        if (!biomeGroupStringList.isEmpty()) {
+            for (String biomeGroup : biomeGroupStringList) {
                 if (cm.getBiomeSetOfBiomeGroup(biomeGroup).contains(currentBiome)) {
                     matchingBiomeGroup = biomeGroup;
                     return true;
@@ -95,9 +91,9 @@ public class BiomeChecker {
      * @return true if the current {@link Biome} is in the list of Default {@link Biome}s, false otherwise.
      */
     private boolean checkDefaultBiomes() {
-        Optional<List<String>> optionalBiomeStringList = plantSection.getOptionalStringList(defaultBiomeListRoute);
-        if (optionalBiomeStringList.isPresent() && !optionalBiomeStringList.get().isEmpty()) {
-            List<String> biomeStringList = optionalBiomeStringList.get();
+        Optional<List<String>> optionalStringList = plantSection.getOptionalStringList(defaultBiomeListRoute);
+        List<String> biomeStringList = optionalStringList.orElseGet(ArrayList::new);
+        if (!biomeStringList.isEmpty()) {
             if (biomeStringList.size() == 1 && biomeStringList.getFirst().equalsIgnoreCase("ALL"))
                 return true;
 
@@ -107,7 +103,6 @@ public class BiomeChecker {
         return false;
     }
 
-
     public static void clearCache() {
         validBiomesCache.clear();
     }
@@ -115,6 +110,24 @@ public class BiomeChecker {
     public boolean isValid() {
         // TODO: implement caching
         return (checkBiomeGroups() || checkDefaultBiomes());
+    }
+
+    @NotNull
+    public List<String> getBiomeGroupStringList() {
+        Optional<List<String>> biomeGroupStringList = plantSection.getOptionalStringList(biomeGroupsListRoute);
+        return biomeGroupStringList.orElseGet(ArrayList::new);
+    }
+
+    @NotNull
+    public List<String> getDefaultBiomes() {
+        Optional<List<String>> biomeStringList = plantSection.getOptionalStringList(defaultBiomeListRoute);
+        List<String> stringList = biomeStringList.orElseGet(ArrayList::new);
+
+        if (stringList.size() == 1 && stringList.getFirst().equalsIgnoreCase("ALL")) {
+            return List.of("ALL");
+        }
+
+        return stringList;
     }
 
     @Nullable
