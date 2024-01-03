@@ -61,6 +61,11 @@ display_growth_rates: true
 # Prevents spam clicking and therefore heavy area scans.
 display_cooldown: 5
 
+# bStats
+# Set to true if you want to anonymously report plugin metrics to bStats.
+# bStats Link: https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634
+use_metrics: true
+
 ########################################################################################################################
 #|                                                                                                                    |#
 #| Fertilizer                                                                                                         |#
@@ -207,5 +212,5 @@ bonemeal_log: false
 #| Spooky internal settings.                                                                                          |#
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
-config-version: 1
+config-version: 2
 verbose: false

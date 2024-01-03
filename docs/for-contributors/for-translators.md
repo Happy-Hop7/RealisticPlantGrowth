@@ -15,9 +15,9 @@ Email: [support@nightevolution.de](mailto:support@nightevolution.de)
 ## Supported Languages
 
 | Language Code | Version | Link to Default File                                                                                      |
-| ------------- | ------- | --------------------------------------------------------------------------------------------------------- |
-| en-US         | 1       | [en-US](https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/lang/en-US.yml) |
-| de-DE         | 1       | [de-DE](https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/lang/de-DE.yml) |
+|---------------|---------|-----------------------------------------------------------------------------------------------------------|
+| en-US         | 2       | [en-US](https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/lang/en-US.yml) |
+| de-DE         | 2       | [de-DE](https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/lang/de-DE.yml) |
 |               |         |                                                                                                           |
 
 ***

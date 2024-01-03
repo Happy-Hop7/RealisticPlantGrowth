@@ -15,9 +15,13 @@ permissions:
     description: Gives access to all RealisticPlantGrowth features.
     default: op
     children:
-        rpg.help: true
-        rpg.info: true
-        rpg.reload: true
+      rpg.reload: true
+      rpg.help: true
+      rpg.info: true
+
+  rpg.reload:
+    description: Gives access to the /rpg reload command.
+    default: op
 
   rpg.help:
     description: Base-Permission to access /rpg command.
@@ -49,7 +53,7 @@ This permission grants access to all commands offered by the **Realistic Plant G
 
 ### `rpg.reload`
 
-This permission, included in the `rpg.*` group, functions as a negative permission option when providing users with access to the `rpg.*` permission. \
+This permission, included in the `rpg.*` group, functions as a negative permission option when providing users with access to the `rpg.*` permission.\
 It is essential for the use of the [`/rpg reload`](commands.md#rpg-reload) command.
 
 ***
@@ -60,8 +64,7 @@ Recommended permissions for regular users.
 
 ### `rpg.help`
 
-This permission is necessary to receive a help message when either the [`/rpg help`](commands.md#rpg-help) command or an
-unknown subcommand of the plugin is used.
+This permission is necessary to receive a help message when either the [`/rpg help`](commands.md#rpg-help) command or an unknown subcommand of the plugin is used.
 
 ### `rpg.info`
 
@@ -73,11 +76,7 @@ This permission allows players to gather growth information about a plant by per
 To provide this information, a comprehensive area search is conducted to determine the exact modifiers applicable in the current environment.
 
 {% hint style="warning" %}
-Prevent server lag caused by players spam-clicking with seeds by utilizing
-the [`display_cooldown`](../../guides/configuration/config.yml.md#display_cooldown) setting in
-the [`Config.yml`](../../guides/configuration/config.yml.md) file!
+Prevent server lag caused by players spam-clicking with seeds by utilizing the [`display_cooldown`](../guides/configuration/config.yml.md#display\_cooldown) setting in the [`Config.yml`](../guides/configuration/config.yml.md) file!
 {% endhint %}
-
-
 
 ***

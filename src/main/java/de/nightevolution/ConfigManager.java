@@ -78,6 +78,7 @@ public class ConfigManager {
     private static boolean require_hoe;
     private static boolean display_growth_rates;
     private static int display_cooldown;
+    private static boolean use_metrics;
 
     // Fertilizer config values
     private static boolean fertilizer_enabled;
@@ -358,6 +359,7 @@ public class ConfigManager {
             require_hoe = config.getBoolean("require_hoe");
             display_growth_rates = config.getBoolean("display_growth_rates");
             display_cooldown = config.getInt("display_cooldown");
+            use_metrics = config.getBoolean("use_metrics");
 
             // Fertilizer settings
             fertilizer_enabled = config.getBoolean("fertilizer_enabled");
@@ -487,6 +489,7 @@ public class ConfigManager {
             logger.logToFile("require_hoe: " + require_hoe, logFile);
             logger.logToFile("display_growth_rates: " + display_growth_rates, logFile);
             logger.logToFile("display_cooldown: " + display_cooldown, logFile);
+            logger.logToFile("use_metrics: " + use_metrics, logFile);
 
             // Fertilizer settings
             logger.logToFile("fertilizer_enabled: " + fertilizer_enabled, logFile);
@@ -736,6 +739,11 @@ public class ConfigManager {
     public int getDisplay_cooldown() {
         return display_cooldown;
     }
+
+    public boolean use_metrics() {
+        return use_metrics;
+    }
+
 
     public boolean isFertilizer_enabled() {
         return fertilizer_enabled;
