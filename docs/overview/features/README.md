@@ -1,5 +1,5 @@
 ---
-description: 🚧 Work in Progress 🚧
+description: Explore the diverse features that make Realistic Plant Growth stand out.
 ---
 
 # ✨ Features
@@ -28,7 +28,13 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 
 ## Planned Features
 
-
+* [ ] Enhance Event Logging
+* [ ] Restrict Bonemeal Usage for Plants
+* [ ] Implement Visual Effects for Area Scans
+* [ ] Optimize Area Scan Performance
+* [ ] Enhance UV-Light Detection
+* [ ] Implement Developer API
+* [ ] Introduce Offline Plant Growth Add-On
 
 
 
