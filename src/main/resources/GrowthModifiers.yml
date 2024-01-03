@@ -252,23 +252,23 @@ CARROT:
       - ALL
 
 
-  MELON_STEM:
-    BiomeGroup:
-      Groups:
-        - Tropical
-        - Temperate
-      Tropical:
-        GrowthRate: 100
-        UVLightGrowthRate: 85
-        NaturalDeathChance: 5
-        UVLightDeathChance: 15
-      Temperate:
-        GrowthRate: 25
-        UVLightGrowthRate: 15
-        NaturalDeathChance: 15
-        UVLightDeathChance: 25
-    Default:
-      Biome: [ ] # No growth in other biomes
+MELON_STEM:
+  BiomeGroup:
+    Groups:
+      - Tropical
+      - Temperate
+    Tropical:
+      GrowthRate: 100
+      UVLightGrowthRate: 85
+      NaturalDeathChance: 5
+      UVLightDeathChance: 15
+    Temperate:
+      GrowthRate: 25
+      UVLightGrowthRate: 15
+      NaturalDeathChance: 15
+      UVLightDeathChance: 25
+  Default:
+    Biome: [ ] # No growth in other biomes
 
 
 PITCHER_CROP:
