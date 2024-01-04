@@ -5,13 +5,22 @@ the Minecraft flora, allowing you to fine-tune growth parameters on a per-biome 
 
 This plugin draws inspiration from [PwnPlantGrowth](https://github.com/Pwn9/PwnPlantGrowth) by [Pwn9](https://github.com/Pwn9). <br>
 
-Compared to the PwnPlantGrowth plugin, this iteration has been elevated to meet current Minecraft plugin standards, with various issues addressed and functionalities restored to their intended operation. <br>
-Additionally, I've introduced more configurable plants, integrated plant death sounds and effects, implemented random replacement materials upon plant death, <br>
-and improved the mechanics of UV-light and fertilizer for a more robust and immersive experience.
-
-It's important to note that development is ongoing, and additional features are planned for the future.
-
 Plugin development by: PredatorG7
+
+## Features
+
+All features can be toggled and fine-tuned either directly in the Config.yml file or by adjusting the
+GrowthModifiers.yml file.
+
+- Biome-Specific Plant Growth
+- Biome-Specific Plant Death Chance
+- Sounds and Effects On Plant Death
+- Replace Farmland On Harvest
+- Agricultural Crops Require Hoe
+- Plants Require Natural Sky Light
+- UV-Light Blocks
+- Boost Growth Rates With Fertilizer
+- Customizable Messages With [miniMessage](https://docs.advntr.dev/minimessage/format.html) Support.
 
 > [!WARNING]
 > RealisticPlantGrowth is still in an early phase of development. <br>
