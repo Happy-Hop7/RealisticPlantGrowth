@@ -63,11 +63,16 @@ UV-Light enables the growth of plants that lack access to natural skylight, enab
 
 
 
-## Fertilizer
+## Boost Growth Rates With Fertilizer
 
 Fertilizer blocks (Composter) enhance the growth rates of plants in their vicinity. By default, each time a plant advances to the next stage, the composter fill level is depleted, signifying the utilization of fertilizer to boost the growth rate. Players must refill the composter either manually or with the assistance of hoppers.
 
 
+
+## Customizable Messages
+
+Take control of almost every player message by effortlessly adjusting them through the default language files or by making personalized modifications to suit your preferences.\
+_**Realistic Plant Growth**_ messages are designed to seamlessly integrate with the [miniMessage format](https://docs.advntr.dev/minimessage/format.html).
 
 ***
 
