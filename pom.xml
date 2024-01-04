@@ -6,7 +6,7 @@
 
     <groupId>de.nightevolution</groupId>
     <artifactId>RealisticPlantGrowth</artifactId>
-    <version>BETA-0.7.0</version>
+    <version>BETA-0.7.1</version>
     <packaging>jar</packaging>
 
     <name>RealisticPlantGrowth</name>
