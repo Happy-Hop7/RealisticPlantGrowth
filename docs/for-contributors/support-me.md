@@ -4,7 +4,7 @@ If you enjoy this plugin and would like to support me, please consider making a 
 
 [https://www.buymeacoffee.com/TheRealPredator](https://www.buymeacoffee.com/TheRealPredator)
 
-<figure><img src="../.gitbook/assets/BuyMeACoffee.png" alt="Donation QR-Code" width="350"><figcaption><p>Support me with a coffee!</p></figcaption></figure>
+[![Buy me a Brezn!](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20brezn&emoji=%F0%9F%A5%A8&slug=TheRealPredator&button_colour=5F7FFF&font_colour=ffffff&font_family=Bree&outline_colour=000000&coffee_colour=FFDD00)](https://www.buymeacoffee.com/TheRealPredator)
 
 
 
