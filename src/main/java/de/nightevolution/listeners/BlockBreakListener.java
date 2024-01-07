@@ -3,7 +3,7 @@ package de.nightevolution.listeners;
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
-import de.nightevolution.utils.PlantKiller;
+import de.nightevolution.utils.plant.PlantKiller;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
@@ -68,7 +68,7 @@ public class BlockBreakListener implements Listener {
             logger.verbose("require_hoe: " + configManager.isRequire_Hoe());
             logger.verbose("destroy_farmland: " + configManager.isDestroy_Farmland());
             logger.verbose("isSolid: " + b.getType().isSolid());
-            logger.verbose("isAPlant: " + instance.isAPlant(b));
+            logger.verbose("isAPlant: " + instance.isAPlant(b.getType()));
 
             if (configManager.isRequire_Hoe()) {
                 requireHoeToHarvest(e, p, usedHOE);

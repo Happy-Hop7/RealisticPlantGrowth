@@ -4,10 +4,10 @@ import de.nightevolution.ConfigManager;
 import de.nightevolution.MessageManager;
 import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
-import de.nightevolution.utils.SpecialBlockSearch;
-import de.nightevolution.utils.Surrounding;
 import de.nightevolution.utils.enums.MessageType;
 import de.nightevolution.utils.enums.PlaceholderInterface;
+import de.nightevolution.utils.plant.SpecialBlockSearch;
+import de.nightevolution.utils.plant.Surrounding;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -73,7 +73,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
 
 
         Block clickedBlock = e.getClickedBlock();
-        if (!e.hasItem() || clickedBlock == null || instance.isAPlant(clickedBlock)) {
+        if (!e.hasItem() || clickedBlock == null || instance.isAPlant(clickedBlock.getType())) {
             return;
         }
 
@@ -156,7 +156,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         );
 
         List<Object> replacements = Arrays.asList(
-                plantMaterial.toString().toLowerCase(),
+                instance.getOriginalPlantName(plantMaterial).toLowerCase(),
                 growthRate,
                 deathChance,
                 surrounding.getBiome().toString().toLowerCase(),

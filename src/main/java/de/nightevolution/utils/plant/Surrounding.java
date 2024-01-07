@@ -1,7 +1,8 @@
-package de.nightevolution.utils;
+package de.nightevolution.utils.plant;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.enums.DeathChanceType;
 import de.nightevolution.utils.enums.GrowthModifierType;
 import org.bukkit.Location;

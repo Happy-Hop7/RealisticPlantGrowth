@@ -3,9 +3,9 @@ package de.nightevolution.listeners;
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
-import de.nightevolution.utils.PlantKiller;
-import de.nightevolution.utils.SpecialBlockSearch;
-import de.nightevolution.utils.Surrounding;
+import de.nightevolution.utils.plant.PlantKiller;
+import de.nightevolution.utils.plant.SpecialBlockSearch;
+import de.nightevolution.utils.plant.Surrounding;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -73,7 +73,7 @@ public abstract class PlantGrowthListener implements Listener {
      */
     protected boolean processEvent() {
         // this check needs to be here because the eventBlock can be changed from child classes.
-        if (!instance.getGrowthModifiedPlants().contains(eventBlockType))
+        if (!instance.isGrowthModifiedPlant(eventBlockType))
             return false;
 
         // Retrieve surrounding environment data

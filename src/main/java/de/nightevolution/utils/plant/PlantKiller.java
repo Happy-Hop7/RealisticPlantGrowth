@@ -1,7 +1,8 @@
-package de.nightevolution.utils;
+package de.nightevolution.utils.plant;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.utils.Logger;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -67,7 +68,7 @@ public class PlantKiller {
         } else if (instance.isSapling(plantToKill)) {
             logger.verbose("Killing Sapling");
             replaceWithRandomMaterial(plantToKill, 0, 0, 1, 0);
-        } else if (instance.isAnAquaticPlant(plantToKill)) {
+        } else if (instance.isAnAquaticPlant(plantToKill.getType())) {
             logger.verbose("Killing AquaticPlant");
             replaceWithRandomAquaticMaterial(plantToKill, 35, 15, 1);
         } else if (plantType == Material.BROWN_MUSHROOM || plantType == Material.RED_MUSHROOM) {

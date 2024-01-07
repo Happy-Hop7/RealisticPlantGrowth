@@ -1,7 +1,8 @@
-package de.nightevolution.utils;
+package de.nightevolution.utils.plant;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.utils.Logger;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.route.Route;
 import org.bukkit.Material;
@@ -42,10 +43,10 @@ public class BiomeChecker {
         RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();
         this.cm = instance.getConfigManager();
 
-        this.plantMaterial = plantMaterial;
+        this.plantMaterial = instance.getMappedPlantName(plantMaterial);
         this.currentBiome = currentBiome;
 
-        this.currentPlantRoute = Route.from(plantMaterial);
+        this.currentPlantRoute = Route.from(instance.getOriginalPlantName(this.plantMaterial));
 
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         logger.verbose("Creating new Biome Checker.");

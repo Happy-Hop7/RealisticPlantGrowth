@@ -1,7 +1,8 @@
-package de.nightevolution.utils;
+package de.nightevolution.utils.plant;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.enums.DeathChanceType;
 import de.nightevolution.utils.enums.GrowthModifierType;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
@@ -54,9 +55,9 @@ public class Modifier {
         logger.verbose("Created new " + this.getClass().getSimpleName() + ".");
 
 
-        Optional<Section> optionalSection = cm.getGrowthModifierSection(Route.from(plantType));
+        Optional<Section> optionalSection = cm.getGrowthModifierSection(Route.from(instance.getOriginalPlantName(plantType)));
         if (optionalSection.isEmpty()) {
-            logger.error("Section '" + plantType + "couldn't be obtained.");
+            logger.error("Section '" + plantType + " couldn't be obtained.");
             throw new YAMLException("Check your GrowthModifiers.yml!");
         }
 
