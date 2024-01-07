@@ -79,6 +79,7 @@ public class ConfigManager {
     private static boolean display_growth_rates;
     private static int display_cooldown;
     private static boolean use_metrics;
+    private static boolean check_for_updates;
 
     // Fertilizer config values
     private static boolean fertilizer_enabled;
@@ -360,6 +361,7 @@ public class ConfigManager {
             display_growth_rates = config.getBoolean("display_growth_rates");
             display_cooldown = config.getInt("display_cooldown");
             use_metrics = config.getBoolean("use_metrics");
+            check_for_updates = config.getBoolean("check_for_updates");
 
             // Fertilizer settings
             fertilizer_enabled = config.getBoolean("fertilizer_enabled");
@@ -490,6 +492,7 @@ public class ConfigManager {
             logger.logToFile("display_growth_rates: " + display_growth_rates, logFile);
             logger.logToFile("display_cooldown: " + display_cooldown, logFile);
             logger.logToFile("use_metrics: " + use_metrics, logFile);
+            logger.logToFile("check_for_updates: " + check_for_updates, logFile);
 
             // Fertilizer settings
             logger.logToFile("fertilizer_enabled: " + fertilizer_enabled, logFile);
@@ -744,6 +747,10 @@ public class ConfigManager {
         return use_metrics;
     }
 
+    public boolean check_for_updates() {
+        return check_for_updates;
+    }
+
 
     public boolean isFertilizer_enabled() {
         return fertilizer_enabled;
@@ -777,6 +784,7 @@ public class ConfigManager {
         return fertilizer_allow_growth_rate_above_100;
     }
 
+
     public boolean isUV_Enabled() {
         return uv_enabled;
     }
@@ -801,24 +809,12 @@ public class ConfigManager {
         return plant_death_sound_effect;
     }
 
-    public Map<String, Object> getBiomeGroups() {
-        return biomeGroupsData;
-    }
-
     public Map<String, Object> getGrowthModifiers() {
         return growthModifierData;
     }
 
     public String getSelectedLanguageString(String s) {
         return selectedLanguageFile.getString(s);
-    }
-
-    public YamlDocument getBiomeGroupsFile() {
-        return biomeGroupsFile;
-    }
-
-    public YamlDocument getGrowthModifiersFile() {
-        return growthModifiersFile;
     }
 
 }

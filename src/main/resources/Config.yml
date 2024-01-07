@@ -66,6 +66,11 @@ display_cooldown: 5
 # bStats Link: https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634
 use_metrics: true
 
+# Update Checker
+# Set this option to 'true' to enable automatic update checks when the server starts.
+# Setting it to 'false' will disable update checking.
+check_for_updates: true
+
 ########################################################################################################################
 #|                                                                                                                    |#
 #| Fertilizer                                                                                                         |#
@@ -212,5 +217,5 @@ bonemeal_log: false
 #| Spooky internal settings.                                                                                          |#
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
-config-version: 2
+config-version: 3
 verbose: false

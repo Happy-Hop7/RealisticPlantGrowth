@@ -3,8 +3,11 @@ package de.nightevolution;
 import de.nightevolution.commands.CommandManager;
 import de.nightevolution.commands.TabCompleterImpl;
 import de.nightevolution.listeners.*;
-import de.nightevolution.utils.BiomeChecker;
 import de.nightevolution.utils.Logger;
+import de.nightevolution.utils.UpdateChecker;
+import de.nightevolution.utils.mapper.VersionMapper;
+import de.nightevolution.utils.mapper.versions.Version_1_20_4;
+import de.nightevolution.utils.plant.BiomeChecker;
 import dev.dejvokep.boostedyaml.route.Route;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
@@ -36,6 +39,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * The name of the debug log file used by the {@link RealisticPlantGrowth} plugin.
      */
     private static final String logFile = "debug";
+
 
     /**
      * A flag indicating whether verbose logging is enabled in the {@link RealisticPlantGrowth} plugin.
@@ -71,6 +75,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * The {@link Metrics} instance for collecting anonymous usage data for the {@link RealisticPlantGrowth} plugin.
      */
     private Metrics metrics;
+
+    private HashMap<Material, String> mappedPlantNames;
 
 
     /**
@@ -287,7 +293,20 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         registerTabCompleter();
         BiomeChecker.clearCache();
         registerListeners();
+        checkForUpdates();
 
+    }
+
+    private void checkForUpdates() {
+        new UpdateChecker(this, 114096).getVersion(version -> {
+            if (this.getDescription().getVersion().equals(version)) {
+                logger.log("There is no new update available.");
+            } else {
+                logger.warn("There is a new update available.");
+                logger.warn("Download at:");
+                logger.warn("https://modrinth.com/plugin/realistic-plant-growth/version/latest");
+            }
+        });
     }
 
     /**
@@ -346,30 +365,50 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     }
 
     /**
-     * Identifies and collects plants with modified growth behavior from the root entries of GrowthModifiers.
-     * Each root entry corresponds to a plant with modified growth characteristics.
-     * The method extracts these plants and adds them to the collection of modified growth rate plants.
+     * Updates the set of growth-modified plants based on the growth modifier data
+     * retrieved from the {@link ConfigManager}. The method iterates through the keys
+     * of the growth modifier data, validates and checks if each key represents a plant material.
+     * If it is a valid plant material, the {@link Material} is added to the set of growth-modified plants.
+     * Additionally, if debug mode is enabled, the modified plant materials are logged
+     * to a file asynchronously for debugging purposes.
      */
     private void updateGrowthModifiedPlants() {
         Map<String, Object> growthModData = cm.getGrowthModifiers();
         Set<String> keys = growthModData.keySet();
+
         growthModifiedPlants = new HashSet<>();
+        mappedPlantNames = new HashMap<>();
 
         for (String key : keys) {
             Route r = Route.fromString(key);
 
             if (r.length() == 1) {
-                Material m = Material.getMaterial(key);
 
-                if (m == null) {
-                    logger.warn("Material '" + key + "' is not a Bukkit Material!");
+                VersionMapper mapper = new Version_1_20_4();
+                if (!mapper.checkPlantMaterial(key)) {
+                    // Log a warning message indicating that plant growth modifiers are ignored for the material
                     logger.warn("Plant growth modifiers for '" + key + "' are ignored.");
-                } else {
-                    // TODO: Name mapping of vines and bamboo (new function getMappedName)
-                    growthModifiedPlants.add(m);
+                    continue;
                 }
+
+                Material material = Material.getMaterial(key);
+                assert material != null;
+
+                Material mappedMaterial = mapper.getMappedPlantName(material);
+
+                if (!mappedPlantNames.containsKey(mappedMaterial)) {
+                    mappedPlantNames.put(mappedMaterial, key);
+                    logger.verbose("mappedPlantNames: " + mappedMaterial + " --> " + key);
+                } else {
+                    logger.warn("Material '" + mappedMaterial + "' is already mapped to: " + mappedPlantNames.get(mappedMaterial));
+                    logger.warn("Please remove either '" + key + "' or '" + mappedPlantNames.get(mappedMaterial) +
+                            "' from your GrowthModifiers.yml");
+                }
+
+                growthModifiedPlants.add(mappedMaterial);
             }
         }
+
 
         if (debug) {
             Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
@@ -503,13 +542,13 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     }
 
     /**
-     * Checks if the given {@link Block} represents a plant.
+     * Checks if the given {@link Material} is a plant.
      *
-     * @param b The {@link Block} to check.
-     * @return {@code true} if the {@link Block} b is a plant, {@code false} otherwise.
+     * @param m The {@link Material} to check.
+     * @return {@code true} if the {@link Material} m is a plant, {@code false} otherwise.
      */
-    public boolean isAPlant(@NotNull Block b) {
-        return plants.contains(b.getType());
+    public boolean isAPlant(@NotNull Material m) {
+        return plants.contains(m);
     }
 
     /**
@@ -523,13 +562,13 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     }
 
     /**
-     * Checks if the given {@link Block} represents an aquatic plant.
+     * Checks if the given {@link Material} is an aquatic plant.
      *
-     * @param b The {@link Block} to check.
-     * @return {@code true} if the {@link Block} b is an aquatic plant, {@code false} otherwise.
+     * @param m The {@link Material} to check.
+     * @return {@code true} if the {@link Material} m is an aquatic plant, {@code false} otherwise.
      */
-    public boolean isAnAquaticPlant(@NotNull Block b) {
-        return aquaticPlants.contains(b.getType());
+    public boolean isAnAquaticPlant(@NotNull Material m) {
+        return aquaticPlants.contains(m);
     }
 
     /**
