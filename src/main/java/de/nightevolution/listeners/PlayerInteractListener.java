@@ -156,7 +156,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         );
 
         List<Object> replacements = Arrays.asList(
-                instance.getOriginalPlantName(plantMaterial).toLowerCase(),
+                (plantMaterial).toString().toLowerCase(),
                 growthRate,
                 deathChance,
                 surrounding.getBiome().toString().toLowerCase(),

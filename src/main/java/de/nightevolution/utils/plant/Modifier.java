@@ -55,7 +55,7 @@ public class Modifier {
         logger.verbose("Created new " + this.getClass().getSimpleName() + ".");
 
 
-        Optional<Section> optionalSection = cm.getGrowthModifierSection(Route.from(instance.getOriginalPlantName(plantType)));
+        Optional<Section> optionalSection = cm.getGrowthModifierSection(Route.from((plantType)));
         if (optionalSection.isEmpty()) {
             logger.error("Section '" + plantType + " couldn't be obtained.");
             throw new YAMLException("Check your GrowthModifiers.yml!");

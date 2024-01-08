@@ -43,10 +43,10 @@ public class BiomeChecker {
         RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();
         this.cm = instance.getConfigManager();
 
-        this.plantMaterial = instance.getMappedPlantName(plantMaterial);
+        this.plantMaterial = (plantMaterial);
         this.currentBiome = currentBiome;
 
-        this.currentPlantRoute = Route.from(instance.getOriginalPlantName(this.plantMaterial));
+        this.currentPlantRoute = Route.from((this.plantMaterial));
 
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         logger.verbose("Creating new Biome Checker.");
