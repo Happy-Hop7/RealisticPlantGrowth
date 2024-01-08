@@ -3,6 +3,7 @@ package de.nightevolution.listeners;
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
+import de.nightevolution.utils.mapper.VersionMapper;
 import de.nightevolution.utils.plant.PlantKiller;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
@@ -18,6 +19,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The BlockBreakListener class handles events related to block breaking,
@@ -26,7 +28,8 @@ import org.bukkit.scheduler.BukkitScheduler;
 public class BlockBreakListener implements Listener {
 
     private final RealisticPlantGrowth instance;
-    private final ConfigManager configManager;
+    private final ConfigManager cm;
+    private final VersionMapper vm;
     private final Logger logger;
     private final BukkitScheduler scheduler;
 
@@ -37,11 +40,13 @@ public class BlockBreakListener implements Listener {
      */
     public BlockBreakListener(RealisticPlantGrowth instance) {
         this.instance = instance;
-        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
-        configManager = instance.getConfigManager();
+        this.vm = instance.getVersionMapper();
+        this.cm = instance.getConfigManager();
+        this.logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        this.scheduler = Bukkit.getScheduler();
+
         instance.getServer().getPluginManager().registerEvents(this, instance);
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
-        scheduler = Bukkit.getScheduler();
     }
 
 
@@ -51,31 +56,31 @@ public class BlockBreakListener implements Listener {
      * @param e BlockBreakEvent containing information about the event.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBlockBreakEvent(BlockBreakEvent e) {
+    public void onBlockBreakEvent(@NotNull BlockBreakEvent e) {
         Block b = e.getBlock();
         World world = b.getWorld();
 
-        if (!configManager.getEnabled_worlds().contains(world.getName())) {
+        if (instance.isWorldDisabled(world)) {
             return;
         }
 
         // basically every crop planted on farmland + nether warts
-        if (instance.isAgriculturalPlant(b) && !(e.getPlayer().getGameMode() == GameMode.CREATIVE)) {
+        if (vm.isAgriculturalPlant(b) && !(e.getPlayer().getGameMode() == GameMode.CREATIVE)) {
             Player p = e.getPlayer();
             ItemStack usedHOE = p.getInventory().getItemInMainHand();
 
             logger.verbose("Player using a " + usedHOE.getType().name() + " to harvest.");
-            logger.verbose("require_hoe: " + configManager.isRequire_Hoe());
-            logger.verbose("destroy_farmland: " + configManager.isDestroy_Farmland());
+            logger.verbose("require_hoe: " + cm.isRequire_Hoe());
+            logger.verbose("destroy_farmland: " + cm.isDestroy_Farmland());
             logger.verbose("isSolid: " + b.getType().isSolid());
-            logger.verbose("isAPlant: " + instance.isAPlant(b.getType()));
+            logger.verbose("isAPlant: " + vm.isAPlant(b.getType()));
 
-            if (configManager.isRequire_Hoe()) {
+            if (cm.isRequire_Hoe()) {
                 requireHoeToHarvest(e, p, usedHOE);
             }
 
             // Destroy Farmland
-            if (configManager.isDestroy_Farmland() && !b.getType().isSolid()) {
+            if (cm.isDestroy_Farmland() && !b.getType().isSolid()) {
                 new PlantKiller().destroyFarmland(e.getBlock());
             }
 
@@ -92,7 +97,7 @@ public class BlockBreakListener implements Listener {
      * @param p       The player who caused the BlockBreakEvent.
      * @param usedHoe The hoe used to harvest the plant.
      */
-    private void requireHoeToHarvest(BlockBreakEvent e, Player p, ItemStack usedHoe) {
+    private void requireHoeToHarvest(@NotNull BlockBreakEvent e, @NotNull Player p, @NotNull ItemStack usedHoe) {
         // If not using a hoe: cancel DropItems
 
         if (!usedHoe.getType().name().endsWith("_HOE")) {
@@ -116,7 +121,7 @@ public class BlockBreakListener implements Listener {
      * @param p       The player who caused the BlockBreakEvent.
      * @param usedHoe The hoe used to harvest the plant.
      */
-    private void damageHoe(Player p, ItemStack usedHoe) {
+    private void damageHoe(@NotNull Player p, @NotNull ItemStack usedHoe) {
 
         Damageable hoe = (Damageable) usedHoe.getItemMeta();
         if (hoe == null)

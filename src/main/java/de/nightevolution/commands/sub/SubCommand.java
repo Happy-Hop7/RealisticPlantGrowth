@@ -3,6 +3,7 @@ package de.nightevolution.commands.sub;
 import de.nightevolution.ConfigManager;
 import de.nightevolution.MessageManager;
 import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.utils.mapper.VersionMapper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
@@ -16,6 +17,7 @@ public abstract class SubCommand {
     protected MessageManager msgManager;
     protected CommandSender commandSender;
     protected ConfigManager configManager;
+    protected VersionMapper mapper;
     protected String[] args;
     protected Permission permission;
 
@@ -30,6 +32,7 @@ public abstract class SubCommand {
         this.instance = instance;
         this.msgManager = instance.getMessageManager();
         this.configManager = instance.getConfigManager();
+        this.mapper = instance.getVersionMapper();
         this.commandSender = commandSender;
         this.args = args;
     }

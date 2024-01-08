@@ -404,20 +404,7 @@ public class ConfigManager {
      * with the values read from the file.
      */
     private void readLanguageData() {
-        languageFileData = selectedLanguageFile.getStringRouteMappedValues(true);
-
-        if (debug_log) {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
-                logger.logToFile("", logFile);
-                logger.logToFile("-------------------- " +
-                        Objects.requireNonNull(selectedLanguageFile.getFile()).getName() +
-                        "-------------------- ", logFile);
-                logger.logToFile("", logFile);
-
-                printMap(languageFileData);
-
-            }, 7 * 20);
-        }
+        languageFileData = selectedLanguageFile.getStringRouteMappedValues(false);
     }
 
     /**
@@ -425,16 +412,7 @@ public class ConfigManager {
      * with the values read from the file.
      */
     private void readBiomeGroupsData() {
-        biomeGroupsData = biomeGroupsFile.getStringRouteMappedValues(true);
-
-        if (debug_log) {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
-                logger.logToFile("", logFile);
-                logger.logToFile("-------------------- BiomeGroups --------------------", logFile);
-                logger.logToFile("", logFile);
-                printMap(biomeGroupsData);
-            }, 8 * 20);
-        }
+        biomeGroupsData = biomeGroupsFile.getStringRouteMappedValues(false);
     }
 
 
@@ -443,16 +421,7 @@ public class ConfigManager {
      * with the values read from the file.
      */
     private void readGrowthModifierData() {
-        growthModifierData = growthModifiersFile.getStringRouteMappedValues(true);
-
-        if (debug_log) {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
-                logger.logToFile("", logFile);
-                logger.logToFile("-------------------- GrowthModifiers --------------------", logFile);
-                logger.logToFile("", logFile);
-                printMap(growthModifierData);
-            }, 9 * 20);
-        }
+        growthModifierData = growthModifiersFile.getStringRouteMappedValues(false);
     }
 
     /**

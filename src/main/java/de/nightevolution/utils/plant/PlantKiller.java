@@ -3,6 +3,7 @@ package de.nightevolution.utils.plant;
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
+import de.nightevolution.utils.mapper.VersionMapper;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -11,7 +12,6 @@ import org.bukkit.block.data.Levelled;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,25 +22,30 @@ import java.util.Set;
 public class PlantKiller {
 
     private final RealisticPlantGrowth instance;
-    private final ConfigManager configManager;
+    private final ConfigManager cm;
     private final Logger logger;
     private final BukkitScheduler scheduler;
+    private final VersionMapper vm;
 
-    private final Set<Material> plantReplacementMaterials = new HashSet<>(Arrays.asList(
-            Material.SHORT_GRASS,
-            Material.TALL_GRASS,
-            Material.DEAD_BUSH,
-            Material.AIR
-    ));
+    private final Set<Material> plantReplacementMaterials = new HashSet<>();
 
     /**
      * Constructs a new PlantKiller instance, initializing necessary dependencies.
      */
     public PlantKiller() {
         this.instance = RealisticPlantGrowth.getInstance();
-        configManager = instance.getConfigManager();
-        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
-        scheduler = Bukkit.getScheduler();
+        this.cm = instance.getConfigManager();
+        this.vm = instance.getVersionMapper();
+        this.logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        this.scheduler = Bukkit.getScheduler();
+
+        // Initialize plantReplacementMaterials
+        plantReplacementMaterials.addAll(Set.of(
+                vm.getGrassMaterial(),
+                Material.TALL_GRASS,
+                Material.DEAD_BUSH,
+                Material.AIR
+        ));
     }
 
     /**
@@ -52,7 +57,7 @@ public class PlantKiller {
     public void killPlant(@NotNull Block plantToKill) {
         Material plantType = plantToKill.getType();
 
-        if (instance.isAgriculturalPlant(plantToKill)) {
+        if (vm.isAgriculturalPlant(plantToKill)) {
 
             // For Melon or Pumpkin stems, replace with a random material (5% tall grass, 2% air, 78% dead bush, 22% grass)
             if (plantType == Material.MELON_STEM || plantType == Material.PUMPKIN_STEM) {
@@ -65,10 +70,10 @@ public class PlantKiller {
             }
 
 
-        } else if (instance.isSapling(plantToKill)) {
+        } else if (vm.isSapling(plantToKill)) {
             logger.verbose("Killing Sapling");
             replaceWithRandomMaterial(plantToKill, 0, 0, 1, 0);
-        } else if (instance.isAnAquaticPlant(plantToKill.getType())) {
+        } else if (vm.isAnAquaticPlant(plantToKill.getType())) {
             logger.verbose("Killing AquaticPlant");
             replaceWithRandomAquaticMaterial(plantToKill, 35, 15, 1);
         } else if (plantType == Material.BROWN_MUSHROOM || plantType == Material.RED_MUSHROOM) {
@@ -111,7 +116,7 @@ public class PlantKiller {
         Material selectedMaterial;
 
         if (randomMaterial < shortGrassWeight) {
-            selectedMaterial = Material.SHORT_GRASS;
+            selectedMaterial = vm.getGrassMaterial();
         } else if (randomMaterial < (shortGrassWeight + tallGrassWeight)) {
             selectedMaterial = Material.TALL_GRASS;
         } else if (randomMaterial < (shortGrassWeight + tallGrassWeight + deadBushWeight)) {
@@ -121,16 +126,11 @@ public class PlantKiller {
         }
 
         switch (selectedMaterial) {
-            case SHORT_GRASS:
-
-                if (supportingBlockType == Material.FARMLAND || Tag.DIRT.getValues().contains(supportingBlockType)) {
-                    replacePlantWith(plantToKill, Material.SHORT_GRASS);
-                    randomDestroyFarmland(plantToKill, 0.75);
-                } else {
-                    // Recursive call
-                    replaceWithRandomMaterial(plantToKill, 0, 0, airWeight, deadBushWeight);
-                }
+            case AIR:
+                replacePlantWith(plantToKill, Material.AIR);
+                destroyFarmland(plantToKill);
                 break;
+
             case TALL_GRASS:
 
                 if (supportingBlockType == Material.FARMLAND || Tag.DIRT.getValues().contains(supportingBlockType)) {
@@ -152,9 +152,14 @@ public class PlantKiller {
                 }
                 break;
 
-            default:
-                replacePlantWith(plantToKill, Material.AIR);
-                destroyFarmland(plantToKill);
+            default: // GRASS || SHORT_GRASS
+                if (supportingBlockType == Material.FARMLAND || Tag.DIRT.getValues().contains(supportingBlockType)) {
+                    replacePlantWith(plantToKill, vm.getGrassMaterial());
+                    randomDestroyFarmland(plantToKill, 0.75);
+                } else {
+                    // Recursive call
+                    replaceWithRandomMaterial(plantToKill, 0, 0, airWeight, deadBushWeight);
+                }
                 break;
         }
 
@@ -245,7 +250,7 @@ public class PlantKiller {
      */
     public void playPlantDeathSound(@NotNull Block plantToKill) {
 
-        Section soundEffectSection = configManager.getPlant_death_sound_effect();
+        Section soundEffectSection = cm.getPlant_death_sound_effect();
 
         // Check if the sound effect is enabled in the configuration
         if (soundEffectSection.getBoolean("enabled")) {
@@ -280,7 +285,7 @@ public class PlantKiller {
      */
     public void reduceComposterFillLevelOf(Block composterToDrain) {
         // Check if passive fertilizer passiv mode is enabled
-        if (configManager.isFertilizer_passiv() || composterToDrain == null) {
+        if (cm.isFertilizer_passiv() || composterToDrain == null) {
             return;
         }
 

@@ -5,6 +5,7 @@ import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.enums.DeathChanceType;
 import de.nightevolution.utils.enums.GrowthModifierType;
+import de.nightevolution.utils.mapper.MaterialMapper;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.route.Route;
 import org.bukkit.Material;
@@ -54,8 +55,8 @@ public class Modifier {
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         logger.verbose("Created new " + this.getClass().getSimpleName() + ".");
 
-
-        Optional<Section> optionalSection = cm.getGrowthModifierSection(Route.from((plantType)));
+        MaterialMapper mm = instance.getVersionMapper().getMaterialMapper();
+        Optional<Section> optionalSection = cm.getGrowthModifierSection(mm.getConfigKeyByMaterial(plantType));
         if (optionalSection.isEmpty()) {
             logger.error("Section '" + plantType + " couldn't be obtained.");
             throw new YAMLException("Check your GrowthModifiers.yml!");

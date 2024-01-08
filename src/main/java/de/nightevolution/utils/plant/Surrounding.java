@@ -5,6 +5,7 @@ import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.enums.DeathChanceType;
 import de.nightevolution.utils.enums.GrowthModifierType;
+import de.nightevolution.utils.mapper.MaterialMapper;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -313,12 +314,14 @@ public class Surrounding {
      */
     // TODO: Check Light level based on plant. (current version don't work for vines)
     public boolean isInDarkness() {
+        MaterialMapper mapper = instance.getVersionMapper().getMaterialMapper();
+
         int skyLightLevel = centerBlock.getRelative(BlockFace.UP).getLightFromSky();
         logger.verbose("skyLightLevel: " + skyLightLevel);
         boolean hasNotMinSkyLight = (cm.getMin_Natural_Light() > skyLightLevel);
         logger.verbose("hasNotMinSkyLight: " + hasNotMinSkyLight);
-        logger.verbose("canGrowInDark: " + instance.canGrowInDark(plantType));
-        return (hasNotMinSkyLight && !instance.canGrowInDark(plantType));
+        logger.verbose("canGrowInDark: " + mapper.canGrowInDark(plantType));
+        return (hasNotMinSkyLight && !mapper.canGrowInDark(plantType));
     }
 
     /**

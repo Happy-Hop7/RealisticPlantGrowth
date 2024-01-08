@@ -6,6 +6,7 @@ import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.enums.MessageType;
 import de.nightevolution.utils.enums.PlaceholderInterface;
+import de.nightevolution.utils.mapper.VersionMapper;
 import de.nightevolution.utils.plant.SpecialBlockSearch;
 import de.nightevolution.utils.plant.Surrounding;
 import org.bukkit.GameMode;
@@ -36,6 +37,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
     private final ConfigManager cm;
     private final Logger logger;
     private final MessageManager msgManager;
+    private final VersionMapper versionMapper;
 
 
     private static final HashMap<UUID, Long> playerCooldownMap = new HashMap<>();
@@ -45,6 +47,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         this.instance = instance;
         this.cm = instance.getConfigManager();
         this.msgManager = instance.getMessageManager();
+        this.versionMapper = instance.getVersionMapper();
 
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         instance.getServer().getPluginManager().registerEvents(this, instance);
@@ -64,7 +67,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         if (instance.isWorldDisabled(eventWorld))
             return;
 
-        if (!instance.isClickableSeed(e.getMaterial())) {
+        if (!versionMapper.isClickableSeed(e.getMaterial())) {
             return;
         }
 
@@ -73,7 +76,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
 
 
         Block clickedBlock = e.getClickedBlock();
-        if (!e.hasItem() || clickedBlock == null || instance.isAPlant(clickedBlock.getType())) {
+        if (!e.hasItem() || clickedBlock == null || versionMapper.isAPlant(clickedBlock.getType())) {
             return;
         }
 
@@ -90,7 +93,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
 
         // Using a BlockState to "change" the Block type without actually changing the Block type in the world.
         BlockState eventBlockState = eventBlock.getBlockData().createBlockState();
-        Material plantMaterial = instance.getMaterialFromSeed(e.getMaterial());
+        Material plantMaterial = versionMapper.getMaterialFromSeed(e.getMaterial());
 
         // getMaterialFromSeed is nullable.
         if (plantMaterial == null)
@@ -118,7 +121,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         if (e.getPlayer().getGameMode() == GameMode.CREATIVE)
             e.setCancelled(true);
 
-        if (!instance.isGrowthModifiedPlant(plantMaterial)) {
+        if (!versionMapper.isGrowthModifiedPlant(plantMaterial)) {
             logger.verbose("Vanilla behavior for: " + plantMaterial);
 
             // send a player message
@@ -163,7 +166,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
                 surrounding.isInValidBiome(),
                 surrounding.usedFertilizer(),
                 surrounding.hasUVLightAccess(),
-                instance.canGrowInDark(plantMaterial),
+                versionMapper.getMaterialMapper().canGrowInDark(plantMaterial),
                 surrounding.isInDarkness()
         );
 
