@@ -8,7 +8,7 @@ description: >-
 
 {% hint style="info" %}
 **Note:**\
-Realistic Plant Growth is currently compatible only with Minecraft version 1.20.4.
+Realistic Plant Growth is currently compatible with Minecraft versions > 1.20
 {% endhint %}
 
 ## Step 1 - Download the Plugin
