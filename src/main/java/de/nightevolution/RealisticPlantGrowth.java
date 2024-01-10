@@ -203,7 +203,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * of the plugin with the latest available version and logs messages accordingly.
      */
     private void checkForUpdates() {
-        new UpdateChecker(this, 114096).getVersion(version -> {
+        new UpdateChecker().getVersion(version -> {
             this.pluginVersion = this.getDescription().getVersion();
             if (pluginVersion.equals(version)) {
                 // Log a message if there is no new update available.

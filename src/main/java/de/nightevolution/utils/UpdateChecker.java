@@ -1,13 +1,15 @@
 package de.nightevolution.utils;
 
+import com.google.gson.Gson;
+import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.utils.rest.ModrinthAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Scanner;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.function.Consumer;
 
 /**
@@ -17,17 +19,15 @@ import java.util.function.Consumer;
 public class UpdateChecker {
 
     private final JavaPlugin plugin;
-    private final int resourceId;
+    private final Logger logger;
+
 
     /**
      * Constructs an {@link UpdateChecker} instance for a given plugin and resource ID.
-     *
-     * @param plugin     The JavaPlugin instance representing the Bukkit/Spigot plugin.
-     * @param resourceId The SpigotMC resource ID of the plugin to check for updates.
      */
-    public UpdateChecker(JavaPlugin plugin, int resourceId) {
-        this.plugin = plugin;
-        this.resourceId = resourceId;
+    public UpdateChecker() {
+        this.plugin = RealisticPlantGrowth.getInstance();
+        this.logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
     }
 
     /**
@@ -38,16 +38,33 @@ public class UpdateChecker {
      */
     public void getVersion(final Consumer<String> consumer) {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-            try (InputStream inputStream = new URI("https://api.spigotmc.org/legacy/update.php?resource=" +
-                    this.resourceId + "/~").toURL().openStream(); Scanner scann = new Scanner(inputStream)) {
-                if (scann.hasNext()) {
-                    consumer.accept(scann.next());
-                }
-            } catch (IOException | URISyntaxException e) {
-                // Log an error message if unable to check for updates
-                plugin.getLogger().info("Unable to check for updates: " + e.getMessage());
+
+            try (HttpClient client = HttpClient.newHttpClient()) {
+
+                HttpRequest getRequest = HttpRequest.newBuilder()
+                        .uri(new URI("https://api.modrinth.com/v2/project/realistic-plant-growth/version"))
+                        .build();
+
+                HttpResponse<String> httpsGetResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+
+                logger.verbose(httpsGetResponse.body());
+
+                String version = getVersion(httpsGetResponse);
+                consumer.accept(version);
+
+            } catch (Exception e) {
+                logger.error("Couldn't check Modrinth-API for RealisticPlantGrowth updates!");
+                e.printStackTrace();
             }
         });
     }
+
+    private String getVersion(HttpResponse<String> getResponse) {
+        Gson gson = new Gson();
+        ModrinthAPI[] versionArray = gson.fromJson(getResponse.body(), ModrinthAPI[].class);
+        return versionArray[0].getVersion_number();
+    }
+
 }
+
 
