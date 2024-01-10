@@ -88,7 +88,7 @@ public class BlockGrowListener extends PlantGrowthListener {
     private Block getSoureFromAirBlock() {
         for (BlockFace blockFace : blockFaceArray) {
             Block relativeEventBlock = eventBlock.getRelative(blockFace);
-            if (instance.isGrowEventReturnsAirBlockPlant(relativeEventBlock.getType())) {
+            if (versionMapper.isGrowEventReturnsAirBlockPlant(relativeEventBlock.getType())) {
                 logger.verbose("getSourceFromAir(): " + relativeEventBlock);
                 return relativeEventBlock;
             }

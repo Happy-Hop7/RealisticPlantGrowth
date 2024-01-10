@@ -38,23 +38,7 @@
 ########################################################################################################################
 # Bamboo grows only in biomes within the 'Tropical' biome group.
 # Since 'Biome' is an empty list, every other biome is considered as 'BAD'.
-# Remember modifying BAMBOO_SAPLINGS (Bamboo in the first growth stage).
 BAMBOO:
-  BiomeGroup:
-    Groups:
-      - Tropical
-    Tropical:
-      GrowthRate: 100
-      UVLightGrowthRate: 35
-      NaturalDeathChance: 5
-      UVLightDeathChance: 15
-  Default:
-    Biome: [ ] # No growth in other biomes
-
-
-# 1. Grow stage of Bamboo
-# (BAMBOO_SAPLING will be merged with BAMBOO in future updates)
-BAMBOO_SAPLING:
   BiomeGroup:
     Groups:
       - Tropical
@@ -222,7 +206,7 @@ BEETROOTS:
     Biome: [ ]
 
 
-CARROT:
+CARROTS:
   BiomeGroup:
     Groups:
       - Temperate
@@ -252,7 +236,7 @@ CARROT:
       - ALL
 
 
-MELON_STEM:
+MELON:
   BiomeGroup:
     Groups:
       - Tropical
@@ -321,7 +305,7 @@ POTATOES:
     Biome: [ ] # No growth in other biomes
 
 
-PUMPKIN_STEM:
+PUMPKIN:
   BiomeGroup:
     Groups:
       - Chilly
@@ -524,19 +508,6 @@ CAVE_VINES:
   Default:
     Biome: [ ] # No growth in other biomes
 
-# Plant stem
-# CAVE_VINES_PLANT will be merged with CAVE_VINES in future updates
-CAVE_VINES_PLANT:
-  BiomeGroup:
-    Groups:
-      - Caves
-    Caves:
-      GrowthRate: 100
-      UVLightGrowthRate: 100
-      NaturalDeathChance: 5
-      UVLightDeathChance: 5
-  Default:
-    Biome: [ ] # No growth in other biomes
 
 # Not fully supported yet
 #GLOW_LICHEN:
@@ -580,26 +551,6 @@ TWISTING_VINES:
       - WARPED_FOREST
       - CRIMSON_FOREST
 
-# Plant stem
-# TWISTING_VINES_PLANT will be merged with TWISTING_VINES in future updates
-TWISTING_VINES_PLANT:
-  BiomeGroup:
-    Groups:
-      - Arid
-    Arid:
-      GrowthRate: 50
-      UVLightGrowthRate: 50
-      NaturalDeathChance: 20
-      UVLightDeathChance: 20
-  Default:
-    GrowthRate: 100
-    UVLightGrowthRate: 100
-    NaturalDeathChance: 5
-    UVLightDeathChance: 5
-    Biome:
-      - WARPED_FOREST
-      - CRIMSON_FOREST
-
 
 WEEPING_VINES:
   BiomeGroup:
@@ -619,49 +570,12 @@ WEEPING_VINES:
       - WARPED_FOREST
       - CRIMSON_FOREST
 
-# Plant stem
-# WEEPING_VINES_PLANT will be merged with WEEPING_VINES in future updates
-WEEPING_VINES_PLANT:
-  Groups:
-    - Arid
-  Arid:
-    GrowthRate: 50
-    UVLightGrowthRate: 50
-    NaturalDeathChance: 20
-    UVLightDeathChance: 20
-  Default:
-    GrowthRate: 100
-    UVLightGrowthRate: 100
-    NaturalDeathChance: 5
-    UVLightDeathChance: 5
-    Biome:
-      - WARPED_FOREST
-      - CRIMSON_FOREST
-
 
 ########################################################################################################################
 #| Aquatic Plants                                                                                                     |#
 ########################################################################################################################
 # KELP can grow in ocean biomes except in frozen, deep-frozen and warm
 KELP:
-  BiomeGroup:
-    Groups: [ ]
-  Default:
-    GrowthRate: 100
-    UVLightGrowthRate: 100
-    NaturalDeathChance: 5
-    UVLightDeathChance: 5
-    Biome:
-      - OCEAN
-      - DEEP_OCEAN
-      - LUKEWARM_OCEAN
-      - DEEP_LUKEWARM_OCEAN
-      - COLD_OCEAN
-      - DEEP_COLD_OCEAN
-
-# plant stem
-# KELP_PLANT will be merged with KELP in future updates
-KELP_PLANT:
   BiomeGroup:
     Groups: [ ]
   Default:
@@ -733,7 +647,6 @@ AZALEA:
       - WOODED_BADLANDS
 
 
-# FLOWERING_AZALEA will be merged with AZALEA in future updates
 FLOWERING_AZALEA:
   BiomeGroup:
     Groups:

@@ -2,9 +2,9 @@ package de.nightevolution.commands.sub;
 
 
 import de.nightevolution.RealisticPlantGrowth;
-import de.nightevolution.utils.BiomeChecker;
 import de.nightevolution.utils.enums.MessageType;
 import de.nightevolution.utils.enums.PlaceholderInterface;
+import de.nightevolution.utils.plant.BiomeChecker;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -76,7 +76,7 @@ public class Info extends SubCommand implements PlaceholderInterface {
 
         List<Object> replacements = Arrays.asList(
                 plantMaterial.toString().toLowerCase(),
-                instance.canGrowInDark(plantMaterial),
+                mapper.getMaterialMapper().canGrowInDark(plantMaterial),
                 bc.getBiomeGroupStringList().toString(),
                 defaultBiomesList
         );
@@ -97,18 +97,18 @@ public class Info extends SubCommand implements PlaceholderInterface {
         Material offHand = player.getInventory().getItemInOffHand().getType();
         Material mainHandSeed;
         Material offHandSeed;
-        if (instance.getMaterialFromSeed(mainHand) != null)
-            mainHandSeed = instance.getMaterialFromSeed(mainHand);
+        if (mapper.getMaterialFromSeed(mainHand) != null)
+            mainHandSeed = mapper.getMaterialFromSeed(mainHand);
         else
             mainHandSeed = Material.AIR;
 
-        if (instance.getMaterialFromSeed(offHand) != null)
-            offHandSeed = instance.getMaterialFromSeed(offHand);
+        if (mapper.getMaterialFromSeed(offHand) != null)
+            offHandSeed = mapper.getMaterialFromSeed(offHand);
         else
             offHandSeed = Material.AIR;
 
 
-        HashSet<Material> growthModifiedPlants = instance.getGrowthModifiedPlants();
+        HashSet<Material> growthModifiedPlants = mapper.getGrowthModifiedPlants();
         plantMaterial = null;
 
         for (Material material : Arrays.asList(mainHand, mainHandSeed, offHand, offHandSeed)) {

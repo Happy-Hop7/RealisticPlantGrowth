@@ -1,7 +1,9 @@
-package de.nightevolution.utils;
+package de.nightevolution.utils.plant;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.utils.Logger;
+import de.nightevolution.utils.mapper.MaterialMapper;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.route.Route;
 import org.bukkit.Material;
@@ -41,11 +43,12 @@ public class BiomeChecker {
     public BiomeChecker(@NotNull Material plantMaterial, @NotNull Biome currentBiome) {
         RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();
         this.cm = instance.getConfigManager();
+        MaterialMapper materialMapper = instance.getVersionMapper().getMaterialMapper();
 
         this.plantMaterial = plantMaterial;
         this.currentBiome = currentBiome;
 
-        this.currentPlantRoute = Route.from(plantMaterial);
+        this.currentPlantRoute = materialMapper.getConfigKeyByMaterial(plantMaterial);
 
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         logger.verbose("Creating new Biome Checker.");
@@ -58,6 +61,7 @@ public class BiomeChecker {
      * Throws an exception if the section cannot be obtained.
      */
     private void initPlantSection() {
+        logger.verbose(currentPlantRoute.toString());
         Optional<Section> optionalSection = cm.getGrowthModifierSection(currentPlantRoute);
         if (optionalSection.isEmpty()) {
             logger.error("Couldn't read GrowthModifier section for '" + plantMaterial + "'!");

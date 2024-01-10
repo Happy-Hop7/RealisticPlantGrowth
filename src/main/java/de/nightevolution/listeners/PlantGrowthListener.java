@@ -3,9 +3,10 @@ package de.nightevolution.listeners;
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
-import de.nightevolution.utils.PlantKiller;
-import de.nightevolution.utils.SpecialBlockSearch;
-import de.nightevolution.utils.Surrounding;
+import de.nightevolution.utils.mapper.VersionMapper;
+import de.nightevolution.utils.plant.PlantKiller;
+import de.nightevolution.utils.plant.SpecialBlockSearch;
+import de.nightevolution.utils.plant.Surrounding;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -23,9 +24,10 @@ public abstract class PlantGrowthListener implements Listener {
     protected ConfigManager configManager;
     protected SpecialBlockSearch specialBlockSearch;
     protected Surrounding surrounding;
+    protected VersionMapper versionMapper;
 
     // Event Data
-    protected String coords;
+    protected String coordinate;
     protected Block eventBlock;
     protected Material eventBlockType;
     protected Location eventLocation;
@@ -63,6 +65,7 @@ public abstract class PlantGrowthListener implements Listener {
         instance.getServer().getPluginManager().registerEvents(this, instance);
         specialBlockSearch = SpecialBlockSearch.get();
         configManager = instance.getConfigManager();
+        versionMapper = instance.getVersionMapper();
 
     }
 
@@ -73,7 +76,12 @@ public abstract class PlantGrowthListener implements Listener {
      */
     protected boolean processEvent() {
         // this check needs to be here because the eventBlock can be changed from child classes.
-        if (!instance.getGrowthModifiedPlants().contains(eventBlockType))
+
+        logger.verbose("EventBlockType:" + eventBlockType);
+        logger.verbose("isGrowthModified:" + versionMapper.isGrowthModifiedPlant(eventBlockType));
+
+
+        if (!versionMapper.isGrowthModifiedPlant(eventBlockType))
             return false;
 
         // Retrieve surrounding environment data
@@ -131,10 +139,10 @@ public abstract class PlantGrowthListener implements Listener {
         Block returnBlock = plantBlock;
         logger.verbose("getRootBlockOf(): plantBlock: " + plantBlock);
 
-        if (instance.isUpwardsGrowingPlant(plantBlockType)) {
+        if (versionMapper.isUpwardsGrowingPlant(plantBlockType)) {
             logger.verbose("SearchDirection: DOWN");
             returnBlock = iterateThroughPlantBlocks(plantBlock, BlockFace.DOWN);
-        } else if (instance.isDownwardsGrowingPlant(plantBlockType)) {
+        } else if (versionMapper.isDownwardsGrowingPlant(plantBlockType)) {
             logger.verbose("SearchDirection: UP");
             returnBlock = iterateThroughPlantBlocks(plantBlock, BlockFace.UP);
         }
@@ -194,7 +202,7 @@ public abstract class PlantGrowthListener implements Listener {
     protected boolean cancelDueToDeathChance() {
 
         if (eventBlock.getBlockData() instanceof Ageable crop) {
-            if ((crop.getAge() != crop.getMaximumAge()) && (instance.isAgriculturalPlant(eventBlock))) {
+            if ((crop.getAge() != crop.getMaximumAge()) && (versionMapper.isAgriculturalPlant(eventBlock))) {
                 deathChance = (deathChance / crop.getMaximumAge());
                 logger.verbose("Using Ageable Interface for partial DeathChance.");
             } else if (eventBlockType == Material.BAMBOO) {
@@ -243,11 +251,11 @@ public abstract class PlantGrowthListener implements Listener {
     protected void logEvent() {
         // Log coordinates if logging is enabled
         if (configManager.isLog_Coords()) {
-            coords = "[ " +
+            coordinate = "[ " +
                     eventBlock.getLocation().getBlockX() + ", " +
                     eventBlock.getLocation().getBlockY() + ", " +
                     eventBlock.getLocation().getBlockZ() + "] ";
-            logString += coords;
+            logString += coordinate;
         }
         logger.verbose(logString);
         logger.verbose("EventBiome: " + eventBiome);

@@ -30,7 +30,7 @@ plugin_prefix: "[RealisticPlantGrowth] "
 enabled_worlds:
   - your_world
   - your_world_nether
-  - your_world_end
+  - your_world_the_end
 
 # Limits the use of bonemeal on plants to the specified amount.
 # Setting 'bonemeal_limit: 0' completely disables the use of bone meal.
@@ -65,6 +65,11 @@ display_cooldown: 5
 # Set to true if you want to anonymously report plugin metrics to bStats.
 # bStats Link: https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634
 use_metrics: true
+
+# Update Checker
+# Set this option to 'true' to enable automatic update checks when the server starts.
+# Setting it to 'false' will disable update checking.
+check_for_updates: true
 
 ########################################################################################################################
 #|                                                                                                                    |#
@@ -212,5 +217,5 @@ bonemeal_log: false
 #| Spooky internal settings.                                                                                          |#
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
-config-version: 2
+config-version: 3
 verbose: false

@@ -3,23 +3,21 @@ package de.nightevolution;
 import de.nightevolution.commands.CommandManager;
 import de.nightevolution.commands.TabCompleterImpl;
 import de.nightevolution.listeners.*;
-import de.nightevolution.utils.BiomeChecker;
 import de.nightevolution.utils.Logger;
-import dev.dejvokep.boostedyaml.route.Route;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import de.nightevolution.utils.UpdateChecker;
+import de.nightevolution.utils.mapper.VersionMapper;
+import de.nightevolution.utils.mapper.versions.Version_1_20;
+import de.nightevolution.utils.mapper.versions.Version_1_20_4;
+import de.nightevolution.utils.plant.BiomeChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Objects;
 
 /**
  * The main class for the {@link RealisticPlantGrowth} plugin.
@@ -33,34 +31,14 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private static RealisticPlantGrowth instance;
 
     /**
-     * The name of the debug log file used by the {@link RealisticPlantGrowth} plugin.
-     */
-    private static final String logFile = "debug";
-
-    /**
-     * A flag indicating whether verbose logging is enabled in the {@link RealisticPlantGrowth} plugin.
-     */
-    private static boolean verbose = false;
-
-    /**
-     * A flag indicating whether debug mode is enabled in the {@link RealisticPlantGrowth} plugin.
-     */
-    private static boolean debug = false;
-
-    /**
      * The {@link ConfigManager} used by the {@link RealisticPlantGrowth} plugin.
      */
     private static ConfigManager cm;
 
     /**
-     * The {@link CommandManager} used by the {@link RealisticPlantGrowth} plugin.
+     * The {@link VersionMapper} used by the {@link RealisticPlantGrowth} plugin.
      */
-    private CommandManager cmdManager;
-
-    /**
-     * The {@link BukkitAudiences} instance for managing Adventure API interactions in the {@link RealisticPlantGrowth} plugin.
-     */
-    private BukkitAudiences bukkitAudiences;
+    private static VersionMapper versionMapper;
 
     /**
      * The {@link Logger} instance for recording log messages in the {@link RealisticPlantGrowth} plugin.
@@ -68,134 +46,75 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private Logger logger;
 
     /**
+     * The {@link CommandManager} used by the {@link RealisticPlantGrowth} plugin.
+     */
+    private CommandManager cmdManager;
+
+    /**
      * The {@link Metrics} instance for collecting anonymous usage data for the {@link RealisticPlantGrowth} plugin.
      */
     private Metrics metrics;
 
-
     /**
-     * A set of plant materials used for the 'require_hoe_to_harvest' setting in the {@link RealisticPlantGrowth} plugin.
-     * These {@link Material}s represent agricultural plants that require a hoe to be harvested.
+     * The name of the debug log file used by the {@link RealisticPlantGrowth} plugin.
      */
-    private static final Set<Material> agriculturalPlants = new HashSet<>(Arrays.asList(
-            Material.ATTACHED_MELON_STEM,
-            Material.ATTACHED_PUMPKIN_STEM,
-            Material.BEETROOTS,
-            Material.CARROTS,
-            Material.MELON_STEM,
-            Material.NETHER_WART,
-            Material.PITCHER_CROP,
-            Material.POTATOES,
-            Material.PUMPKIN_STEM,
-            Material.TORCHFLOWER,
-            Material.TORCHFLOWER_CROP,
-            Material.WHEAT
-    ));
+    private static final String logFile = "debug";
 
-    /**
-     * A set of all supported land plants in the {@link RealisticPlantGrowth} plugin.
-     * This set includes various plant {@link Material}s found on land.
-     * Saplings are added later to this set.
-     */
-    private static final Set<Material> plants = new HashSet<>(Arrays.asList(
-            Material.BAMBOO,
-            Material.BAMBOO_SAPLING,
-            Material.BROWN_MUSHROOM,
-            Material.BEETROOTS,
-            Material.CACTUS,
-            Material.CARROTS,
-            Material.CAVE_VINES,
-            Material.CAVE_VINES_PLANT,
-            Material.CHORUS_FLOWER,
-            Material.CHORUS_PLANT,
-            Material.COCOA,
-            Material.CRIMSON_FUNGUS,
-            Material.GLOW_LICHEN,
-            Material.SHORT_GRASS,
-            Material.MELON_STEM,
-            Material.NETHER_WART,
-            Material.PITCHER_CROP,
-            Material.POTATOES,
-            Material.PUMPKIN_STEM,
-            Material.RED_MUSHROOM,
-            Material.SUGAR_CANE,
-            Material.SWEET_BERRY_BUSH,
-            Material.TALL_GRASS,
-            Material.TORCHFLOWER,
-            Material.TORCHFLOWER_CROP,
-            Material.TWISTING_VINES,
-            Material.TWISTING_VINES_PLANT,
-            Material.VINE,
-            Material.WARPED_FUNGUS,
-            Material.WEEPING_VINES,
-            Material.WEEPING_VINES_PLANT,
-            Material.WHEAT
-    ));
-
-    /**
-     * A set of all supported aquatic plants in the {@link RealisticPlantGrowth} plugin.
-     * These {@link Material} represent plant {@link Block}s typically found in aquatic environments.
-     */
-    private static final Set<Material> aquaticPlants = new HashSet<>(Arrays.asList(
-            Material.KELP,
-            Material.SEAGRASS,
-            Material.SEA_PICKLE,
-            Material.TALL_SEAGRASS
-    ));
-
-    private static final Set<Material> upwardsGrowingPlants = new HashSet<>(Arrays.asList(
-            Material.BAMBOO,
-            Material.BAMBOO_SAPLING,
-            Material.KELP,
-            Material.KELP_PLANT,
-            Material.SUGAR_CANE,
-            Material.CACTUS,
-            Material.TWISTING_VINES,
-            Material.TWISTING_VINES_PLANT
-    ));
-
-    private static final Set<Material> downwardsGrowingPlants = new HashSet<>(Arrays.asList(
-            Material.CAVE_VINES,
-            Material.CAVE_VINES_PLANT,
-            Material.WEEPING_VINES,
-            Material.WEEPING_VINES_PLANT
-    ));
-
-    private static final Set<Material> growEventReturnsAirBlockPlants = new HashSet<>(Arrays.asList(
-            Material.CHORUS_FLOWER,
-            Material.CHORUS_PLANT,
-            Material.MELON_STEM,
-            Material.PUMPKIN_STEM,
-            Material.SUGAR_CANE,
-            Material.CACTUS
-    ));
-    private static Set<Material> saplings;
-
-    /**
-     * Set of materials representing plants with growth modifications.
-     */
-    private static HashSet<Material> growthModifiedPlants;
-
-    /**
-     * Mapping of clickable seeds to their corresponding plant materials.
-     * Key: Clickable Seed ({@link Material}) , Value: Plant {@link Material}
-     */
-    private static HashMap<Material, Material> clickableSeedsMap;
-
-    /**
-     * Set of materials representing clickable seeds.
-     */
-    private static HashSet<Material> clickableSeeds;
+    private String pluginVersion;
 
     @Override
     public void onEnable() {
         // Create an instance of this Plugin
         instance = this;
+        cm = ConfigManager.get();
+
+        logger = new Logger(this.getClass().getSimpleName(), cm.isVerbose(), cm.isDebug_log());
+
+        if (checkServerVersion()) {
+            logger.log("Version check passed.");
+        } else {
+            logger.error("Server version not supported!");
+            disablePlugin();
+        }
 
         updateVariables();
         registerMetrics();
         drawLogo();
     }
+
+    /**
+     * Checks the server version and initializes the appropriate {@link VersionMapper}.<p>
+     * This method determines the server version by extracting it from the Bukkit server class package name.
+     * It then sets the corresponding version mapper based on the extracted version.
+     *
+     * @return {@code true} if the version check and initialization are successful, {@code false} otherwise.
+     */
+    private boolean checkServerVersion() {
+
+        String version;
+        try {
+            version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+
+        } catch (ArrayIndexOutOfBoundsException whatVersionAreYouUsingException) {
+            // Unable to extract version, log the exception and return false
+            logger.error("Error while extracting server version!");
+            return false;
+        }
+
+        logger.log("Your server is running version " + version);
+
+        // Initialize version-specific mappers based on the detected version
+        if (version.equals("v1_20_R1") || version.equals("v1_20_R2")) {
+            versionMapper = new Version_1_20();
+
+        } else if (version.equals("v1_20_R3")) {
+            versionMapper = new Version_1_20_4();
+        }
+
+        // Return true if version mapper is successfully initialized, false otherwise
+        return versionMapper != null;
+    }
+
 
     /**
      * Registers the primary command executor for the {@link RealisticPlantGrowth} plugin.
@@ -253,6 +172,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      */
     public void reload() {
         cm.reloadAllYAMLFiles();
+        versionMapper.reload();
         HandlerList.unregisterAll(instance);
         updateVariables();
     }
@@ -263,32 +183,42 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * and various cached data used by the plugin.
      */
     public void updateVariables() {
-        cm = ConfigManager.get();
 
-        verbose = cm.isVerbose();
-        debug = cm.isDebug_log();
-
-        logger = new Logger(this.getClass().getSimpleName(), verbose, debug);
+        logger.setVerbose(cm.isVerbose());
+        logger.setDebug(cm.isDebug_log());
 
         cmdManager = new CommandManager();
 
-        if (this.bukkitAudiences != null) {
-            this.bukkitAudiences.close();
-            this.bukkitAudiences = null;
-        }
-
-        // Initialize an audiences instance for the plugin
-        this.bukkitAudiences = BukkitAudiences.create(this);
-
-        getSaplingsTag();
-        updateGrowthModifiedPlants();
-        updateClickableSeeds();
         registerCommands();
         registerTabCompleter();
         BiomeChecker.clearCache();
         registerListeners();
+        checkForUpdates();
 
     }
+
+    /**
+     * Checks for updates of the {@link RealisticPlantGrowth} plugin.
+     * This method uses an {@link UpdateChecker} to compare the current version
+     * of the plugin with the latest available version and logs messages accordingly.
+     */
+    private void checkForUpdates() {
+        new UpdateChecker(this, 114096).getVersion(version -> {
+            this.pluginVersion = this.getDescription().getVersion();
+            if (pluginVersion.equals(version)) {
+                // Log a message if there is no new update available.
+                logger.log("Your RealisticPlantGrowth plugin is up to date (version " + pluginVersion + ").");
+            } else {
+                // Log messages if a new update is available.
+                logger.warn("A new version of RealisticPlantGrowth is available!");
+                logger.warn("Current version: " + pluginVersion);
+                logger.warn("Latest version: " + version);
+                logger.warn("Download the latest version at:");
+                logger.warn("https://modrinth.com/plugin/realistic-plant-growth/version/latest");
+            }
+        });
+    }
+
 
     /**
      * Method used by error used, if critical error appears.
@@ -303,137 +233,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
-        if (this.bukkitAudiences != null) {
-            this.bukkitAudiences.close();
-            this.bukkitAudiences = null;
-        }
-    }
 
-
-    /**
-     * Adds all saplings to the seeds and plants list.
-     * Saplings are chosen by vanilla {@code saplings} tag.
-     * AZALEA and FLOWERING_AZALEA are also included.
-     */
-    private void getSaplingsTag() {
-        logger.verbose("Getting saplings tag...");
-        Set<Material> saplingSet = (Tag.SAPLINGS.getValues());
-
-        plants.addAll(saplingSet);
-        saplings = saplingSet;
-
-        if (verbose) {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
-                logger.logToFile("", logFile);
-                logger.logToFile("---------------------- Saplings ----------------------", logFile);
-                logger.logToFile("", logFile);
-
-                for (Material material : saplings) {
-                    logger.logToFile("  - " + material, logFile);
-                }
-
-
-                logger.logToFile("", logFile);
-                logger.logToFile("---------------------- All Plants ----------------------", logFile);
-                logger.logToFile("", logFile);
-
-                for (Material material : plants) {
-                    logger.logToFile("  - " + material, logFile);
-                }
-            }, 20);
-        }
-    }
-
-    /**
-     * Identifies and collects plants with modified growth behavior from the root entries of GrowthModifiers.
-     * Each root entry corresponds to a plant with modified growth characteristics.
-     * The method extracts these plants and adds them to the collection of modified growth rate plants.
-     */
-    private void updateGrowthModifiedPlants() {
-        Map<String, Object> growthModData = cm.getGrowthModifiers();
-        Set<String> keys = growthModData.keySet();
-        growthModifiedPlants = new HashSet<>();
-
-        for (String key : keys) {
-            Route r = Route.fromString(key);
-
-            if (r.length() == 1) {
-                Material m = Material.getMaterial(key);
-
-                if (m == null) {
-                    logger.warn("Material '" + key + "' is not a Bukkit Material!");
-                    logger.warn("Plant growth modifiers for '" + key + "' are ignored.");
-                } else {
-                    // TODO: Name mapping of vines and bamboo (new function getMappedName)
-                    growthModifiedPlants.add(m);
-                }
-            }
-        }
-
-        if (debug) {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
-                logger.logToFile("", logFile);
-                logger.logToFile("---------------------- Growth modified plants ----------------------", logFile);
-                logger.logToFile("", logFile);
-
-                for (Material m : growthModifiedPlants) {
-                    logger.logToFile("  - " + m, logFile);
-                }
-            }, 2 * 20);
-        }
-
-    }
-
-    /**
-     * Updates the set of clickable seeds based on the specified plant and aquatic plant {@link Material}s.
-     * Additionally, performs debug logging if the debug mode is enabled.
-     */
-    private void updateClickableSeeds() {
-        clickableSeedsMap = new HashMap<>();
-        clickableSeeds = new HashSet<>();
-
-        for (Material plant : plants) {
-            clickableSeedsMap.put(plant.createBlockData().getPlacementMaterial(), plant);
-        }
-
-        for (Material plant : aquaticPlants) {
-            clickableSeedsMap.put(plant.createBlockData().getPlacementMaterial(), plant);
-        }
-
-        clickableSeeds.addAll(clickableSeedsMap.keySet());
-
-
-        // getPlacementMaterial() returns AIR for e.g. BAMBOO_SAPLING
-        clickableSeeds.remove(Material.AIR);
-
-        // also remove torchFlower, since it is already a fully grown decoration plant
-        clickableSeeds.remove(Material.TORCHFLOWER);
-
-
-        if (debug) {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
-                logger.logToFile("", logFile);
-                logger.logToFile("---------------------- Material --> Clickable Seed ----------------------", logFile);
-                logger.logToFile("", logFile);
-
-                for (Material plant : plants) {
-                    logger.logToFile(plant.toString(), logFile);
-                    logger.logToFile("  -> " + plant.createBlockData().getPlacementMaterial(), logFile);
-                }
-                for (Material plant : aquaticPlants) {
-                    logger.logToFile(plant.toString(), logFile);
-                    logger.logToFile("  -> " + plant.createBlockData().getPlacementMaterial(), logFile);
-                }
-                // Log clickable Seeds Set:
-                logger.logToFile("", logFile);
-                logger.logToFile("---------------------- Clickable Seeds ----------------------", logFile);
-                logger.logToFile("", logFile);
-                for (Material seed : clickableSeeds) {
-                    logger.logToFile("  - " + seed, logFile);
-                }
-            }, 3 * 20);
-        }
     }
 
 
@@ -488,100 +288,14 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         return MessageManager.get();
     }
 
-
     /**
-     * Retrieves the corresponding {@link Material} that a seed converts to if the seed is placed.
+     * Retrieves the {@link VersionMapper} associated with the {@link RealisticPlantGrowth} plugin.
      *
-     * @param seed {@link Material} representing the seed to inquire about.
-     * @return The {@link Material} that the provided seed can grow into, or {@code null} if not applicable.
+     * @return The {@link VersionMapper} instance handling different minecraft versions.
      */
-    @Nullable
-    public Material getMaterialFromSeed(@NotNull Material seed) {
-        if (clickableSeeds.contains(seed))
-            return clickableSeedsMap.get(seed);
-        return null;
-    }
-
-    /**
-     * Checks if the given {@link Block} represents a plant.
-     *
-     * @param b The {@link Block} to check.
-     * @return {@code true} if the {@link Block} b is a plant, {@code false} otherwise.
-     */
-    public boolean isAPlant(@NotNull Block b) {
-        return plants.contains(b.getType());
-    }
-
-    /**
-     * Checks if the given {@link Block} represents an agricultural plant.
-     *
-     * @param b The {@link Block} to check.
-     * @return {@code true} if the {@link Block} b is an agricultural plant, {@code false} otherwise.
-     */
-    public boolean isAgriculturalPlant(@NotNull Block b) {
-        return agriculturalPlants.contains(b.getType());
-    }
-
-    /**
-     * Checks if the given {@link Block} represents an aquatic plant.
-     *
-     * @param b The {@link Block} to check.
-     * @return {@code true} if the {@link Block} b is an aquatic plant, {@code false} otherwise.
-     */
-    public boolean isAnAquaticPlant(@NotNull Block b) {
-        return aquaticPlants.contains(b.getType());
-    }
-
-    /**
-     * Checks if the given {@link Block} represents a sapling.
-     *
-     * @param b The {@link Block} to check.
-     * @return {@code true} if the {@link Block} b is a sapling, {@code false} otherwise.
-     */
-    public boolean isSapling(@NotNull Block b) {
-        return saplings.contains(b.getType());
-    }
-
-    /**
-     * Checks if the given {@link Material} is a growth-modified plant.
-     *
-     * @param m The {@link Material} to check.
-     * @return {@code true} if the {@link Material} m is a growth-modified plant, {@code false} otherwise.
-     */
-    public boolean isGrowthModifiedPlant(@NotNull Material m) {
-        return growthModifiedPlants.contains(m);
-    }
-
-    /**
-     * Checks if the specified material can grow in the dark based on configuration.
-     *
-     * @param m The {@link Material} to check.
-     * @return {@code true} if the {@link Material} m can grow in the dark, {@code false} otherwise.
-     */
-    public boolean canGrowInDark(@NotNull Material m) {
-        return cm.getGrow_In_Dark().contains(m);
-    }
-
-    /**
-     * Checks if a given {@link Material} represents a clickable seed.
-     *
-     * @param material The {@link Material} to check for clickability.
-     * @return {@code true} if the {@link Material} is a clickable seed, {@code false} otherwise.
-     */
-    public boolean isClickableSeed(@NotNull Material material) {
-        return clickableSeeds.contains(material);
-    }
-
-    public boolean isUpwardsGrowingPlant(@NotNull Material material) {
-        return upwardsGrowingPlants.contains(material);
-    }
-
-    public boolean isDownwardsGrowingPlant(@NotNull Material material) {
-        return downwardsGrowingPlants.contains(material);
-    }
-
-    public boolean isGrowEventReturnsAirBlockPlant(@NotNull Material material) {
-        return growEventReturnsAirBlockPlants.contains(material);
+    @NotNull
+    public VersionMapper getVersionMapper() {
+        return versionMapper;
     }
 
     /**
@@ -594,14 +308,6 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         return (!cm.getEnabled_worlds().contains(world.getName()));
     }
 
-    /**
-     * Retrieves a HashSet containing {@link Material}s of plants that have growth modifications applied.
-     *
-     * @return A HashSet of Material objects representing plants with growth modifications.
-     */
-    public HashSet<Material> getGrowthModifiedPlants() {
-        return growthModifiedPlants;
-    }
 
     /**
      * Checks whether the debug mode is enabled.
@@ -609,7 +315,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * @return {@code true} if debug mode is enabled, {@code false} otherwise.
      */
     public static boolean isDebug() {
-        return debug;
+        return cm.isDebug_log();
     }
 
     /**
@@ -618,7 +324,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * @return {@code true} if verbose mode is enabled, {@code false} otherwise.
      */
     public static boolean isVerbose() {
-        return verbose;
+        return cm.isVerbose();
     }
 
 }
