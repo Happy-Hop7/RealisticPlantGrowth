@@ -37,7 +37,7 @@ For details, refer to: [MiniMessage Format](https://docs.advntr.dev/minimessage/
 
 * `your_world`
 * `your_world_nether`
-* `your_world_end`
+* `your_world_the_end`
 
 List of worlds where this plugin is active.\
 To customize, modify this list to include your desired worlds.\
