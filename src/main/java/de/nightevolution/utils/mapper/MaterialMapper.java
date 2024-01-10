@@ -5,15 +5,18 @@ import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
 import dev.dejvokep.boostedyaml.route.Route;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Mapper for handling various material-related operations in the RealisticPlantGrowth plugin.
+ * Manages growth modifications, plant variations, and interactions with the plugin's configuration.
+ */
 public class MaterialMapper {
 
-    private final VersionMapper mapper;
+    private final VersionMapper versionMapper;
     private final ConfigManager cm;
     private final Logger logger;
     private final String logFile = "debug";
@@ -27,13 +30,24 @@ public class MaterialMapper {
     private final Map<String, List<Material>> plantVariationsMap = new HashMap<>();
 
 
-    public MaterialMapper(VersionMapper mapper) {
-        this.mapper = mapper;
+    /**
+     * Constructor for {@link MaterialMapper}.
+     *
+     * @param versionMapper The associated {@link VersionMapper} instance.
+     */
+    public MaterialMapper(VersionMapper versionMapper) {
+        this.versionMapper = versionMapper;
         this.cm = RealisticPlantGrowth.getInstance().getConfigManager();
         this.logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         initializePlantVariationsMap();
     }
 
+    /**
+     * Initializes a {@link Map} of plant variations for different plant types. <p>
+     * This method populates a map where each entry represents a plant type (e.g., "bamboo") and its associated
+     * list of {@link Material} variations. The variations include different materials representing the same plant type,
+     * such as mature plants and saplings.
+     */
     private void initializePlantVariationsMap() {
         plantVariationsMap.put("bamboo", Arrays.asList(Material.BAMBOO, Material.BAMBOO_SAPLING));
         plantVariationsMap.put("melon", Collections.singletonList(Material.MELON_STEM));
@@ -51,13 +65,22 @@ public class MaterialMapper {
     }
 
 
+    /**
+     * Retrieves a Bukkit {@link Material} based on the given material string.<p>
+     * This method attempts to get a Bukkit {@link Material} using the provided material string.
+     * If the material is not found or is not considered a plant material, a warning is logged,
+     * and null is returned.
+     *
+     * @param materialString The string representation of the {@link Material} to retrieve.
+     * @return The Bukkit {@link Material} if found and considered a plant material, otherwise null.
+     */
     @Nullable
     public Material getCheckedMaterial(@NotNull String materialString) {
         Material material = Material.getMaterial(materialString);
 
         if (material == null) {
             logger.warn("Material '" + materialString + "' is not a Bukkit Material!");
-        } else if (mapper.isPlantMaterial(material)) {
+        } else if (versionMapper.isPlantMaterial(material)) {
             return material;
         } else {
             logger.warn("Material '" + materialString + "' is not a Plant Material!");
@@ -68,12 +91,12 @@ public class MaterialMapper {
 
 
     /**
-     * Updates the set of growth-modified plants based on the growth modifier data
-     * retrieved from the {@link ConfigManager}. The method iterates through the keys
-     * of the growth modifier data, validates and checks if each key represents a plant material.
-     * If it is a valid plant material, the {@link Material} is added to the set of growth-modified plants.
-     * Additionally, if debug mode is enabled, the modified plant materials are logged
-     * to a file asynchronously for debugging purposes.
+     * Updates the set of {@link Material}s representing plants with modified growth behavior based on configuration data.
+     * <p>
+     * This method reads growth modification data from the configuration, processes each entry, and updates
+     * the set of growth-modified plants accordingly. It logs information about each processed material,
+     * including those not mapped to known plant variations. Unsupported materials, such as VINE and GLOW_LICHEN,
+     * trigger warnings. The final set of growth-modified plants is then logged for debugging purposes.
      */
     protected void updateGrowthModifiedPlants() {
         Map<String, Object> growthModData = cm.getGrowthModifiers();
@@ -106,6 +129,13 @@ public class MaterialMapper {
 
     }
 
+    /**
+     * Updates the set of {@link Material}s that can grow in the dark based on configuration data.
+     * <p>
+     * This method reads materials configured to grow in the dark from the configuration and updates
+     * the set of materials that can grow in the dark accordingly. It processes each material entry
+     * using the {@code getPlantVariationsOf} method, which includes variations of each specified plant type.
+     */
     protected void updateGrowInDark() {
         growInDarkPlants = new HashSet<>();
 
@@ -114,6 +144,15 @@ public class MaterialMapper {
         }
     }
 
+    /**
+     * Retrieves the configuration key associated with the specified Bukkit {@link Material}.
+     * <p>
+     * This method iterates through the plantVariationsMap to find the entry containing the specified Material.
+     * It then retrieves the corresponding configuration key using {@code findConfigKeyInGrowthModifiers} and returns it as a Route.
+     *
+     * @param material The Bukkit {@link Material} for which to retrieve the configuration key.
+     * @return The {@link Route} representing the configuration key associated with the specified Material.
+     */
     @NotNull
     public Route getConfigKeyByMaterial(@NotNull Material material) {
         for (Map.Entry<String, List<Material>> entry : plantVariationsMap.entrySet()) {
@@ -126,6 +165,16 @@ public class MaterialMapper {
         return Route.from(findConfigKeyInGrowthModifiers(material.toString()));
     }
 
+    /**
+     * Finds the configuration key associated with the specified key in the {@code GrowthModifiers.yml} file.
+     * <p>
+     * This method searches through the keys in the {@code GrowthModifiers.yml} file to find a key containing the specified configKey.
+     * It returns the found key if there is a match; otherwise, it throws an {@link IllegalArgumentException}.
+     *
+     * @param configKey The key for which to find the associated configuration key.
+     * @return The configuration key associated with the specified key in the {@code GrowthModifiers.yml} file.
+     * @throws IllegalArgumentException If the specified key is not found in the {@code GrowthModifiers.yml} file.
+     */
     @NotNull
     private String findConfigKeyInGrowthModifiers(@NotNull String configKey) {
         for (String key : cm.getGrowthModifiers().keySet()) {
@@ -141,18 +190,38 @@ public class MaterialMapper {
 
     // Getters
 
+    /**
+     * Checks if the specified Bukkit {@link Material} is included in the set of growth-modified plants.
+     *
+     * @param material The Bukkit {@link Material} to check.
+     * @return {@code true} if the {@link Material} is a growth-modified plant, {@code false} otherwise.
+     */
     public boolean isGrowthModifiedPlant(@NotNull Material material) {
         return growthModifiedPlants.contains(material);
     }
 
-    public boolean isGrowthModifiedPlant(@NotNull Block block) {
-        return growthModifiedPlants.contains(block.getType());
-    }
 
+    /**
+     * Retrieves the {@link Set} of {@link Material} representing plants with modified growth behavior.
+     *
+     * @return The {@link Set} of growth-modified plants.
+     */
     public HashSet<Material> getGrowthModifiedPlants() {
         return growthModifiedPlants;
     }
 
+
+    /**
+     * Retrieves a {@link List} of {@link Material} variations associated with the specified material string.
+     * <p>
+     * This method searches through the plantVariationsMap to find entries containing the specified material string.
+     * It returns the associated list of material variations. If no variations are found, it checks if the material
+     * is a valid plant material using 'getCheckedMaterial' and returns a singleton list with the validated material,
+     * or an empty list if the material is ignored.
+     *
+     * @param materialString The string representation of the {@link Material} for which to retrieve variations.
+     * @return A {@link List} of {@link Material} variations associated with the specified material string.
+     */
     @NotNull
     public List<Material> getPlantVariationsOf(@NotNull String materialString) {
         String loweredMaterialString = materialString.toLowerCase();
@@ -180,16 +249,6 @@ public class MaterialMapper {
      */
     public boolean canGrowInDark(@NotNull Material m) {
         return growInDarkPlants.contains(m);
-    }
-
-    // TODO: implement
-    public boolean isSamePlant(Block blockToCheck, Material plantMaterial) {
-        return false;
-    }
-
-    // TODO: implement
-    public boolean isSamePlant(Material MaterialToCheck, Material plantMaterial) {
-        return false;
     }
 
 }

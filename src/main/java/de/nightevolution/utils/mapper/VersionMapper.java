@@ -13,6 +13,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Abstract class representing a version-specific mapper for RealisticPlantGrowth plugin.
+ * Provides methods for handling plant-related operations based on the server's Minecraft version.
+ */
 public abstract class VersionMapper {
 
     private final Logger logger;
@@ -142,6 +146,9 @@ public abstract class VersionMapper {
         this.logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
     }
 
+    /**
+     * Reloads the configuration and updates internal data structures based on the server's Minecraft version.
+     */
     public void reload() {
         plants.add(getGrassMaterial());
         getSaplingsTag();
@@ -162,10 +169,12 @@ public abstract class VersionMapper {
     }
 
 
-
     /**
-     * Updates the set of clickable seeds based on the specified plant and aquatic plant {@link Material}s.
-     * Additionally, performs debug logging if the debug mode is enabled.
+     * Updates the set of clickable seeds based on land and aquatic plant {@link Material}s.
+     * Performs debug logging and removes specific materials that are not suitable as clickable seeds.<p>
+     * This method updates the set of clickable seeds by iterating through land and aquatic plant {@link Material}.
+     * It logs verbose information for each plant {@link Material} and associates its clickable seed {@link Material} using block data.
+     * Certain {@link Material}s, such as AIR and TORCHFLOWER, are excluded from the final set of clickable seeds.
      */
     protected void updateClickableSeeds() {
         clickableSeedsMap = new HashMap<>();
@@ -194,6 +203,12 @@ public abstract class VersionMapper {
     }
 
     // Getters
+
+    /**
+     * Gets the associated {@link MaterialMapper} instance.
+     *
+     * @return The MaterialMapper instance.
+     */
     public MaterialMapper getMaterialMapper() {
         return materialMapper;
     }
@@ -211,6 +226,14 @@ public abstract class VersionMapper {
         return null;
     }
 
+    /**
+     * Checks if the provided {@link Material} represents a land or aquatic plant.<p>
+     * This method determines whether the specified Material corresponds to either a land plant or an aquatic plant.
+     * Land plants include various plant {@link Material} found on land, and aquatic plants are typically found in aquatic environments.
+     *
+     * @param material The {@link Material} to check for being a land or aquatic plant.
+     * @return {@code true} if the provided {@link Material} represents a land or aquatic plant, {@code false} otherwise.
+     */
     public boolean isPlantMaterial(Material material) {
         return plants.contains(material) || aquaticPlants.contains(material);
     }
@@ -269,30 +292,68 @@ public abstract class VersionMapper {
         return clickableSeeds.contains(material);
     }
 
+
+    /**
+     * Checks if the given {@link Material} is an upwards-growing plant.
+     *
+     * @param material The {@link Material} to check.
+     * @return {@code true} if the {@link Material} is an upwards-growing plant, {@code false} otherwise.
+     */
     public boolean isUpwardsGrowingPlant(@NotNull Material material) {
         return upwardsGrowingPlants.contains(material);
     }
 
+
+    /**
+     * Checks if the given {@link Material} is a downwards-growing plant.
+     *
+     * @param material The {@link Material} to check.
+     * @return {@code true} if the {@link Material} is a downwards-growing plant, {@code false} otherwise.
+     */
     public boolean isDownwardsGrowingPlant(@NotNull Material material) {
         return downwardsGrowingPlants.contains(material);
     }
 
+    /**
+     * Checks if the given {@link Material} represents a plant where the grow event returns an air block.
+     *
+     * @param material The {@link Material} to check.
+     * @return {@code true} if the {@link Material} represents a plant with grow event returning air, {@code false} otherwise.
+     */
     public boolean isGrowEventReturnsAirBlockPlant(@NotNull Material material) {
         return growEventReturnsAirBlockPlants.contains(material);
     }
 
+    /**
+     * Retrieves a {@link HashSet} of {@link Material} representing plants whose growth behavior has been modified.<p>
+     * This method returns a set of {@link Material} instances representing plants that have their growth behavior modified
+     * by the {@link RealisticPlantGrowth} plugin.
+     *
+     * @return A {@link HashSet} of {@link Material} representing plants with modified growth behavior.
+     */
     public HashSet<Material> getGrowthModifiedPlants() {
         return materialMapper.getGrowthModifiedPlants();
     }
 
+
+    /**
+     * Checks if the provided {@link Material} represents a plant with modified growth behavior.<p>
+     * This method determines whether the specified {@link Material} corresponds to a plant that has its growth behavior
+     * modified by the {@link RealisticPlantGrowth} plugin.
+     *
+     * @param material The Material to check for growth modifications.
+     * @return {@code true} if the provided Material represents a growth-modified plant, {@code false} otherwise.
+     */
     public boolean isGrowthModifiedPlant(@NotNull Material material) {
         return materialMapper.isGrowthModifiedPlant(material);
     }
 
-    public boolean isGrowthModifiedPlant(@NotNull Block block) {
-        return materialMapper.isGrowthModifiedPlant(block);
-    }
-
+    /**
+     * Retrieves the {@link Material} representing the grass block associated with the server's Minecraft version.
+     * The specific {@link Material} may vary depending on the Minecraft version and server implementation.
+     *
+     * @return The {@link Material} representing the grass block for the current server version.
+     */
     public Material getGrassMaterial() {
         return grassMaterial;
     }

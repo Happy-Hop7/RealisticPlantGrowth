@@ -82,7 +82,13 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         drawLogo();
     }
 
-
+    /**
+     * Checks the server version and initializes the appropriate {@link VersionMapper}.<p>
+     * This method determines the server version by extracting it from the Bukkit server class package name.
+     * It then sets the corresponding version mapper based on the extracted version.
+     *
+     * @return {@code true} if the version check and initialization are successful, {@code false} otherwise.
+     */
     private boolean checkServerVersion() {
 
         String version;
@@ -90,21 +96,22 @@ public final class RealisticPlantGrowth extends JavaPlugin {
             version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 
         } catch (ArrayIndexOutOfBoundsException whatVersionAreYouUsingException) {
+            // Unable to extract version, log the exception and return false
+            logger.error("Error while extracting server version!");
             return false;
         }
 
         logger.log("Your server is running version " + version);
 
+        // Initialize version-specific mappers based on the detected version
         if (version.equals("v1_20_R1") || version.equals("v1_20_R2")) {
-
             versionMapper = new Version_1_20();
 
         } else if (version.equals("v1_20_R3")) {
-
             versionMapper = new Version_1_20_4();
         }
 
-
+        // Return true if version mapper is successfully initialized, false otherwise
         return versionMapper != null;
     }
 
