@@ -1,8 +1,7 @@
 # ⚙ Config.yml
 
 Default Config:\
-[https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml](https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml)\
-
+[https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml](https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml)\\
 
 ***
 
@@ -19,7 +18,7 @@ The language files are located in your server's "plugins" directory:\
 Upon the first plugin start, all supported languages for your version should be available in this directory.\
 If you wish to change the language, you'll need to identify and select the `.yml` file with the desired language. You also have the option to create your own language files and use them .
 
-In cases where specific translations are missing, the default strings from the default language \
+In cases where specific translations are missing, the default strings from the default language\
 (`en-US`) will be automatically selected.
 
 ***
@@ -119,6 +118,15 @@ Prevents spam clicking and therefore heavy area scans.
 When this configuration setting is set to true, your plugin will anonymously contribute usage data to bStats. bStats is a service that assists plugin developers in understanding how their creations are utilized in the wider community.
 
 This anonymized information is invaluable for enhancing and optimizing plugins based on real-world usage patterns. For additional details, please visit the [bStats page](https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634) of _**Realistic Plant Growth**_.
+
+***
+
+### check\_for\_updates
+
+#### default: `true`
+
+Set this option to `true` to enable automatic update checks when the server starts.\
+Setting it to `false` will disable update checking.
 
 ***
 
