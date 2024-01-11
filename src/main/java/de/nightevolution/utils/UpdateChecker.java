@@ -2,7 +2,7 @@ package de.nightevolution.utils;
 
 import com.google.gson.Gson;
 import de.nightevolution.RealisticPlantGrowth;
-import de.nightevolution.utils.rest.ModrinthAPI;
+import de.nightevolution.utils.rest.ModrinthVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,11 +10,15 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
+
 /**
- * Utility class for checking updates of a Bukkit/Spigot plugin on SpigotMC.
- * This class uses the SpigotMC API to check for updates based on the provided resource ID.
+ * The UpdateChecker class is responsible for checking updates for the {@link RealisticPlantGrowth} plugin
+ * using the Modrinth API.
  */
 public class UpdateChecker {
 
@@ -23,20 +27,21 @@ public class UpdateChecker {
 
 
     /**
-     * Constructs an {@link UpdateChecker} instance for a given plugin and resource ID.
+     * Constructs a new {@link UpdateChecker} instance.
      */
     public UpdateChecker() {
         this.plugin = RealisticPlantGrowth.getInstance();
         this.logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
     }
 
+
     /**
-     * Asynchronously fetches the latest version information from SpigotMC.
-     * Executes the provided consumer with the latest version string if available.
+     * Asynchronously fetches the latest version information from the Modrinth API and
+     * executes the provided consumer with the retrieved {@link ModrinthVersion}.
      *
-     * @param consumer The consumer to accept the latest version string.
+     * @param consumer The consumer to accept the {@link ModrinthVersion}.
      */
-    public void getVersion(final Consumer<String> consumer) {
+    public void getVersion(final Consumer<ModrinthVersion> consumer) {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
 
             try (HttpClient client = HttpClient.newHttpClient()) {
@@ -46,23 +51,36 @@ public class UpdateChecker {
                         .build();
 
                 HttpResponse<String> httpsGetResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+                int responseCode = httpsGetResponse.statusCode();
 
-                logger.verbose(httpsGetResponse.body());
+                logger.verbose("Modrinth API response code: " + responseCode);
+                logger.verbose("Modrinth API response body: " + httpsGetResponse.body());
 
-                String version = getVersion(httpsGetResponse);
-                consumer.accept(version);
+                if (responseCode == 200) {
+                    consumer.accept(getVersion(httpsGetResponse));
+                } else
+                    throw new Exception("Error response code: " + responseCode);
+
 
             } catch (Exception e) {
-                logger.error("Couldn't check Modrinth-API for RealisticPlantGrowth updates!");
-                e.printStackTrace();
+                logger.error("Failed to check Modrinth API for RealisticPlantGrowth updates!");
+                logger.error("Error details: " + e.getMessage());
             }
         });
     }
 
-    private String getVersion(HttpResponse<String> getResponse) {
+    /**
+     * Parses the Modrinth API response to extract the latest version.
+     *
+     * @param getResponse The HTTP response containing version information.
+     * @return The latest {@link ModrinthVersion}.
+     */
+    private ModrinthVersion getVersion(HttpResponse<String> getResponse) {
         Gson gson = new Gson();
-        ModrinthAPI[] versionArray = gson.fromJson(getResponse.body(), ModrinthAPI[].class);
-        return versionArray[0].getVersion_number();
+        ModrinthVersion[] versionArray = gson.fromJson(getResponse.body(), ModrinthVersion[].class);
+
+        List<ModrinthVersion> versionList = Arrays.stream(versionArray).toList();
+        return Collections.max(versionList);
     }
 
 }

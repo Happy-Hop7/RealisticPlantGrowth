@@ -1,8 +1,14 @@
 package de.nightevolution.utils.rest;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public class ModrinthAPI {
+/**
+ * The ModrinthVersion class represents a version of the RealisticPlantGrowth plugin on Modrinth.
+ * It implements {@link Comparable} to allow for version comparison based on version numbers.
+ */
+public class ModrinthVersion implements Comparable<ModrinthVersion> {
 
 
     private String name;
@@ -104,5 +110,43 @@ public class ModrinthAPI {
 
     public void setDownloads(int downloads) {
         this.downloads = downloads;
+    }
+
+
+    /**
+     * Compares this {@link ModrinthVersion} with another version based on version numbers.
+     *
+     * @param otherVersion The {@link ModrinthVersion} to compare to.
+     * @return A negative integer, zero, or a positive integer if this version is
+     * less than, equal to, or greater than the specified version.
+     */
+    @Override
+    public int compareTo(@NotNull ModrinthVersion otherVersion) {
+
+        String[] thisParts = this.getFilteredVersion().split("\\.");
+        String[] otherParts = otherVersion.getFilteredVersion().split("\\.");
+
+        int length = Math.max(thisParts.length, otherParts.length);
+
+        for (int i = 0; i < length; i++) {
+            int thisPart = i < thisParts.length ?
+                    Integer.parseInt(thisParts[i]) : 0;
+            int otherPart = i < otherParts.length ?
+                    Integer.parseInt(otherParts[i]) : 0;
+            if (thisPart < otherPart)
+                return -1;
+            if (thisPart > otherPart)
+                return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * Removes certain elements from the version number to facilitate numeric comparison.
+     *
+     * @return The version number with specified elements removed.
+     */
+    public String getFilteredVersion() {
+        return this.getVersion_number().replaceAll("(ALPHA|BETA|SNAPSHOT|-)", "");
     }
 }

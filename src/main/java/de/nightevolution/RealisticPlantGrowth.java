@@ -9,6 +9,7 @@ import de.nightevolution.utils.mapper.VersionMapper;
 import de.nightevolution.utils.mapper.versions.Version_1_20;
 import de.nightevolution.utils.mapper.versions.Version_1_20_4;
 import de.nightevolution.utils.plant.BiomeChecker;
+import de.nightevolution.utils.rest.ModrinthVersion;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -205,14 +206,17 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private void checkForUpdates() {
         new UpdateChecker().getVersion(version -> {
             this.pluginVersion = this.getDescription().getVersion();
-            if (pluginVersion.equals(version)) {
+            ModrinthVersion thisPluginVersion = new ModrinthVersion();
+            thisPluginVersion.setVersion_number(pluginVersion);
+
+            if (thisPluginVersion.compareTo(version) >= 0) {
                 // Log a message if there is no new update available.
                 logger.log("Your RealisticPlantGrowth plugin is up to date (version " + pluginVersion + ").");
             } else {
                 // Log messages if a new update is available.
                 logger.warn("A new version of RealisticPlantGrowth is available!");
                 logger.warn("Current version: " + pluginVersion);
-                logger.warn("Latest version: " + version);
+                logger.warn("Latest version: " + version.getVersion_number());
                 logger.warn("Download the latest version at:");
                 logger.warn("https://modrinth.com/plugin/realistic-plant-growth/version/latest");
             }
