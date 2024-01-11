@@ -146,6 +146,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         new BlockBreakListener(instance);
         new PlayerInteractListener(instance);
         new PlayerQuitListener(instance);
+        new BlockPhysicsListener(instance);
     }
 
     /**
