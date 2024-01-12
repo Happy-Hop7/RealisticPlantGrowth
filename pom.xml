@@ -6,7 +6,7 @@
 
     <groupId>de.nightevolution</groupId>
     <artifactId>RealisticPlantGrowth</artifactId>
-    <version>BETA-0.8.1-SNAPSHOT</version>
+    <version>BETA-0.8.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>RealisticPlantGrowth</name>
@@ -17,7 +17,7 @@
     </description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.plugin.validation>VERBOSE</maven.plugin.validation>
     </properties>
@@ -31,14 +31,13 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
     <build>
-        <defaultGoal>package</defaultGoal>
+        <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.12.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>

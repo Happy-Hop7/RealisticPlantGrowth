@@ -134,8 +134,8 @@ public class Info extends SubCommand implements PlaceholderInterface {
             return "[]";
         }
 
-        if (biomeList.size() == 1 && biomeList.getFirst().equalsIgnoreCase("ALL"))
-            return biomeList.getFirst();
+        if (biomeList.size() == 1 && biomeList.get(0).equalsIgnoreCase("ALL"))
+            return biomeList.get(0);
 
         builder.append("<newline>");
         for (String element : biomeList) {

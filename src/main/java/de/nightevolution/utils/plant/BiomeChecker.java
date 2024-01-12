@@ -98,7 +98,7 @@ public class BiomeChecker {
         Optional<List<String>> optionalStringList = plantSection.getOptionalStringList(defaultBiomeListRoute);
         List<String> biomeStringList = optionalStringList.orElseGet(ArrayList::new);
         if (!biomeStringList.isEmpty()) {
-            if (biomeStringList.size() == 1 && biomeStringList.getFirst().equalsIgnoreCase("ALL"))
+            if (biomeStringList.size() == 1 && biomeStringList.get(0).equalsIgnoreCase("ALL"))
                 return true;
 
             return (cm.getCheckedBiomeSet(biomeStringList).contains(currentBiome));
@@ -127,7 +127,7 @@ public class BiomeChecker {
         Optional<List<String>> biomeStringList = plantSection.getOptionalStringList(defaultBiomeListRoute);
         List<String> stringList = biomeStringList.orElseGet(ArrayList::new);
 
-        if (stringList.size() == 1 && stringList.getFirst().equalsIgnoreCase("ALL")) {
+        if (stringList.size() == 1 && stringList.get(0).equalsIgnoreCase("ALL")) {
             return List.of("ALL");
         }
 

@@ -245,7 +245,7 @@ public class Surrounding {
             }
         }
         if (cm.isFertilizer_passiv()) {
-            closestComposter = fertilizerSources.getFirst();
+            closestComposter = fertilizerSources.get(0);
             return closestComposter;
 
         }
