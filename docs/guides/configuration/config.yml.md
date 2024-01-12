@@ -1,7 +1,7 @@
 # ⚙ Config.yml
 
 Default Config:\
-[https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml](https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml)\\
+[https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml](https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml)
 
 ***
 
@@ -87,8 +87,12 @@ Setting '`destroy_farmland`' to '`true`' enables this feature.
 
 #### default: `true`
 
-Determines whether a player needs a hoe to harvest plants. If set to `true`, players must use a hoe for harvesting.\
-If `require_hoe` is set to 'true' and a plant is harvested without a hoe, the plant will not drop anything.
+Determines whether a player requires a hoe to harvest plants. \
+If set to `true`, players must use a hoe for harvesting. \
+When `require_hoe` is set to `true`, harvesting plants without a hoe will yield no drops. \
+
+
+Additionally, enabling this setting prevents drops from agricultural plants destroyed by flowing water and pistons.
 
 ***
 
@@ -166,8 +170,10 @@ Higher values may increase server resource consumption and cause lag (Maximum 15
 
 #### default: `20.0`
 
-The `fertilizer_boost_growth_rate` is a ~~percentage~~ value added to biome-specific growth rates, if a composter is within the configured `fertilizer_radius`.\
-For example, a biome-specific growth rate of wheat in a desert is 20%. A 'fertilizer\_boost\_growth\_rate' of 25.0% results in a growth rate of 45.0% for wheat plants.
+The `fertilizer_boost_growth_rate` is an additive value applied to the percentage-based biome-specific growth rate when a composter is within the configured `fertilizer_radius`. \
+
+
+For instance, if the biome-specific growth rate for wheat in a desert is `25.0%`, setting `fertilizer_boost_growth_rate` to `20.0%` will result in a boosted growth rate of `45.0%` for wheat plants.
 
 ***
 
