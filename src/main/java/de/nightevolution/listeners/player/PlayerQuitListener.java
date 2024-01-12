@@ -1,4 +1,4 @@
-package de.nightevolution.listeners;
+package de.nightevolution.listeners.player;
 
 import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;

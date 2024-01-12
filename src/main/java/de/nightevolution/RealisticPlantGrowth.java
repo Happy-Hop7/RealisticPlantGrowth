@@ -2,7 +2,10 @@ package de.nightevolution;
 
 import de.nightevolution.commands.CommandManager;
 import de.nightevolution.commands.TabCompleterImpl;
-import de.nightevolution.listeners.*;
+import de.nightevolution.listeners.BlockFromToListener;
+import de.nightevolution.listeners.plant.*;
+import de.nightevolution.listeners.player.PlayerInteractListener;
+import de.nightevolution.listeners.player.PlayerQuitListener;
 import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.UpdateChecker;
 import de.nightevolution.utils.mapper.VersionMapper;
@@ -146,7 +149,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         new BlockBreakListener(instance);
         new PlayerInteractListener(instance);
         new PlayerQuitListener(instance);
-        new BlockPhysicsListener(instance);
+        new BlockFromToListener(instance);
     }
 
     /**

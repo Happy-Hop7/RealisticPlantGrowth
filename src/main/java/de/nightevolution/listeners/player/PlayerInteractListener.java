@@ -1,4 +1,4 @@
-package de.nightevolution.listeners;
+package de.nightevolution.listeners.player;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.MessageManager;
