@@ -1,6 +1,7 @@
-package de.nightevolution.listeners;
+package de.nightevolution.listeners.plant;
 
 import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.listeners.PlantGrowthListener;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;

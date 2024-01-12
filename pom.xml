@@ -6,7 +6,7 @@
 
     <groupId>de.nightevolution</groupId>
     <artifactId>RealisticPlantGrowth</artifactId>
-    <version>BETA-0.8.0</version>
+    <version>BETA-0.8.1</version>
     <packaging>jar</packaging>
 
     <name>RealisticPlantGrowth</name>
@@ -22,7 +22,7 @@
         <maven.plugin.validation>VERBOSE</maven.plugin.validation>
     </properties>
 
-    <url>https://online.nightevolution.de</url>
+    <url>https://docs.nightevolution.de</url>
 
     <licenses>
         <license>
@@ -125,6 +125,7 @@
                 </executions>
             </plugin>
         </plugins>
+
         <resources>
             <resource>
                 <targetPath>.</targetPath>
@@ -210,6 +211,12 @@
             <groupId>net.kyori</groupId>
             <artifactId>ansi</artifactId>
             <version>1.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
         </dependency>
 
     </dependencies>

@@ -1,32 +1,27 @@
-package de.nightevolution.listeners;
+package de.nightevolution.listeners.plant;
 
 import de.nightevolution.RealisticPlantGrowth;
-import org.bukkit.block.Block;
+import de.nightevolution.listeners.PlantGrowthListener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockSpreadEvent;
-
-import java.util.List;
+import org.bukkit.event.world.StructureGrowEvent;
 
 /**
- * Listens for plant growth from block spread.
- * Used by chorus plant, bamboo, red- and brown-mushrooms.
+ * Listens to organic structure attempts to grow (Sapling -> Tree), (Mushroom -> Huge Mushroom), naturally or using bonemeal.
  */
-public class BlockSpreadListener extends PlantGrowthListener {
-    private List<Block> plantStem;
-
-    public BlockSpreadListener(RealisticPlantGrowth instance) {
+public class StructureGrowListener extends PlantGrowthListener {
+    public StructureGrowListener(RealisticPlantGrowth instance) {
         super(instance);
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlantGrow(BlockSpreadEvent e) {
-        logger.verbose("-------------------- BEGIN BlockSpreadEvent --------------------");
+    public void onPlantGrow(StructureGrowEvent e) {
+        logger.verbose("StructureGrowEvent:");
 
         if (!initEventData(e)) return;
 
-        logger.verbose("initialized BlockSpreadEvent");
+        logger.verbose("initialized StructureGrowEvent");
 
         if (!processEvent())
             return;
@@ -36,13 +31,14 @@ public class BlockSpreadListener extends PlantGrowthListener {
             return;
         }
         checkFertilizerUsage();
-        logger.verbose("-------------------- Normal END BlockSpreadEvent --------------------");
+        logger.verbose("Normal event");
     }
 
-    private boolean initEventData(BlockSpreadEvent e) {
+
+    private boolean initEventData(StructureGrowEvent e) {
         // Get coordinates and information of the event block for logging
-        eventBlock = getRootBlockOf(e.getSource());
-        eventLocation = eventBlock.getLocation();
+        eventLocation = e.getLocation();
+        eventBlock = eventLocation.getBlock();
         eventWorld = eventBlock.getWorld();
         eventBiome = eventBlock.getBiome();
         eventBlockType = eventBlock.getType();
