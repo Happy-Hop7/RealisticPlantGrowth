@@ -3,6 +3,7 @@ package de.nightevolution;
 import de.nightevolution.commands.CommandManager;
 import de.nightevolution.commands.TabCompleterImpl;
 import de.nightevolution.listeners.BlockFromToListener;
+import de.nightevolution.listeners.BlockPistonListener;
 import de.nightevolution.listeners.plant.*;
 import de.nightevolution.listeners.player.PlayerInteractListener;
 import de.nightevolution.listeners.player.PlayerQuitListener;
@@ -150,6 +151,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         new PlayerInteractListener(instance);
         new PlayerQuitListener(instance);
         new BlockFromToListener(instance);
+        new BlockPistonListener(instance);
     }
 
     /**
