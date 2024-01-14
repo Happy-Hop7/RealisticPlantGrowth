@@ -37,7 +37,7 @@ public class BlockFromToListener implements Listener {
      *
      * @param e The {@link BlockFromToEvent} triggered by the flow of water.
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onWaterDestroyCrops(BlockFromToEvent e) {
         Block source = e.getBlock();
         Block target = e.getToBlock();

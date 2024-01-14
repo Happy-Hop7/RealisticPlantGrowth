@@ -44,8 +44,8 @@ public class UpdateChecker {
     public void getVersion(final Consumer<ModrinthVersion> consumer) {
         Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
 
-            try (HttpClient client = HttpClient.newHttpClient()) {
-
+            try {
+                HttpClient client = HttpClient.newHttpClient();
                 HttpRequest getRequest = HttpRequest.newBuilder()
                         .uri(new URI("https://api.modrinth.com/v2/project/realistic-plant-growth/version"))
                         .build();

@@ -38,7 +38,7 @@ public class BlockPistonListener implements Listener {
      *
      * @param e The {@link BlockPistonExtendEvent} triggered by piston extension.
      */
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPistonDestroyPlant(BlockPistonExtendEvent e) {
         logger.verbose("BlockPistonExtendEvent");
 
