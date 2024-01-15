@@ -60,8 +60,17 @@ public class MaterialMapper {
         plantVariationsMap.put("twisting_vine", Arrays.asList(Material.TWISTING_VINES, Material.TWISTING_VINES_PLANT));
         plantVariationsMap.put("weeping_vine", Arrays.asList(Material.WEEPING_VINES, Material.WEEPING_VINES_PLANT));
         plantVariationsMap.put("kelp", Arrays.asList(Material.KELP, Material.KELP_PLANT));
-        plantVariationsMap.put("pitcher", Collections.singletonList(Material.PITCHER_CROP));
         plantVariationsMap.put("chorus", Arrays.asList(Material.CHORUS_FLOWER, Material.CHORUS_PLANT));
+
+        if (versionMapper.getPitcherPlacedMaterial() != null) {
+            plantVariationsMap.put("pitcher", Collections.singletonList(versionMapper.getPitcherPlacedMaterial()));
+        }
+
+        if (versionMapper.getTorchflowerMaterial() != null) {
+            plantVariationsMap.put("torchflower",
+                    Arrays.asList(versionMapper.getTorchflowerMaterial(), versionMapper.getTorchflowerPlacedMaterial()));
+        }
+
     }
 
 
@@ -76,6 +85,7 @@ public class MaterialMapper {
      */
     @Nullable
     public Material getCheckedMaterial(@NotNull String materialString) {
+
         Material material = Material.getMaterial(materialString);
 
         if (material == null) {
@@ -106,11 +116,10 @@ public class MaterialMapper {
         for (String key : growthModData.keySet()) {
             growthModifiedPlants.addAll(getPlantVariationsOf(key));
 
-            Material notMapped = getCheckedMaterial(key);
+            Material notMapped = Material.getMaterial(key);
 
             if (notMapped != null) {
                 logger.verbose(notMapped + " is not a mapped material.");
-                growthModifiedPlants.add(notMapped);
 
                 if (notMapped == Material.VINE || notMapped == Material.GLOW_LICHEN) {
                     logger.warn("'" + Material.VINE + "' and '" + Material.GLOW_LICHEN + "' are not supported yet.");
@@ -235,7 +244,6 @@ public class MaterialMapper {
         if (checkedMaterial != null) {
             return Collections.singletonList(checkedMaterial);
         } else {
-            logger.warn("Ignoring Material '" + materialString + "'.");
             return Collections.emptyList();
         }
     }

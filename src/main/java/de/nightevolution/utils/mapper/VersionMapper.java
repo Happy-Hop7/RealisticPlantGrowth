@@ -33,11 +33,8 @@ public abstract class VersionMapper {
             Material.CARROTS,
             Material.MELON_STEM,
             Material.NETHER_WART,
-            Material.PITCHER_CROP,
             Material.POTATOES,
             Material.PUMPKIN_STEM,
-            Material.TORCHFLOWER,
-            Material.TORCHFLOWER_CROP,
             Material.WHEAT
     ));
 
@@ -64,7 +61,6 @@ public abstract class VersionMapper {
             Material.MELON,
             Material.MELON_STEM,
             Material.NETHER_WART,
-            Material.PITCHER_CROP,
             Material.POTATOES,
             Material.PUMPKIN,
             Material.PUMPKIN_STEM,
@@ -72,8 +68,6 @@ public abstract class VersionMapper {
             Material.SUGAR_CANE,
             Material.SWEET_BERRY_BUSH,
             Material.TALL_GRASS,
-            Material.TORCHFLOWER,
-            Material.TORCHFLOWER_CROP,
             Material.TWISTING_VINES,
             Material.TWISTING_VINES_PLANT,
             Material.VINE,
@@ -139,8 +133,6 @@ public abstract class VersionMapper {
     private static final String logFile = "debug";
     private static final String treeLogFile = "treeLog";
 
-    protected Material grassMaterial;
-
     protected VersionMapper() {
         this.materialMapper = new MaterialMapper(this);
         this.logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
@@ -150,11 +142,27 @@ public abstract class VersionMapper {
      * Reloads the configuration and updates internal data structures based on the server's Minecraft version.
      */
     public void reload() {
-        plants.add(getGrassMaterial());
+        addVersionDependentMaterials();
         getSaplingsTag();
         materialMapper.updateGrowthModifiedPlants();
         materialMapper.updateGrowInDark();
         updateClickableSeeds();
+    }
+
+    private void addVersionDependentMaterials() {
+        if (getGrassMaterial() != null) plants.add(getGrassMaterial());
+
+        if (getPitcherPlacedMaterial() != null) {
+            plants.add(getPitcherPlacedMaterial());
+            agriculturalPlants.add(getPitcherPlacedMaterial());
+        }
+
+        if (getTorchflowerMaterial() != null) {
+            plants.add(getTorchflowerPlacedMaterial());
+            plants.add(getTorchflowerMaterial());
+            agriculturalPlants.add(getTorchflowerPlacedMaterial());
+            agriculturalPlants.add(getTorchflowerMaterial());
+        }
     }
 
     /**
@@ -198,7 +206,7 @@ public abstract class VersionMapper {
         clickableSeeds.remove(Material.AIR);
 
         // also remove torchFlower, since it is already a fully grown decoration plant
-        clickableSeeds.remove(Material.TORCHFLOWER);
+        clickableSeeds.remove(getTorchflowerMaterial());
 
     }
 
@@ -348,14 +356,33 @@ public abstract class VersionMapper {
         return materialMapper.isGrowthModifiedPlant(material);
     }
 
-    /**
-     * Retrieves the {@link Material} representing the grass block associated with the server's Minecraft version.
-     * The specific {@link Material} may vary depending on the Minecraft version and server implementation.
-     *
-     * @return The {@link Material} representing the grass block for the current server version.
-     */
-    public Material getGrassMaterial() {
-        return grassMaterial;
-    }
+    // Abstract Methods implemented in Child classes.
+    @Nullable
+    public abstract Material getGrassMaterial();
 
+    /**
+     * Placed plant material
+     *
+     * @return
+     */
+    @Nullable
+    public abstract Material getPitcherPlacedMaterial();
+
+
+    /**
+     * Placed plant material
+     *
+     * @return
+     */
+    @Nullable
+    public abstract Material getTorchflowerPlacedMaterial();
+
+
+    /**
+     * Fully grown placed plant material and "normal" placeable plant
+     *
+     * @return
+     */
+    @Nullable
+    public abstract Material getTorchflowerMaterial();
 }
