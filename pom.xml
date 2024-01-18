@@ -6,7 +6,7 @@
 
     <groupId>de.nightevolution</groupId>
     <artifactId>RealisticPlantGrowth</artifactId>
-    <version>BETA-0.8.2</version>
+    <version>BETA-0.8.3</version>
     <packaging>jar</packaging>
 
     <name>RealisticPlantGrowth</name>
@@ -195,7 +195,7 @@
 
         <dependency>
             <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-serializer-ansi</artifactId>
+            <artifactId>adventure-text-serializer-legacy</artifactId>
             <version>4.14.0</version>
         </dependency>
 
@@ -203,12 +203,6 @@
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-serializer-gson</artifactId>
             <version>4.14.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>ansi</artifactId>
-            <version>1.0.3</version>
         </dependency>
 
         <dependency>
