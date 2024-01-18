@@ -30,4 +30,4 @@
 * [Modrinth](https://modrinth.com/plugin/realistic-plant-growth)
 * [Spigot](https://www.spigotmc.org/resources/realistic-plant-growth.114096/)
 * [Discord](https://discord.gg/4RdgdaNdhB)
-* [Buy Me a Coffee](https://www.buymeacoffee.com/TheRealPredator)
+* [Donate](https://www.buymeacoffee.com/TheRealPredator)

@@ -71,6 +71,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     public void onEnable() {
         // Create an instance of this Plugin
         instance = this;
+        this.pluginVersion = this.getDescription().getVersion();
+
         cm = ConfigManager.get();
 
         logger = new Logger(this.getClass().getSimpleName(), cm.isVerbose(), cm.isDebug_log());
@@ -108,12 +110,14 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
         logger.log("Your server is running version " + version);
 
-        // Initialize version-specific mappers based on the detected version
-        if (version.equals("v1_20_R1") || version.equals("v1_20_R2")) {
-            versionMapper = new Version_1_20();
+        if (pluginVersion.contains("SNAPSHOT")) {
+            logger.warn("You are using a snapshot version!");
+        }
 
-        } else if (version.equals("v1_20_R3")) {
-            versionMapper = new Version_1_20_4();
+        // Initialize version-specific mappers based on the detected version
+        switch (version) {
+            case "v1_20_R1", "v1_20_R2" -> versionMapper = new Version_1_20();
+            case "v1_20_R3" -> versionMapper = new Version_1_20_4();
         }
 
         // Return true if version mapper is successfully initialized, false otherwise
@@ -211,7 +215,6 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      */
     private void checkForUpdates() {
         new UpdateChecker().getVersion(version -> {
-            this.pluginVersion = this.getDescription().getVersion();
             ModrinthVersion thisPluginVersion = new ModrinthVersion();
             thisPluginVersion.setVersion_number(pluginVersion);
 
@@ -250,18 +253,18 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private void drawLogo() {
         String logo = System.lineSeparator() +
                 System.lineSeparator() +
-                "&2     .{{}}}}}}." + System.lineSeparator() +
-                "&2    {{{{{{(`)}}}." + System.lineSeparator() +
-                "&2   {{{(`)}}}}}}}}}" + System.lineSeparator() +
-                "&2  }}}}}}}}}{{(`){{{" + "&b     Realistic &aPlant &bGrowth" + System.lineSeparator() +
-                "&2  }}}}{{{{(`)}}{{{{" + "&b       by &6TheRealPredator" + System.lineSeparator() +
-                "&2 {{{(`)}}}}}}}{}}}}}" + System.lineSeparator() +
-                "&2{{{{{{{{(`)}}}}}}}}}}" + System.lineSeparator() +
-                "&2{{{{{{{}{{{{(`)}}}}}}" + "&a    ... successfully enabled." + System.lineSeparator() +
-                "&2 {{{{{(`&r)   {&2{{{(`)}'" + System.lineSeparator() +
-                "&2  `\"\"'\" &r|   | &2\"'\"'`" + System.lineSeparator() +
-                "       &r/     \\" + System.lineSeparator() +
-                "&a~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + System.lineSeparator();
+                "&2     .{{}}}}}}." + "&r" + System.lineSeparator() +
+                "&2    {{{{{{(`)}}}." + "&r" + System.lineSeparator() +
+                "&2   {{{(`)}}}}}}}}}" + "&r" + System.lineSeparator() +
+                "&2  }}}}}}}}}{{(`){{{" + "&b     Realistic &aPlant &bGrowth" + "&r" + System.lineSeparator() +
+                "&2  }}}}{{{{(`)}}{{{{" + "&b       by &6TheRealPredator" + "&r" + System.lineSeparator() +
+                "&2 {{{(`)}}}}}}}{}}}}}" + "&r" + System.lineSeparator() +
+                "&2{{{{{{{{(`)}}}}}}}}}}" + "&r" + System.lineSeparator() +
+                "&2{{{{{{{}{{{{(`)}}}}}}" + "&a    ... successfully enabled." + "&r" + System.lineSeparator() +
+                "&2 {{{{{(`&r)   {&2{{{(`)}'" + "&r" + System.lineSeparator() +
+                "&2  `\"\"'\" &r|   | &2\"'\"'`" + "&r" + System.lineSeparator() +
+                "       &r/     \\" + "&r" + System.lineSeparator() +
+                "&a~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + "&r" + System.lineSeparator();
         logger.log(logo);
 
     }
