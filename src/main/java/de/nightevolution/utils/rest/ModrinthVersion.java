@@ -147,6 +147,6 @@ public class ModrinthVersion implements Comparable<ModrinthVersion> {
      * @return The version number with specified elements removed.
      */
     public String getFilteredVersion() {
-        return this.getVersion_number().replaceAll("(ALPHA|BETA|SNAPSHOT|-)", "");
+        return this.getVersion_number().replaceAll("(ALPHA|BETA|SNAPSHOT|HOTFIX|-)", "");
     }
 }
