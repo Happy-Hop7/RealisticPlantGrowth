@@ -62,6 +62,6 @@ If you enjoy this plugin and would like to support me, please consider making a 
 [https://www.buymeacoffee.com/TheRealPredator](https://www.buymeacoffee.com/TheRealPredator)
 {% endhint %}
 
-<figure><img src=".gitbook/assets/BuyMeACoffee.png" alt="Donation QR-Code" width="175"><figcaption><p>Support me with a coffee!</p></figcaption></figure>
+<figure><img src=".gitbook/assets/BuyMeACoffee.png" alt="Donation QR-Code" width="175"><figcaption><p>Donation Link</p></figcaption></figure>
 
 ***

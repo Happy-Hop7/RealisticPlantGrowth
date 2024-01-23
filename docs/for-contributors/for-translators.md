@@ -4,11 +4,11 @@ description: 🚧 Work in Progress 🚧
 
 # 🌏 For Translators
 
-{% hint style="info" %}
-If you have translated the language file into your own language, you can help others by providing me with your language file.\
+If you have translated the language file into your own language, you can help others by providing me with your language file.
+
+\
 You can either directly upload it on GitHub or send the file via Email or Discord.\
 Email: [support@nightevolution.de](mailto:support@nightevolution.de)
-{% endhint %}
 
 ## Supported Languages
 
