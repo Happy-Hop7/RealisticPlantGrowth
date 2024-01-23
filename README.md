@@ -1,10 +1,60 @@
 # 👋 Welcome to the Realistic Plant Growth Plugin
 
+> [!IMPORTANT]
+> RealisticPlantGrowth is still in an early phase of development. <br>
+> If you encounter any problems, please open an issue with a detailed error description. <br>
+> I will investigate the occurring problem and try to fix it as soon as possible.
+
 Realistic Plant Growth is a powerful Spigot/Paper plugin that brings a new level of realism to
 the Minecraft flora, allowing you to fine-tune growth parameters on a per-biome basis.
 
 <br>
 
+- Do you want to stop Nether Wart farming or make it only work in the Nether like it used to be?
+- Do you think Melon farms are too powerful and want to balance them?
+- Maybe you want cocoa to grow only in jungles or make plants grow slower in deserts?
+- Or perhaps you want farms to be above ground and need natural light?
+
+You can do all that with **Realistic Plant Grotwh**!
+
+
+<br>
+
+**Realistic Plant Growth** actively monitors grow events, allowing plants to progress through their growth stages based
+on a configured growth rate. <br>
+What sets this plugin apart is its biome-dependent growth rate, providing an immersive experience tailored to the
+in-game environment.
+
+<br>
+
+## Balancing Automatic Farms
+
+You can customize your farming experience by adjusting the required light level for plant growth. This feature can not
+only ensure that growth occurs only above ground but also disables the dominance of stacked farms, preventing
+overpowering setups like giant cactus farms.
+
+To add an extra layer of complexity, each plant introduces a configurable death chance. This element adds a strategic
+component to the game, as plants now have a chance to perish during their growth process. The introduction of a death
+chance serves as a countermeasure against fully automatic farms, adding a balancing factor to the gameplay.
+
+
+<br>
+
+## UV-Light Blocks
+
+UV-Light enables the growth of plants that lack access to natural skylight, enabling their cultivation in dark and
+indoor environments. Easily customize the effect radius and the UV-light blocks in the configuration settings.
+
+<br>
+
+## Fertilizer
+
+Fertilizer blocks (Composter) enhance the growth rates of plants in their vicinity. By default, each time a plant
+advances to the next stage, the composter fill level is depleted, signifying the utilization of fertilizer to boost the
+growth rate. Players must refill the composter either manually or with the assistance of hoppers.
+
+
+<br>
 
 ## Features
 
@@ -21,12 +71,7 @@ the ```GrowthModifiers.yml``` file.
 - Boost Growth Rates With Fertilizer
 - Customizable Messages With [miniMessage](https://docs.advntr.dev/minimessage/format.html) Support.
 
-<br>
 
-> [!IMPORTANT]
-> RealisticPlantGrowth is still in an early phase of development. <br>
-> If you encounter any problems, please open an issue with a detailed error description. <br>
-> I will investigate the occurring problem and try to fix it as soon as possible.
 
 <br>
 <br>
