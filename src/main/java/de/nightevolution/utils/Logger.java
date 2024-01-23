@@ -4,7 +4,7 @@ import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -65,14 +65,17 @@ public class Logger {
 
     /**
      * Formats and logs a given message provided as String to the console.
-     * Messages containing {@link MiniMessage} tags get serialized using the {@link ANSIComponentSerializer}.
+     * Messages containing {@link MiniMessage} tags get serialized using the {@link LegacyComponentSerializer}.
      * '&' color cotes get resolved by using the {@link ChatColor} functions of {@link Bukkit}.
      *
      * @param msg Message to send to the console.
      */
     public void log(String msg) {
         Component c = MiniMessage.miniMessage().deserialize(pluginPrefix + msg);
-        String msgInANSI = ANSIComponentSerializer.ansi().serialize(c);
+
+        String msgInANSI = LegacyComponentSerializer.legacyAmpersand().serialize(c);
+        // String msgInANSI = ANSIComponentSerializer.ansi().serialize(c); // Not supported in older mc versions.
+
 
         // Translate & in § Legacy ColorCodes for Console
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', msgInANSI));
