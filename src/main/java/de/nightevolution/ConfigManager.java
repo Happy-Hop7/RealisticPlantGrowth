@@ -55,7 +55,8 @@ public class ConfigManager {
     // All predefined supported localizations.
     private static final List<String> supportedLanguageCodes = (Arrays.asList(
             "de-DE",
-            "en-US"
+            "en-US",
+            "zh-Hant"
     ));
 
     private static String language_code;

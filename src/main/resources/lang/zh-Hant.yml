@@ -1,0 +1,54 @@
+# 中文語言檔案
+# 請參閱 https://docs.advntr.dev/minimessage/format.html 以獲取格式化信息。
+# 此文件不支持舊的顏色代碼(& 和 §)！
+
+# 訊息標頭
+# 用作插件聊天訊息的分隔符。
+MSG_HEADER: <newline><gray>---------------- <green>真實植物生長 <gray>----------------
+
+# 沒有權限
+# 當玩家沒有執行給定插件命令所需的權限時發送給他們。
+NO_PERMISSIONS: <red>您沒有執行此命令所需的權限！
+
+# 當使用僅可由遊戲內玩家使用的命令時在控制台中記錄。
+NO_CONSOLE: <red>此命令無法從控制台使用！
+
+# 幫助菜單
+# 當用戶執行'/rpg help'命令或使用未知子命令時顯示給用戶。
+HELP_CMD_MSG: <aqua>/rpg help <dark_gray>- <gray>顯示此幫助菜單。
+INFO_CMD_MSG: <aqua>/rpg info <dark_gray>- <gray>顯示手持的植物的信息。
+RELOAD_CMD_MSG: <aqua>/rpg reload <dark_gray>- <gray>重新加載所有配置文件。
+# 成功重新加載插件後顯示。
+RELOAD_COMPLETE_MSG: <green>真實的植物生長重新加載成功。
+
+# 生長信息訊息。
+# 當玩家用種子在地面上左鍵單擊時發送給玩家。
+# 只有在配置文件（Config.yml）中啟用了 'display_growth_rates' 時才會生效。
+GROWTH_RATE_MSG: |-
+  <gray><hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray> 的生長信息：
+    <dark_gray> » <gray>生物群系： <aqua><lang:biome.minecraft.{BIOME}>
+    <dark_gray> » <gray>生長速率： <aqua>{GROWTH_RATE}
+    <dark_gray> » <gray>死亡機率：   <aqua>{DEATH_CHANCE}
+    <dark_gray> » <gray>是否為黑暗區域： <aqua>{IS_DARK}
+    <dark_gray> » <gray>受肥料影響： <aqua>{FERTILIZER_USED}
+    <dark_gray> » <gray>受紫外線影響： <aqua>{UV_LIGHT_USED}
+    <dark_gray> » <gray>能在黑暗中生長： <aqua>{CAN_GROW_IN_DARK}
+    <dark_gray> » <gray>能在 <lang:biome.minecraft.{BIOME}> 生長而無需肥料： <aqua>{IS_VALID_BIOME}
+# 當在配置文件（Config.yml）中啟用了 'display_growth_rates' 且
+# 與 Minecraft 原始行為相比，種子沒有修改屬性時發送給玩家。
+PLANT_NOT_MODIFIED_MSG: |-
+  <hover:show_item:"minecraft:{PLANT}"> <aqua><lang:block.minecraft.{PLANT}></hover> <gray> 沒有修改的生長屬性。
+    » <yellow><italic>正常的 Minecraft 原始行為。
+# 植物信息
+# 當用戶執行 '/rpg info' 命令並手持植物時顯示給用戶。
+INFO_CMD_RESULT: |-
+  <gray><hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray> 的生長信息：
+    <dark_gray> » <gray>能在黑暗中生長： <aqua>{CAN_GROW_IN_DARK}
+    <dark_gray> » <gray>生物群組： <aqua>{BIOME_GROUP_LIST}
+    <dark_gray> » <gray>有效的生物群系： <aqua>{BIOME_LIST}
+# 當用戶執行 '/rpg info' 命令並且手持物品（沒有植物）時顯示給用戶。
+INFO_CMD_NO_ITEM: <red>您必須手持一株植物才能執行此命令！
+
+# 配置文件版本。
+# 請不要自行修改 :)
+version: 2
