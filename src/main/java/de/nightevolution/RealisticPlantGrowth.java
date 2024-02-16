@@ -318,7 +318,10 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * @return {@code true} if growth modification is enabled for the world, {@code false} otherwise.
      */
     public boolean isWorldDisabled(@NotNull World world) {
-        return (!cm.getEnabled_worlds().contains(world.getName()));
+        if (cm.getEnabled_worlds().contains(world.getName())) {
+            return cm.isUse_enabled_worlds_as_world_blacklist();
+        }
+        return !cm.isUse_enabled_worlds_as_world_blacklist();
     }
 
 

@@ -32,6 +32,10 @@ enabled_worlds:
   - your_world_nether
   - your_world_the_end
 
+# When set to 'true', the world whitelist above will function as a world blacklist,
+# enabling the plugin on all worlds except those listed.
+use_enabled_worlds_as_world_blacklist: false
+
 # Limits the use of bonemeal on plants to the specified amount.
 # Setting 'bonemeal_limit: 0' completely disables the use of bone meal.
 # Negative numbers deactivate this feature (e.g., 'bonemeal_limit: -1').
@@ -217,5 +221,5 @@ bonemeal_log: false
 #| Spooky internal settings.                                                                                          |#
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
-config-version: 3
+config-version: 4
 verbose: false

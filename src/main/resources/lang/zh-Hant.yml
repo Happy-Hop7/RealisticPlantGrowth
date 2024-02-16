@@ -51,4 +51,4 @@ INFO_CMD_NO_ITEM: <red>您必須手持一株植物才能執行此命令！
 
 # 配置文件版本。
 # 請不要自行修改 :)
-version: 2
+version: 1

@@ -71,6 +71,7 @@ public class ConfigManager {
 
     // Enabled worlds
     private static List<String> enabled_worlds;
+    private static boolean use_enabled_worlds_as_world_blacklist;
 
     // More config values
     private static int bonemeal_limit;
@@ -355,6 +356,7 @@ public class ConfigManager {
             // General settings
             language_code = config.getString("language_code");
             enabled_worlds = config.getStringList("enabled_worlds");
+            use_enabled_worlds_as_world_blacklist = config.getBoolean("use_enabled_worlds_as_world_blacklist");
             bonemeal_limit = config.getInt("bonemeal_limit");
             min_natural_light = config.getInt("min_natural_light");
             destroy_farmland = config.getBoolean("destroy_farmland");
@@ -687,6 +689,10 @@ public class ConfigManager {
 
     public List<String> getEnabled_worlds() {
         return enabled_worlds;
+    }
+
+    public boolean isUse_enabled_worlds_as_world_blacklist() {
+        return use_enabled_worlds_as_world_blacklist;
     }
 
     public int getBonemeal_limit() {
