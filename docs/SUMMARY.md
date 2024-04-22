@@ -5,15 +5,15 @@
 ## Overview
 
 * [✨ Features](overview/features.md)
-* [⁉ FAQ](overview/faq.md)
+* [⁉️ FAQ](overview/faq.md)
 * [Commands](overview/commands.md)
 * [Permissions](overview/permissions.md)
 
 ## Guides
 
-* [🖥 Installation](guides/installation.md)
-* [🛠 Configuration](guides/configuration/README.md)
-  * [⚙ Config.yml](guides/configuration/config.yml.md)
+* [🖥️ Installation](guides/installation.md)
+* [🛠️ Configuration](guides/configuration/README.md)
+  * [⚙️ Config.yml](guides/configuration/config.yml.md)
   * [🌅 BiomeGroups.yml](guides/configuration/biomegroups.yml.md)
   * [📊 GrowthModifiers.yml](guides/configuration/growthmodifiers.yml.md)
 
@@ -21,7 +21,7 @@
 
 * [☕ Support me](for-contributors/support-me.md)
 * [🌏 For Translators](for-contributors/for-translators.md)
-* [🖥 For Developers](for-contributors/for-developers/README.md)
+* [🖥️ For Developers](for-contributors/for-developers/README.md)
   * [API](for-contributors/for-developers/api.md)
 
 ## Links
