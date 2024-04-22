@@ -1,0 +1,54 @@
+# Russian Language File
+# See https://docs.advntr.dev/minimessage/format.html for formatting infos.
+# Legacy color-codes (& and §) are not supported in this file!
+
+# Заголовок сообщения
+# Используется в качестве разделителя сообщений плагина в чате .
+MSG_HEADER: <newline><gray>---------------- <green>Realistic Plant Growth <gray>----------------
+
+# Нет доступа
+# Отправляется игроку, когда у него нет необходимых разрешений для данной команды плагина.
+NO_PERMISSIONS: <red>У вас нет необходимых доступа для выполнения этой команды!
+
+# Лог пишется в консоли при использовании команды, которая может быть использована только внутриигровыми игроками.
+NO_CONSOLE: <red>Эта команда не может быть использована из консоли!
+
+# Помощь
+# Отображается пользователю, когда он выполняет команду "/rpg help" или использует неизвестную подкоманду.
+HELP_CMD_MSG: <aqua>/rpg help <dark_gray>- <gray>Показывает это меню помощи.
+INFO_CMD_MSG: <aqua>/rpg info <dark_gray>- <gray>Показывает информацию о растении, которое в данный момент находится в руке.
+RELOAD_CMD_MSG: <aqua>/rpg reload <dark_gray>- <gray>Перезагружает все файлы конфигураци.
+# Отображается после успешной перезагрузки плагина.
+RELOAD_COMPLETE_MSG: <green>Realistic Plant Growth успешно перезагружен.
+
+# Сообщение с информацией о росте.
+# Отправляется игроку, когда он нажимает ЛКМ с растением в руке по грядке.
+# Активен только в том случае, если в файле конфигурации (Config.yml) включен параметр 'display_growth_rates'.
+GROWTH_RATE_MSG: |-
+  <gray>Информация о росте<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
+    <dark_gray> » <gray>Биом: <aqua><lang:biome.minecraft.{BIOME}>
+    <dark_gray> » <gray>Скорость роста: <aqua>{GROWTH_RATE}
+    <dark_gray> » <gray>Шанс неприживления:   <aqua>{DEATH_CHANCE}
+    <dark_gray> » <gray>Рост в тёмном месте: <aqua>{IS_DARK}
+    <dark_gray> » <gray>Влияние компостера: <aqua>{FERTILIZER_USED}
+    <dark_gray> » <gray>Влияние УФ-Света: <aqua>{UV_LIGHT_USED}
+    <dark_gray> » <gray>Может расти в темноте: <aqua>{CAN_GROW_IN_DARK}
+    <dark_gray> » <gray>Может расти без компостера в биоме <lang:biome.minecraft.{BIOME}>: <aqua>{IS_VALID_BIOME}
+# Отправляется игроку, когда в файле конфигурации (Config.yml) включен параметр 'display_growth_rates' и
+# если seed мира не был модифицирован по сравнении с Minecraft Vanilla.
+PLANT_NOT_MODIFIED_MSG: |-
+  <hover:show_item:"minecraft:{PLANT}"> <aqua><lang:block.minecraft.{PLANT}></hover> <gray>отсутствуют модификаторы роста.
+    » <yellow><italic>Нормальное поведение Minecraft Vanilla.
+# Информация о растении
+# Отображается пользователю, когда он выполняет команду '/rpg info' пока держит растение в руке.
+INFO_CMD_RESULT: |-
+  <gray>Информация о росте<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
+    <dark_gray> » <gray>Может расти в темноте: <aqua>{CAN_GROW_IN_DARK}
+    <dark_gray> » <gray>Группа биомов: <aqua>{BIOME_GROUP_LIST}
+    <dark_gray> » <gray>В каких именно биомах: <aqua>{BIOME_LIST}
+# # Отображается пользователю, когда он выполняет команду '/rpg info' не держа в руке растение.
+INFO_CMD_NO_ITEM: <red>Для исполнения команды возьмите растение в руку!
+
+# Версия файла конфигурации.
+# Пожалуйста, не редактируйте сами :)
+version: 1

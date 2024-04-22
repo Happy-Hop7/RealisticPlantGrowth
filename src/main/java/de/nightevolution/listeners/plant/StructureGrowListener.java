@@ -5,6 +5,7 @@ import de.nightevolution.listeners.PlantGrowthListener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.world.StructureGrowEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Listens to organic structure attempts to grow (Sapling -> Tree), (Mushroom -> Huge Mushroom), naturally or using bonemeal.
@@ -19,7 +20,8 @@ public class StructureGrowListener extends PlantGrowthListener {
     public void onPlantGrow(StructureGrowEvent e) {
         logger.verbose("StructureGrowEvent:");
 
-        if (!initEventData(e)) return;
+        initEventData(e);
+        if (instance.isWorldDisabled(eventWorld)) return;
 
         logger.verbose("initialized StructureGrowEvent");
 
@@ -35,16 +37,13 @@ public class StructureGrowListener extends PlantGrowthListener {
     }
 
 
-    private boolean initEventData(StructureGrowEvent e) {
+    private void initEventData(@NotNull StructureGrowEvent e) {
         // Get coordinates and information of the event block for logging
         eventLocation = e.getLocation();
         eventBlock = eventLocation.getBlock();
         eventWorld = eventBlock.getWorld();
         eventBiome = eventBlock.getBiome();
         eventBlockType = eventBlock.getType();
-
-        // Check if the world is enabled for plant growth modification
-        return !instance.isWorldDisabled(eventWorld);
     }
 
 }

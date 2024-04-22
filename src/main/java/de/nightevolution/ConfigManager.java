@@ -56,6 +56,7 @@ public class ConfigManager {
     private static final List<String> supportedLanguageCodes = (Arrays.asList(
             "de-DE",
             "en-US",
+            "ru-RU",
             "zh-Hant"
     ));
 

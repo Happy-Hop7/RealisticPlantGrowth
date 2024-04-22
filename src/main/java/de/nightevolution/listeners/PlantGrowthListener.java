@@ -21,6 +21,7 @@ public abstract class PlantGrowthListener implements Listener {
     protected RealisticPlantGrowth instance;
     protected Logger logger;
     protected String logString = "";
+    private static final String logFile = "debug";
     protected ConfigManager configManager;
     protected SpecialBlockSearch specialBlockSearch;
     protected Surrounding surrounding;
@@ -90,8 +91,6 @@ public abstract class PlantGrowthListener implements Listener {
         // Get death chance and growth rate from the surrounding environment
         deathChance = surrounding.getDeathChance();
         growthRate = surrounding.getGrowthRate();
-
-        logEvent();
 
         return true;
     }
@@ -243,24 +242,4 @@ public abstract class PlantGrowthListener implements Listener {
             pk.reduceComposterFillLevelOf(surrounding.getClosestComposter());
         }
     }
-
-    /**
-     * Logs details of the plant growth event, including coordinates, biome, death chance, and growth rate.
-     * If coordinate logging is enabled in the configuration, it includes the block's X, Y, and Z coordinates in the log.
-     */
-    protected void logEvent() {
-        // Log coordinates if logging is enabled
-        if (configManager.isLog_Coords()) {
-            coordinate = "[ " +
-                    eventBlock.getLocation().getBlockX() + ", " +
-                    eventBlock.getLocation().getBlockY() + ", " +
-                    eventBlock.getLocation().getBlockZ() + "] ";
-            logString += coordinate;
-        }
-        logger.verbose(logString);
-        logger.verbose("EventBiome: " + eventBiome);
-        logger.verbose("DeathChance: " + deathChance);
-        logger.verbose("GrowthRate: " + growthRate);
-    }
-
 }

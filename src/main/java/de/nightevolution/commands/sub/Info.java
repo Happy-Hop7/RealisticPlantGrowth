@@ -2,9 +2,9 @@ package de.nightevolution.commands.sub;
 
 
 import de.nightevolution.RealisticPlantGrowth;
+import de.nightevolution.utils.biome.BiomeChecker;
 import de.nightevolution.utils.enums.MessageType;
 import de.nightevolution.utils.enums.PlaceholderInterface;
-import de.nightevolution.utils.plant.BiomeChecker;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
