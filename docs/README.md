@@ -6,14 +6,23 @@ coverY: 0
 # 👋 Welcome to Realistic Plant Growth
 
 {% hint style="warning" %}
-_**Realistic Plant Growth**_ is still in an early phase of development. \
-If you encounter any problems, please open an issue with a detailed error description. \
+_**Realistic Plant Growth**_ is still in an early phase of development.\
+If you encounter any problems, please open an issue with a detailed error description.\
 I will investigate the occurring problem and try to fix it as soon as possible.
 {% endhint %}
 
 ## Overview
 
 _**Realistic Plant Growth**_ is a powerful Spigot/Paper plugin that brings a new level of realism to the Minecraft flora, allowing you to fine-tune growth parameters on a per-biome basis.
+
+
+
+* Do you want to stop Nether Wart farming or make it only work in the Nether like it used to be?
+* Do you think Melon farms are too powerful and want to balance them?
+* Maybe you want cocoa to grow only in jungles or make plants grow slower in deserts?
+* Or perhaps you want farms to be above ground and need natural light?
+
+&#x20;                                          **You can do all that with **_**Realistic Plant Grotwh**_**!**
 
 ***
 
@@ -53,6 +62,6 @@ If you enjoy this plugin and would like to support me, please consider making a 
 [https://www.buymeacoffee.com/TheRealPredator](https://www.buymeacoffee.com/TheRealPredator)
 {% endhint %}
 
-<figure><img src=".gitbook/assets/BuyMeACoffee.png" alt="Donation QR-Code" width="175"><figcaption><p>Support me with a coffee!</p></figcaption></figure>
+<figure><img src=".gitbook/assets/BuyMeACoffee.png" alt="Donation QR-Code" width="175"><figcaption><p>Donation Link</p></figcaption></figure>
 
 ***
