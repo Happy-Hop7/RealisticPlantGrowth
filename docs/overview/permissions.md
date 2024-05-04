@@ -43,7 +43,7 @@ permissions:
 
 ***
 
-## Admin Permissions
+## Admin
 
 The permissions listed in this section are intended for use by server administrators who have knowledge of the plugin's behavior and configurations.
 
@@ -58,7 +58,7 @@ It is essential for the use of the [`/rpg reload`](commands.md#rpg-reload) comma
 
 ***
 
-## User Permissions
+## User
 
 Recommended permissions for regular users.
 
