@@ -98,9 +98,16 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      */
     private boolean checkServerVersion() {
 
-        String version;
+        int minorReleaseVersion;
+        int microReleaseVersion;
+
         try {
-            version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+
+            String[] versionString = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+            minorReleaseVersion = Integer.parseInt(versionString[1]);
+            microReleaseVersion = Integer.parseInt(versionString[2]);
+
+            logger.log("Your server is running version 1." + minorReleaseVersion + "." + microReleaseVersion);
 
         } catch (ArrayIndexOutOfBoundsException whatVersionAreYouUsingException) {
             // Unable to extract version, log the exception and return false
@@ -108,20 +115,23 @@ public final class RealisticPlantGrowth extends JavaPlugin {
             return false;
         }
 
-        logger.log("Your server is running version " + version);
 
         if (pluginVersion.contains("SNAPSHOT")) {
             logger.warn("You are using a snapshot version!");
         }
 
-        // Initialize version-specific mappers based on the detected version
-        switch (version) {
-            case "v1_20_R1", "v1_20_R2" -> versionMapper = new Version_1_20();
-            case "v1_20_R3" -> versionMapper = new Version_1_20_4();
-        }
+        // Version below Minecraft 1.20 are not supported.
+        if (minorReleaseVersion < 20)
+            return false;
 
-        // Return true if version mapper is successfully initialized, false otherwise
-        return versionMapper != null;
+        // Initialize version-specific mappers based on the detected version
+        if (microReleaseVersion <= 3)
+            versionMapper = new Version_1_20();
+
+        else
+            versionMapper = new Version_1_20_4();
+
+        return true;
     }
 
 
