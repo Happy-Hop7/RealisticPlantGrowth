@@ -1,12 +1,13 @@
-name: '${project.name}'
-version: '${project.version}'
-main: de.nightevolution.RealisticPlantGrowth
+name: '${name}'
+version: '${version}'
+main: '${group}.RealisticPlantGrowth'
 api-version: '1.20'
 prefix: 'RealisticPlantGrowth'
 load: STARTUP
-author: TheRealPredator
-description: '${project.description}'
-website: '${project.url}'
+author: '${author}'
+description: '${description}'
+website: '${website}'
+folia-supported: false
 
 commands:
    rpg:

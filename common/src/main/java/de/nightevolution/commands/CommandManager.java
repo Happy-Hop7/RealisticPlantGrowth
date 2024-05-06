@@ -66,7 +66,8 @@ public class CommandManager implements CommandExecutor {
 
             // Prepare arguments for the switch case
             String[] args = new String[arguments.length];
-            for (int i = 0; i < arguments.length; i++) args[i] = arguments[i].toLowerCase();
+            for (int i = 0; i < arguments.length; i++)
+                args[i] = arguments[i].toLowerCase();
 
             if (args.length == 1) {
                 switch (args[0]) {

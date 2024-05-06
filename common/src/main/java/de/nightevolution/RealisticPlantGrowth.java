@@ -84,6 +84,10 @@ public final class RealisticPlantGrowth extends JavaPlugin {
             disablePlugin();
         }
 
+    }
+
+    @Override
+    public void onLoad() {
         updateVariables();
         registerMetrics();
         drawLogo();
