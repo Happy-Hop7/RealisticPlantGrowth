@@ -1,0 +1,54 @@
+# Finnish Language File
+# See https://docs.advntr.dev/minimessage/format.html for formatting infos.
+# Legacy color-codes (& and §) are not supported in this file!
+
+# Viestin Ylätunniste
+# Käytetään erottamaan pluginin chat viestejä.
+MSG_HEADER: <newline><gray>---------------- <green>Realistic Plant Growth <gray>----------------
+
+# Ei oikeutta
+# Lähetä pelaajalle jos heillä ei ole oikeutta käyttää kyseistä komentoa.
+NO_PERMISSIONS: <red>Sinulla ei ole oikeutta käyttää kyseistä komentoa!
+
+# Kirjataan konsoliin jos ei ole oikeutta käyttää pelissä.
+NO_CONSOLE: <red>Tätä komentoa voi käyttää ainoastaan konsolista!
+
+# Apu Valikko
+# Näytetään käyttäjälle jos he syöttävät '/rpg help' komennon tai käyttävät ei olemassa olevaa komentoa.
+HELP_CMD_MSG: <aqua>/rpg help <dark_gray>- <gray>Näyttää tämän apuvalikon.
+INFO_CMD_MSG: <aqua>/rpg info <dark_gray>- <gray>Näyttää tiedot kasvista jota pidät nyt kädessä.
+RELOAD_CMD_MSG: <aqua>/rpg reload <dark_gray>- <gray>Lataa uudelleen kaikki tiedostot.
+# Näytetään kun olet onnistuneesti ladannut kaikki tiedostot uudelleen.
+RELOAD_COMPLETE_MSG: <green>Realistic Plant Growth on onnistuneesti ladattu uudelleen.
+
+# Kasvutietojen viesti.
+# Lähetetään pelaajalle sen jälkeen kun left-click on klikattu maahan siemenet kädessä.
+# Aktiivinen ainoastaan 'display_growth_rates' on aktivoitu tiedostossa (Config.yml).
+GROWTH_RATE_MSG: |-
+  <gray>Growth information for<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
+    <dark_gray> » <gray>Biomi: <aqua><lang:biome.minecraft.{BIOME}>
+    <dark_gray> » <gray>Kasvutahti: <aqua>{GROWTH_RATE}
+    <dark_gray> » <gray>Kuoleman Mahdollisuus:   <aqua>{DEATH_CHANCE}
+    <dark_gray> » <gray>On liian pimeää: <aqua>{IS_DARK}
+    <dark_gray> » <gray>Lannoitteen vaikutusalueella: <aqua>{FERTILIZER_USED}
+    <dark_gray> » <gray>UV-Valojen vaikutusalueella: <aqua>{UV_LIGHT_USED}
+    <dark_gray> » <gray>Voi kasvaa pimessä: <aqua>{CAN_GROW_IN_DARK}
+    <dark_gray> » <gray>Voi kasvaa ilman lannoitetta -> <lang:biome.minecraft.{BIOME}>: <aqua>{IS_VALID_BIOME}
+# Lähetetään pelaajalle jos 'display_growth_rates'  on aktivoitu tiedostossa (Config.yml) ja
+# siementä ei ole muokattu verrattaen normaaliin Vanilla Minecraftiin.
+PLANT_NOT_MODIFIED_MSG: |-
+  <hover:show_item:"minecraft:{PLANT}"> <aqua><lang:block.minecraft.{PLANT}></hover> <gray>ei ole muokattuja ominaisuuksia.
+    » <yellow><italic>Verrattaen normaaliin Vanilla Minecraftiin.
+# Tietoja Kasvista
+# Näytetään jos käyttäjä syöttää '/rpg info' pitäessään kasvia kädessä.
+INFO_CMD_RESULT: |-
+  <gray>Growth information for<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
+    <dark_gray> » <gray>Voi kasvaa pimeässä: <aqua>{CAN_GROW_IN_DARK}
+    <dark_gray> » <gray>Biomi Ryhmät: <aqua>{BIOME_GROUP_LIST}
+    <dark_gray> » <gray>Hyväksyttävät Biomit: <aqua>{BIOME_LIST}
+# Näytetään jos käyttäjä syöttää '/rpg info' komennon ja hänella ei ole esinettä (kasvia) kädessään.
+INFO_CMD_NO_ITEM: <red>Sinun pitää pitää jotain kasvia kädessäsi syöttääksesi tämän komennon!
+
+# Konfiguraatio tiedoston versio.
+# Älä muokkaa tätä omin päin :)
+version: 1
