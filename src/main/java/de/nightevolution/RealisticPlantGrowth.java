@@ -105,7 +105,12 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
             String[] versionString = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
             minorReleaseVersion = Integer.parseInt(versionString[1]);
-            microReleaseVersion = Integer.parseInt(versionString[2]);
+
+            if (versionString.length >= 3) {
+                microReleaseVersion = Integer.parseInt(versionString[2]);
+            } else {
+                microReleaseVersion = 0;
+            }
 
             logger.log("Your server is running version 1." + minorReleaseVersion + "." + microReleaseVersion);
 
@@ -125,7 +130,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
             return false;
 
         // Initialize version-specific mappers based on the detected version
-        if (microReleaseVersion <= 3)
+        if (minorReleaseVersion == 20 && microReleaseVersion <= 3)
             versionMapper = new Version_1_20();
 
         else
