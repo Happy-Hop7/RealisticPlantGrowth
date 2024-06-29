@@ -1,13 +1,13 @@
 # 👋 Welcome to the Realistic Plant Growth Plugin
 
 ![GitHub branch status](https://img.shields.io/github/checks-status/Happy-Hop7/RealisticPlantGrowth/master?style=for-the-badge)
-![Modrinth Downloads](https://img.shields.io/modrinth/dt/TcGxLk2t?style=for-the-badge&logo=modrinth&logoSize=auto&link=https%3A%2F%2Fmodrinth.com%2Fplugin%2Frealistic-plant-growth)
-![Modrinth Version](https://img.shields.io/modrinth/v/TcGxLk2t?style=for-the-badge&link=https%3A%2F%2Fmodrinth.com%2Fplugin%2Frealistic-plant-growth%2Fversion%2Flatest)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/TcGxLk2t?style=for-the-badge&logo=modrinth&logoSize=auto)](https://modrinth.com/plugin/realistic-plant-growth)
+[![Modrinth Version](https://img.shields.io/modrinth/v/TcGxLk2t?style=for-the-badge)](https://modrinth.com/plugin/realistic-plant-growth/version/latest)
 
-![Discord](https://img.shields.io/discord/1241334817098956851?style=for-the-badge&logo=discord&link=https%3A%2F%2Fdiscord.gg%2FPgUhUNGu2A)
-![Static Badge](https://img.shields.io/badge/wiki-RealisticPlantGrowth?style=for-the-badge&logo=gitbook&labelColor=gray&color=c73636&link=https%3A%2F%2Fdocs.nightevolution.de%2F)
+[![Discord](https://img.shields.io/discord/1241334817098956851?style=for-the-badge&logo=discord)](https://discord.gg/PgUhUNGu2A)
+[![Static Badge](https://img.shields.io/badge/wiki-RealisticPlantGrowth?style=for-the-badge&logo=gitbook&labelColor=gray&color=c73636)](https://docs.nightevolution.de/)
 
-
+<br>
 
 > [!IMPORTANT]
 > RealisticPlantGrowth is still in an early phase of development. <br>
@@ -103,7 +103,7 @@ Check out our [wiki](https://docs.nightevolution.de/) for detailed documentation
 <br>
 
 
-![IMG](https://bstats.org/signatures/bukkit/Realistic%20Plant%20Growth.svg)
+[![IMG](https://bstats.org/signatures/bukkit/Realistic%20Plant%20Growth.svg)](https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634)
 
 <br>
 <br>
