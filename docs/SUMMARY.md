@@ -29,5 +29,5 @@
 * [GitHub](https://github.com/Happy-Hop7/RealisticPlantGrowth)
 * [Modrinth](https://modrinth.com/plugin/realistic-plant-growth)
 * [Spigot](https://www.spigotmc.org/resources/realistic-plant-growth.114096/)
-* [Discord](https://discord.gg/4RdgdaNdhB)
+* [Discord](https://discord.gg/PgUhUNGu2A)
 * [Donate](https://www.buymeacoffee.com/TheRealPredator)
