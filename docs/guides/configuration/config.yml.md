@@ -1,7 +1,8 @@
-# ⚙ Config.yml
+# ⚙️ Config.yml
 
-Default Config:\
-[https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml](https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml)
+{% embed url="https://github.com/Happy-Hop7/RealisticPlantGrowth/blob/master/src/main/resources/Config.yml" fullWidth="false" %}
+Default Config.yml
+{% endembed %}
 
 ***
 

@@ -4,8 +4,8 @@ description: Localize Messages for the Realistic Plant Growth Plugin.
 
 # 🌏 For Translators
 
-If you've translated the language file into your native language, you can assist others by sharing your version with me. You can share it directly on GitHub or send  me the file via Email or Discord.\
-Email: [support@nightevolution.de](mailto:support@nightevolution.de)
+If you've translated the language file into your native language, you can assist others by sharing your version with me. You can share it directly on GitHub or send  me the file via [Email ](mailto:support@nightevolution.de)or [Discord](https://discord.gg/PgUhUNGu2A).\
+
 
 ## Supported Languages
 
