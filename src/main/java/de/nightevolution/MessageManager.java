@@ -23,7 +23,6 @@ public class MessageManager {
     private final MiniMessage miniMessage;
     private final Logger logger;
 
-
     private static String prefix;
     private static EnumMap<MessageType, String> localizedMessagePair;
 
@@ -63,7 +62,6 @@ public class MessageManager {
         }
 
         prefix = localizedMessagePair.get(MessageType.MSG_HEADER);
-
     }
 
     /**
@@ -78,11 +76,12 @@ public class MessageManager {
     public void sendLocalizedMsg(@NotNull CommandSender target, @NotNull MessageType messageType,
                                  @Nullable List<String> placeholders, @Nullable List<Object> replacements, boolean sendHeader) {
 
+        String logFile = "debug";
         String message = localizedMessagePair.get(messageType);
 
         if (placeholders != null && replacements != null) {
             if (placeholders.size() != replacements.size()) {
-                throw new IllegalArgumentException("MessageManager.getLocalizedMsg() to less arguments provided!");
+                throw new IllegalArgumentException("MessageManager.getLocalizedMsg() received an incorrect number of arguments!");
             }
 
             // Replace Plugin Placeholders
@@ -91,14 +90,19 @@ public class MessageManager {
             }
         }
 
-        logger.verbose(message);
+        if (RealisticPlantGrowth.isDebug()) {
+            logger.logToFile("", logFile);
+            logger.logToFile("-------------------- Message Sent --------------------", logFile);
+            logger.logToFile("  To: " + target, logFile);
+            logger.logToFile("  Message Type: " + messageType, logFile);
+            logger.logToFile(System.lineSeparator() + message, logFile);
+        }
 
         if (sendHeader)
             sendMessageHeader(target);
 
         Component messageComponent = miniMessage.deserialize(message);
         target.spigot().sendMessage(BungeeComponentSerializer.get().serialize(messageComponent));
-
     }
 
     /**
@@ -141,7 +145,6 @@ public class MessageManager {
         target.spigot().sendMessage(BungeeComponentSerializer.get().serialize(headerComponent));
     }
 
-
     /**
      * Sends the help menu to the specified command sender.
      *
@@ -161,5 +164,4 @@ public class MessageManager {
     public void sendNoPermissionMessage(CommandSender sender) {
         sendLocalizedMsg(sender, MessageType.NO_PERMISSIONS, false);
     }
-
 }

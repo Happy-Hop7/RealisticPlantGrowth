@@ -120,6 +120,9 @@ public class Modifier {
 
         this.growthModifier = getCheckedGrowthModifier(optionalGrowthDouble.get());
         this.deathChance = getCheckedDeathChance(optionalDeathDouble.get());
+
+        logger.verbose("growthModifier: " + this.growthModifier);
+        logger.verbose("deathChance: " + this.deathChance);
     }
 
     /**

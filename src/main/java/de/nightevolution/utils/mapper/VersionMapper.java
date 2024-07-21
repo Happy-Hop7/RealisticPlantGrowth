@@ -208,6 +208,12 @@ public abstract class VersionMapper {
         // also remove torchFlower, since it is already a fully grown decoration plant
         clickableSeeds.remove(getTorchflowerMaterial());
 
+        if (RealisticPlantGrowth.isVerbose()) {
+            logger.logToFile("-------------------- Clickable Seeds updated --------------------", "verbose");
+            for (Material seed : clickableSeedsMap.keySet()) {
+                logger.logToFile("- " + seed + "->" + clickableSeedsMap.get(seed), "verbose");
+            }
+        }
     }
 
     // Getters

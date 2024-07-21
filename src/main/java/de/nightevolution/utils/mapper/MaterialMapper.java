@@ -131,11 +131,12 @@ public class MaterialMapper {
 
         }
 
-        logger.verbose("--------- GrowthModifiedPlants ------------");
-        for (Material m : growthModifiedPlants) {
-            logger.verbose("  - " + m.toString());
+        if (RealisticPlantGrowth.isVerbose()) {
+            logger.logToFile("-------------------- Updated GrowthModifiedPlants --------------------", "verbose");
+            for (Material m : growthModifiedPlants) {
+                logger.logToFile("  - " + m.toString(), "verbose");
+            }
         }
-
     }
 
     /**

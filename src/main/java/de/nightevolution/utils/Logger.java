@@ -57,7 +57,7 @@ public class Logger {
 
         // Print all debug values, if verbose is enabled.
         if (verbose)
-            debug(msg);
+            verbose(msg);
 
         // write log file
         writeToLogFile(getDate() + " " + msg, fileName);
