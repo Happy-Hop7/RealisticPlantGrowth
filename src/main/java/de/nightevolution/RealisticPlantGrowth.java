@@ -219,8 +219,9 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         registerTabCompleter();
         BiomeChecker.clearCache();
         registerListeners();
-        checkForUpdates();
 
+        if (cm.check_for_updates())
+            checkForUpdates();
     }
 
     /**
