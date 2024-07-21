@@ -66,10 +66,10 @@ public class ConfigManager {
     // Different debug and logging modes
     private static boolean verbose = true;
     private static boolean debug_log;
-    private static boolean tree_log;
+    private static boolean structure_log;
     private static boolean plant_log;
     private static boolean bonemeal_log;
-    private static boolean log_coords;
+    private static boolean player_log;
 
     // Enabled worlds
     private static List<String> enabled_worlds;
@@ -350,10 +350,10 @@ public class ConfigManager {
             plugin_prefix = config.getString("plugin_prefix");
             logger.setPluginPrefix(plugin_prefix);
 
-            tree_log = config.getBoolean("tree_log");
+            structure_log = config.getBoolean("structure_log");
             plant_log = config.getBoolean("plant_log");
             bonemeal_log = config.getBoolean("bonemeal_log");
-            log_coords = config.getBoolean("log_coords");
+            player_log = config.getBoolean("player_log");
 
             // General settings
             language_code = config.getString("language_code");
@@ -449,10 +449,10 @@ public class ConfigManager {
             logger.logToFile("", logFile);
 
             logger.logToFile("plugin_prefix: " + plugin_prefix, logFile);
-            logger.logToFile("tree_log: " + tree_log, logFile);
+            logger.logToFile("structure_log: " + structure_log, logFile);
             logger.logToFile("plant_log: " + plant_log, logFile);
             logger.logToFile("bonemeal_log: " + bonemeal_log, logFile);
-            logger.logToFile("log_coords: " + log_coords, logFile);
+            logger.logToFile("player_log: " + player_log, logFile);
 
             // General settings
             logger.logToFile("language_code: " + language_code, logFile);
@@ -673,8 +673,8 @@ public class ConfigManager {
         return debug_log;
     }
 
-    public boolean isTree_log() {
-        return tree_log;
+    public boolean isStructure_log() {
+        return structure_log;
     }
 
     public boolean isPlant_log() {
@@ -685,9 +685,10 @@ public class ConfigManager {
         return bonemeal_log;
     }
 
-    public boolean isLog_Coords() {
-        return log_coords;
+    public boolean isPlayer_log() {
+        return player_log;
     }
+
 
     public List<String> getEnabled_worlds() {
         return enabled_worlds;

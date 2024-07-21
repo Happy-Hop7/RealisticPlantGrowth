@@ -6,7 +6,6 @@ import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.enums.MessageType;
 import de.nightevolution.utils.enums.PlaceholderInterface;
-import de.nightevolution.utils.mapper.MaterialMapper;
 import de.nightevolution.utils.mapper.VersionMapper;
 import de.nightevolution.utils.plant.SpecialBlockSearch;
 import de.nightevolution.utils.plant.Surrounding;
@@ -23,7 +22,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Listens to player block interactions in order to provide information
@@ -36,19 +38,24 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
     private final Logger logger;
     private final MessageManager msgManager;
     private final VersionMapper versionMapper;
-    private final MaterialMapper materialMapper;
-    private final String logFile = "PlayerInteractEvent";
     private final boolean logEvent;
+    private final String logFile = "PlayerInteractEvent";
 
     private static final HashMap<UUID, Long> playerCooldownMap = new HashMap<>();
 
+    /**
+     * Constructs a new {@link PlayerInteractListener}.
+     *
+     * @param instance The main plugin instance of RealisticPlantGrowth.
+     */
     public PlayerInteractListener(RealisticPlantGrowth instance) {
         this.instance = instance;
         this.cm = instance.getConfigManager();
         this.msgManager = instance.getMessageManager();
         this.versionMapper = instance.getVersionMapper();
-        this.materialMapper = versionMapper.getMaterialMapper();
-        this.logEvent = RealisticPlantGrowth.isDebug();
+
+        // Enable logging if debug mode is active and player logging is enabled
+        this.logEvent = (RealisticPlantGrowth.isDebug() && cm.isPlayer_log());
 
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         instance.getServer().getPluginManager().registerEvents(this, instance);
@@ -56,8 +63,14 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
     }
 
+    /**
+     * Handles player interactions with blocks, specifically when holding clickable seeds.
+     *
+     * @param e The PlayerInteractEvent.
+     */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteractEventWithClickableSeeds(PlayerInteractEvent e) {
+
         if (logEvent) {
             logger.logToFile("", logFile);
             logger.logToFile("-------------------- Player Interact Event --------------------", logFile);
@@ -65,6 +78,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             logger.logToFile("  Player location: " + e.getPlayer().getLocation(), logFile);
         }
 
+        // Check if growth rate display is enabled
         if (!cm.isDisplay_growth_rates()) {
             if (logEvent)
                 logger.logToFile("  Display_growth_rates deactivated.", logFile);
@@ -94,10 +108,11 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             return;
         }
 
-        // Use the block above the clicked block to avoid a sky light level of zero
+        // Use the block above the clicked block to avoid a skylight level of zero
         Block eventBlock = clickedBlock.getRelative(BlockFace.UP);
         Player ePlayer = e.getPlayer();
 
+        // Check if the player has the required permission
         if (!ePlayer.hasPermission("rpg.info.interact")) {
             if (logEvent)
                 logger.logToFile("Player has no interact permission.", logFile);
@@ -134,8 +149,11 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             }
         }
 
+        // Update the player's last interaction time
         playerCooldownMap.put(e.getPlayer().getUniqueId(), currentTime);
 
+        // Cancel the interact event if the player is in creative mode.
+        // Prevents destroying clicked blocks
         if (e.getPlayer().getGameMode() == GameMode.CREATIVE)
             e.setCancelled(true);
 
@@ -145,21 +163,24 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             logger.logToFile("  Material derived from seed: " + plantMaterial, logFile);
         }
 
+        // Check if the plant's growth is modified by the plugin
         if (!versionMapper.isGrowthModifiedPlant(plantMaterial)) {
             logger.logToFile("  Vanilla behavior for: " + plantMaterial, logFile);
 
-            // Send a player message
+            // Send a message to the player
             msgManager.sendLocalizedMsg(ePlayer, MessageType.PLANT_NOT_MODIFIED_MSG,
                     PLANT_PLACEHOLDER, plantMaterial.toString().toLowerCase(), true);
 
             return;
         }
 
+        // Temporarily set the event block state to the plant material
         eventBlockState.setType(plantMaterial);
 
         if (logEvent)
             logger.logToFile("  Calculating Growth Modifier Data...", logFile);
 
+        // Calculate the surrounding environment's effect on the plant's growth
         Surrounding surrounding = SpecialBlockSearch.get().surroundingOf(eventBlock, eventBlockState);
 
         double growthRate = surrounding.getGrowthRate();
@@ -171,6 +192,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             logger.logToFile("    Biome: " + surrounding.getBiome(), logFile);
         }
 
+        // Prepare placeholders and their replacements for the localized message
         List<String> placeholders = Arrays.asList(
                 PLANT_PLACEHOLDER,
                 GROWTH_RATE_PLACEHOLDER,
@@ -195,9 +217,16 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
                 surrounding.isInDarkness()
         );
 
+        // Send the localized message to the player
         msgManager.sendLocalizedMsg(ePlayer, MessageType.GROWTH_RATE_MSG, placeholders, replacements, true);
     }
 
+    /**
+     * Clears the cooldown data for a specific player.
+     * Called in {@link PlayerQuitListener}.
+     *
+     * @param uuid The UUID of the player.
+     */
     public static void clearPlayerCooldownData(UUID uuid) {
         playerCooldownMap.remove(uuid);
     }
