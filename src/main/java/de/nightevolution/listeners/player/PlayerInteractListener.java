@@ -89,7 +89,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         World eventWorld = e.getPlayer().getWorld();
         if (instance.isWorldDisabled(eventWorld)) {
             if (logEvent)
-                logger.logToFile("  World: " + eventWorld + " not activated.", logFile);
+                logger.logToFile("  World: " + eventWorld.getName() + " is not activated for plant growth modification.", logFile);
             return;
         }
 
@@ -115,7 +115,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         // Check if the player has the required permission
         if (!ePlayer.hasPermission("rpg.info.interact")) {
             if (logEvent)
-                logger.logToFile("Player has no interact permission.", logFile);
+                logger.logToFile("Player " + ePlayer.getName() + " lacks 'rpg.info.interact' permission.", logFile);
             return;
         }
 
@@ -126,16 +126,16 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         // getMaterialFromSeed is nullable
         if (plantMaterial == null) {
             if (logEvent)
-                logger.logToFile("Could not retrieve a plant material from used seed material.", logFile);
+                logger.logToFile("Could not retrieve plant material from seed material: " + e.getMaterial(), logFile);
             return;
         }
 
         // Add a cooldown to stop click spamming, preventing unnecessary heavy area calculations
-        Long lastTime = playerCooldownMap.get(e.getPlayer().getUniqueId());
+        Long lastTime = playerCooldownMap.get(ePlayer.getUniqueId());
         long currentTime = System.currentTimeMillis();
 
         // Cooldown in milliseconds
-        int cooldown = (cm.getDisplay_cooldown() * 1000);
+        int cooldown = cm.getDisplay_cooldown() * 1000;
         if (lastTime != null) {
             if (logEvent) {
                 logger.logToFile("  Last interact time: " + lastTime, logFile);
@@ -144,28 +144,28 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             }
 
             if ((currentTime - lastTime) < cooldown) {
-                logger.logToFile("  PlayerInteractEvent during cooldown.", logFile);
+                logger.logToFile("  PlayerInteractEvent triggered during cooldown period.", logFile);
                 return;
             }
         }
 
         // Update the player's last interaction time
-        playerCooldownMap.put(e.getPlayer().getUniqueId(), currentTime);
+        playerCooldownMap.put(ePlayer.getUniqueId(), currentTime);
 
         // Cancel the interact event if the player is in creative mode.
         // Prevents destroying clicked blocks
-        if (e.getPlayer().getGameMode() == GameMode.CREATIVE)
+        if (ePlayer.getGameMode() == GameMode.CREATIVE)
             e.setCancelled(true);
 
         if (logEvent) {
             logger.logToFile("  All pre-checks passed.", logFile);
-            logger.logToFile("  Seed material in player hand: " + e.getMaterial(), logFile);
+            logger.logToFile("  Seed material in player's hand: " + e.getMaterial(), logFile);
             logger.logToFile("  Material derived from seed: " + plantMaterial, logFile);
         }
 
         // Check if the plant's growth is modified by the plugin
         if (!versionMapper.isGrowthModifiedPlant(plantMaterial)) {
-            logger.logToFile("  Vanilla behavior for: " + plantMaterial, logFile);
+            logger.logToFile("  Vanilla behavior for plant material: " + plantMaterial, logFile);
 
             // Send a message to the player
             msgManager.sendLocalizedMsg(ePlayer, MessageType.PLANT_NOT_MODIFIED_MSG,

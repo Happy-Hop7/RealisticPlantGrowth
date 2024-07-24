@@ -23,9 +23,9 @@ public class MessageManager {
     private static MessageManager messageManager;
     private final MiniMessage miniMessage;
     private final Logger logger;
-    private final String logFile = "debug";
-    private final boolean debug;
 
+    private static final String logFile = "debug";
+    private static boolean debug;
     private static String prefix;
     private static EnumMap<MessageType, String> localizedMessagePair;
 
@@ -38,7 +38,6 @@ public class MessageManager {
         this.miniMessage = MiniMessage.miniMessage();
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         messageManager = this;
-        debug = RealisticPlantGrowth.isDebug();
     }
 
     /**
@@ -55,16 +54,16 @@ public class MessageManager {
     }
 
     /**
-     * Checks and updates the localized message pairs.
+     * Checks and updates the localized message pairs from the configuration.
      */
     protected static void checkAndUpdateMessages() {
-
         localizedMessagePair = new EnumMap<>(MessageType.class);
 
         for (MessageType s : MessageType.values()) {
             localizedMessagePair.put(s, configManager.getSelectedLanguageString(s.toString()));
         }
 
+        debug = RealisticPlantGrowth.isDebug();
         prefix = localizedMessagePair.get(MessageType.MSG_HEADER);
     }
 
@@ -80,18 +79,19 @@ public class MessageManager {
     public void sendLocalizedMsg(@NotNull CommandSender target, @NotNull MessageType messageType,
                                  @Nullable List<String> placeholders, @Nullable List<Object> replacements, boolean sendHeader) {
 
+        if (debug) {
+            logger.logToFile("", logFile);
+            logger.logToFile("-------------------- Message Sent --------------------", logFile);
+            logger.logToFile("  To: " + target.getName(), logFile);
+            logger.logToFile("  Message Type: " + messageType, logFile);
+        }
 
         String messageWithPlaceholder = localizedMessagePair.get(messageType);
         String message = processPlaceholder(messageWithPlaceholder, placeholders, replacements);
 
-
         if (debug) {
-            logger.logToFile("", logFile);
-            logger.logToFile("-------------------- Message Sent --------------------", logFile);
-            logger.logToFile("  To: " + target, logFile);
-            logger.logToFile("  Message Type: " + messageType, logFile);
-            logger.logToFile("  Message with Placeholder" + System.lineSeparator() + messageWithPlaceholder, logFile);
-            logger.logToFile("  Message without Placeholder" + System.lineSeparator() + message, logFile);
+            logger.logToFile("  Message with Placeholder:" + System.lineSeparator() + messageWithPlaceholder, logFile);
+            logger.logToFile("  Message without Placeholder:" + System.lineSeparator() + message, logFile);
         }
 
         if (sendHeader)
@@ -161,7 +161,15 @@ public class MessageManager {
         sendLocalizedMsg(sender, MessageType.NO_PERMISSIONS, false);
     }
 
-    public String processPlaceholder (String message, @Nullable List<String> placeholders, @Nullable List<Object> replacements){
+    /**
+     * Processes placeholders in the message with their corresponding replacements.
+     *
+     * @param message       The message containing placeholders.
+     * @param placeholders  The list of placeholders to be replaced.
+     * @param replacements  The list of replacements for the placeholders.
+     * @return The message with placeholders replaced by their corresponding values.
+     */
+    public String processPlaceholder(String message, @Nullable List<String> placeholders, @Nullable List<Object> replacements) {
         if (placeholders != null && replacements != null && !replacements.isEmpty()) {
             if (placeholders.size() != replacements.size()) {
                 throw new IllegalArgumentException("MessageManager.processPlaceholder() received an incorrect number of arguments!");
@@ -172,29 +180,19 @@ public class MessageManager {
                 message = message.replace(placeholders.get(i), replacements.get(i).toString());
             }
 
-            // Check if there Plant Placeholder is a Block or Item (relevant for correct minimessage formatting)
+            // Check if the Plant Placeholder is a Block or Item (relevant for correct MiniMessage formatting)
             Material plantMaterialType = Material.getMaterial(replacements.get(0).toString().toUpperCase());
 
             if (plantMaterialType != null && !plantMaterialType.isBlock()) {
                 message = message.replace("lang:block.minecraft", "lang:item.minecraft");
 
                 if (debug) {
-                    logger.logToFile("  Placeholder Material: " + plantMaterialType, logFile);
-                    logger.logToFile("  Is Item?: " + plantMaterialType.isItem(), logFile);
+                    logger.logToFile("  Processed Placeholder Material: " + plantMaterialType, logFile);
+                    logger.logToFile("  Placeholder Material is an Item: " + plantMaterialType.isItem(), logFile);
                 }
             }
-            else {
-                if (debug) {
-                    logger.logToFile("  Placeholder Material: " + plantMaterialType, logFile);
-                    logger.logToFile("  Is a Block." , logFile);
-                }
-            }
-
-
         }
 
         return message;
-
     }
-
 }

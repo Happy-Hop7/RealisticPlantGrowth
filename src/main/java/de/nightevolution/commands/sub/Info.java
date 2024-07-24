@@ -1,6 +1,5 @@
 package de.nightevolution.commands.sub;
 
-
 import de.nightevolution.RealisticPlantGrowth;
 import de.nightevolution.utils.biome.BiomeChecker;
 import de.nightevolution.utils.enums.MessageType;
@@ -43,10 +42,11 @@ public class Info extends SubCommand implements PlaceholderInterface {
      */
     @Override
     public boolean executeCommand() {
-        if (!super.executeCommand())
+        if (!super.executeCommand()) {
             return false;
+        }
 
-        // Command can only be executed by a player In-Game.
+        // Ensure the command is executed by a player in-game
         if (!(commandSender instanceof Player player)) {
             msgManager.sendLocalizedMsg(commandSender, MessageType.NO_CONSOLE, false);
             return false;
@@ -55,24 +55,26 @@ public class Info extends SubCommand implements PlaceholderInterface {
         World world = player.getWorld();
 
         // Check if the world is enabled for plant growth modification
-        if (instance.isWorldDisabled(world))
-            return false;
-
-
-        if (!isPlayerHoldingAGrowthModifiedPlantSeed(player)) {
-            if (notGrowthModifiedSeed != null)
-                msgManager.sendLocalizedMsg(player, MessageType.PLANT_NOT_MODIFIED_MSG,
-                        PLANT_PLACEHOLDER, notGrowthModifiedSeed.toString().toLowerCase(), true);
-            else
-                msgManager.sendLocalizedMsg(player, MessageType.INFO_CMD_NO_ITEM, false);
+        if (instance.isWorldDisabled(world)) {
             return false;
         }
 
-        BiomeChecker bc = new BiomeChecker(plantMaterial, player.getLocation().getBlock().getBiome());
+        // Check if the player is holding a growth-modified plant seed
+        if (!isPlayerHoldingAGrowthModifiedPlantSeed(player)) {
+            if (notGrowthModifiedSeed != null) {
+                msgManager.sendLocalizedMsg(player, MessageType.PLANT_NOT_MODIFIED_MSG,
+                        PLANT_PLACEHOLDER, notGrowthModifiedSeed.toString().toLowerCase(), true);
+            } else {
+                msgManager.sendLocalizedMsg(player, MessageType.INFO_CMD_NO_ITEM, false);
+            }
+            return false;
+        }
 
+        // Check the biomes where the plant can grow
+        BiomeChecker bc = new BiomeChecker(plantMaterial, player.getLocation().getBlock().getBiome());
         String defaultBiomesList = formatBiomeList(bc.getDefaultBiomes());
 
-
+        // Prepare placeholders and replacements for the message
         List<String> placeholders = Arrays.asList(
                 PLANT_PLACEHOLDER,
                 CAN_GROW_IN_DARK_PLACEHOLDER,
@@ -87,6 +89,7 @@ public class Info extends SubCommand implements PlaceholderInterface {
                 defaultBiomesList
         );
 
+        // Logging the details if verbose mode is enabled
         if (verbose) {
             superLogger.logToFile("  Plant: " + plantMaterial, logFile);
             superLogger.logToFile("  Seed: " + seedMaterial, logFile);
@@ -95,16 +98,17 @@ public class Info extends SubCommand implements PlaceholderInterface {
             superLogger.logToFile("  BiomeList: " + defaultBiomesList, logFile);
         }
 
+        // Send the localized message to the player
         msgManager.sendLocalizedMsg(player, MessageType.INFO_CMD_RESULT, placeholders, replacements, true);
 
         return true;
     }
 
     /**
-     * Checks if the {@link Player} is holding a plant in their hand.
+     * Checks if the {@link Player} is holding a plant seed in their hand.
      *
      * @param player The {@link Player} to check.
-     * @return True if the {@link Player} is holding a plant, false otherwise.
+     * @return True if the {@link Player} is holding a plant seed, false otherwise.
      */
     private boolean isPlayerHoldingAGrowthModifiedPlantSeed(@NotNull Player player) {
         Material mainHand = player.getInventory().getItemInMainHand().getType();
@@ -113,33 +117,37 @@ public class Info extends SubCommand implements PlaceholderInterface {
         Material offHandSeed;
         notGrowthModifiedSeed = null;
 
-        if (mapper.isClickableSeed(mainHand))
+        // Check if the player is holding a clickable seed in their main or off hand
+        if (mapper.isClickableSeed(mainHand)) {
             mainHandSeed = mainHand;
-        else
+        } else {
             mainHandSeed = Material.AIR;
+        }
 
-        if (mapper.isClickableSeed(offHand))
+        if (mapper.isClickableSeed(offHand)) {
             offHandSeed = offHand;
-        else
+        } else {
             offHandSeed = Material.AIR;
+        }
 
-
-        if (mainHandSeed == Material.AIR && offHandSeed == Material.AIR){
+        // If the player is not holding any clickable seed, return false
+        if (mainHandSeed == Material.AIR && offHandSeed == Material.AIR) {
             return false;
         }
 
+        // Check if the seed corresponds to a growth-modified plant
         for (Material material : Arrays.asList(mainHandSeed, offHandSeed)) {
             Material tempPlantMaterial = mapper.getMaterialFromSeed(material);
 
-            if (tempPlantMaterial == null)
+            if (tempPlantMaterial == null) {
                 continue;
+            }
 
             if (mapper.isGrowthModifiedPlant(tempPlantMaterial)) {
                 plantMaterial = tempPlantMaterial;
                 seedMaterial = material;
                 return true;
-            }
-            else if (mapper.isAPlant(tempPlantMaterial)) {
+            } else if (mapper.isAPlant(tempPlantMaterial)) {
                 notGrowthModifiedSeed = material;
             }
         }
@@ -156,12 +164,15 @@ public class Info extends SubCommand implements PlaceholderInterface {
     private String formatBiomeList(@NotNull List<String> biomeList) {
         StringBuilder builder = new StringBuilder();
 
+        // If the list is empty, return an empty bracket
         if (biomeList.isEmpty()) {
             return "[]";
         }
 
-        if (biomeList.size() == 1 && biomeList.get(0).equalsIgnoreCase("ALL"))
+        // If the list contains only 'ALL', return it as is
+        if (biomeList.size() == 1 && biomeList.get(0).equalsIgnoreCase("ALL")) {
             return biomeList.get(0);
+        }
 
         builder.append("<newline>");
         for (String element : biomeList) {
@@ -174,6 +185,4 @@ public class Info extends SubCommand implements PlaceholderInterface {
 
         return builder.toString();
     }
-
-
 }
