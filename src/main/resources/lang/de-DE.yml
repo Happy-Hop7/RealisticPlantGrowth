@@ -39,8 +39,9 @@ GROWTH_RATE_MSG: |-
     <dark_gray> » <gray>Kann in Dunkelheit wachsen: <aqua>{CAN_GROW_IN_DARK}
     <dark_gray> » <gray>Kann ohne Dünger in <lang:biome.minecraft.{BIOME}> wachsen: <aqua>{IS_VALID_BIOME}
 
-# Nachricht an den Spieler, wenn 'display_growth_rates' in der Konfigurationsdatei (Config.yml) aktiviert ist und
-# das Saatgut keine veränderten Eigenschaften gegenüber Minecraft-Vanilla verhalten aufweist.
+# Nachricht an den Spieler, wenn eines der folgenden zutrifft:
+# 1. Die Option 'display_growth_rates' in der Config.yml aktiviert ist und das Saatgut keine Änderungen im Vergleich zu den Standard-Eigenschaften von Minecraft hat.
+# 2. Der Befehl '/rpg info' verwendet wurde und das Saatgut keine Änderungen im Vergleich zu den Standard-Eigenschaften von Minecraft hat.
 PLANT_NOT_MODIFIED_MSG: |-
   <hover:show_item:"minecraft:{PLANT}"> <aqua><lang:block.minecraft.{PLANT}></hover> <gray>besitzt keine veränderten Wachstumseigenschaften.
     » <yellow><italic>Normales Minecraft Vanilla-Verhalten.
@@ -53,8 +54,8 @@ INFO_CMD_RESULT: |-
     <dark_gray> » <gray>Biomgruppen: <aqua>{BIOME_GROUP_LIST}
     <dark_gray> » <gray>Gültige Biome: <aqua>{BIOME_LIST}
 
-# Wird dem Nutzer angezeigt, wenn dieser den Befehl '/rpg info' ausführt und kein Item (keine Pflanze) in der Hand hält.
-INFO_CMD_NO_ITEM: "<red>Du musst eine Pflanze in der Hand halten, um diesen Befehl ausführen zu können!"
+# Wird dem Nutzer angezeigt, wenn dieser den Befehl '/rpg info' ausführt und kein Item (Saatgut) in der Hand hält.
+INFO_CMD_NO_ITEM: "<red>Du musst Pflanzensaatgut in der Hand halten, um diesen Befehl ausführen zu können!"
 
 # Version der Konfigurationsdatei.
 # Bitte nicht selbständig ändern :)

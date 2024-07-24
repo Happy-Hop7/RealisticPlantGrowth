@@ -39,8 +39,9 @@ GROWTH_RATE_MSG: |-
     <dark_gray> » <gray>Can Grow in Darkness: <aqua>{CAN_GROW_IN_DARK}
     <dark_gray> » <gray>Can grow without fertilizer in <lang:biome.minecraft.{BIOME}>: <aqua>{IS_VALID_BIOME}
 
-# Sent to the player when 'display_growth_rates' is enabled in the configuration file (Config.yml) and
-# the seed has no modified properties compared to Minecraft vanilla behavior.
+# Message to the player if either of the following conditions is met:
+# 1. The 'display_growth_rates' option in the Config.yml is enabled and the seed has no modified properties compared to Minecraft vanilla.
+# 2. The '/rpg info' command is used and the seed has no modified properties compared to Minecraft vanilla.
 PLANT_NOT_MODIFIED_MSG: |-
   <hover:show_item:"minecraft:{PLANT}"> <aqua><lang:block.minecraft.{PLANT}></hover> <gray>has no modified growth properties.
     » <yellow><italic>Normal Minecraft Vanilla behavior.
@@ -53,8 +54,8 @@ INFO_CMD_RESULT: |-
     <dark_gray> » <gray>Biome Groups: <aqua>{BIOME_GROUP_LIST}
     <dark_gray> » <gray>Valid Biomes: <aqua>{BIOME_LIST}
 
-# Displayed to the user when they execute the '/rpg info' command and have no item (no plant) in hand.
-INFO_CMD_NO_ITEM: "<red>You must hold a plant in your hand to execute this command!"
+# Displayed to the user when they execute the '/rpg info' command and have no item (plant seed) in hand.
+INFO_CMD_NO_ITEM: "<red>You need to hold plant seeds in your hand to execute this command!"
 
 # Configuration File Version.
 # Please do not modify on your own :)
