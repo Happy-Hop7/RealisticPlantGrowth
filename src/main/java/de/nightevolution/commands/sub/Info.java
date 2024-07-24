@@ -13,7 +13,6 @@ import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -22,6 +21,8 @@ import java.util.List;
 public class Info extends SubCommand implements PlaceholderInterface {
 
     private Material plantMaterial;
+    private Material seedMaterial;
+    private Material notGrowthModifiedSeed;
 
     /**
      * Constructor for the 'info' subcommand.
@@ -57,14 +58,19 @@ public class Info extends SubCommand implements PlaceholderInterface {
         if (instance.isWorldDisabled(world))
             return false;
 
-        if (!isPlayerHoldingAPlant(player)) {
-            msgManager.sendLocalizedMsg(player, MessageType.INFO_CMD_NO_ITEM, false);
+
+        if (!isPlayerHoldingAGrowthModifiedPlantSeed(player)) {
+            if (notGrowthModifiedSeed != null)
+                msgManager.sendLocalizedMsg(player, MessageType.PLANT_NOT_MODIFIED_MSG,
+                        PLANT_PLACEHOLDER, notGrowthModifiedSeed.toString().toLowerCase(), true);
+            else
+                msgManager.sendLocalizedMsg(player, MessageType.INFO_CMD_NO_ITEM, false);
             return false;
         }
 
         BiomeChecker bc = new BiomeChecker(plantMaterial, player.getLocation().getBlock().getBiome());
 
-        String defaultBiomesList = formatList(bc.getDefaultBiomes());
+        String defaultBiomesList = formatBiomeList(bc.getDefaultBiomes());
 
 
         List<String> placeholders = Arrays.asList(
@@ -75,11 +81,19 @@ public class Info extends SubCommand implements PlaceholderInterface {
         );
 
         List<Object> replacements = Arrays.asList(
-                plantMaterial.toString().toLowerCase(),
+                seedMaterial.toString().toLowerCase(),
                 mapper.getMaterialMapper().canGrowInDark(plantMaterial),
                 bc.getBiomeGroupStringList().toString(),
                 defaultBiomesList
         );
+
+        if (verbose) {
+            superLogger.logToFile("  Plant: " + plantMaterial, logFile);
+            superLogger.logToFile("  Seed: " + seedMaterial, logFile);
+            superLogger.logToFile("  CanGrowInDark: " + mapper.getMaterialMapper().canGrowInDark(plantMaterial), logFile);
+            superLogger.logToFile("  BiomeGroups: " + bc.getBiomeGroupStringList(), logFile);
+            superLogger.logToFile("  BiomeList: " + defaultBiomesList, logFile);
+        }
 
         msgManager.sendLocalizedMsg(player, MessageType.INFO_CMD_RESULT, placeholders, replacements, true);
 
@@ -92,33 +106,45 @@ public class Info extends SubCommand implements PlaceholderInterface {
      * @param player The {@link Player} to check.
      * @return True if the {@link Player} is holding a plant, false otherwise.
      */
-    private boolean isPlayerHoldingAPlant(@NotNull Player player) {
+    private boolean isPlayerHoldingAGrowthModifiedPlantSeed(@NotNull Player player) {
         Material mainHand = player.getInventory().getItemInMainHand().getType();
         Material offHand = player.getInventory().getItemInOffHand().getType();
         Material mainHandSeed;
         Material offHandSeed;
-        if (mapper.getMaterialFromSeed(mainHand) != null)
-            mainHandSeed = mapper.getMaterialFromSeed(mainHand);
+        notGrowthModifiedSeed = null;
+
+        if (mapper.isClickableSeed(mainHand))
+            mainHandSeed = mainHand;
         else
             mainHandSeed = Material.AIR;
 
-        if (mapper.getMaterialFromSeed(offHand) != null)
-            offHandSeed = mapper.getMaterialFromSeed(offHand);
+        if (mapper.isClickableSeed(offHand))
+            offHandSeed = offHand;
         else
             offHandSeed = Material.AIR;
 
 
-        HashSet<Material> growthModifiedPlants = mapper.getGrowthModifiedPlants();
-        plantMaterial = null;
+        if (mainHandSeed == Material.AIR && offHandSeed == Material.AIR){
+            return false;
+        }
 
-        for (Material material : Arrays.asList(mainHand, mainHandSeed, offHand, offHandSeed)) {
-            if (growthModifiedPlants.contains(material)) {
-                plantMaterial = material;
-                break;
+        for (Material material : Arrays.asList(mainHandSeed, offHandSeed)) {
+            Material tempPlantMaterial = mapper.getMaterialFromSeed(material);
+
+            if (tempPlantMaterial == null)
+                continue;
+
+            if (mapper.isGrowthModifiedPlant(tempPlantMaterial)) {
+                plantMaterial = tempPlantMaterial;
+                seedMaterial = material;
+                return true;
+            }
+            else if (mapper.isAPlant(tempPlantMaterial)) {
+                notGrowthModifiedSeed = material;
             }
         }
 
-        return plantMaterial != null;
+        return false;
     }
 
     /**
@@ -127,7 +153,7 @@ public class Info extends SubCommand implements PlaceholderInterface {
      * @param biomeList The list of biomes to format.
      * @return The formatted list as a string.
      */
-    private String formatList(@NotNull List<String> biomeList) {
+    private String formatBiomeList(@NotNull List<String> biomeList) {
         StringBuilder builder = new StringBuilder();
 
         if (biomeList.isEmpty()) {

@@ -58,11 +58,9 @@ public abstract class VersionMapper {
             Material.CRIMSON_FUNGUS,
             Material.DEAD_BUSH,
             Material.GLOW_LICHEN,
-            Material.MELON,
             Material.MELON_STEM,
             Material.NETHER_WART,
             Material.POTATOES,
-            Material.PUMPKIN,
             Material.PUMPKIN_STEM,
             Material.RED_MUSHROOM,
             Material.SUGAR_CANE,
@@ -209,9 +207,10 @@ public abstract class VersionMapper {
         clickableSeeds.remove(getTorchflowerMaterial());
 
         if (RealisticPlantGrowth.isVerbose()) {
+            logger.logToFile("", "verbose");
             logger.logToFile("-------------------- Clickable Seeds updated --------------------", "verbose");
             for (Material seed : clickableSeedsMap.keySet()) {
-                logger.logToFile("- " + seed + "->" + clickableSeedsMap.get(seed), "verbose");
+                logger.logToFile("  - " + seed + "->" + clickableSeedsMap.get(seed), "verbose");
             }
         }
     }

@@ -5,6 +5,7 @@ import de.nightevolution.utils.enums.MessageType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,8 @@ public class MessageManager {
     private static MessageManager messageManager;
     private final MiniMessage miniMessage;
     private final Logger logger;
+    private final String logFile = "debug";
+    private final boolean debug;
 
     private static String prefix;
     private static EnumMap<MessageType, String> localizedMessagePair;
@@ -35,6 +38,7 @@ public class MessageManager {
         this.miniMessage = MiniMessage.miniMessage();
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         messageManager = this;
+        debug = RealisticPlantGrowth.isDebug();
     }
 
     /**
@@ -76,26 +80,18 @@ public class MessageManager {
     public void sendLocalizedMsg(@NotNull CommandSender target, @NotNull MessageType messageType,
                                  @Nullable List<String> placeholders, @Nullable List<Object> replacements, boolean sendHeader) {
 
-        String logFile = "debug";
-        String message = localizedMessagePair.get(messageType);
 
-        if (placeholders != null && replacements != null) {
-            if (placeholders.size() != replacements.size()) {
-                throw new IllegalArgumentException("MessageManager.getLocalizedMsg() received an incorrect number of arguments!");
-            }
+        String messageWithPlaceholder = localizedMessagePair.get(messageType);
+        String message = processPlaceholder(messageWithPlaceholder, placeholders, replacements);
 
-            // Replace Plugin Placeholders
-            for (int i = 0; i < placeholders.size(); i++) {
-                message = message.replace(placeholders.get(i), replacements.get(i).toString());
-            }
-        }
 
-        if (RealisticPlantGrowth.isDebug()) {
+        if (debug) {
             logger.logToFile("", logFile);
             logger.logToFile("-------------------- Message Sent --------------------", logFile);
             logger.logToFile("  To: " + target, logFile);
             logger.logToFile("  Message Type: " + messageType, logFile);
-            logger.logToFile(System.lineSeparator() + message, logFile);
+            logger.logToFile("  Message with Placeholder" + System.lineSeparator() + messageWithPlaceholder, logFile);
+            logger.logToFile("  Message without Placeholder" + System.lineSeparator() + message, logFile);
         }
 
         if (sendHeader)
@@ -164,4 +160,41 @@ public class MessageManager {
     public void sendNoPermissionMessage(CommandSender sender) {
         sendLocalizedMsg(sender, MessageType.NO_PERMISSIONS, false);
     }
+
+    public String processPlaceholder (String message, @Nullable List<String> placeholders, @Nullable List<Object> replacements){
+        if (placeholders != null && replacements != null && !replacements.isEmpty()) {
+            if (placeholders.size() != replacements.size()) {
+                throw new IllegalArgumentException("MessageManager.processPlaceholder() received an incorrect number of arguments!");
+            }
+
+            // Replace Plugin Placeholders
+            for (int i = 0; i < placeholders.size(); i++) {
+                message = message.replace(placeholders.get(i), replacements.get(i).toString());
+            }
+
+            // Check if there Plant Placeholder is a Block or Item (relevant for correct minimessage formatting)
+            Material plantMaterialType = Material.getMaterial(replacements.get(0).toString().toUpperCase());
+
+            if (plantMaterialType != null && !plantMaterialType.isBlock()) {
+                message = message.replace("lang:block.minecraft", "lang:item.minecraft");
+
+                if (debug) {
+                    logger.logToFile("  Placeholder Material: " + plantMaterialType, logFile);
+                    logger.logToFile("  Is Item?: " + plantMaterialType.isItem(), logFile);
+                }
+            }
+            else {
+                if (debug) {
+                    logger.logToFile("  Placeholder Material: " + plantMaterialType, logFile);
+                    logger.logToFile("  Is a Block." , logFile);
+                }
+            }
+
+
+        }
+
+        return message;
+
+    }
+
 }
