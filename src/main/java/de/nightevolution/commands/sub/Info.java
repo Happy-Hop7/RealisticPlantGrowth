@@ -90,12 +90,12 @@ public class Info extends SubCommand implements PlaceholderInterface {
         );
 
         // Logging the details if verbose mode is enabled
-        if (verbose) {
-            superLogger.logToFile("  Plant: " + plantMaterial, logFile);
-            superLogger.logToFile("  Seed: " + seedMaterial, logFile);
-            superLogger.logToFile("  CanGrowInDark: " + mapper.getMaterialMapper().canGrowInDark(plantMaterial), logFile);
-            superLogger.logToFile("  BiomeGroups: " + bc.getBiomeGroupStringList(), logFile);
-            superLogger.logToFile("  BiomeList: " + defaultBiomesList, logFile);
+        if (logEvent) {
+            superLogger.logToFile("    Plant: " + plantMaterial, logFile);
+            superLogger.logToFile("    Seed: " + seedMaterial, logFile);
+            superLogger.logToFile("    CanGrowInDark: " + mapper.getMaterialMapper().canGrowInDark(plantMaterial), logFile);
+            superLogger.logToFile("    BiomeGroups: " + bc.getBiomeGroupStringList(), logFile);
+            superLogger.logToFile("    BiomeList: " + defaultBiomesList, logFile);
         }
 
         // Send the localized message to the player

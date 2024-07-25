@@ -1,4 +1,4 @@
-package de.nightevolution.listeners.plant;
+package de.nightevolution.listeners.other;
 
 import de.nightevolution.ConfigManager;
 import de.nightevolution.RealisticPlantGrowth;

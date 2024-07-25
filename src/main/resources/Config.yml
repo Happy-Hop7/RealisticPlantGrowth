@@ -213,17 +213,17 @@ plant_death_sound_effect:
 # Enable Debug Mode. This can generate a large amount of log data, so use it only for debugging purposes.
 debug_log: false
 
-# Enable logging of tree growing events (e.g., sapling to tree, mushroom to huge mushroom) in a separate log file.
-structure_log: false
-
 # Enable logging of plant growing events in a separate log file.
 plant_log: false
 
-# Enable logging of bonemeal usage events in a separate log file.
-bonemeal_log: false
+# Enable logging of tree growing events (e.g., sapling to tree, mushroom to huge mushroom) in a separate log file.
+structure_log: false
 
 # Enable logging of player interaction events in a separate log file.
 player_log: false
+
+# Enable logging of bonemeal usage events in a separate log file.
+bonemeal_log: false
 
 
 ########################################################################################################################

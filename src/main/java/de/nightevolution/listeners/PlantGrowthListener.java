@@ -16,19 +16,29 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.event.Listener;
 
-
+/**
+ * An abstract base class for listeners that handle plant growth events.
+ * <p>
+ * This class provides methods for processing and modifying plant growth events, including:
+ * <ul>
+ *     <li>Determining if an event should be canceled based on growth rate and death chance.</li>
+ *     <li>Finding the root block of a plant.</li>
+ *     <li>Handling the effects of fertilizer usage.</li>
+ * </ul>
+ * </p>
+ */
 public abstract class PlantGrowthListener implements Listener {
     protected RealisticPlantGrowth instance;
-    protected Logger logger;
-    protected String logString = "";
-    private static final String logFile = "debug";
+    protected Logger superLogger;
+    protected String logFile = "PlantGrowthEvent";
+    protected boolean logEvent;
+
     protected ConfigManager configManager;
     protected SpecialBlockSearch specialBlockSearch;
     protected Surrounding surrounding;
     protected VersionMapper versionMapper;
 
     // Event Data
-    protected String coordinate;
     protected Block eventBlock;
     protected Material eventBlockType;
     protected Location eventLocation;
@@ -47,13 +57,12 @@ public abstract class PlantGrowthListener implements Listener {
             BlockFace.EAST
     };
 
-
     /**
      * Constructs a new PlantGrowthListener instance.
      * <p>
      * Initializes the listener with the provided RealisticPlantGrowth instance, sets up the logger,
-     * registers the listener with the server's plugin manager, and obtains necessary components such as SpecialBlockSearch
-     * and the configuration manager.
+     * registers the listener with the server's plugin manager, and obtains necessary components such as
+     * SpecialBlockSearch and the configuration manager.
      * </p>
      *
      * @param instance The RealisticPlantGrowth instance to associate with the listener.
@@ -61,62 +70,89 @@ public abstract class PlantGrowthListener implements Listener {
     public PlantGrowthListener(RealisticPlantGrowth instance) {
         this.instance = instance;
 
-        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        // Initialize the logger with verbosity and debugging options.
+        superLogger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        superLogger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
 
+        // Register this listener with the server's plugin manager.
         instance.getServer().getPluginManager().registerEvents(this, instance);
+
+        // Initialize components.
         specialBlockSearch = SpecialBlockSearch.get();
         configManager = instance.getConfigManager();
         versionMapper = instance.getVersionMapper();
 
+        // Can get overwritten by child classes.
+        logEvent = RealisticPlantGrowth.isDebug() && configManager.isPlant_log();
     }
 
     /**
-     * @return -1 = return and cancel event
-     * 0 = normal event
-     * 1 = return without canceling the event
+     * Processes the plant growth event to determine if it should proceed.
+     * <p>
+     * Checks if the event block is a growth-modified plant and retrieves environmental data.
+     * Logs relevant information if logging is enabled.
+     * </p>
+     *
+     * @return {@code true} if the event should proceed, {@code false} if it should be canceled.
      */
     protected boolean processEvent() {
-        // this check needs to be here because the eventBlock can be changed from child classes.
+        if (logEvent) {
+            superLogger.logToFile("  Event Block: " + eventBlockType, logFile);
+            superLogger.logToFile("  Is Block a growth-modified plant: " +
+                    versionMapper.isGrowthModifiedPlant(eventBlockType), logFile);
+        }
 
-        logger.verbose("EventBlockType:" + eventBlockType);
-        logger.verbose("isGrowthModified:" + versionMapper.isGrowthModifiedPlant(eventBlockType));
-
-
-        if (!versionMapper.isGrowthModifiedPlant(eventBlockType))
+        // Check if the event block is a growth-modified plant.
+        if (!versionMapper.isGrowthModifiedPlant(eventBlockType)) {
+            if (logEvent) {
+                superLogger.logToFile("  -> Event Block not a growth-modified plant.", logFile);
+            }
             return false;
+        }
 
-        // Retrieve surrounding environment data
+        // Retrieve surrounding environment data.
         surrounding = specialBlockSearch.surroundingOf(eventBlock);
 
-        // Get death chance and growth rate from the surrounding environment
+        // Get death chance and growth rate from the surrounding environment.
         deathChance = surrounding.getDeathChance();
         growthRate = surrounding.getGrowthRate();
 
+        if (logEvent) {
+            superLogger.logToFile("  Growth Rate: " + growthRate, logFile);
+            superLogger.logToFile("  Death Chance: " + deathChance, logFile);
+        }
         return true;
     }
 
     /**
-     * Determines whether the plant growth event should be cancelled based on configured parameters.
-     * This method checks conditions such as death chance, growth rate, and specific cancellation rules
-     * to decide if the event should be cancelled, and takes appropriate actions if necessary.
+     * Determines whether the plant growth event should be canceled based on configured parameters.
+     * <p>
+     * Checks conditions such as death chance, growth rate, and specific cancellation rules
+     * to decide if the event should be canceled. Logs detailed information if logging is enabled.
+     * </p>
      *
-     * @return {@code true} if the event should be cancelled, {@code false} otherwise.
+     * @return {@code true} if the event should be canceled, {@code false} otherwise.
      */
     protected boolean shouldEventBeCancelled() {
-
         if (deathChance >= 100.0 || growthRate <= 0.0) {
-            logger.verbose("Super-Event: Kill plant.");
+            if (logEvent) {
+                superLogger.logToFile("  -> Event: Kill plant.", logFile);
+            }
             killPlant();
             return true;
         }
 
         if (cancelDueToGrowthRate()) {
-            logger.verbose("Event cancelled due to growth rate.");
+            if (logEvent) {
+                superLogger.logToFile("  -> Event canceled due to growth rate.", logFile);
+            }
             return true;
         }
 
         if (cancelDueToDeathChance()) {
-            logger.verbose("Event cancelled due to death chance.");
+            if (logEvent) {
+                superLogger.logToFile("  -> Event canceled due to death chance.", logFile);
+            }
             killPlant();
             return true;
         }
@@ -124,11 +160,12 @@ public abstract class PlantGrowthListener implements Listener {
         return false;
     }
 
-
     /**
      * Retrieves the root {@link Block} of a specified plant block, considering the growth direction of the plant.
+     * <p>
      * This method is designed for plants that grow either upwards (e.g., bamboo, kelp) or downwards
      * (e.g., twisted vines).
+     * </p>
      *
      * @param plantBlock The {@link Block} representing the plant.
      * @return The root {@link Block} of the specified plant.
@@ -136,27 +173,40 @@ public abstract class PlantGrowthListener implements Listener {
     public Block getRootBlockOf(Block plantBlock) {
         Material plantBlockType = plantBlock.getType();
         Block returnBlock = plantBlock;
-        logger.verbose("getRootBlockOf(): plantBlock: " + plantBlock);
+
+        if (logEvent) {
+            superLogger.logToFile("  getRootBlockOf(): Starting with plantBlock: " + plantBlock, logFile);
+        }
 
         if (versionMapper.isUpwardsGrowingPlant(plantBlockType)) {
-            logger.verbose("SearchDirection: DOWN");
+            if (logEvent) {
+                superLogger.logToFile("    Searching downwards.", logFile);
+            }
             returnBlock = iterateThroughPlantBlocks(plantBlock, BlockFace.DOWN);
         } else if (versionMapper.isDownwardsGrowingPlant(plantBlockType)) {
-            logger.verbose("SearchDirection: UP");
+            if (logEvent) {
+                superLogger.logToFile("    Searching upwards.", logFile);
+            }
             returnBlock = iterateThroughPlantBlocks(plantBlock, BlockFace.UP);
         }
 
         if (plantBlockType == Material.VINE || plantBlockType == Material.GLOW_LICHEN) {
-            // implement floodfill search algorithm
+            // TODO: Handling special cases like Vines or Glow Lichen here.
         }
 
-        logger.verbose("getRootBlockOf(): returnBlock: " + returnBlock.toString());
-        logger.verbose(returnBlock.toString());
+        if (logEvent) {
+            superLogger.logToFile("  getRootBlockOf(): Found root block: " + returnBlock, logFile);
+        }
+
         return returnBlock;
     }
 
     /**
-     * Iterates through plant {@link Block} in the specified search direction to find the root block.
+     * Iterates through plant {@link Block}s in the specified direction to find the root block.
+     * <p>
+     * This method traverses the plant blocks in the specified search direction until it finds
+     * a block that does not match the type of the initial block.
+     * </p>
      *
      * @param plantBlock      The current {@link Block} representing the plant.
      * @param searchDirection The direction ({@link BlockFace}) to search for the root block.
@@ -167,59 +217,69 @@ public abstract class PlantGrowthListener implements Listener {
         Block tempBlock;
         String plantBlockTypeName = plantBlock.getType().name();
 
-
         while (currentBlock.getType().name().startsWith(plantBlockTypeName)) {
             tempBlock = currentBlock.getRelative(searchDirection);
 
-            if (tempBlock.getType().name().startsWith(plantBlockTypeName))
+            if (tempBlock.getType().name().startsWith(plantBlockTypeName)) {
                 currentBlock = tempBlock;
-
-            else break;
+            } else {
+                break;
+            }
         }
 
         return currentBlock;
     }
 
-
     /**
      * Checks if the growth event should be canceled based on the configured growth rate.
+     * <p>
+     * If a random value exceeds the growth rate, the event will be canceled.
+     * </p>
      *
-     * @return True if the event should be canceled due to the growth rate, false otherwise.
+     * @return {@code true} if the event should be canceled due to the growth rate, {@code false} otherwise.
      */
     protected boolean cancelDueToGrowthRate() {
-        return ((Math.random() * 100) > growthRate);
+        return (Math.random() * 100) > growthRate;
     }
 
     /**
      * Checks if the growth event should be canceled based on the configured death chance.
      * <p>
      * If the event block implements the Ageable interface, the death chance is adjusted based on the plant's age.
+     * Logs detailed information if logging is enabled.
      * </p>
      *
-     * @return True if the event should be canceled due to the death chance, false otherwise.
+     * @return {@code true} if the event should be canceled due to the death chance, {@code false} otherwise.
      */
     protected boolean cancelDueToDeathChance() {
-
         if (eventBlock.getBlockData() instanceof Ageable crop) {
-            if ((crop.getAge() != crop.getMaximumAge()) && (versionMapper.isAgriculturalPlant(eventBlock))) {
-                deathChance = (deathChance / crop.getMaximumAge());
-                logger.verbose("Using Ageable Interface for partial DeathChance.");
+            if ((crop.getAge() != crop.getMaximumAge()) && versionMapper.isAgriculturalPlant(eventBlock)) {
+                deathChance /= crop.getMaximumAge();
+
+                if (logEvent)
+                    superLogger.verbose("Adjusted DeathChance using Ageable interface.");
+
             } else if (eventBlockType == Material.BAMBOO) {
-                logger.verbose("Using Ageable Interface for Bamboo DeathChance.");
-                deathChance = (deathChance / 14);
-            } else logger.verbose("Using Ageable Interface with full DeathChance.");
+                deathChance /= 14;
 
-            logger.verbose("Age of crop: " + crop.getAge() + " / " + crop.getMaximumAge());
+                if (logEvent)
+                    superLogger.verbose("Adjusted DeathChance for Bamboo using Ageable interface.");
+
+            } else {
+                if (logEvent)
+                    superLogger.verbose("Full DeathChance used with Ageable interface.");
+            }
+
+            if (logEvent)
+                superLogger.logToFile("  Crop age: " + crop.getAge() + " / " + crop.getMaximumAge(), logFile);
         }
-
-        logger.verbose("DeathChance: " + deathChance);
-        return ((Math.random() * 100) < deathChance);
+        return (Math.random() * 100) < deathChance;
     }
 
     /**
      * Initiates the process to kill the plant associated with the current event block.
      * <p>
-     * Creates a new PlantKiller instance and uses it to initiate the plant killing process for the specified event block.
+     * Creates a new PlantKiller instance and uses it to kill the specified plant block.
      * </p>
      */
     protected void killPlant() {
@@ -228,18 +288,34 @@ public abstract class PlantGrowthListener implements Listener {
     }
 
     /**
-     * Checks if fertilizer was used in the surrounding environment
-     * and reduces the fill level of the corresponding composter.
+     * Checks if fertilizer was used in the surrounding environment and adjusts the fill level of the composter.
      * <p>
-     * If a fertilizer was used and passive fertilizer mode is not enabled,
-     * this method initiates the process to reduce the fill level of the composter closest to the event block.
+     * If fertilizer was used and passive fertilizer mode is not enabled, this method reduces the fill level
+     * of the closest composter to the event block. Logs detailed information if logging is enabled.
      * </p>
      */
     protected void checkFertilizerUsage() {
         if (surrounding.usedFertilizer() && !configManager.isFertilizer_passiv()) {
-            logger.verbose("Fertilizer was used. Reducing fill level of particular Composter.");
+            if (logEvent) {
+                superLogger.logToFile("  Fertilizer was used.", logFile);
+                superLogger.logToFile("  Reducing fill level of the closest composter.", logFile);
+            }
             PlantKiller pk = new PlantKiller();
             pk.reduceComposterFillLevelOf(surrounding.getClosestComposter());
         }
+    }
+
+    /**
+     * Logs detailed data about the current event.
+     * <p>
+     * Includes information such as block type, location, world, and biome.
+     * </p>
+     */
+    protected void logEventData() {
+        superLogger.logToFile("  Event data:", logFile);
+        superLogger.logToFile("    Block Type: " + eventBlockType, logFile);
+        superLogger.logToFile("    Location: " + eventLocation, logFile);
+        superLogger.logToFile("    World: " + eventWorld.getName(), logFile);
+        superLogger.logToFile("    Biome: " + eventBiome, logFile);
     }
 }

@@ -41,10 +41,10 @@ public abstract class SubCommand {
     protected Permission permission;
 
     /** Flag to indicate if verbose logging is enabled */
-    protected boolean verbose;
+    protected boolean logEvent;
 
     /** File name for logging verbose output */
-    protected String logFile = "verbose";
+    protected String logFile = "debug";
 
     /**
      * Constructor for the abstract 'SubCommand' class.
@@ -60,12 +60,12 @@ public abstract class SubCommand {
         this.mapper = instance.getVersionMapper();
         this.commandSender = commandSender;
         this.args = args;
-        this.verbose = RealisticPlantGrowth.isVerbose();
-        this.superLogger = new Logger(this.getClass().getSimpleName(), verbose, RealisticPlantGrowth.isDebug());
+        this.logEvent = RealisticPlantGrowth.isDebug();
+        this.superLogger = new Logger(this.getClass().getSimpleName(), logEvent, RealisticPlantGrowth.isDebug());
 
-        if (verbose) {
+        if (logEvent) {
             superLogger.logToFile("", logFile);
-            superLogger.logToFile("-------------------- SubCommand --------------------", logFile);
+            superLogger.logToFile("  SubCommand: " + this.getClass().getSimpleName(), logFile);
         }
     }
 
@@ -79,15 +79,15 @@ public abstract class SubCommand {
         if (!commandSender.hasPermission(this.permission)) {
             msgManager.sendNoPermissionMessage(this.commandSender);
 
-            if (verbose)
-                superLogger.logToFile("Permission Denied: User '" + commandSender.getName() +
-                        "' lacks permission for subcommand '" + this.getClass().getSimpleName() + "'", logFile);
+            if (logEvent)
+                superLogger.logToFile("    Permission Denied: User '" + commandSender.getName() +
+                        "' lacks permission for subcommand '" + this.getClass().getSimpleName().toLowerCase() + "'", logFile);
             return false;
         }
 
-        if (verbose)
-            superLogger.logToFile("Executing SubCommand: User '" + commandSender.getName() +
-                    "' is executing subcommand '" + this.getClass().getSimpleName() + "'", logFile);
+        if (logEvent)
+            superLogger.logToFile("    Executing SubCommand: User '" + commandSender.getName() +
+                    "' is executing subcommand '" + this.getClass().getSimpleName().toLowerCase() + "'", logFile);
         return true;
     }
 

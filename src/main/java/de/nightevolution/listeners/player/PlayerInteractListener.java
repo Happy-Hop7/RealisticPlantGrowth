@@ -85,11 +85,10 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             return;
         }
 
-        // Check if the world is enabled for plant growth modification
-        World eventWorld = e.getPlayer().getWorld();
-        if (instance.isWorldDisabled(eventWorld)) {
-            if (logEvent)
-                logger.logToFile("  World: " + eventWorld.getName() + " is not activated for plant growth modification.", logFile);
+        if (instance.isWorldDisabled(e.getPlayer().getWorld())) {
+            if (logEvent) {
+                logger.logToFile("  -> World is disabled for RealisticPlantGrowth.", logFile);
+            }
             return;
         }
 
@@ -178,7 +177,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         eventBlockState.setType(plantMaterial);
 
         if (logEvent)
-            logger.logToFile("  Calculating Growth Modifier Data...", logFile);
+            logger.logToFile("  Growth Modifier Data:", logFile);
 
         // Calculate the surrounding environment's effect on the plant's growth
         Surrounding surrounding = SpecialBlockSearch.get().surroundingOf(eventBlock, eventBlockState);
@@ -220,7 +219,6 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         // Send the localized message to the player
         msgManager.sendLocalizedMsg(ePlayer, MessageType.GROWTH_RATE_MSG, placeholders, replacements, true);
     }
-
     /**
      * Clears the cooldown data for a specific player.
      * Called in {@link PlayerQuitListener}.
