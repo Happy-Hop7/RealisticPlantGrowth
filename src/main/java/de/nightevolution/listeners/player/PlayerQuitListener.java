@@ -20,6 +20,7 @@ public class PlayerQuitListener implements Listener {
     private final RealisticPlantGrowth instance;
     private final Logger logger;
     private final BukkitScheduler scheduler;
+    private final boolean logEvent;
 
     /**
      * Constructs a new {@link PlayerQuitListener} instance.
@@ -32,6 +33,9 @@ public class PlayerQuitListener implements Listener {
         instance.getServer().getPluginManager().registerEvents(this, instance);
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
         scheduler = Bukkit.getScheduler();
+
+        // Enable logging if debug mode is active and player logging is enabled
+        this.logEvent = (RealisticPlantGrowth.isDebug() && instance.getConfigManager().isPlayer_log());
     }
 
     /**
@@ -42,7 +46,13 @@ public class PlayerQuitListener implements Listener {
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent e) {
         UUID quittingPlayer = e.getPlayer().getUniqueId();
-        logger.verbose("Clearing '" + e.getPlayer().getName() + "'s cooldown.");
+
+        if (logEvent) {
+            logger.logToFile("", "PlayerInteractEvent");
+            logger.logToFile("-------------------- Player Quit Event --------------------\"", "PlayerInteractEvent");
+            logger.logToFile("  Clearing '" + e.getPlayer().getName() + "'s cooldown.", "PlayerInteractEvent");
+        }
+
         scheduler.runTaskAsynchronously(instance, () -> {
             PlayerInteractListener.clearPlayerCooldownData(quittingPlayer);
         });

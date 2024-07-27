@@ -1,14 +1,23 @@
 # 👋 Welcome to the Realistic Plant Growth Plugin
 
+![GitHub branch status](https://img.shields.io/github/checks-status/Happy-Hop7/RealisticPlantGrowth/master?style=for-the-badge)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/TcGxLk2t?style=for-the-badge&logo=modrinth&logoSize=auto)](https://modrinth.com/plugin/realistic-plant-growth)
+[![Modrinth Version](https://img.shields.io/modrinth/v/TcGxLk2t?style=for-the-badge)](https://modrinth.com/plugin/realistic-plant-growth/version/latest)
+
+[![Discord](https://img.shields.io/discord/1241334817098956851?style=for-the-badge&logo=discord)](https://discord.gg/PgUhUNGu2A)
+[![Static Badge](https://img.shields.io/badge/wiki-RealisticPlantGrowth?style=for-the-badge&logo=gitbook&labelColor=gray&color=c73636)](https://docs.nightevolution.de/)
+
+<br>
+
 > [!IMPORTANT]
 > RealisticPlantGrowth is still in an early phase of development. <br>
 > If you encounter any problems, please open an issue with a detailed error description. <br>
 > I will investigate the occurring problem and try to fix it as soon as possible.
 
+<br>
+
 Realistic Plant Growth is a powerful Spigot/Paper plugin that brings a new level of realism to
 the Minecraft flora, allowing you to fine-tune growth parameters on a per-biome basis.
-
-<br>
 
 - Do you want to stop Nether Wart farming or make it only work in the Nether like it used to be?
 - Do you think Melon farms are too powerful and want to balance them?
@@ -89,6 +98,12 @@ Check out our [wiki](https://docs.nightevolution.de/) for detailed documentation
 
 **Java version:** <br>
 -> _At least_ **Java 17**. _(recommend using_ **Java 21**_)_
+
+<br>
+<br>
+
+
+[![IMG](https://bstats.org/signatures/bukkit/Realistic%20Plant%20Growth.svg)](https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634)
 
 <br>
 <br>

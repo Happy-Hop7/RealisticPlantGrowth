@@ -34,20 +34,24 @@ GROWTH_RATE_MSG: |-
     <dark_gray> » <gray>Влияние УФ-Света: <aqua>{UV_LIGHT_USED}
     <dark_gray> » <gray>Может расти в темноте: <aqua>{CAN_GROW_IN_DARK}
     <dark_gray> » <gray>Может расти без компостера в биоме <lang:biome.minecraft.{BIOME}>: <aqua>{IS_VALID_BIOME}
-# Отправляется игроку, когда в файле конфигурации (Config.yml) включен параметр 'display_growth_rates' и
-# если seed мира не был модифицирован по сравнении с Minecraft Vanilla.
+
+# Сообщение игроку, если выполнено одно из следующих условий:
+# 1. Опция 'display_growth_rates' в Config.yml активирована, и семя не имеет изменённых свойств по сравнению с Minecraft ванильной версией.
+# 2. Использована команда '/rpg info', и семя не имеет изменённых свойств по сравнению с Minecraft ванильной версией.
 PLANT_NOT_MODIFIED_MSG: |-
   <hover:show_item:"minecraft:{PLANT}"> <aqua><lang:block.minecraft.{PLANT}></hover> <gray>отсутствуют модификаторы роста.
     » <yellow><italic>Нормальное поведение Minecraft Vanilla.
+
 # Информация о растении
-# Отображается пользователю, когда он выполняет команду '/rpg info' пока держит растение в руке.
+# Показывается пользователю, когда он выполняет команду '/rpg info', держа растение в руке.
 INFO_CMD_RESULT: |-
   <gray>Информация о росте<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
     <dark_gray> » <gray>Может расти в темноте: <aqua>{CAN_GROW_IN_DARK}
     <dark_gray> » <gray>Группа биомов: <aqua>{BIOME_GROUP_LIST}
     <dark_gray> » <gray>В каких именно биомах: <aqua>{BIOME_LIST}
-# # Отображается пользователю, когда он выполняет команду '/rpg info' не держа в руке растение.
-INFO_CMD_NO_ITEM: <red>Для исполнения команды возьмите растение в руку!
+
+# Показывается пользователю, когда он выполняет команду '/rpg info' и не держит предмет (семена растения) в руке.
+INFO_CMD_NO_ITEM: <red>Вам нужно держать семена растений в руке, чтобы выполнить эту команду!
 
 # Версия файла конфигурации.
 # Пожалуйста, не редактируйте сами :)

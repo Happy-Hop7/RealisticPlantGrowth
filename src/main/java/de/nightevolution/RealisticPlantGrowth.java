@@ -2,17 +2,14 @@ package de.nightevolution;
 
 import de.nightevolution.commands.CommandManager;
 import de.nightevolution.commands.TabCompleterImpl;
-import de.nightevolution.listeners.BlockFromToListener;
-import de.nightevolution.listeners.BlockPistonListener;
+import de.nightevolution.listeners.other.*;
 import de.nightevolution.listeners.plant.*;
-import de.nightevolution.listeners.player.PlayerInteractListener;
-import de.nightevolution.listeners.player.PlayerQuitListener;
+import de.nightevolution.listeners.player.*;
 import de.nightevolution.utils.Logger;
 import de.nightevolution.utils.UpdateChecker;
 import de.nightevolution.utils.biome.BiomeChecker;
 import de.nightevolution.utils.mapper.VersionMapper;
-import de.nightevolution.utils.mapper.versions.Version_1_20;
-import de.nightevolution.utils.mapper.versions.Version_1_20_4;
+import de.nightevolution.utils.mapper.versions.*;
 import de.nightevolution.utils.rest.ModrinthVersion;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -165,7 +162,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         new BlockGrowListener(instance);
         new StructureGrowListener(instance);
         new BlockSpreadListener(instance);
-        new BlockFertilizeListener(instance);
+        new BonemealListener(instance);
         new BlockBreakListener(instance);
         new PlayerInteractListener(instance);
         new PlayerQuitListener(instance);
@@ -219,8 +216,9 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         registerTabCompleter();
         BiomeChecker.clearCache();
         registerListeners();
-        checkForUpdates();
 
+        if (cm.check_for_updates())
+            checkForUpdates();
     }
 
     /**

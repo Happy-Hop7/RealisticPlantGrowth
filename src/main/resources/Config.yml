@@ -1,7 +1,7 @@
 # Realistic Plant Growth Configuration File
 #
 # For additional configuration details and examples, visit the Realistic Plant Growth documentation at:
-# [Insert Link Here]
+# https://realistic-plant-growth.nightevolution.de/
 #
 # A complete list of biomes can be found in the Spigot API documentation:
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
@@ -19,6 +19,7 @@
 #| General Settings                                                                                                   |#
 #|                                                                                                                    |#
 ########################################################################################################################
+
 # Language setting for the plugin. Language files are located in /RealisticPlantGrowth/local
 language_code: en-US
 
@@ -82,6 +83,7 @@ check_for_updates: true
 #| Enables Composters to fertilize crops in the surrounding area, allowing for growth in normally uninhabitable areas.|#
 #|                                                                                                                    |#
 ########################################################################################################################
+
 # Enables the use of composters to fertilize crops in the surrounding area.
 fertilizer_enabled: false
 
@@ -133,6 +135,7 @@ fertilizer_invalid_biome_death_chance: 35.0
 #| Note: Plants still require a certain light level to grow.                                                          |#
 #|                                                                                                                    |#
 ########################################################################################################################
+
 # Enable use of UV-Light Blocks
 uv_enabled: false
 
@@ -183,6 +186,7 @@ grow_in_dark:
 #| Particle Effect:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Effect.html                                  |#
 #|                                                                                                                    |#
 ########################################################################################################################
+
 plant_death_sound_effect:
   # Enables the sound and particle effects for dying plants.
   enabled: true
@@ -201,19 +205,24 @@ plant_death_sound_effect:
 #|                                                                                                                    |#
 #| Logging & Debugging                                                                                                |#
 #|                                                                                                                    |#
-#| Provides various debug logs to offer additional plugin data for troubleshooting and configuration.                 |#
+#| Enables various debug logs to provide additional plugin data for troubleshooting and configuration purposes.       |#
+#| WARNING: Enable logging only for debugging purposes, as it can generate a large amount of data.                    |#
 #|                                                                                                                    |#
 ########################################################################################################################
-# Enables Debug-Mode. Can get spammy, use for only for debugging.
-debug_log:    false
 
-# Logs Tree Growing Events in a separate log file.
-tree_log:     false
+# Enable Debug Mode. This can generate a large amount of log data, so use it only for debugging purposes.
+debug_log: false
 
-# Logs Plant Growing Events in a separate log file.
-plant_log:    false
+# Enable logging of plant growing events in a separate log file.
+plant_log: false
 
-# Logs Bonemeal Usage Events in a separate log file.
+# Enable logging of tree growing events (e.g., sapling to tree, mushroom to huge mushroom) in a separate log file.
+structure_log: false
+
+# Enable logging of player interaction events in a separate log file.
+player_log: false
+
+# Enable logging of bonemeal usage events in a separate log file.
 bonemeal_log: false
 
 
@@ -221,5 +230,5 @@ bonemeal_log: false
 #| Spooky internal settings.                                                                                          |#
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
-config-version: 4
+config-version: 5
 verbose: false

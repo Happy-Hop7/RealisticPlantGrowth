@@ -19,8 +19,7 @@ public class MaterialMapper {
     private final VersionMapper versionMapper;
     private final ConfigManager cm;
     private final Logger logger;
-    private final String logFile = "debug";
-
+    private final String logFile = "verbose";
 
     /**
      * Set of materials representing plants with growth modifications.
@@ -28,7 +27,6 @@ public class MaterialMapper {
     private static HashSet<Material> growthModifiedPlants;
     private static HashSet<Material> growInDarkPlants;
     private final Map<String, List<Material>> plantVariationsMap = new HashMap<>();
-
 
     /**
      * Constructor for {@link MaterialMapper}.
@@ -73,7 +71,6 @@ public class MaterialMapper {
 
     }
 
-
     /**
      * Retrieves a Bukkit {@link Material} based on the given material string.<p>
      * This method attempts to get a Bukkit {@link Material} using the provided material string.
@@ -98,7 +95,6 @@ public class MaterialMapper {
 
         return null;
     }
-
 
     /**
      * Updates the set of {@link Material}s representing plants with modified growth behavior based on configuration data.
@@ -131,11 +127,13 @@ public class MaterialMapper {
 
         }
 
-        logger.verbose("--------- GrowthModifiedPlants ------------");
-        for (Material m : growthModifiedPlants) {
-            logger.verbose("  - " + m.toString());
+        if (RealisticPlantGrowth.isVerbose()) {
+            logger.logToFile("", logFile);
+            logger.logToFile("-------------------- Updated GrowthModifiedPlants --------------------", logFile);
+            for (Material m : growthModifiedPlants) {
+                logger.logToFile("  - " + m.toString(), logFile);
+            }
         }
-
     }
 
     /**
@@ -196,7 +194,6 @@ public class MaterialMapper {
                 getClass().getSimpleName() + ": Material '" + configKey + "' not found in your GrowthModifiers.yml!");
     }
 
-
     // Getters
 
     /**
@@ -209,7 +206,6 @@ public class MaterialMapper {
         return growthModifiedPlants.contains(material);
     }
 
-
     /**
      * Retrieves the {@link Set} of {@link Material} representing plants with modified growth behavior.
      *
@@ -218,7 +214,6 @@ public class MaterialMapper {
     public HashSet<Material> getGrowthModifiedPlants() {
         return growthModifiedPlants;
     }
-
 
     /**
      * Retrieves a {@link List} of {@link Material} variations associated with the specified material string.
@@ -247,7 +242,6 @@ public class MaterialMapper {
             return Collections.emptyList();
         }
     }
-
 
     /**
      * Checks if the specified material can grow in the dark based on configuration.

@@ -5,6 +5,7 @@ import de.nightevolution.utils.enums.MessageType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +24,8 @@ public class MessageManager {
     private final MiniMessage miniMessage;
     private final Logger logger;
 
-
+    private static final String logFile = "debug";
+    private static boolean debug;
     private static String prefix;
     private static EnumMap<MessageType, String> localizedMessagePair;
 
@@ -52,18 +54,17 @@ public class MessageManager {
     }
 
     /**
-     * Checks and updates the localized message pairs.
+     * Checks and updates the localized message pairs from the configuration.
      */
     protected static void checkAndUpdateMessages() {
-
         localizedMessagePair = new EnumMap<>(MessageType.class);
 
         for (MessageType s : MessageType.values()) {
             localizedMessagePair.put(s, configManager.getSelectedLanguageString(s.toString()));
         }
 
+        debug = RealisticPlantGrowth.isDebug();
         prefix = localizedMessagePair.get(MessageType.MSG_HEADER);
-
     }
 
     /**
@@ -78,27 +79,26 @@ public class MessageManager {
     public void sendLocalizedMsg(@NotNull CommandSender target, @NotNull MessageType messageType,
                                  @Nullable List<String> placeholders, @Nullable List<Object> replacements, boolean sendHeader) {
 
-        String message = localizedMessagePair.get(messageType);
-
-        if (placeholders != null && replacements != null) {
-            if (placeholders.size() != replacements.size()) {
-                throw new IllegalArgumentException("MessageManager.getLocalizedMsg() to less arguments provided!");
-            }
-
-            // Replace Plugin Placeholders
-            for (int i = 0; i < placeholders.size(); i++) {
-                message = message.replace(placeholders.get(i), replacements.get(i).toString());
-            }
+        if (debug) {
+            logger.logToFile("", logFile);
+            logger.logToFile("-------------------- Message Sent --------------------", logFile);
+            logger.logToFile("  To: " + target.getName(), logFile);
+            logger.logToFile("  Message Type: " + messageType, logFile);
         }
 
-        logger.verbose(message);
+        String messageWithPlaceholder = localizedMessagePair.get(messageType);
+        String message = processPlaceholder(messageWithPlaceholder, placeholders, replacements);
+
+        if (debug) {
+            logger.logToFile("  Message with Placeholder:" + System.lineSeparator() + messageWithPlaceholder, logFile);
+            logger.logToFile("  Message without Placeholder:" + System.lineSeparator() + message, logFile);
+        }
 
         if (sendHeader)
             sendMessageHeader(target);
 
         Component messageComponent = miniMessage.deserialize(message);
         target.spigot().sendMessage(BungeeComponentSerializer.get().serialize(messageComponent));
-
     }
 
     /**
@@ -141,7 +141,6 @@ public class MessageManager {
         target.spigot().sendMessage(BungeeComponentSerializer.get().serialize(headerComponent));
     }
 
-
     /**
      * Sends the help menu to the specified command sender.
      *
@@ -162,4 +161,38 @@ public class MessageManager {
         sendLocalizedMsg(sender, MessageType.NO_PERMISSIONS, false);
     }
 
+    /**
+     * Processes placeholders in the message with their corresponding replacements.
+     *
+     * @param message       The message containing placeholders.
+     * @param placeholders  The list of placeholders to be replaced.
+     * @param replacements  The list of replacements for the placeholders.
+     * @return The message with placeholders replaced by their corresponding values.
+     */
+    public String processPlaceholder(String message, @Nullable List<String> placeholders, @Nullable List<Object> replacements) {
+        if (placeholders != null && replacements != null && !replacements.isEmpty()) {
+            if (placeholders.size() != replacements.size()) {
+                throw new IllegalArgumentException("MessageManager.processPlaceholder() received an incorrect number of arguments!");
+            }
+
+            // Replace Plugin Placeholders
+            for (int i = 0; i < placeholders.size(); i++) {
+                message = message.replace(placeholders.get(i), replacements.get(i).toString());
+            }
+
+            // Check if the Plant Placeholder is a Block or Item (relevant for correct MiniMessage formatting)
+            Material plantMaterialType = Material.getMaterial(replacements.get(0).toString().toUpperCase());
+
+            if (plantMaterialType != null && !plantMaterialType.isBlock()) {
+                message = message.replace("lang:block.minecraft", "lang:item.minecraft");
+
+                if (debug) {
+                    logger.logToFile("  Processed Placeholder Material: " + plantMaterialType, logFile);
+                    logger.logToFile("  Placeholder Material is an Item: " + plantMaterialType.isItem(), logFile);
+                }
+            }
+        }
+
+        return message;
+    }
 }
