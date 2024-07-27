@@ -143,7 +143,8 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             }
 
             if ((currentTime - lastTime) < cooldown) {
-                logger.logToFile("  PlayerInteractEvent triggered during cooldown period.", logFile);
+                if (logEvent)
+                    logger.logToFile("  PlayerInteractEvent triggered during cooldown period.", logFile);
                 return;
             }
         }
@@ -164,7 +165,8 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
 
         // Check if the plant's growth is modified by the plugin
         if (!versionMapper.isGrowthModifiedPlant(plantMaterial)) {
-            logger.logToFile("  Vanilla behavior for plant material: " + plantMaterial, logFile);
+            if (logEvent)
+                logger.logToFile("  Vanilla behavior for plant material: " + plantMaterial, logFile);
 
             // Send a message to the player
             msgManager.sendLocalizedMsg(ePlayer, MessageType.PLANT_NOT_MODIFIED_MSG,
