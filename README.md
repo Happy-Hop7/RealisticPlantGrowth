@@ -94,7 +94,7 @@ Check out our [wiki](https://docs.nightevolution.de/) for detailed documentation
 ## Requirements
 
 **Minecraft version:** <br>
--> **1.20** _or above_.
+-> **1.20.1** _or above_.
 
 **Java version:** <br>
 -> _At least_ **Java 17**. _(recommend using_ **Java 21**_)_
