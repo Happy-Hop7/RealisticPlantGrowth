@@ -1,6 +1,6 @@
 name: '${project.name}'
 version: '${project.version}'
-main: de.nightevolution.RealisticPlantGrowth
+main: de.nightevolution.realisticplantgrowth.RealisticPlantGrowth
 api-version: '1.20'
 prefix: 'RealisticPlantGrowth'
 load: STARTUP
