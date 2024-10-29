@@ -51,6 +51,26 @@
             </plugin>
 
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>plugin.properties</file>
+                            </files>
+                            <override>true</override>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.6.0</version>
@@ -129,9 +149,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.4.2</version>
+
+                <!-- 0. JAR output (release version) -->
                 <configuration>
-                    <outputDirectory>A:\Programmieren\#DEV Plugins\#SERVER\1.21.1\plugins</outputDirectory>
+                    <outputDirectory>${plugin.output.directory}</outputDirectory>
                 </configuration>
+
             </plugin>
 
         </plugins>
@@ -230,6 +253,13 @@
             <artifactId>MockBukkit-v1.21</artifactId>
             <version>3.133.2</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.34</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
