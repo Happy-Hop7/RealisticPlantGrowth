@@ -29,6 +29,7 @@ public class Logger {
 
     private final String classPrefix;
 
+    // TODO: Update logger to automatically save errors and warnings into a file.
     public Logger(String classPrefix, boolean verbose, boolean debug) {
         this.classPrefix = classPrefix.strip() + ": ";
         Logger.verbose = verbose;

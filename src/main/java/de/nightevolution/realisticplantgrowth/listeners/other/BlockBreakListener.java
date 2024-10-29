@@ -32,6 +32,7 @@ public class BlockBreakListener implements Listener {
     private final VersionMapper vm;
     private final Logger logger;
     private final BukkitScheduler scheduler;
+    private final String logFile = "PlayerInteractEvent";
 
     /**
      * Constructs a new BlockBreakListener.
@@ -69,11 +70,11 @@ public class BlockBreakListener implements Listener {
             Player p = e.getPlayer();
             ItemStack usedHOE = p.getInventory().getItemInMainHand();
 
-            logger.verbose("Player using a " + usedHOE.getType().name() + " to harvest.");
-            logger.verbose("require_hoe: " + cm.isRequire_Hoe());
-            logger.verbose("destroy_farmland: " + cm.isDestroy_Farmland());
-            logger.verbose("isSolid: " + b.getType().isSolid());
-            logger.verbose("isAPlant: " + vm.isAPlant(b.getType()));
+            logger.logToFile("Player using a " + usedHOE.getType().name() + " to harvest.", logFile);
+            logger.logToFile("require_hoe: " + cm.isRequire_Hoe(), logFile);
+            logger.logToFile("destroy_farmland: " + cm.isDestroy_Farmland(), logFile);
+            logger.logToFile("isSolid: " + b.getType().isSolid(), logFile);
+            logger.logToFile("isAPlant: " + vm.isAPlant(b.getType()), logFile);
 
             if (cm.isRequire_Hoe()) {
                 requireHoeToHarvest(e, p, usedHOE);
@@ -101,7 +102,7 @@ public class BlockBreakListener implements Listener {
         // If not using a hoe: cancel DropItems
 
         if (!usedHoe.getType().name().endsWith("_HOE")) {
-            logger.verbose("Block drops cancelled: true");
+            logger.logToFile("Block drops cancelled: true", logFile);
             e.setDropItems(false);
         } else {
             scheduler.runTaskLater(instance, () -> {
@@ -113,36 +114,76 @@ public class BlockBreakListener implements Listener {
 
     /**
      * Calculates and applies durability changes to the provided hoe used for harvesting.
-     * This method simulates durability changes based on enchantments like Unbreaking.
+     * This method simulates durability changes based on the Unbreaking enchantment.
      * If the hoe has the Unbreaking enchantment, there is a chance that the durability
-     * will not decrease with each use. Additionally, the method handles the removal of
-     * the hoe if it reaches its maximum durability.
+     * will not decrease with each use. Additionally, if the hoe reaches its maximum durability,
+     * it is removed from the player's inventory.
      *
-     * @param p       The player who caused the BlockBreakEvent.
-     * @param usedHoe The hoe used to harvest the plant.
+     * @param player   The player who caused the BlockBreakEvent.
+     * @param usedHoe  The hoe used to harvest the plant.
      */
-    private void damageHoe(@NotNull Player p, @NotNull ItemStack usedHoe) {
+    private void damageHoe(@NotNull Player player, @NotNull ItemStack usedHoe) {
 
+        // Ensure the ItemStack has metadata that can be damaged
         Damageable hoe = (Damageable) usedHoe.getItemMeta();
-        if (hoe == null)
+        if (hoe == null) {
+            logger.error("Damage attempt on hoe failed: Item has no damageable metadata.");
             return;
+        }
 
-        if (usedHoe.getEnchantments().containsKey(Enchantment.DURABILITY)) {
-            if (Math.random() <= ((double) 1 / (usedHoe.getEnchantmentLevel(Enchantment.DURABILITY) + 1))) {
+        // TODO: Use VersionMapper for this distinction
+        // Fetch the appropriate enchantment (UNBREAKING or DURABILITY for backward compatibility)
+        // API Change from version 1.20.3 to 1.20.4.
+        Enchantment unbreaking = Enchantment.getByName("UNBREAKING");
+        if (unbreaking == null) {
+            unbreaking = Enchantment.getByName("DURABILITY");
+            logger.logToFile("Using legacy enchantment 'DURABILITY' due to API version < 1.20.4", logFile);
+        }
+
+        // Exit if enchantment retrieval fails
+        if (unbreaking == null) {
+            logger.error("Enchantment retrieval failed: Neither UNBREAKING nor DURABILITY enchantments found.");
+            return;
+        }
+
+        // Logging the enchantment key, presence, and level on the hoe for debugging
+        boolean hasUnbreaking = usedHoe.getEnchantments().containsKey(unbreaking);
+        int unbreakingLevel = usedHoe.getEnchantmentLevel(unbreaking);
+
+        logger.logToFile("Unbreaking Enchantment: " + unbreaking, logFile);
+        logger.logToFile("Hoe has Unbreaking: " + hasUnbreaking, logFile);
+        logger.logToFile("  - Unbreaking Level: " + unbreakingLevel, logFile);
+
+        // Apply damage with Unbreaking logic
+        if (hasUnbreaking) {
+            if (Math.random() <= (1.0 / (unbreakingLevel + 1))) {
                 hoe.setDamage(hoe.getDamage() + 1);
                 usedHoe.setItemMeta(hoe);
+                logger.logToFile("Hoe durability reduced (Unbreaking applied).", logFile);
+                logger.logToFile("  - New Damage: " + hoe.getDamage(), logFile);
+            } else {
+                logger.logToFile("Hoe durability unchanged (Unbreaking prevented damage).", logFile);
             }
         } else {
             hoe.setDamage(hoe.getDamage() + 1);
             usedHoe.setItemMeta(hoe);
+            logger.logToFile("Hoe durability reduced without Unbreaking enchantment.", logFile);
+            logger.logToFile("  - New Damage: " + hoe.getDamage(), logFile);
         }
 
-        // Remove the hoe if it reaches maximum durability
+        // Check and handle maximum durability
         if (hoe.getDamage() >= usedHoe.getType().getMaxDurability()) {
-            p.playEffect(EntityEffect.BREAK_EQUIPMENT_MAIN_HAND);
-            p.getInventory().remove(usedHoe);
+            player.playEffect(EntityEffect.BREAK_EQUIPMENT_MAIN_HAND);
+            player.getInventory().remove(usedHoe);
+            logger.logToFile("Hoe reached max durability and was removed from inventory.", logFile);
+        } else {
+            logger.logToFile("Hoe durability is within limits.", logFile);
+            logger.logToFile("Current Damage: " + hoe.getDamage() +
+                    " / Max Durability: " + usedHoe.getType().getMaxDurability(), logFile);
         }
-        p.updateInventory();
+
+        // Update player inventory after durability adjustments
+        player.updateInventory();
 
     }
 
