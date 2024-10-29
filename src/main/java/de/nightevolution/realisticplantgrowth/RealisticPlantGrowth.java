@@ -63,6 +63,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private static final String logFile = "debug";
 
     private String pluginVersion;
+    private boolean isPaperFork;
 
     @Override
     public void onEnable() {
@@ -74,6 +75,9 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
         logger = new Logger(this.getClass().getSimpleName(), cm.isVerbose(), cm.isDebug_log());
 
+
+        checkServerFork();
+
         if (checkServerVersion()) {
             logger.log("Version check passed.");
         } else {
@@ -84,6 +88,28 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         updateVariables();
         registerMetrics();
         drawLogo();
+    }
+
+
+    /**
+     * Checks the server implementation to determine if it is running on a Paper or Spigot server.
+     * <p>
+     * This method attempts to load a Paper-specific class. If the class is found, it indicates that
+     * the server is a Paper fork, and the corresponding flag is set. If the class cannot be found,
+     * it assumes the server is running on Spigot or another non-Paper implementation.
+     * </p>
+     */
+    private void checkServerFork() {
+        try {
+            logger.log("Checking server version...");
+            // Attempt to load a Paper-specific class to verify if running on a Paper fork
+            Class.forName("io.papermc.paper.util.Tick");
+            isPaperFork = true;
+            logger.log("... using Paper implementation.");
+        } catch (ClassNotFoundException ignored) {
+            isPaperFork = false;
+            logger.log("... using Spigot implementation.");
+        }
     }
 
     /**
@@ -111,31 +137,33 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
             logger.log("Your server is running version 1." + minorReleaseVersion + "." + microReleaseVersion);
 
-        } catch (ArrayIndexOutOfBoundsException whatVersionAreYouUsingException) {
-            // Unable to extract version, log the exception and return false
-            logger.error("Error while extracting server version!");
+        } catch (ArrayIndexOutOfBoundsException | NumberFormatException whatVersionAreYouUsingException) {
+            logger.error("Error extracting server version: Unable to parse Bukkit version format.");
             return false;
         }
 
-
+        // Warn if the server version is a snapshot version
         if (pluginVersion.contains("SNAPSHOT")) {
-            logger.warn("You are using a snapshot version!");
+            logger.warn("You are using a snapshot version of RealisticPlantGrowth!");
         }
 
-        // Version below Minecraft 1.20 are not supported.
-        if (minorReleaseVersion < 20)
+        // Version below Minecraft 1.20.1 are not supported (due to createBlockState API change).
+        if (minorReleaseVersion < 20 || (minorReleaseVersion == 20 && microReleaseVersion == 0)) {
+            logger.error("Unsupported server version: This plugin requires Minecraft 1.20.1 or higher.");
             return false;
+        }
 
-        // Initialize version-specific mappers based on the detected version
-        if (minorReleaseVersion == 20 && microReleaseVersion <= 3)
+        // Assign the correct VersionMapper based on the server version
+        if (minorReleaseVersion == 20 && microReleaseVersion <= 3) {
             versionMapper = new Version_1_20();
-
-        else
+            logger.log("Implementation initialized for Minecraft 1.20.1 - 1.20.3.");
+        } else {
             versionMapper = new Version_1_20_4();
+            logger.log("Implementation initialized for Minecraft 1.20.4 and above.");
+        }
 
         return true;
     }
-
 
     /**
      * Registers the primary command executor for the {@link RealisticPlantGrowth} plugin.
@@ -292,6 +320,16 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     @NotNull
     public static RealisticPlantGrowth getInstance() {
         return instance;
+    }
+
+    /**
+     * Checks if the server is running a Paper or Paper fork implementation.
+     *
+     * @return {@code true} if the server is identified as a Paper or Paper fork, <p>
+     *         {@code false} if it is a Spigot or other non-Paper implementation.
+     */
+    public boolean isPaperFork(){
+        return isPaperFork;
     }
 
     /**
