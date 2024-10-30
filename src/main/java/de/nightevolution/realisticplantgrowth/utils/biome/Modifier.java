@@ -1,4 +1,4 @@
-package de.nightevolution.realisticplantgrowth.utils.plant;
+package de.nightevolution.realisticplantgrowth.utils.biome;
 
 import de.nightevolution.realisticplantgrowth.ConfigManager;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
@@ -20,6 +20,7 @@ import java.util.Optional;
  * The Modifier class represents modifiers for plant growth in the RealisticPlantGrowth plugin.
  * It includes properties such as growthModifier, deathChance, and the information if a fertilizer was used.
  */
+@Deprecated
 public class Modifier {
 
     private final RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();

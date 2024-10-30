@@ -1,9 +1,10 @@
-package de.nightevolution.realisticplantgrowth.utils.plant;
+package de.nightevolution.realisticplantgrowth.plant;
 
 import de.nightevolution.realisticplantgrowth.ConfigManager;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.biome.BiomeChecker;
+import de.nightevolution.realisticplantgrowth.utils.biome.Modifier;
 import de.nightevolution.realisticplantgrowth.utils.enums.DeathChanceType;
 import de.nightevolution.realisticplantgrowth.utils.enums.GrowthModifierType;
 import de.nightevolution.realisticplantgrowth.utils.mapper.MaterialMapper;
@@ -246,7 +247,7 @@ public class Surrounding {
             }
         }
         if (cm.isFertilizer_passiv()) {
-            closestComposter = fertilizerSources.get(0);
+            closestComposter = fertilizerSources.getFirst();
             return closestComposter;
 
         }

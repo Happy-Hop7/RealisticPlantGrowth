@@ -3,7 +3,7 @@ package de.nightevolution.realisticplantgrowth.listeners.other;
 import de.nightevolution.realisticplantgrowth.ConfigManager;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
-import de.nightevolution.realisticplantgrowth.utils.plant.PlantKiller;
+import de.nightevolution.realisticplantgrowth.plant.PlantKiller;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;

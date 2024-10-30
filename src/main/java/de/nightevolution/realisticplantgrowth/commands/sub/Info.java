@@ -170,8 +170,8 @@ public class Info extends SubCommand implements PlaceholderInterface {
         }
 
         // If the list contains only 'ALL', return it as is
-        if (biomeList.size() == 1 && biomeList.get(0).equalsIgnoreCase("ALL")) {
-            return biomeList.get(0);
+        if (biomeList.size() == 1 && biomeList.getFirst().equalsIgnoreCase("ALL")) {
+            return biomeList.getFirst();
         }
 
         builder.append("<newline>");
