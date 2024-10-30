@@ -27,6 +27,11 @@
 # a 100% chance. Fertilizer in range can enable plant growth in 'BAD' biomes.
 # BiomeGroups listed under 'Groups' and not specified further receive the 'Default' values.
 #
+# Some Materials are mapped to simpler names to help to avoid errors in the configuration Mapped materials
+# can be found at:
+# TODO: Link einfügen
+#
+#
 # Disclaimer:
 # The GrowthModifiers.yml settings provided here are EXAMPLES. Users are encouraged to customize and modify
 # these settings based on their specific preferences and gameplay needs.
