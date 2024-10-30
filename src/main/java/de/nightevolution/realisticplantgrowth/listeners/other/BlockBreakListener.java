@@ -4,7 +4,7 @@ import de.nightevolution.realisticplantgrowth.ConfigManager;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
-import de.nightevolution.realisticplantgrowth.utils.plant.PlantKiller;
+import de.nightevolution.realisticplantgrowth.plant.PlantKiller;
 import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
@@ -105,9 +105,7 @@ public class BlockBreakListener implements Listener {
             logger.logToFile("Block drops cancelled: true", logFile);
             e.setDropItems(false);
         } else {
-            scheduler.runTaskLater(instance, () -> {
-                damageHoe(p, usedHoe);
-            }, 1); // 1 Tick delay
+            scheduler.runTaskLater(instance, () -> damageHoe(p, usedHoe), 1); // 1 Tick delay
         }
     }
 

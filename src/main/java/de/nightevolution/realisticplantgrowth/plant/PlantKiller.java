@@ -1,4 +1,4 @@
-package de.nightevolution.realisticplantgrowth.utils.plant;
+package de.nightevolution.realisticplantgrowth.plant;
 
 import de.nightevolution.realisticplantgrowth.ConfigManager;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;

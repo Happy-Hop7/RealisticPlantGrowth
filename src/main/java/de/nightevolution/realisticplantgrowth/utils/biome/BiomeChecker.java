@@ -18,6 +18,7 @@ import java.util.*;
  * Utility class for checking if a given plant {@link Material} and {@link Biome} combination is valid
  * based on configured BiomeGroups and Default Biomes.
  */
+@Deprecated
 public class BiomeChecker {
     private final RealisticPlantGrowth instance;
     private final ConfigManager cm;
