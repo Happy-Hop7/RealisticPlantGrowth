@@ -30,14 +30,14 @@ RELOAD_COMPLETE_MSG: "<green>Realistic Plant Growth erfolgreich neu geladen."
 # Nur aktiv, wenn 'display_growth_rates' in der Konfigurationsdatei (Config.yml) aktiviert ist.
 GROWTH_RATE_MSG: |-
   <gray> Wachstumsinformationen für<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
-    <dark_gray> » <gray>Biom: <aqua><lang:biome.minecraft.{BIOME}>
+    <dark_gray> » <gray>Biom: <aqua>{BIOME}
     <dark_gray> » <gray>Wachstumsrate: <aqua>{GROWTH_RATE}
     <dark_gray> » <gray>Todeschance:   <aqua>{DEATH_CHANCE}
     <dark_gray> » <gray>Ist stelle in Dunkelheit: <aqua>{IS_DARK}
     <dark_gray> » <gray>Beeinflusst durch Dünger: <aqua>{FERTILIZER_USED}
     <dark_gray> » <gray>Beeinflusst durch UV-Licht: <aqua>{UV_LIGHT_USED}
     <dark_gray> » <gray>Kann in Dunkelheit wachsen: <aqua>{CAN_GROW_IN_DARK}
-    <dark_gray> » <gray>Kann ohne Dünger in <lang:biome.minecraft.{BIOME}> wachsen: <aqua>{IS_VALID_BIOME}
+    <dark_gray> » <gray>Kann ohne Dünger in {BIOME} wachsen: <aqua>{IS_VALID_BIOME}
 
 # Nachricht an den Spieler, wenn eines der folgenden zutrifft:
 # 1. Die Option 'display_growth_rates' in der Config.yml aktiviert ist und das Saatgut keine Änderungen im Vergleich zu den Standard-Eigenschaften von Minecraft hat.

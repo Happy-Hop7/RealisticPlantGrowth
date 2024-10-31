@@ -7,8 +7,10 @@ import de.nightevolution.realisticplantgrowth.utils.biome.BiomeChecker;
 import de.nightevolution.realisticplantgrowth.utils.enums.DeathChanceType;
 import de.nightevolution.realisticplantgrowth.utils.enums.GrowthModifierType;
 import de.nightevolution.realisticplantgrowth.utils.mapper.MaterialMapper;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -66,6 +68,8 @@ public class Surrounding {
      */
     private final boolean validBiome;
 
+    private NamespacedKey biomeKey;
+
 
     /**
      * Constructs a Surrounding object representing the environmental conditions around a central block.
@@ -87,8 +91,15 @@ public class Surrounding {
 
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
 
-        biomeChecker = new BiomeChecker(plantType, biome);
-        validBiome = biomeChecker.isValid();
+        if (instance.isPaperFork()) {
+            biomeKey = Bukkit.getUnsafe().getBiomeKey(centerBlock.getWorld(), centerBlock.getX(), centerBlock.getY(), centerBlock.getZ());
+            biomeChecker = new BiomeChecker(plantType, biomeKey);
+            logger.verbose("BiomeKey: " + biomeKey);
+        } else {
+            biomeChecker = new BiomeChecker(plantType, biome);
+            logger.verbose("Biome: " + biome);
+        }
+            validBiome = biomeChecker.isValid();
 
         modifier = getModifier();
 
@@ -165,6 +176,8 @@ public class Surrounding {
 
         // Normal-Case (Fertilizer-Boost can still be applied)
         else {
+            logger.verbose("Normal Case Modifier selected.");
+            logger.verbose("matchingBiomeGroup: " + biomeChecker.getMatchingBiomeGroup());
             tempModifier = new Modifier(plantType, biomeChecker.getMatchingBiomeGroup(),
                     GrowthModifierType.GrowthRate,
                     DeathChanceType.NaturalDeathChance);
@@ -198,8 +211,11 @@ public class Surrounding {
      *
      * @return The biome of the center block.
      */
-    public Biome getBiome() {
-        return biome;
+    public String getBiome() {
+        if (instance.isPaperFork())
+            return biomeKey.toString();
+        else
+            return biome.toString();
     }
 
     /**

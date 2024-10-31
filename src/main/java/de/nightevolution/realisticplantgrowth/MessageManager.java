@@ -181,7 +181,7 @@ public class MessageManager {
             }
 
             // Check if the Plant Placeholder is a Block or Item (relevant for correct MiniMessage formatting)
-            Material plantMaterialType = Material.getMaterial(replacements.get(0).toString().toUpperCase());
+            Material plantMaterialType = Material.getMaterial(replacements.getFirst().toString().toUpperCase());
 
             if (plantMaterialType != null && !plantMaterialType.isBlock()) {
                 message = message.replace("lang:block.minecraft", "lang:item.minecraft");

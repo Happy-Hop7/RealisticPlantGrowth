@@ -26,14 +26,14 @@ RELOAD_COMPLETE_MSG: <green>Realistic Plant Growth on onnistuneesti ladattu uude
 # Aktiivinen ainoastaan 'display_growth_rates' on aktivoitu tiedostossa (Config.yml).
 GROWTH_RATE_MSG: |-
   <gray>Growth information for<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
-    <dark_gray> » <gray>Biomi: <aqua><lang:biome.minecraft.{BIOME}>
+    <dark_gray> » <gray>Biomi: <aqua>{BIOME}
     <dark_gray> » <gray>Kasvutahti: <aqua>{GROWTH_RATE}
     <dark_gray> » <gray>Kuoleman Mahdollisuus:   <aqua>{DEATH_CHANCE}
     <dark_gray> » <gray>On liian pimeää: <aqua>{IS_DARK}
     <dark_gray> » <gray>Lannoitteen vaikutusalueella: <aqua>{FERTILIZER_USED}
     <dark_gray> » <gray>UV-Valojen vaikutusalueella: <aqua>{UV_LIGHT_USED}
     <dark_gray> » <gray>Voi kasvaa pimessä: <aqua>{CAN_GROW_IN_DARK}
-    <dark_gray> » <gray>Voi kasvaa ilman lannoitetta -> <lang:biome.minecraft.{BIOME}>: <aqua>{IS_VALID_BIOME}
+    <dark_gray> » <gray>Voi kasvaa ilman lannoitetta -> {BIOME}: <aqua>{IS_VALID_BIOME}
 
 # Viesti pelaajalle, jos jompikumpi seuraavista ehdoista täyttyy:
 # 1. 'display_growth_rates' -vaihtoehto Config.yml-tiedostossa on käytössä ja siemenellä ei ole muutettuja ominaisuuksia verrattuna Minecraftin vakio-ominaisuuksiin.

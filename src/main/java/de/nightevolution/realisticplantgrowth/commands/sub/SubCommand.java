@@ -61,7 +61,7 @@ public abstract class SubCommand {
         this.commandSender = commandSender;
         this.args = args;
         this.logEvent = RealisticPlantGrowth.isDebug();
-        this.superLogger = new Logger(this.getClass().getSimpleName(), logEvent, RealisticPlantGrowth.isDebug());
+        this.superLogger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
 
         if (logEvent) {
             superLogger.logToFile("", logFile);
