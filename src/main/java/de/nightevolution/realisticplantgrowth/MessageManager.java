@@ -2,6 +2,7 @@ package de.nightevolution.realisticplantgrowth;
 
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.enums.MessageType;
+import de.nightevolution.realisticplantgrowth.utils.enums.PlaceholderInterface;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
@@ -177,7 +178,28 @@ public class MessageManager {
 
             // Replace Plugin Placeholders
             for (int i = 0; i < placeholders.size(); i++) {
-                message = message.replace(placeholders.get(i), replacements.get(i).toString());
+
+                Object currentPlaceholder = placeholders.get(i);
+
+                String rawReplacement = replacements.get(i).toString();
+                String[] fragmentedReplacement = rawReplacement.split(":");
+                String replacement = rawReplacement.replace(":", ".");
+                //message = message.replace(placeholders.get(i), replacement);
+
+                if (currentPlaceholder == PlaceholderInterface.BIOME_PLACEHOLDER) {
+                    if (fragmentedReplacement[0].equalsIgnoreCase("minecraft")){
+                        replacement = "<lang:biome." + replacement + ">";
+                        message = message.replace(placeholders.get(i), replacement);
+                    }
+
+                    else {
+                        // Custom Biome Names
+                        message = message.replace(placeholders.get(i), fragmentedReplacement[1]);
+                    }
+                } else {
+                    message = message.replace(placeholders.get(i), replacements.get(i).toString());
+                }
+
             }
 
             // Check if the Plant Placeholder is a Block or Item (relevant for correct MiniMessage formatting)

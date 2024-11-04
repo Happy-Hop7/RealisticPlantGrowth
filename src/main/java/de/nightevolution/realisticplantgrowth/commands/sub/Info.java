@@ -185,24 +185,24 @@ public class Info extends SubCommand implements PlaceholderInterface {
         }
 
         builder.append("<newline>");
-        if (instance.isPaperFork()) {
-            // TODO: Need NamespacedKey for correct formatting
+
             for (String element : biomeList) {
-                builder.append("     - ")
-                        //.append("<lang:biome.minecraft.")
-                        .append(element.toLowerCase())
-                        //.append(">")
-                        .append("<newline>");
+
+                String[] fragmentedString = element.split(":");
+                if (fragmentedString.length == 1) { // if length == 1 -> Not a custom biome
+                    builder.append("     - ")
+                            .append("<lang:biome.minecraft.")
+                            .append(element.toLowerCase())
+                            .append(">")
+                            .append("<newline>");
+                } else {
+
+                    builder.append("     - ")
+                            .append(element)
+                            .append("<newline>");
+                }
             }
-        } else {
-            for (String element : biomeList) {
-                builder.append("     - ")
-                        .append("<lang:biome.minecraft.")
-                        .append(element.toLowerCase())
-                        .append(">")
-                        .append("<newline>");
-            }
-        }
+
         return builder.toString();
     }
 }
