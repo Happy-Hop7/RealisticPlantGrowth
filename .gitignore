@@ -39,3 +39,9 @@ replay_pid*
 # Maven
 log/
 target/
+
+# Local variables
+/plugin.properties
+
+# Build path
+build/

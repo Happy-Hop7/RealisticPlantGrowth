@@ -26,14 +26,14 @@ RELOAD_COMPLETE_MSG: <green>Realistic Plant Growth успешно перезаг
 # Активен только в том случае, если в файле конфигурации (Config.yml) включен параметр 'display_growth_rates'.
 GROWTH_RATE_MSG: |-
   <gray>Информация о росте<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
-    <dark_gray> » <gray>Биом: <aqua><lang:biome.minecraft.{BIOME}>
+    <dark_gray> » <gray>Биом: <aqua>{BIOME}
     <dark_gray> » <gray>Скорость роста: <aqua>{GROWTH_RATE}
     <dark_gray> » <gray>Шанс неприживления:   <aqua>{DEATH_CHANCE}
     <dark_gray> » <gray>Рост в тёмном месте: <aqua>{IS_DARK}
     <dark_gray> » <gray>Влияние компостера: <aqua>{FERTILIZER_USED}
     <dark_gray> » <gray>Влияние УФ-Света: <aqua>{UV_LIGHT_USED}
     <dark_gray> » <gray>Может расти в темноте: <aqua>{CAN_GROW_IN_DARK}
-    <dark_gray> » <gray>Может расти без компостера в биоме <lang:biome.minecraft.{BIOME}>: <aqua>{IS_VALID_BIOME}
+    <dark_gray> » <gray>Может расти без компостера в биоме {BIOME}: <aqua>{IS_VALID_BIOME}
 
 # Сообщение игроку, если выполнено одно из следующих условий:
 # 1. Опция 'display_growth_rates' в Config.yml активирована, и семя не имеет изменённых свойств по сравнению с Minecraft ванильной версией.
