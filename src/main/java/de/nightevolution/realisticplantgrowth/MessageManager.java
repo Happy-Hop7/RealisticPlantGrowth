@@ -190,9 +190,10 @@ public class MessageManager {
                     if (fragmentedReplacement[0].equalsIgnoreCase("minecraft")){
                         replacement = "<lang:biome." + replacement + ">";
                         message = message.replace(placeholders.get(i), replacement);
-                    }
-
-                    else {
+                    } else if (fragmentedReplacement.length == 1) { // Spigot Vanilla Biomes
+                        replacement = "<lang:biome.minecraft." + replacement + ">";
+                        message = message.replace(placeholders.get(i), replacement);
+                    } else {
                         // Custom Biome Names
                         message = message.replace(placeholders.get(i), fragmentedReplacement[1]);
                     }

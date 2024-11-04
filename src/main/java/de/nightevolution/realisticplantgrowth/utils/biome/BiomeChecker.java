@@ -121,9 +121,13 @@ public class BiomeChecker {
                         }
                     }
                 } else {
-                    if (cm.getBiomeSetOfBiomeGroup(biomeGroup).contains(currentBiome.getKey().asString())) {
-                        matchingBiomeGroup = biomeGroup;
-                        return true;
+                    for (String biomeString : cm.getBiomeSetOfBiomeGroup(biomeGroup)) {
+                        logger.verbose("returned String: " + biomeString);
+                        logger.verbose("String to check: " + currentBiome);
+                        if (biomeString.equalsIgnoreCase(currentBiome.toString())){
+                            matchingBiomeGroup = biomeGroup;
+                            return true;
+                        }
                     }
                 }
             }
