@@ -26,14 +26,14 @@ RELOAD_COMPLETE_MSG: <green>真實的植物生長重新加載成功。
 # 2. 使用了 '/rpg info' 命令，且種子與Minecraft原版的特性無異。
 GROWTH_RATE_MSG: |-
   <gray><hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray> 的生長信息：
-    <dark_gray> » <gray>生物群系： <aqua><lang:biome.minecraft.{BIOME}>
+    <dark_gray> » <gray>生物群系： <aqua>{BIOME}
     <dark_gray> » <gray>生長速率： <aqua>{GROWTH_RATE}
     <dark_gray> » <gray>死亡機率：   <aqua>{DEATH_CHANCE}
     <dark_gray> » <gray>是否為黑暗區域： <aqua>{IS_DARK}
     <dark_gray> » <gray>受肥料影響： <aqua>{FERTILIZER_USED}
     <dark_gray> » <gray>受紫外線影響： <aqua>{UV_LIGHT_USED}
     <dark_gray> » <gray>能在黑暗中生長： <aqua>{CAN_GROW_IN_DARK}
-    <dark_gray> » <gray>能在 <lang:biome.minecraft.{BIOME}> 生長而無需肥料： <aqua>{IS_VALID_BIOME}
+    <dark_gray> » <gray>能在 {BIOME} 生長而無需肥料： <aqua>{IS_VALID_BIOME}
 
 # 當在配置文件（Config.yml）中啟用了 'display_growth_rates' 且
 # 與 Minecraft 原始行為相比，種子沒有修改屬性時發送給玩家。

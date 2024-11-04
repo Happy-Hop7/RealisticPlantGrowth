@@ -9,10 +9,7 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -567,12 +564,38 @@ public class ConfigManager {
      * @return a HashSet containing Biomes from the specified route. (empty if route not valid)
      */
     @NotNull
-    public Set<Biome> getBiomeSetOfBiomeGroup(@NotNull String biomeGroup) {
+    public List<String> getBiomeSetOfBiomeGroup(@NotNull String biomeGroup) {
         Optional<List<String>> biomeList = biomeGroupsFile.getOptionalStringList(biomeGroup);
-        if (biomeList.isPresent() && !biomeList.get().isEmpty()) {
-            return getCheckedBiomeSet(biomeList.get());
-        } else
-            return new HashSet<>();
+
+        if (instance.isPaperFork()) {
+            if (biomeList.isPresent() && !biomeList.get().isEmpty()) {
+                List<String> returnList = new ArrayList<>();
+                for (String biomeString : biomeList.get()) {
+                    if (biomeString.contains(":")) {
+                        returnList.add(biomeString);
+                    } else {
+                        try {
+                            Biome biome = Biome.valueOf(biomeString);
+                            returnList.add((biome.getKey().asString()));
+                            logger.verbose("Checked BiomeString: " + biome);
+                            logger.verbose("Added to return list: " + biome.getKey().asString());
+                        } catch (IllegalArgumentException e) {
+                            logger.warn("Biome '" + biomeString + "' is not a valid Bukkit Biome name!");
+                            logger.warn("Please check your BiomeGroups.yml!");
+                            logger.warn("Include the Namespace of custom Biomes!");
+                        }
+                    }
+                }
+
+                return returnList;
+            } else
+                return new ArrayList<>();
+        } else {
+            if (biomeList.isPresent() && !biomeList.get().isEmpty()) {
+                return getCheckedBiomeSet(biomeList.get());
+            } else
+                return new ArrayList<>();
+        }
     }
 
 
@@ -607,12 +630,13 @@ public class ConfigManager {
      * @param stringBiomeList The list of biome names to be converted.
      * @return A HashSet containing Bukkit {@link Biome} objects derived from the input biome names.
      */
-    public HashSet<Biome> getCheckedBiomeSet(List<String> stringBiomeList) {
-        HashSet<Biome> biomeSet = new HashSet<>(stringBiomeList.size());
+    public List<String> getCheckedBiomeSet(List<String> stringBiomeList) {
+        List<String> biomeSet = new ArrayList<>(stringBiomeList.size());
         for (String biomeName : stringBiomeList) {
             try {
                 Biome biome = Biome.valueOf(biomeName);
-                biomeSet.add(biome);
+                biomeSet.add(biome.toString());
+                logger.verbose("Checked BiomeString: " + biome);
             } catch (IllegalArgumentException e) {
                 logger.warn("Biome '" + biomeName + "' is not a valid Bukkit Biome name!");
                 logger.warn("Please check your BiomeGroups.yml!");

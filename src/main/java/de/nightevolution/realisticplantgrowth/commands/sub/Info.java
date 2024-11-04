@@ -4,8 +4,7 @@ import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.biome.BiomeChecker;
 import de.nightevolution.realisticplantgrowth.utils.enums.MessageType;
 import de.nightevolution.realisticplantgrowth.utils.enums.PlaceholderInterface;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
@@ -22,6 +21,7 @@ public class Info extends SubCommand implements PlaceholderInterface {
     private Material plantMaterial;
     private Material seedMaterial;
     private Material notGrowthModifiedSeed;
+    private NamespacedKey biomeKey;
 
     /**
      * Constructor for the 'info' subcommand.
@@ -70,8 +70,18 @@ public class Info extends SubCommand implements PlaceholderInterface {
             return false;
         }
 
-        // Check the biomes where the plant can grow
-        BiomeChecker bc = new BiomeChecker(plantMaterial, player.getLocation().getBlock().getBiome());
+        Location playerLocation = player.getLocation();
+        BiomeChecker bc;
+
+        // New custom biome handling
+        if (instance.isPaperFork()) {
+            biomeKey = Bukkit.getUnsafe().getBiomeKey(player.getWorld(), playerLocation.getBlockX(), playerLocation.getBlockY(), playerLocation.getBlockZ());
+             bc = new BiomeChecker(plantMaterial, biomeKey);
+        } else {
+            // Check the biomes where the plant can grow
+            bc = new BiomeChecker(plantMaterial, playerLocation.getBlock().getBiome());
+        }
+
         String defaultBiomesList = formatBiomeList(bc.getDefaultBiomes());
 
         // Prepare placeholders and replacements for the message
@@ -175,13 +185,23 @@ public class Info extends SubCommand implements PlaceholderInterface {
         }
 
         builder.append("<newline>");
-        for (String element : biomeList) {
-            builder.append("     - ")
-                    .append("<lang:biome.minecraft.")
-                    .append(element.toLowerCase())
-                    .append(">")
-                    .append("<newline>");
-        }
+
+            for (String element : biomeList) {
+
+                String[] fragmentedString = element.split(":");
+                if (fragmentedString.length == 1) { // if length == 1 -> Not a custom biome
+                    builder.append("     - ")
+                            .append("<lang:biome.minecraft.")
+                            .append(element.toLowerCase())
+                            .append(">")
+                            .append("<newline>");
+                } else {
+
+                    builder.append("     - ")
+                            .append(element)
+                            .append("<newline>");
+                }
+            }
 
         return builder.toString();
     }

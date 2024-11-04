@@ -209,7 +209,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
                 e.getMaterial().toString().toLowerCase(),
                 growthRate,
                 deathChance,
-                surrounding.getBiome().toString().toLowerCase(),
+                surrounding.getBiome().toLowerCase(),
                 surrounding.isInValidBiome(),
                 surrounding.usedFertilizer(),
                 surrounding.hasUVLightAccess(),

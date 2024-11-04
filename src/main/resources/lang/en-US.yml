@@ -30,14 +30,14 @@ RELOAD_COMPLETE_MSG: "<green>Realistic Plant Growth successfully reloaded."
 # Active only if 'display_growth_rates' is enabled in the configuration file (Config.yml).
 GROWTH_RATE_MSG: |-
   <gray>Growth information for<hover:show_item:"minecraft:{PLANT}"> <yellow><lang:block.minecraft.{PLANT}></hover><gray>:
-    <dark_gray> » <gray>Biome: <aqua><lang:biome.minecraft.{BIOME}>
+    <dark_gray> » <gray>Biome: <aqua>{BIOME}
     <dark_gray> » <gray>Growth Rate: <aqua>{GROWTH_RATE}
     <dark_gray> » <gray>Death Chance:   <aqua>{DEATH_CHANCE}
     <dark_gray> » <gray>Is Dark Spot: <aqua>{IS_DARK}
     <dark_gray> » <gray>Influenced by Fertilizer: <aqua>{FERTILIZER_USED}
     <dark_gray> » <gray>Influenced by UV-Light: <aqua>{UV_LIGHT_USED}
     <dark_gray> » <gray>Can Grow in Darkness: <aqua>{CAN_GROW_IN_DARK}
-    <dark_gray> » <gray>Can grow without fertilizer in <lang:biome.minecraft.{BIOME}>: <aqua>{IS_VALID_BIOME}
+    <dark_gray> » <gray>Can grow without fertilizer in {BIOME}: <aqua>{IS_VALID_BIOME}
 
 # Message to the player if either of the following conditions is met:
 # 1. The 'display_growth_rates' option in the Config.yml is enabled and the seed has no modified properties compared to Minecraft vanilla.
