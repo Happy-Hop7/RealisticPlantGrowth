@@ -24,72 +24,18 @@ the Minecraft flora, allowing you to fine-tune growth parameters on a per-biome 
 - Maybe you want cocoa to grow only in jungles or make plants grow slower in deserts?
 - Or perhaps you want farms to be above ground and need natural light?
 
-You can do all that with **Realistic Plant Grotwh**!
+You can do all that with **Realistic Plant Growth**!
 
-
-<br>
 
 **Realistic Plant Growth** actively monitors grow events, allowing plants to progress through their growth stages based
 on a configured growth rate. <br>
 What sets this plugin apart is its biome-dependent growth rate, providing an immersive experience tailored to the
 in-game environment.
 
-<br>
-
-## Balancing Automatic Farms
-
-You can customize your farming experience by adjusting the required light level for plant growth. This feature can not
-only ensure that growth occurs only above ground but also disables the dominance of stacked farms, preventing
-overpowering setups like giant cactus farms.
-
-To add an extra layer of complexity, each plant introduces a configurable death chance. This element adds a strategic
-component to the game, as plants now have a chance to perish during their growth process. The introduction of a death
-chance serves as a countermeasure against fully automatic farms, adding a balancing factor to the gameplay.
-
-
-<br>
-
-## UV-Light Blocks
-
-UV-Light enables the growth of plants that lack access to natural skylight, enabling their cultivation in dark and
-indoor environments. Easily customize the effect radius and the UV-light blocks in the configuration settings.
-
-<br>
-
-## Fertilizer
-
-Fertilizer blocks (Composter) enhance the growth rates of plants in their vicinity. By default, each time a plant
-advances to the next stage, the composter fill level is depleted, signifying the utilization of fertilizer to boost the
-growth rate. Players must refill the composter either manually or with the assistance of hoppers.
-
-
-<br>
-
-## Features
-
-All features can be toggled and fine-tuned either directly in the ```Config.yml``` file or by adjusting
-the ```GrowthModifiers.yml``` file.
-
-- Biome-Specific Plant Growth
-- Biome-Specific Plant Death Chance
-- Sounds and Effects On Plant Death
-- Replace Farmland On Harvest
-- Agricultural Crops Require Hoe
-- Plants Require Natural Sky Light
-- UV-Light Blocks
-- Boost Growth Rates With Fertilizer
-- Customizable Messages With [miniMessage](https://docs.advntr.dev/minimessage/format.html) Support.
-
-
-
-<br>
-<br>
 
 ## Wiki
 Check out our [wiki](https://docs.nightevolution.de/) for detailed documentation.
 
-<br>
-<br>
 
 ## Requirements
 
@@ -100,7 +46,7 @@ Check out our [wiki](https://docs.nightevolution.de/) for detailed documentation
 → _At least_ **Java 21**.
 
 <br>
-<br>
+
 
 
 [![IMG](https://bstats.org/signatures/bukkit/Realistic%20Plant%20Growth.svg)](https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634)
