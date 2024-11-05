@@ -14,4 +14,4 @@ updates:
     labels:
       - "dependencies" # Optional: Label for PRs created by Dependabot
     commit-message:
-      prefix: "Bot-" # Optional: Customize commit message prefix
+      prefix: "[Dependabot]" # Optional: Customize commit message prefix
