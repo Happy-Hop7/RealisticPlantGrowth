@@ -1,0 +1,17 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/" # Location of your pom.xml file, adjust if it's not in the root directory
+    schedule:
+      interval: "weekly" # You can set this to daily, weekly, or monthly
+    #ignore:
+      #- dependency-name: "org.example:example-lib" # Optional: Skip specific dependencies
+    labels:
+      - "dependencies" # Optional: Label for PRs created by Dependabot
+    commit-message:
+      prefix: "Bot-" # Optional: Customize commit message prefix
