@@ -37,27 +37,6 @@ enabled_worlds:
 # enabling the plugin on all worlds except those listed.
 use_enabled_worlds_as_world_blacklist: false
 
-# Limits the use of bonemeal on plants to the specified amount.
-# Setting 'bonemeal_limit: 0' completely disables the use of bone meal.
-# Negative numbers deactivate this feature (e.g., 'bonemeal_limit: -1').
-# Note: This feature is currently not implemented.
-bonemeal_limit: 3
-
-# Required natural sky light level for plant growth.
-# Sky light level: 0: allows underground growth. (Additional light sources are still necessary.)
-# Sky light level 10-12: corresponds to sunlight filtered through leaves.
-# Sky light level 15: plants only grow in direct sunlight. (Allows glass ceilings.)
-min_natural_light: 15
-
-# When a player harvests a plant that has grown on farmland, the farmland is automatically replaced with a
-# coarse dirt block. Consequently, the player is required to re-hoe the area to prepare it for seeding new plants.
-# Setting 'destroy_farmland' to 'true' enables this feature.
-destroy_farmland: true
-
-# Determines whether a player needs a hoe to harvest plants. If set to 'true', players must use a hoe for harvesting.
-# If 'require_hoe' is set to 'true' and a plant is harvested without a hoe, the plant will not drop anything.
-require_hoe: true
-
 # Displays potential growth rates for an item in hand when a player left-clicks the ground.
 # Only shows growth rates for the biome the player is currently in.
 display_growth_rates: true
@@ -67,16 +46,16 @@ display_growth_rates: true
 # Prevents spam clicking and therefore heavy area scans.
 display_cooldown: 5
 
-# bStats
-# Set to true if you want to anonymously report plugin metrics to bStats.
-# bStats Link: https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634
-use_metrics: true
+# Limits the use of bonemeal on plants to the specified amount.
+# Setting 'bonemeal_limit: 0' completely disables the use of bone meal.
+# Negative numbers deactivate this feature (e.g., 'bonemeal_limit: -1').
+# Note: This feature is currently not implemented.
+bonemeal_limit: 3
 
-# Update Checker
-# Set this option to 'true' to enable automatic update checks when the server starts.
-# Setting it to 'false' will disable update checking.
-check_for_updates: true
-
+# When a player harvests a plant that has grown on farmland, the farmland is automatically replaced with a
+# coarse dirt block. Consequently, the player is required to re-hoe the area to prepare it for seeding new plants.
+# Setting 'destroy_farmland' to 'true' enables this feature.
+destroy_farmland: true
 
 ########################################################################################################################
 #|                                                                                                                    |#
@@ -119,13 +98,6 @@ fertilizer_radius: 8
 # false: Players must actively fill the composter to achieve fertilization effects.
 fertilizer_passive: false
 
-# The 'fertilizer_boost_growth_rate' is a percentage added to biome-specific growth rates,
-# if a composter is within the configured 'fertilizer_radius'.
-# For example, a biome-specific growth rate of wheat in a desert is 20%. A 'fertilizer_boost_growth_rate' of 25.0%
-# results in a growth rate of 45.0% for wheat plants.
-# Note that specific plant/biome growth and death rates take effect regardless of fertilizer.
-fertilizer_boost_growth_rate: 20.0
-
 # Allows a growth rate above 100.0%.
 # If a plant has a biome-specific growth rate of 100.0% and this is set to be true,
 # the resulting growth rate can exceed 100.0% (e.g., 125.0%).
@@ -163,6 +135,10 @@ fertilizer_invalid_biome_death_chance: 35.0
 # Enable use of UV-Light Blocks
 uv_enabled: false
 
+# Radius around a UV-Light block that affects growth.
+# Higher values consume more server resources and may lead to server lag. (Maximum 15 blocks)
+uv_radius: 5
+
 # List of blocks that can function as UV-Light sources; they don't need to emit light.
 uv_blocks:
   - OCHRE_FROGLIGHT
@@ -173,10 +149,6 @@ uv_blocks:
 #   true: All blocks in 'uv_blocks' are necessary for plant growth.
 #   false: Only one of the blocks listed in 'uv_blocks' is required for plant growth.
 require_all_uv_blocks: true
-
-# Radius around a UV-Light block that affects growth.
-# Higher values consume more server resources and may lead to server lag. (Maximum 15 blocks)
-uv_radius: 5
 
 # List of plants that grow without requiring natural sky light, allowing growth
 # in artificial light sources like torches and lanterns (not the same as UV-Light).
@@ -251,8 +223,36 @@ bonemeal_log: false
 
 
 ########################################################################################################################
+#|                                                                                                                    |#
+#| Plugin Management                                                                                                  |#
+#|                                                                                                                    |#
+#| Controls plugin update checks and anonymous metrics reporting.                                                     |#
+#|                                                                                                                    |#
+########################################################################################################################
+
+# bStats
+# Please keep this enabled! It helps me understand what Minecraft versions and server setups are most common.
+# No personal data is collected — just anonymous stats that help improve the plugin.
+# bStats Link: https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634
+use_metrics: true
+
+# Update Checker
+# Set 'enabled' to 'true' to allow the plugin to automatically check for updates.
+# By default, the update check happens when the server starts.
+#
+# You can also set a custom interval for periodic update checks:
+# - Use 'interval' (in hours) to specify how often to check for updates automatically.
+# - Set 'interval' to -1 if you only want the update check to run once at startup.
+#
+# Setting 'enabled' to 'false' disables all automatic update checks.
+update_check:
+  enabled: true
+  interval: 24
+
+
+########################################################################################################################
 #| Spooky internal settings.                                                                                          |#
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
-config-version: 7
+config-version: 8
 verbose: false

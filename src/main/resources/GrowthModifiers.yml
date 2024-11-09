@@ -20,7 +20,7 @@
 # in relation to the vanilla game. A 'GrowthRate' of 100% mirrors vanilla behavior.
 # Growth rates above 100% must be enabled in 'Config.yml' first. Higher rates introduce the
 # possibility of plants skipping growth states or aging faster. Plants not specified in this
-# file adhere to the vanilla GrowthRate.
+# file adhere to the vanilla growth rate.
 #
 # Note:
 # Every biome not listed under 'Groups' or in the 'Biome' list is considered a 'BAD' biome where the plant dies with
@@ -44,14 +44,21 @@
 # Bamboo grows only in biomes within the 'Tropical' biome group.
 # Since 'Biome' is an empty list, every other biome is considered as 'BAD'.
 BAMBOO:
+  min_natural_light: 15
+  require_tool_for_drops:
+    enabled: true
+    allowed_tool_list:
+      - DIAMOND_SWORD
   BiomeGroup:
     Groups:
       - Tropical
     Tropical:
-      GrowthRate: 100
-      UVLightGrowthRate: 35
+      NaturalGrowthRate: 100
       NaturalDeathChance: 5
+      UVLightGrowthRate: 35
       UVLightDeathChance: 15
+      FertilizerBoostRate: 20
+      requires-greenhouse: false  # Plant must be enclosed in a greenhouse due to harsh environmental conditions.
   Default:
     Biome: [ ] # No growth in other biomes
 
@@ -62,7 +69,7 @@ CACTUS:
     Groups:
       - Arid
     Arid:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
@@ -77,12 +84,12 @@ CHORUS_FLOWER:
       - End
       - Frozen
     End:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
     Frozen:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
       UVLightDeathChance: 20
@@ -96,7 +103,7 @@ COCOA:
     Groups: [ ]
   # The default section applies only to jungle biomes
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 55
     NaturalDeathChance: 5
     UVLightDeathChance: 25
@@ -113,17 +120,17 @@ NETHER_WART:
       - Arid
       - Savanna
     Nether:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
     Arid:
-      GrowthRate: 60
+      NaturalGrowthRate: 60
       UVLightGrowthRate: 70
       NaturalDeathChance: 10
       UVLightDeathChance: 20
     Savanna:
-      GrowthRate: 20
+      NaturalGrowthRate: 20
       UVLightGrowthRate: 30
       NaturalDeathChance: 10
       UVLightDeathChance: 20
@@ -137,12 +144,12 @@ SUGAR_CANE:
       - Tropical
       - RiverAndCoasts
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 75
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     RiverAndCoasts:
-      GrowthRate: 35
+      NaturalGrowthRate: 35
       UVLightGrowthRate: 20
       NaturalDeathChance: 25
       UVLightDeathChance: 35
@@ -157,22 +164,22 @@ SWEET_BERRY_BUSH:
       - Temperate
       - Frozen
     Chilly:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 75
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Frozen:
-      GrowthRate: 80
+      NaturalGrowthRate: 80
       UVLightGrowthRate: 65
       NaturalDeathChance: 35
       UVLightDeathChance: 45
     Temperate:
-      GrowthRate: 60
+      NaturalGrowthRate: 60
       UVLightGrowthRate: 45
       NaturalDeathChance: 10
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 25
+    NaturalGrowthRate: 25
     UVLightGrowthRate: 45
     NaturalDeathChance: 35
     UVLightDeathChance: 5
@@ -193,17 +200,17 @@ BEETROOTS:
       - Chilly
       - Frozen
     Chilly:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Temperate:
-      GrowthRate: 75
+      NaturalGrowthRate: 75
       UVLightGrowthRate: 60
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Frozen:
-      GrowthRate: 60
+      NaturalGrowthRate: 60
       UVLightGrowthRate: 85
       NaturalDeathChance: 35
       UVLightDeathChance: 5
@@ -218,22 +225,22 @@ CARROTS:
       - Savanna
       - Chilly
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 75
+      NaturalGrowthRate: 75
       UVLightGrowthRate: 60
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Chilly:
-      GrowthRate: 60
+      NaturalGrowthRate: 60
       UVLightGrowthRate: 60
       NaturalDeathChance: 15
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 50
+    NaturalGrowthRate: 50
     UVLightGrowthRate: 25
     NaturalDeathChance: 15
     UVLightDeathChance: 25
@@ -247,12 +254,12 @@ MELON:
       - Tropical
       - Temperate
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Temperate:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 15
       NaturalDeathChance: 15
       UVLightDeathChance: 25
@@ -266,12 +273,12 @@ PITCHER_CROP:
       - Tropical
       - Savanna
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
@@ -287,22 +294,22 @@ POTATOES:
       - Chilly
       - Tropical
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 75
+      NaturalGrowthRate: 75
       UVLightGrowthRate: 60
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Chilly:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 60
       NaturalDeathChance: 15
       UVLightDeathChance: 5
     Tropical:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 35
       NaturalDeathChance: 15
       UVLightDeathChance: 20
@@ -317,22 +324,22 @@ PUMPKIN:
       - Temperate
       - Frozen
     Chilly:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Temperate:
-      GrowthRate: 85
+      NaturalGrowthRate: 85
       UVLightGrowthRate: 70
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Frozen:
-      GrowthRate: 70
+      NaturalGrowthRate: 70
       UVLightGrowthRate: 85
       NaturalDeathChance: 35
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 50
+    NaturalGrowthRate: 50
     UVLightGrowthRate: 25
     NaturalDeathChance: 15
     UVLightDeathChance: 25
@@ -346,12 +353,12 @@ TORCHFLOWER_CROP:
       - Tropical
       - Savanna
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
@@ -366,22 +373,22 @@ WHEAT:
       - Arid
       - Frozen
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Arid:
-      GrowthRate: 0
+      NaturalGrowthRate: 0
       UVLightGrowthRate: 50
       NaturalDeathChance: 100
       UVLightDeathChance: 5
     Frozen:
-      GrowthRate: 0
+      NaturalGrowthRate: 0
       UVLightGrowthRate: 50
       NaturalDeathChance: 100
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 50
+    NaturalGrowthRate: 50
     UVLightGrowthRate: 35
     NaturalDeathChance: 5
     UVLightDeathChance: 15
@@ -400,22 +407,22 @@ BROWN_MUSHROOM:
       - Tropical
       - Caves
     Chilly:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
     Caves:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -433,22 +440,22 @@ RED_MUSHROOM:
     - Tropical
     - Caves
   Chilly:
-    GrowthRate: 80
+    NaturalGrowthRate: 80
     UVLightGrowthRate: 80
     NaturalDeathChance: 10
     UVLightDeathChance: 10
   Tropical:
-    GrowthRate: 80
+    NaturalGrowthRate: 80
     UVLightGrowthRate: 80
     NaturalDeathChance: 10
     UVLightDeathChance: 10
   Caves:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -465,12 +472,12 @@ CRIMSON_FUNGUS:
     Groups:
       - Arid
     Arid:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
       UVLightDeathChance: 20
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -483,12 +490,12 @@ WARPED_FUNGUS:
     Groups:
       - Arid
     Arid:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
       UVLightDeathChance: 20
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -506,7 +513,7 @@ CAVE_VINES:
     Groups:
       - Caves
     Caves:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
@@ -520,7 +527,7 @@ CAVE_VINES:
 #    Groups:
 #      - Caves
 #  Default:
-#    GrowthRate: 50
+#    NaturalGrowthRate: 50
 #    UVLightGrowthRate: 25
 #    NaturalDeathChance: 0
 #    UVLightDeathChance: 5
@@ -543,7 +550,7 @@ CAVE_VINES:
 #  BiomeGroup:
 #    Groups: []
 #  Default:
-#    GrowthRate: 50
+#    NaturalGrowthRate: 50
 #    UVLightGrowthRate: 25
 #    NaturalDeathChance: 0
 #    UVLightDeathChance: 5
@@ -556,12 +563,12 @@ TWISTING_VINES:
     Groups:
       - Arid
     Arid:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
       UVLightDeathChance: 20
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -575,12 +582,12 @@ WEEPING_VINES:
     Groups:
       - Arid
     Arid:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
       UVLightDeathChance: 20
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -597,7 +604,7 @@ KELP:
   BiomeGroup:
     Groups: [ ]
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -617,7 +624,7 @@ KELP:
 #    Groups:
 #      - OCEAN
 #  Default:
-#    GrowthRate: 50
+#    NaturalGrowthRate: 50
 #    UVLightGrowthRate: 25
 #    NaturalDeathChance: 0
 #    UVLightDeathChance: 5
@@ -637,27 +644,27 @@ AZALEA:
       - Temperate
       - Chilly
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Tropical:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Chilly:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 40
+    NaturalGrowthRate: 40
     UVLightGrowthRate: 25
     NaturalDeathChance: 35
     UVLightDeathChance: 5
@@ -673,27 +680,27 @@ FLOWERING_AZALEA:
       - Temperate
       - Chilly
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Tropical:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Chilly:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 40
+    NaturalGrowthRate: 40
     UVLightGrowthRate: 25
     NaturalDeathChance: 35
     UVLightDeathChance: 5
@@ -707,12 +714,12 @@ ACACIA_SAPLING:
       - Arid
       - Savanna
     Savanna:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Arid:
-      GrowthRate: 45
+      NaturalGrowthRate: 45
       UVLightGrowthRate: 25
       NaturalDeathChance: 15
       UVLightDeathChance: 25
@@ -727,12 +734,12 @@ BIRCH_SAPLING:
       - Chilly
       - Temperate
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Chilly:
-      GrowthRate: 35
+      NaturalGrowthRate: 35
       UVLightGrowthRate: 25
       NaturalDeathChance: 25
       UVLightDeathChance: 15
@@ -745,12 +752,12 @@ CHERRY_SAPLING:
     Groups:
       - Temperate
     Temperate:
-      GrowthRate: 20
+      NaturalGrowthRate: 20
       UVLightGrowthRate: 10
       NaturalDeathChance: 10
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 85
     NaturalDeathChance: 5
     UVLightDeathChance: 15
@@ -762,12 +769,12 @@ DARK_OAK_SAPLING:
     Groups:
       - Temperate
     Temperate:
-      GrowthRate: 20
+      NaturalGrowthRate: 20
       UVLightGrowthRate: 10
       NaturalDeathChance: 10
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 85
     NaturalDeathChance: 5
     UVLightDeathChance: 15
@@ -780,7 +787,7 @@ JUNGLE_SAPLING:
     Groups:
       - Tropical
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
@@ -793,12 +800,12 @@ MANGROVE_PROPAGULE:
     Groups:
       - RiverAndCoasts
     RiverAndCoasts:
-      GrowthRate: 20
+      NaturalGrowthRate: 20
       UVLightGrowthRate: 10
       NaturalDeathChance: 10
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 85
     NaturalDeathChance: 5
     UVLightDeathChance: 15
@@ -815,27 +822,27 @@ OAK_SAPLING:
       - Temperate
       - Chilly
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Tropical:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Chilly:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 40
+    NaturalGrowthRate: 40
     UVLightGrowthRate: 25
     NaturalDeathChance: 35
     UVLightDeathChance: 5
@@ -868,17 +875,17 @@ SPRUCE_SAPLING:
       - Frozen
       - Temperate
     Chilly:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Frozen:
-      GrowthRate: 75
+      NaturalGrowthRate: 75
       UVLightGrowthRate: 55
       NaturalDeathChance: 12
       UVLightDeathChance: 7
     Temperate:
-      GrowthRate: 60
+      NaturalGrowthRate: 60
       UVLightGrowthRate: 45
       NaturalDeathChance: 5
       UVLightDeathChance: 15
