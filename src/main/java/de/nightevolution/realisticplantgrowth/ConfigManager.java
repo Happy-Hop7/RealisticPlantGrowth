@@ -595,8 +595,7 @@ public class ConfigManager {
             }
 
             // Check for default modifiers if additional biomes are defined in the Default section
-            Route specificDefaultBiomeListRoute = Route.from(plantSection, defaultBiomeListRoute);
-            List<String> biomeStringList = growthModifiersFile.getStringList(specificDefaultBiomeListRoute);
+            List<String> biomeStringList = plantSection.getStringList(defaultBiomeListRoute);
 
             if (!biomeStringList.isEmpty()) {
                 checkDefaultModifiers(plantSection);
@@ -634,7 +633,7 @@ public class ConfigManager {
             }
         } else {
             // If the biome group section is not defined, check default modifiers
-            logger.debug("Biome group Section '" + biomeGroupString + "' not found for plant '" + plantSection.getNameAsString() + "'.");
+            logger.debug("BiomeGroup Section '" + biomeGroupString + "' not found for plant '" + plantSection.getNameAsString() + "'.");
             logger.debug("Checking default modifier section for this plant...");
             checkDefaultModifiers(plantSection);
         }
@@ -686,9 +685,9 @@ public class ConfigManager {
      */
     private void handleConfigurationError(Route missingModifierRoute) {
         logger.error("Configuration error detected in GrowthModifiers.yml!");
-        logger.error("Missing modifier at: " + missingModifierRoute);
+        logger.error("Missing modifier at: " + missingModifierRoute.get(0) + " -> " + missingModifierRoute.get(1) + " -> " + missingModifierRoute.get(2));
         logger.error("Please refer to the Wiki for correct configuration or join our Discord for support.");
-        logger.error("Guide: https://realistic-plant-growth.nightevolution.de/guides/configuration/growthmodifiers.yml");
+        logger.error("Wiki: https://realistic-plant-growth.nightevolution.de/guides/configuration/growthmodifiers.yml");
 
         // Disable the plugin due to an incomplete configuration
         throw new ConfigurationException("Configuration error detected in GrowthModifiers.yml!");
