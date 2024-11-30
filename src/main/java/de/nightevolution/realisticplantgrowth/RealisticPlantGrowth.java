@@ -1,6 +1,5 @@
 package de.nightevolution.realisticplantgrowth;
 
-import de.nightevolution.realisticplantgrowth.commands.CommandManager;
 import de.nightevolution.realisticplantgrowth.commands.TabCompleterImpl;
 import de.nightevolution.realisticplantgrowth.listeners.other.*;
 import de.nightevolution.realisticplantgrowth.listeners.plant.*;
@@ -8,6 +7,7 @@ import de.nightevolution.realisticplantgrowth.listeners.player.*;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.UpdateChecker;
 import de.nightevolution.realisticplantgrowth.utils.biome.BiomeChecker;
+import de.nightevolution.realisticplantgrowth.utils.exception.ConfigurationException;
 import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
 import de.nightevolution.realisticplantgrowth.utils.mapper.versions.*;
 import de.nightevolution.realisticplantgrowth.utils.rest.ModrinthVersion;
@@ -71,7 +71,12 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         instance = this;
         this.pluginVersion = this.getDescription().getVersion();
 
-        cm = ConfigManager.get();
+        try {
+            cm = ConfigManager.get();
+        } catch (ConfigurationException e) {
+            disablePlugin();
+            return;
+        }
 
         logger = new Logger(this.getClass().getSimpleName(), cm.isVerbose(), cm.isDebug_log());
 
@@ -279,9 +284,16 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Disables this plugin via the {@link Bukkit} {@link PluginManager}.
      */
     void disablePlugin() {
-        logger.log("");
-        logger.error("&cDisabling " + this.getClass().getSimpleName() + "...");
-        logger.log("");
+        instance = null;
+        cm = null;
+        versionMapper = null;
+        logger = null;
+        cmdManager = null;
+        metrics = null;
+        pluginVersion = null;
+        HandlerList.unregisterAll(this);
+        Objects.requireNonNull(this.getCommand("rpg")).setTabCompleter(null);
+        Objects.requireNonNull(this.getCommand("rpg")).setExecutor(null);
         getServer().getPluginManager().disablePlugin(this);
     }
 
