@@ -584,7 +584,13 @@ public class ConfigManager {
             // Validate growth modifiers for each biome group assigned to the plant
             if (!biomeGroupsList.isEmpty()) {
                 for (String biomeGroup : biomeGroupsList) {
-                    checkBiomeGroupModifiers(plantSection, biomeGroup);
+                    if (isValidBiomeGroupName(biomeGroup))
+                        checkBiomeGroupModifiers(plantSection, biomeGroup);
+                    else {
+                        logger.warn("BiomeGroup '" + biomeGroup + "' is not defined in your BiomeGroups.yml and will be ignored.");
+                        logger.warn("Check the configuration at: " + plantSection.getNameAsString() + " -> BiomeGroup -> Groups -> " + biomeGroup);
+                        logger.warn("Please verify your BiomeGroups.yml to avoid potential issues");
+                    }
                 }
             }
 
@@ -653,6 +659,21 @@ public class ConfigManager {
             }
         }
     }
+
+    /**
+     * Checks if the provided biome group name is valid by verifying if it exists in the {@code BiomeGroups.yml} FIle.
+     *
+     * <p>This method looks up the given biome group name in the internal collection of registered biome groups
+     * and returns {@code true} if the name exists, indicating that it's a valid biome group name.</p>
+     *
+     * @param biomeGroupNameToCheck the name of the biome group to be checked for validity
+     * @return {@code true} if the biome group name exists in the internal data, otherwise {@code false}
+     */
+    private boolean isValidBiomeGroupName(String biomeGroupNameToCheck) {
+        Set<String> biomeGroupNames = biomeGroupsData.keySet();
+        return biomeGroupNames.contains(biomeGroupNameToCheck);
+    }
+
 
     /**
      * <p>Handles configuration errors by logging the issue and disabling the plugin.</p>
