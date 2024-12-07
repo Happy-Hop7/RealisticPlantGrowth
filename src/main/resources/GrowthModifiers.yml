@@ -17,7 +17,7 @@
 ########################################################################################################################
 #
 # This configuration file adjusts the growth rate behavior of specified plants (Bukkit Materials)
-# in relation to the vanilla game. A 'GrowthRate' of 100% mirrors vanilla behavior.
+# in relation to the vanilla game. A 'NaturalGrowthRate' of 100% mirrors vanilla behavior.
 # Growth rates above 100% must be enabled in 'Config.yml' first. Higher rates introduce the
 # possibility of plants skipping growth states or aging faster. Plants not specified in this
 # file adhere to the vanilla growth rate.
@@ -41,26 +41,95 @@
 # I would greatly appreciate sharing well-configured versions of this file with the community :)
 #
 ########################################################################################################################
-# Bamboo grows only in biomes within the 'Tropical' biome group.
-# Since 'Biome' is an empty list, every other biome is considered as 'BAD'.
+
+# Bamboo growth is primarily restricted to biomes within the 'Tropical' biome group in the 'world' world.
+# In the 'farm_world', different growth rates are applied, allowing Bamboo to grow in any biome.
+# However, Bamboo still grows best in biomes belonging to the 'Tropical' biome group.
 BAMBOO:
-  min_natural_light: 15
-  require_tool_for_drops:
-    enabled: true
-    allowed_tool_list:
-      - DIAMOND_SWORD
-  BiomeGroup:
-    Groups:
-      - Tropical
-    Tropical:
-      NaturalGrowthRate: 100
-      NaturalDeathChance: 5
-      UVLightGrowthRate: 35
-      UVLightDeathChance: 15
-      FertilizerBoostRate: 20
-      requires-greenhouse: false  # Plant must be enclosed in a greenhouse due to harsh environmental conditions.
-  Default:
-    Biome: [ ] # No growth in other biomes
+  # Configuration settings for Bamboo's growth behavior
+  growth_settings:
+    bonemeal_limit: 3                   # The maximum number of times bonemeal can be applied to speed up Bamboo growth.
+    min_light_level: 15                 # The minimum light level required for Bamboo to grow (range: 0-15, where 15 is the brightest).
+    allow_piston_harvesting: false      # If true, Pistons can be used to harvest Bamboo. Set to false to disable Piston-based harvesting.
+    offline_grow: true                  # If true, Bamboo will continue to grow even when the player is offline.
+
+  # Configuration settings for Bamboo harvesting behavior
+  harvesting_requirements:
+    require_tool: true                  # If true, Bamboo must be harvested with a tool (e.g., a sword).
+    allow_dispenser_harvesting: false   # If true, dispensers can be used to harvest Bamboo. Set to false to disable this feature.
+    allowed_tools:                      # A list of tools that can be used to harvest Bamboo. Supports vanilla tool tags.
+      - DIAMOND_SWORD                   # Example: Only Diamond Swords are allowed for Bamboo harvesting.
+
+  # Biome-specific settings for Bamboo growth behavior
+  biome_groups:
+    custom_groups:
+      # Configuration for Bamboo growth in biomes within the 'Tropical' biome group
+      - group_id: Tropical_world        # Unique identifier for this custom biome group
+        greenhouse_required: false      # Bamboo does not need a greenhouse to grow in this biome group
+        growth_rates:                   # Growth rate settings for Bamboo in this biome group
+          natural:
+            growth_rate: 100            # Bamboo growth rate in natural conditions (higher value means faster growth)
+            death_chance: 5             # The probability (in percentage) that Bamboo will die under natural conditions
+            fertilizer_boost: 20        # Percentage increase in growth rate when fertilizer is used
+          uv_light:
+            growth_rate: 35             # Growth rate under UV light conditions
+            death_chance: 15            # Probability that Bamboo will die under UV light exposure
+            fertilizer_boost: 20        # Boost to growth when fertilizer is used under UV light conditions
+        worlds:                         # List of worlds where this configuration applies
+          - world                       # This configuration is active in the "world" world (as defined in global config)
+        apply_to_biome_groups:          # List of biome groups which this section is applied to
+          - Tropical                    # Reference to the 'Tropical' biome group
+
+      # Configuration for Bamboo growth in another specific world setup
+      - group_id: Tropical_farm_world   # Unique identifier for this custom biome group
+        greenhouse_required: false      # No greenhouse required for Bamboo to grow in this setup
+        growth_rates:                   # Growth rate settings for Bamboo in this setup
+          natural:
+            growth_rate: 100            # Bamboo grows at the normal rate in natural conditions
+            death_chance: 0             # No risk of Bamboo dying in natural conditions here
+            fertilizer_boost: 0         # No increase in growth rate with fertilizer
+          uv_light:
+            growth_rate: 0              # Bamboo does not grow under UV light in this setup
+            death_chance: 0             # No risk of Bamboo dying under UV light here
+            fertilizer_boost: 0         # No fertilizer boost in UV light conditions
+        worlds:                         # List of worlds where this configuration applies
+          - farm_world                  # Bamboo grows in the "farm_world" world with this configuration
+        apply_to_biome_groups:          # List of biome groups which this section is applied to
+          - Tropical                    # Reference to the 'Tropical' biome group
+
+    # Default configuration for Bamboo growth when no specific biome group is applied
+    default:
+      - group_id: default_world         # Unique identifier for the default biome group
+        greenhouse_required: false      # No greenhouse is required for Bamboo in the default group
+        growth_rates:                   # Growth rate settings for Bamboo in the default group
+          natural:
+            growth_rate: 100            # Growth rate for Bamboo in natural conditions
+            death_chance: 5             # 5% chance of Bamboo dying in this biome group
+            fertilizer_boost: 20        # 20% growth boost when fertilizer is used in natural conditions
+          uv_light:
+            growth_rate: 35             # Growth rate for Bamboo under UV light exposure
+            death_chance: 15            # 15% chance of Bamboo dying under UV light exposure
+            fertilizer_boost: 20        # 20% growth boost with fertilizer under UV light exposure
+        worlds:                         # List of worlds where this configuration applies
+          - world                       # This configuration applies to the "world" world
+        apply_to_biomes: []             # No specific biomes are defined, meaning Bamboo won't grow by default in this world
+
+      - group_id: default_farm_world    # Another configuration for Bamboo in the default biome group
+        greenhouse_required: false      # No greenhouse required for Bamboo growth in this configuration
+        growth_rates:                   # Growth rate settings for Bamboo in this default group
+          natural:
+            growth_rate: 35             # Slower growth rate in natural conditions compared to the previous group
+            death_chance: 5             # 5% chance of Bamboo dying in this setup
+            fertilizer_boost: 20        # 20% growth boost with fertilizer in natural conditions
+          uv_light:
+            growth_rate: 10             # Slower growth rate under UV light exposure
+            death_chance: 15            # 15% chance of Bamboo dying under UV light exposure
+            fertilizer_boost: 20        # 20% growth boost with fertilizer under UV light conditions
+        worlds:                         # List of worlds where this configuration applies
+          - farm_world                  # Bamboo will grow in the "farm_world" world with this configuration
+        apply_to_biomes:
+          - ALL                         # Bamboo can grow in any biome within the "farm_world"
+
 
 
 # Cactus growth is limited to arid Biomes
@@ -539,12 +608,13 @@ CAVE_VINES:
 #  BiomeGroup:
 #    Groups: []
 #  Default:
-#    GrowthRate: 100
+#    NaturalGrowthRate: 100
 #    UVLightGrowthRate: 100
 #    NaturalDeathChance: 5
 #    UVLightDeathChance: 5
 #    Biome:
 #      - PALE_GARDEN
+
 
 #VINE:
 #  BiomeGroup:
@@ -855,12 +925,12 @@ PALE_OAK_SAPLING:
     Groups:
       - Temperate
     Temperate:
-      GrowthRate: 20
+      NaturalGrowthRate: 20
       UVLightGrowthRate: 40
       NaturalDeathChance: 10
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 85
     NaturalDeathChance: 5
     UVLightDeathChance: 15

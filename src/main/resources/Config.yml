@@ -46,16 +46,24 @@ display_growth_rates: true
 # Prevents spam clicking and therefore heavy area scans.
 display_cooldown: 5
 
-# Limits the use of bonemeal on plants to the specified amount.
-# Setting 'bonemeal_limit: 0' completely disables the use of bone meal.
-# Negative numbers deactivate this feature (e.g., 'bonemeal_limit: -1').
-# Note: This feature is currently not implemented.
-bonemeal_limit: 3
 
-# When a player harvests a plant that has grown on farmland, the farmland is automatically replaced with a
-# coarse dirt block. Consequently, the player is required to re-hoe the area to prepare it for seeding new plants.
-# Setting 'destroy_farmland' to 'true' enables this feature.
-destroy_farmland: true
+########################################################################################################################
+#|                                                                                                                    |#
+#| Farmland Behavior                                                                                                  |#
+#|                                                                                                                    |#
+########################################################################################################################
+
+# If enabled, farmland will be replaced with another block when a player harvests a plant growing on it.
+# This feature forces players to re-till the soil before planting new crops.
+farmland_settings:
+  destroy_on_harvest: true # Enables farmland destruction upon harvest.
+
+  # Define the blocks that can replace farmland when it is destroyed and their probabilities.
+  # The format is: <BLOCK>: <PROBABILITY in %>
+  replacement_blocks:
+    DIRT: 75          # 75% chance for farmland to be replaced by dirt
+    COARSE_DIRT: 25   # 25% chance for farmland to be replaced by coarse dirt
+
 
 ########################################################################################################################
 #|                                                                                                                    |#
@@ -230,12 +238,6 @@ bonemeal_log: false
 #|                                                                                                                    |#
 ########################################################################################################################
 
-# bStats
-# Please keep this enabled! It helps me understand what Minecraft versions and server setups are most common.
-# No personal data is collected — just anonymous stats that help improve the plugin.
-# bStats Link: https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634
-use_metrics: true
-
 # Update Checker
 # Set 'enabled' to 'true' to allow the plugin to automatically check for updates.
 # By default, the update check happens when the server starts.
@@ -248,6 +250,12 @@ use_metrics: true
 update_check:
   enabled: true
   interval: 24
+
+# bStats
+# Please keep this enabled! It helps me understand what Minecraft versions and server setups are most common.
+# No personal data is collected — just anonymous stats that help improve the plugin.
+# bStats Link: https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634
+use_metrics: true
 
 
 ########################################################################################################################
