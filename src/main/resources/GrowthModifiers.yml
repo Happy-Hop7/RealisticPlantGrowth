@@ -17,10 +17,10 @@
 ########################################################################################################################
 #
 # This configuration file adjusts the growth rate behavior of specified plants (Bukkit Materials)
-# in relation to the vanilla game. A 'GrowthRate' of 100% mirrors vanilla behavior.
+# in relation to the vanilla game. A 'NaturalGrowthRate' of 100% mirrors vanilla behavior.
 # Growth rates above 100% must be enabled in 'Config.yml' first. Higher rates introduce the
 # possibility of plants skipping growth states or aging faster. Plants not specified in this
-# file adhere to the vanilla GrowthRate.
+# file adhere to the vanilla growth rate.
 #
 # Note:
 # Every biome not listed under 'Groups' or in the 'Biome' list is considered a 'BAD' biome where the plant dies with
@@ -41,19 +41,95 @@
 # I would greatly appreciate sharing well-configured versions of this file with the community :)
 #
 ########################################################################################################################
-# Bamboo grows only in biomes within the 'Tropical' biome group.
-# Since 'Biome' is an empty list, every other biome is considered as 'BAD'.
+
+# Bamboo growth is primarily restricted to biomes within the 'Tropical' biome group in the 'world' world.
+# In the 'farm_world', different growth rates are applied, allowing Bamboo to grow in any biome.
+# However, Bamboo still grows best in biomes belonging to the 'Tropical' biome group.
 BAMBOO:
-  BiomeGroup:
-    Groups:
-      - Tropical
-    Tropical:
-      GrowthRate: 100
-      UVLightGrowthRate: 35
-      NaturalDeathChance: 5
-      UVLightDeathChance: 15
-  Default:
-    Biome: [ ] # No growth in other biomes
+  # Configuration settings for Bamboo's growth behavior
+  growth_settings:
+    bonemeal_limit: 3                   # The maximum number of times bonemeal can be applied to speed up Bamboo growth.
+    min_light_level: 15                 # The minimum light level required for Bamboo to grow (range: 0-15, where 15 is the brightest).
+    allow_piston_harvesting: false      # If true, Pistons can be used to harvest Bamboo. Set to false to disable Piston-based harvesting.
+    offline_grow: true                  # If true, Bamboo will continue to grow even when the player is offline.
+
+  # Configuration settings for Bamboo harvesting behavior
+  harvesting_requirements:
+    require_tool: true                  # If true, Bamboo must be harvested with a tool (e.g., a sword).
+    allow_dispenser_harvesting: false   # If true, dispensers can be used to harvest Bamboo. Set to false to disable this feature.
+    allowed_tools:                      # A list of tools that can be used to harvest Bamboo. Supports vanilla tool tags.
+      - DIAMOND_SWORD                   # Example: Only Diamond Swords are allowed for Bamboo harvesting.
+
+  # Biome-specific settings for Bamboo growth behavior
+  biome_groups:
+    custom_groups:
+      # Configuration for Bamboo growth in biomes within the 'Tropical' biome group
+      - group_id: Tropical_world        # Unique identifier for this custom biome group
+        greenhouse_required: false      # Bamboo does not need a greenhouse to grow in this biome group
+        growth_rates:                   # Growth rate settings for Bamboo in this biome group
+          natural:
+            growth_rate: 100            # Bamboo growth rate in natural conditions (higher value means faster growth)
+            death_chance: 5             # The probability (in percentage) that Bamboo will die under natural conditions
+            fertilizer_boost: 20        # Percentage increase in growth rate when fertilizer is used
+          uv_light:
+            growth_rate: 35             # Growth rate under UV light conditions
+            death_chance: 15            # Probability that Bamboo will die under UV light exposure
+            fertilizer_boost: 20        # Boost to growth when fertilizer is used under UV light conditions
+        worlds:                         # List of worlds where this configuration applies
+          - world                       # This configuration is active in the "world" world (as defined in global config)
+        apply_to_biome_groups:          # List of biome groups which this section is applied to
+          - Tropical                    # Reference to the 'Tropical' biome group
+
+      # Configuration for Bamboo growth in another specific world setup
+      - group_id: Tropical_farm_world   # Unique identifier for this custom biome group
+        greenhouse_required: false      # No greenhouse required for Bamboo to grow in this setup
+        growth_rates:                   # Growth rate settings for Bamboo in this setup
+          natural:
+            growth_rate: 100            # Bamboo grows at the normal rate in natural conditions
+            death_chance: 0             # No risk of Bamboo dying in natural conditions here
+            fertilizer_boost: 0         # No increase in growth rate with fertilizer
+          uv_light:
+            growth_rate: 0              # Bamboo does not grow under UV light in this setup
+            death_chance: 0             # No risk of Bamboo dying under UV light here
+            fertilizer_boost: 0         # No fertilizer boost in UV light conditions
+        worlds:                         # List of worlds where this configuration applies
+          - farm_world                  # Bamboo grows in the "farm_world" world with this configuration
+        apply_to_biome_groups:          # List of biome groups which this section is applied to
+          - Tropical                    # Reference to the 'Tropical' biome group
+
+    # Default configuration for Bamboo growth when no specific biome group is applied
+    default:
+      - group_id: default_world         # Unique identifier for the default biome group
+        greenhouse_required: false      # No greenhouse is required for Bamboo in the default group
+        growth_rates:                   # Growth rate settings for Bamboo in the default group
+          natural:
+            growth_rate: 100            # Growth rate for Bamboo in natural conditions
+            death_chance: 5             # 5% chance of Bamboo dying in this biome group
+            fertilizer_boost: 20        # 20% growth boost when fertilizer is used in natural conditions
+          uv_light:
+            growth_rate: 35             # Growth rate for Bamboo under UV light exposure
+            death_chance: 15            # 15% chance of Bamboo dying under UV light exposure
+            fertilizer_boost: 20        # 20% growth boost with fertilizer under UV light exposure
+        worlds:                         # List of worlds where this configuration applies
+          - world                       # This configuration applies to the "world" world
+        apply_to_biomes: []             # No specific biomes are defined, meaning Bamboo won't grow by default in this world
+
+      - group_id: default_farm_world    # Another configuration for Bamboo in the default biome group
+        greenhouse_required: false      # No greenhouse required for Bamboo growth in this configuration
+        growth_rates:                   # Growth rate settings for Bamboo in this default group
+          natural:
+            growth_rate: 35             # Slower growth rate in natural conditions compared to the previous group
+            death_chance: 5             # 5% chance of Bamboo dying in this setup
+            fertilizer_boost: 20        # 20% growth boost with fertilizer in natural conditions
+          uv_light:
+            growth_rate: 10             # Slower growth rate under UV light exposure
+            death_chance: 15            # 15% chance of Bamboo dying under UV light exposure
+            fertilizer_boost: 20        # 20% growth boost with fertilizer under UV light conditions
+        worlds:                         # List of worlds where this configuration applies
+          - farm_world                  # Bamboo will grow in the "farm_world" world with this configuration
+        apply_to_biomes:
+          - ALL                         # Bamboo can grow in any biome within the "farm_world"
+
 
 
 # Cactus growth is limited to arid Biomes
@@ -62,7 +138,7 @@ CACTUS:
     Groups:
       - Arid
     Arid:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
@@ -77,12 +153,12 @@ CHORUS_FLOWER:
       - End
       - Frozen
     End:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
     Frozen:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
       UVLightDeathChance: 20
@@ -96,7 +172,7 @@ COCOA:
     Groups: [ ]
   # The default section applies only to jungle biomes
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 55
     NaturalDeathChance: 5
     UVLightDeathChance: 25
@@ -113,17 +189,17 @@ NETHER_WART:
       - Arid
       - Savanna
     Nether:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
     Arid:
-      GrowthRate: 60
+      NaturalGrowthRate: 60
       UVLightGrowthRate: 70
       NaturalDeathChance: 10
       UVLightDeathChance: 20
     Savanna:
-      GrowthRate: 20
+      NaturalGrowthRate: 20
       UVLightGrowthRate: 30
       NaturalDeathChance: 10
       UVLightDeathChance: 20
@@ -137,12 +213,12 @@ SUGAR_CANE:
       - Tropical
       - RiverAndCoasts
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 75
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     RiverAndCoasts:
-      GrowthRate: 35
+      NaturalGrowthRate: 35
       UVLightGrowthRate: 20
       NaturalDeathChance: 25
       UVLightDeathChance: 35
@@ -157,22 +233,22 @@ SWEET_BERRY_BUSH:
       - Temperate
       - Frozen
     Chilly:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 75
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Frozen:
-      GrowthRate: 80
+      NaturalGrowthRate: 80
       UVLightGrowthRate: 65
       NaturalDeathChance: 35
       UVLightDeathChance: 45
     Temperate:
-      GrowthRate: 60
+      NaturalGrowthRate: 60
       UVLightGrowthRate: 45
       NaturalDeathChance: 10
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 25
+    NaturalGrowthRate: 25
     UVLightGrowthRate: 45
     NaturalDeathChance: 35
     UVLightDeathChance: 5
@@ -193,17 +269,17 @@ BEETROOTS:
       - Chilly
       - Frozen
     Chilly:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Temperate:
-      GrowthRate: 75
+      NaturalGrowthRate: 75
       UVLightGrowthRate: 60
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Frozen:
-      GrowthRate: 60
+      NaturalGrowthRate: 60
       UVLightGrowthRate: 85
       NaturalDeathChance: 35
       UVLightDeathChance: 5
@@ -218,22 +294,22 @@ CARROTS:
       - Savanna
       - Chilly
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 75
+      NaturalGrowthRate: 75
       UVLightGrowthRate: 60
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Chilly:
-      GrowthRate: 60
+      NaturalGrowthRate: 60
       UVLightGrowthRate: 60
       NaturalDeathChance: 15
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 50
+    NaturalGrowthRate: 50
     UVLightGrowthRate: 25
     NaturalDeathChance: 15
     UVLightDeathChance: 25
@@ -247,12 +323,12 @@ MELON:
       - Tropical
       - Temperate
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Temperate:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 15
       NaturalDeathChance: 15
       UVLightDeathChance: 25
@@ -266,12 +342,12 @@ PITCHER_CROP:
       - Tropical
       - Savanna
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
@@ -287,22 +363,22 @@ POTATOES:
       - Chilly
       - Tropical
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 75
+      NaturalGrowthRate: 75
       UVLightGrowthRate: 60
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Chilly:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 60
       NaturalDeathChance: 15
       UVLightDeathChance: 5
     Tropical:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 35
       NaturalDeathChance: 15
       UVLightDeathChance: 20
@@ -317,22 +393,22 @@ PUMPKIN:
       - Temperate
       - Frozen
     Chilly:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Temperate:
-      GrowthRate: 85
+      NaturalGrowthRate: 85
       UVLightGrowthRate: 70
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Frozen:
-      GrowthRate: 70
+      NaturalGrowthRate: 70
       UVLightGrowthRate: 85
       NaturalDeathChance: 35
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 50
+    NaturalGrowthRate: 50
     UVLightGrowthRate: 25
     NaturalDeathChance: 15
     UVLightDeathChance: 25
@@ -346,12 +422,12 @@ TORCHFLOWER_CROP:
       - Tropical
       - Savanna
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
@@ -366,22 +442,22 @@ WHEAT:
       - Arid
       - Frozen
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Arid:
-      GrowthRate: 0
+      NaturalGrowthRate: 0
       UVLightGrowthRate: 50
       NaturalDeathChance: 100
       UVLightDeathChance: 5
     Frozen:
-      GrowthRate: 0
+      NaturalGrowthRate: 0
       UVLightGrowthRate: 50
       NaturalDeathChance: 100
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 50
+    NaturalGrowthRate: 50
     UVLightGrowthRate: 35
     NaturalDeathChance: 5
     UVLightDeathChance: 15
@@ -400,22 +476,22 @@ BROWN_MUSHROOM:
       - Tropical
       - Caves
     Chilly:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
     Caves:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -433,22 +509,22 @@ RED_MUSHROOM:
     - Tropical
     - Caves
   Chilly:
-    GrowthRate: 80
+    NaturalGrowthRate: 80
     UVLightGrowthRate: 80
     NaturalDeathChance: 10
     UVLightDeathChance: 10
   Tropical:
-    GrowthRate: 80
+    NaturalGrowthRate: 80
     UVLightGrowthRate: 80
     NaturalDeathChance: 10
     UVLightDeathChance: 10
   Caves:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -465,12 +541,12 @@ CRIMSON_FUNGUS:
     Groups:
       - Arid
     Arid:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
       UVLightDeathChance: 20
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -483,12 +559,12 @@ WARPED_FUNGUS:
     Groups:
       - Arid
     Arid:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
       UVLightDeathChance: 20
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -506,7 +582,7 @@ CAVE_VINES:
     Groups:
       - Caves
     Caves:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
@@ -520,7 +596,7 @@ CAVE_VINES:
 #    Groups:
 #      - Caves
 #  Default:
-#    GrowthRate: 50
+#    NaturalGrowthRate: 50
 #    UVLightGrowthRate: 25
 #    NaturalDeathChance: 0
 #    UVLightDeathChance: 5
@@ -532,18 +608,19 @@ CAVE_VINES:
 #  BiomeGroup:
 #    Groups: []
 #  Default:
-#    GrowthRate: 100
+#    NaturalGrowthRate: 100
 #    UVLightGrowthRate: 100
 #    NaturalDeathChance: 5
 #    UVLightDeathChance: 5
 #    Biome:
 #      - PALE_GARDEN
 
+
 #VINE:
 #  BiomeGroup:
 #    Groups: []
 #  Default:
-#    GrowthRate: 50
+#    NaturalGrowthRate: 50
 #    UVLightGrowthRate: 25
 #    NaturalDeathChance: 0
 #    UVLightDeathChance: 5
@@ -556,12 +633,12 @@ TWISTING_VINES:
     Groups:
       - Arid
     Arid:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
       UVLightDeathChance: 20
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -575,12 +652,12 @@ WEEPING_VINES:
     Groups:
       - Arid
     Arid:
-      GrowthRate: 50
+      NaturalGrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
       UVLightDeathChance: 20
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -597,7 +674,7 @@ KELP:
   BiomeGroup:
     Groups: [ ]
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 100
     NaturalDeathChance: 5
     UVLightDeathChance: 5
@@ -617,7 +694,7 @@ KELP:
 #    Groups:
 #      - OCEAN
 #  Default:
-#    GrowthRate: 50
+#    NaturalGrowthRate: 50
 #    UVLightGrowthRate: 25
 #    NaturalDeathChance: 0
 #    UVLightDeathChance: 5
@@ -637,27 +714,27 @@ AZALEA:
       - Temperate
       - Chilly
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Tropical:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Chilly:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 40
+    NaturalGrowthRate: 40
     UVLightGrowthRate: 25
     NaturalDeathChance: 35
     UVLightDeathChance: 5
@@ -673,27 +750,27 @@ FLOWERING_AZALEA:
       - Temperate
       - Chilly
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Tropical:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Chilly:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 40
+    NaturalGrowthRate: 40
     UVLightGrowthRate: 25
     NaturalDeathChance: 35
     UVLightDeathChance: 5
@@ -707,12 +784,12 @@ ACACIA_SAPLING:
       - Arid
       - Savanna
     Savanna:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Arid:
-      GrowthRate: 45
+      NaturalGrowthRate: 45
       UVLightGrowthRate: 25
       NaturalDeathChance: 15
       UVLightDeathChance: 25
@@ -727,12 +804,12 @@ BIRCH_SAPLING:
       - Chilly
       - Temperate
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Chilly:
-      GrowthRate: 35
+      NaturalGrowthRate: 35
       UVLightGrowthRate: 25
       NaturalDeathChance: 25
       UVLightDeathChance: 15
@@ -745,12 +822,12 @@ CHERRY_SAPLING:
     Groups:
       - Temperate
     Temperate:
-      GrowthRate: 20
+      NaturalGrowthRate: 20
       UVLightGrowthRate: 10
       NaturalDeathChance: 10
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 85
     NaturalDeathChance: 5
     UVLightDeathChance: 15
@@ -762,12 +839,12 @@ DARK_OAK_SAPLING:
     Groups:
       - Temperate
     Temperate:
-      GrowthRate: 20
+      NaturalGrowthRate: 20
       UVLightGrowthRate: 10
       NaturalDeathChance: 10
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 85
     NaturalDeathChance: 5
     UVLightDeathChance: 15
@@ -780,7 +857,7 @@ JUNGLE_SAPLING:
     Groups:
       - Tropical
     Tropical:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
@@ -793,12 +870,12 @@ MANGROVE_PROPAGULE:
     Groups:
       - RiverAndCoasts
     RiverAndCoasts:
-      GrowthRate: 20
+      NaturalGrowthRate: 20
       UVLightGrowthRate: 10
       NaturalDeathChance: 10
       UVLightDeathChance: 15
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 85
     NaturalDeathChance: 5
     UVLightDeathChance: 15
@@ -815,27 +892,27 @@ OAK_SAPLING:
       - Temperate
       - Chilly
     Temperate:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Savanna:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Tropical:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
     Chilly:
-      GrowthRate: 25
+      NaturalGrowthRate: 25
       UVLightGrowthRate: 10
       NaturalDeathChance: 35
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 40
+    NaturalGrowthRate: 40
     UVLightGrowthRate: 25
     NaturalDeathChance: 35
     UVLightDeathChance: 5
@@ -848,12 +925,12 @@ PALE_OAK_SAPLING:
     Groups:
       - Temperate
     Temperate:
-      GrowthRate: 20
+      NaturalGrowthRate: 20
       UVLightGrowthRate: 40
       NaturalDeathChance: 10
       UVLightDeathChance: 5
   Default:
-    GrowthRate: 100
+    NaturalGrowthRate: 100
     UVLightGrowthRate: 85
     NaturalDeathChance: 5
     UVLightDeathChance: 15
@@ -868,17 +945,17 @@ SPRUCE_SAPLING:
       - Frozen
       - Temperate
     Chilly:
-      GrowthRate: 100
+      NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
     Frozen:
-      GrowthRate: 75
+      NaturalGrowthRate: 75
       UVLightGrowthRate: 55
       NaturalDeathChance: 12
       UVLightDeathChance: 7
     Temperate:
-      GrowthRate: 60
+      NaturalGrowthRate: 60
       UVLightGrowthRate: 45
       NaturalDeathChance: 5
       UVLightDeathChance: 15

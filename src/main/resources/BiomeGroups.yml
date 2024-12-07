@@ -119,11 +119,12 @@ Caves:
 
 
 # Biomes with bad plant growing on the surface
-Windy:
+Harsh:
   - WINDSWEPT_FOREST
   - WINDSWEPT_GRAVELLY_HILLS
   - WINDSWEPT_HILLS
   - WINDSWEPT_SAVANNA
+  - PALE_GARDEN
 
 
 # All Nether dimension biomes
