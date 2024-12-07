@@ -520,7 +520,20 @@ CAVE_VINES:
 #    NaturalDeathChance: 0
 #    UVLightDeathChance: 5
 #    Biome: []
-#
+
+
+# Not fully supported yet (Can only grow with Bonemeal)
+#PALE_HANGING_MOSS:
+#  BiomeGroup:
+#    Groups: []
+#  Default:
+#    GrowthRate: 100
+#    UVLightGrowthRate: 100
+#    NaturalDeathChance: 5
+#    UVLightDeathChance: 5
+#    Biome:
+#      - PALE_GARDEN
+
 #VINE:
 #  BiomeGroup:
 #    Groups: []
@@ -823,6 +836,24 @@ OAK_SAPLING:
     UVLightDeathChance: 5
     Biome:
       - WOODED_BADLANDS
+
+
+PALE_OAK_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Temperate
+    Temperate:
+      GrowthRate: 20
+      UVLightGrowthRate: 40
+      NaturalDeathChance: 10
+      UVLightDeathChance: 5
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 85
+    NaturalDeathChance: 5
+    UVLightDeathChance: 15
+    Biome:
+      - PALE_GARDEN
 
 
 SPRUCE_SAPLING:
