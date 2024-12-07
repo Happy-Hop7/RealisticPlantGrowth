@@ -1,13 +1,12 @@
-package de.nightevolution.realisticplantgrowth.commands;
+package de.nightevolution.realisticplantgrowth;
 
 
-import de.nightevolution.realisticplantgrowth.MessageManager;
-import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.commands.sub.Help;
 import de.nightevolution.realisticplantgrowth.commands.sub.Info;
 import de.nightevolution.realisticplantgrowth.commands.sub.Reload;
 import de.nightevolution.realisticplantgrowth.commands.sub.SubCommand;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
+import de.nightevolution.realisticplantgrowth.utils.exception.ConfigurationException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -102,8 +101,13 @@ public class CommandManager implements CommandExecutor {
                         info.executeCommand();
                         break;
                     case "reload":
-                        SubCommand reload = new Reload(commandSender, args, instance);
-                        reload.executeCommand();
+                        try {
+                            SubCommand reload = new Reload(commandSender, args, instance);
+                            reload.executeCommand();
+                        } catch (ConfigurationException e) {
+                            logger.error("Failed to execute the reload command: Configuration error.");
+                            instance.disablePlugin();
+                        }
                         break;
                     default:
                         if (logEvent) {

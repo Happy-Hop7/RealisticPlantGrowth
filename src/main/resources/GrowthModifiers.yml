@@ -70,13 +70,13 @@ CHORUS_FLOWER:
   BiomeGroup:
     Groups:
       - End
-      - Cold
+      - Frozen
     End:
       GrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
-    Cold:
+    Frozen:
       GrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
@@ -150,13 +150,13 @@ SWEET_BERRY_BUSH:
     Groups:
       - Chilly
       - Temperate
-      - Cold
+      - Frozen
     Chilly:
       GrowthRate: 100
       UVLightGrowthRate: 75
       NaturalDeathChance: 5
       UVLightDeathChance: 15
-    Cold:
+    Frozen:
       GrowthRate: 80
       UVLightGrowthRate: 65
       NaturalDeathChance: 35
@@ -186,7 +186,7 @@ BEETROOTS:
     Groups:
       - Temperate
       - Chilly
-      - Cold
+      - Frozen
     Chilly:
       GrowthRate: 100
       UVLightGrowthRate: 85
@@ -197,7 +197,7 @@ BEETROOTS:
       UVLightGrowthRate: 60
       NaturalDeathChance: 5
       UVLightDeathChance: 15
-    Cold:
+    Frozen:
       GrowthRate: 60
       UVLightGrowthRate: 85
       NaturalDeathChance: 35
@@ -310,7 +310,7 @@ PUMPKIN:
     Groups:
       - Chilly
       - Temperate
-      - Cold
+      - Frozen
     Chilly:
       GrowthRate: 100
       UVLightGrowthRate: 85
@@ -321,7 +321,7 @@ PUMPKIN:
       UVLightGrowthRate: 70
       NaturalDeathChance: 5
       UVLightDeathChance: 15
-    Cold:
+    Frozen:
       GrowthRate: 70
       UVLightGrowthRate: 85
       NaturalDeathChance: 35
@@ -359,7 +359,7 @@ WHEAT:
     Groups:
       - Temperate
       - Arid
-      - Cold
+      - Frozen
     Temperate:
       GrowthRate: 100
       UVLightGrowthRate: 85
@@ -370,7 +370,7 @@ WHEAT:
       UVLightGrowthRate: 50
       NaturalDeathChance: 100
       UVLightDeathChance: 5
-    Cold:
+    Frozen:
       GrowthRate: 0
       UVLightGrowthRate: 50
       NaturalDeathChance: 100
@@ -520,7 +520,20 @@ CAVE_VINES:
 #    NaturalDeathChance: 0
 #    UVLightDeathChance: 5
 #    Biome: []
-#
+
+
+# Not fully supported yet (Can only grow with Bonemeal)
+#PALE_HANGING_MOSS:
+#  BiomeGroup:
+#    Groups: []
+#  Default:
+#    GrowthRate: 100
+#    UVLightGrowthRate: 100
+#    NaturalDeathChance: 5
+#    UVLightDeathChance: 5
+#    Biome:
+#      - PALE_GARDEN
+
 #VINE:
 #  BiomeGroup:
 #    Groups: []
@@ -825,18 +838,36 @@ OAK_SAPLING:
       - WOODED_BADLANDS
 
 
+PALE_OAK_SAPLING:
+  BiomeGroup:
+    Groups:
+      - Temperate
+    Temperate:
+      GrowthRate: 20
+      UVLightGrowthRate: 40
+      NaturalDeathChance: 10
+      UVLightDeathChance: 5
+  Default:
+    GrowthRate: 100
+    UVLightGrowthRate: 85
+    NaturalDeathChance: 5
+    UVLightDeathChance: 15
+    Biome:
+      - PALE_GARDEN
+
+
 SPRUCE_SAPLING:
   BiomeGroup:
     Groups:
       - Chilly
-      - Cold
+      - Frozen
       - Temperate
     Chilly:
       GrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
-    Cold:
+    Frozen:
       GrowthRate: 75
       UVLightGrowthRate: 55
       NaturalDeathChance: 12

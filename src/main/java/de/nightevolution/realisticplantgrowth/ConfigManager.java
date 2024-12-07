@@ -1,6 +1,8 @@
 package de.nightevolution.realisticplantgrowth;
 
 import de.nightevolution.realisticplantgrowth.utils.Logger;
+import de.nightevolution.realisticplantgrowth.utils.enums.ModifierType;
+import de.nightevolution.realisticplantgrowth.utils.exception.ConfigurationException;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
@@ -31,6 +33,12 @@ public class ConfigManager {
 
     private static String plugin_prefix;
     private static final String logFile = "debug";
+
+    // Route to plant modifiers in GrowthModifiers.yml
+    private static final Route biomeGroupSectionRoute = Route.from("BiomeGroup");
+    private static final Route biomeGroupsListRoute = Route.from("BiomeGroup", "Groups");
+    private static final Route defaultSectionRoute = Route.from("Default");
+    private static final Route defaultBiomeListRoute = Route.from("Default", "Biome");
 
     // Main config
     private static YamlDocument config;
@@ -132,9 +140,9 @@ public class ConfigManager {
                     logger.log("New language directory created.");
                 }
 
-            } catch (SecurityException e) {
+            } catch (Exception e) {
                 logger.error("&cCouldn't create language directory!");
-                instance.disablePlugin();
+                throw new ConfigurationException("&cCouldn't create language directory!");
             }
 
         } else
@@ -150,6 +158,12 @@ public class ConfigManager {
 
         logger.log("Loading GrowthModifiers ...");
         readGrowthModifierData();
+
+        // Check GrowthModifiers.yml
+        verifyGrowthModifiersConfiguration();
+
+        if (debug_log)
+            printConfigData();
 
     }
 
@@ -184,7 +198,7 @@ public class ConfigManager {
 
         } catch (IOException e) {
             logger.error("&cCouldn't load YAML configuration!");
-            instance.disablePlugin();
+            throw new ConfigurationException("&cCouldn't load YAML configuration!");
         }
 
         // BiomeGroups Config
@@ -199,7 +213,7 @@ public class ConfigManager {
 
         } catch (IOException e) {
             logger.error("&cCouldn't load BiomeGroups YAML configuration!");
-            instance.disablePlugin();
+            throw new ConfigurationException("&cCouldn't load BiomeGroups YAML configuration!");
         }
 
         // GrowthModifiers Config
@@ -212,7 +226,7 @@ public class ConfigManager {
 
         } catch (IOException e) {
             logger.error("&cCouldn't load GrowthModifiers YAML configuration!");
-            instance.disablePlugin();
+            throw new ConfigurationException("&cCouldn't load GrowthModifiers YAML configuration!");
         }
 
     }
@@ -254,8 +268,7 @@ public class ConfigManager {
             }
         } catch (IOException e) {
             logger.error("&cCouldn't load language files!");
-            instance.disablePlugin();
-            return;
+            throw new ConfigurationException("&cCouldn't load language files!");
         }
 
         // Search for custom files in lang directory.
@@ -265,8 +278,7 @@ public class ConfigManager {
 
             if (allFiles == null) {
                 logger.error("&cCouldn't load language files!");
-                instance.disablePlugin();
-                return;
+                throw new ConfigurationException("&cCouldn't load language files!");
             }
 
             GeneralSettings gs = GeneralSettings.builder().setUseDefaults(false).build();
@@ -301,7 +313,7 @@ public class ConfigManager {
                         UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build());
             } catch (IOException e) {
                 logger.error("&cCouldn't load custom language file!");
-                instance.disablePlugin();
+                throw new ConfigurationException("&cCouldn't load custom language file!");
             }
 
         }
@@ -323,7 +335,7 @@ public class ConfigManager {
 
         } catch (IOException e) {
             logger.error("&cCouldn't load YAML configuration!");
-            instance.disablePlugin();
+            throw new ConfigurationException("&cCouldn't load YAML configuration!");
         }
     }
 
@@ -391,13 +403,11 @@ public class ConfigManager {
             checkSoundEffectSection();
 
 
-            printConfigData();
-
         } catch (YAMLException e) {
             logger.error("&cAn Error occurred while reading config.yml data!");
             logger.log(e.getLocalizedMessage());
 
-            instance.disablePlugin();
+            throw new ConfigurationException("&cAn Error occurred while reading config.yml data!");
         }
     }
 
@@ -535,6 +545,11 @@ public class ConfigManager {
             readLanguageData();
             readBiomeGroupsData();
             readGrowthModifierData();
+            verifyGrowthModifiersConfiguration();
+
+
+            if (debug_log)
+                printConfigData();
 
             logger.log("&2All configuration files reloaded.");
 
@@ -542,8 +557,141 @@ public class ConfigManager {
         } catch (YAMLException | IOException e) {
             logger.log(e.getLocalizedMessage());
             logger.error("&cError while reloading config files.");
-            instance.disablePlugin();
+            throw new ConfigurationException("&cError while reloading config files.");
         }
+    }
+
+
+    /**
+     * <p>Validates the configuration in {@code GrowthModifiers.yml} for correctness and completeness.</p>
+     *
+     * <p>This method ensures that all plants have defined growth modifiers for their respective biome groups
+     * or appropriate default settings. During the verification process, any detected issues are logged,
+     * and the plugin is disabled if the configuration is found to be incomplete.</p>
+     *
+     * <p><b>Important:</b> Proper configuration is critical to avoid runtime errors and ensure expected plugin functionality.</p>
+     */
+    private void verifyGrowthModifiersConfiguration() {
+        logger.log("Starting verification of GrowthModifiers.yml...");
+
+        // Iterate through all plants defined in the GrowthModifiers.yml file
+        for (String plantSectionString : growthModifierData.keySet()) {
+            Section plantSection = growthModifiersFile.getSection(Route.from(plantSectionString));
+
+            // Retrieve all biome groups assigned to the current plant
+            List<String> biomeGroupsList = plantSection.getStringList(biomeGroupsListRoute);
+
+            // Validate growth modifiers for each biome group assigned to the plant
+            if (!biomeGroupsList.isEmpty()) {
+                for (String biomeGroup : biomeGroupsList) {
+                    if (isValidBiomeGroupName(biomeGroup))
+                        checkBiomeGroupModifiers(plantSection, biomeGroup);
+                    else {
+                        logger.warn("BiomeGroup '" + biomeGroup + "' is not defined in your BiomeGroups.yml and will be ignored.");
+                        logger.warn("Check the configuration at: " + plantSection.getNameAsString() + " -> BiomeGroup -> Groups -> " + biomeGroup);
+                        logger.warn("Please verify your BiomeGroups.yml to avoid potential issues");
+                    }
+                }
+            }
+
+            // Check for default modifiers if additional biomes are defined in the Default section
+            List<String> biomeStringList = plantSection.getStringList(defaultBiomeListRoute);
+
+            if (!biomeStringList.isEmpty()) {
+                checkDefaultModifiers(plantSection);
+            }
+
+            logger.verbose(plantSection.getNameAsString() + ": Verification completed.");
+        }
+
+        logger.log("GrowthModifiers.yml verification completed successfully.");
+    }
+
+    /**
+     * <p>Validates the growth modifiers for a specified biome group within a plant's configuration.</p>
+     *
+     * <p>This method ensures that all required modifiers for the given biome group are declared.
+     * If the biome group is missing or incomplete, the method checks the plant's default modifiers
+     * for fallback settings. If any required modifier is missing, it logs the error and triggers
+     * the necessary error handling routine.</p>
+     *
+     * @param plantSection <br>The {@link Section} of the plant being validated.
+     * @param biomeGroupString <br>The name of the biome group whose growth modifiers are being verified.
+     */
+    private void checkBiomeGroupModifiers(Section plantSection, String biomeGroupString) {
+        Optional<Section> optionalBiomeGroupSection = plantSection.getOptionalSection(Route.from("BiomeGroup", biomeGroupString));
+
+        if (optionalBiomeGroupSection.isPresent()) {
+            // Check if all required modifiers are declared in this section
+            for (ModifierType modifier : ModifierType.getModifierTypeList()) {
+                Optional<Double> optionalDouble = optionalBiomeGroupSection.get().getOptionalDouble(modifier.getValue());
+
+                if (optionalDouble.isEmpty()) {
+                    Route modifierRoute = Route.from(plantSection.getRouteAsString(), "BiomeGroup", biomeGroupString, modifier.getValue());
+                    handleConfigurationError(modifierRoute);
+                }
+            }
+        } else {
+            // If the biome group section is not defined, check default modifiers
+            logger.debug("BiomeGroup Section '" + biomeGroupString + "' not found for plant '" + plantSection.getNameAsString() + "'.");
+            logger.debug("Checking default modifier section for this plant...");
+            checkDefaultModifiers(plantSection);
+        }
+    }
+
+    /**
+     * <p>Validates the default growth modifiers for a given plant section.</p>
+     *
+     * <p>This method ensures that all required modifiers are defined in the default section of the plant's configuration.
+     * If any required modifier is missing, it logs the error and triggers the necessary error handling routine.</p>
+     *
+     * @param plantSection <br>The {@link Section} representing the plant to validate.
+     */
+    private void checkDefaultModifiers(Section plantSection) {
+        for (ModifierType modifier : ModifierType.getModifierTypeList()) {
+            Route modifierRoute = Route.from("Default", modifier.getValue());
+            Optional<Double> optionalDouble = plantSection.getOptionalDouble(modifierRoute);
+
+            if (optionalDouble.isEmpty()) {
+                Route plantModifierRoute = Route.from(plantSection.getRouteAsString(), "Default", modifier.getValue());
+                handleConfigurationError(plantModifierRoute);
+            }
+        }
+    }
+
+    /**
+     * Checks if the provided biome group name is valid by verifying if it exists in the {@code BiomeGroups.yml} FIle.
+     *
+     * <p>This method looks up the given biome group name in the internal collection of registered biome groups
+     * and returns {@code true} if the name exists, indicating that it's a valid biome group name.</p>
+     *
+     * @param biomeGroupNameToCheck the name of the biome group to be checked for validity
+     * @return {@code true} if the biome group name exists in the internal data, otherwise {@code false}
+     */
+    private boolean isValidBiomeGroupName(String biomeGroupNameToCheck) {
+        Set<String> biomeGroupNames = biomeGroupsData.keySet();
+        return biomeGroupNames.contains(biomeGroupNameToCheck);
+    }
+
+
+    /**
+     * <p>Handles configuration errors by logging the issue and disabling the plugin.</p>
+     *
+     * <p>This method is invoked whenever a required modifier is missing or the configuration is incomplete.
+     * It logs the missing details, provides a link to the documentation for troubleshooting,
+     * and disables the plugin to prevent runtime errors.</p>
+     *
+     * @param missingModifierRoute <br>The {@link Route} indicating the location of the missing modifier in the configuration file.
+     */
+    private void handleConfigurationError(Route missingModifierRoute) {
+        logger.error("Configuration error detected in GrowthModifiers.yml!");
+        logger.error("Missing modifier at: " + missingModifierRoute.get(0) + " -> " + missingModifierRoute.get(1) + " -> " + missingModifierRoute.get(2));
+        logger.error("Please refer to the Wiki for correct configuration or join our Discord for support.");
+        logger.error("Wiki: https://realistic-plant-growth.nightevolution.de/guides/configuration/growthmodifiers.yml");
+
+        // Disable the plugin due to an incomplete configuration
+        throw new ConfigurationException("Configuration error detected in GrowthModifiers.yml!");
+
     }
 
 
