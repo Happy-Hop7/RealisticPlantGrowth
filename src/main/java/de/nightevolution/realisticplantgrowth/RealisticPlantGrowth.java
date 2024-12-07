@@ -13,6 +13,7 @@ import de.nightevolution.realisticplantgrowth.utils.mapper.versions.*;
 import de.nightevolution.realisticplantgrowth.utils.rest.ModrinthVersion;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
@@ -162,9 +163,18 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         if (minorReleaseVersion == 20 && microReleaseVersion <= 3) {
             versionMapper = new Version_1_20();
             logger.log("Implementation initialized for Minecraft 1.20.1 - 1.20.3.");
-        } else {
+        }
+
+        // Version 1.20.4 - 1.21.3
+        if (minorReleaseVersion <= 21 && microReleaseVersion <= 3) {
             versionMapper = new Version_1_20_4();
-            logger.log("Implementation initialized for Minecraft 1.20.4 and above.");
+            logger.log("Implementation initialized for Minecraft 1.20.4 - 1.21.3.");
+        }
+
+        // Version >= 1.21.4
+        else {
+            versionMapper = new Version_1_21_4();
+            logger.log("Implementation initialized for Minecraft 1.21.4 and above.");
         }
 
         return true;
