@@ -1,6 +1,5 @@
 package de.nightevolution.realisticplantgrowth;
 
-import de.nightevolution.realisticplantgrowth.commands.CommandManager;
 import de.nightevolution.realisticplantgrowth.commands.TabCompleterImpl;
 import de.nightevolution.realisticplantgrowth.listeners.other.*;
 import de.nightevolution.realisticplantgrowth.listeners.plant.*;
@@ -8,11 +7,13 @@ import de.nightevolution.realisticplantgrowth.listeners.player.*;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.UpdateChecker;
 import de.nightevolution.realisticplantgrowth.utils.biome.BiomeChecker;
+import de.nightevolution.realisticplantgrowth.utils.exception.ConfigurationException;
 import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
 import de.nightevolution.realisticplantgrowth.utils.mapper.versions.*;
 import de.nightevolution.realisticplantgrowth.utils.rest.ModrinthVersion;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
@@ -71,7 +72,12 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         instance = this;
         this.pluginVersion = this.getDescription().getVersion();
 
-        cm = ConfigManager.get();
+        try {
+            cm = ConfigManager.get();
+        } catch (ConfigurationException e) {
+            disablePlugin();
+            return;
+        }
 
         logger = new Logger(this.getClass().getSimpleName(), cm.isVerbose(), cm.isDebug_log());
 
@@ -157,9 +163,18 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         if (minorReleaseVersion == 20 && microReleaseVersion <= 3) {
             versionMapper = new Version_1_20();
             logger.log("Implementation initialized for Minecraft 1.20.1 - 1.20.3.");
-        } else {
+        }
+
+        // Version 1.20.4 - 1.21.3
+        if (minorReleaseVersion <= 21 && microReleaseVersion <= 3) {
             versionMapper = new Version_1_20_4();
-            logger.log("Implementation initialized for Minecraft 1.20.4 and above.");
+            logger.log("Implementation initialized for Minecraft 1.20.4 - 1.21.3.");
+        }
+
+        // Version >= 1.21.4
+        else {
+            versionMapper = new Version_1_21_4();
+            logger.log("Implementation initialized for Minecraft 1.21.4 and above.");
         }
 
         return true;
@@ -279,9 +294,16 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Disables this plugin via the {@link Bukkit} {@link PluginManager}.
      */
     void disablePlugin() {
-        logger.log("");
-        logger.error("&cDisabling " + this.getClass().getSimpleName() + "...");
-        logger.log("");
+        instance = null;
+        cm = null;
+        versionMapper = null;
+        logger = null;
+        cmdManager = null;
+        metrics = null;
+        pluginVersion = null;
+        HandlerList.unregisterAll(this);
+        Objects.requireNonNull(this.getCommand("rpg")).setTabCompleter(null);
+        Objects.requireNonNull(this.getCommand("rpg")).setExecutor(null);
         getServer().getPluginManager().disablePlugin(this);
     }
 

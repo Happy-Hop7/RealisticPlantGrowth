@@ -151,13 +151,13 @@ CHORUS_FLOWER:
   BiomeGroup:
     Groups:
       - End
-      - Cold
+      - Frozen
     End:
       NaturalGrowthRate: 100
       UVLightGrowthRate: 100
       NaturalDeathChance: 5
       UVLightDeathChance: 5
-    Cold:
+    Frozen:
       NaturalGrowthRate: 50
       UVLightGrowthRate: 50
       NaturalDeathChance: 20
@@ -231,13 +231,13 @@ SWEET_BERRY_BUSH:
     Groups:
       - Chilly
       - Temperate
-      - Cold
+      - Frozen
     Chilly:
       NaturalGrowthRate: 100
       UVLightGrowthRate: 75
       NaturalDeathChance: 5
       UVLightDeathChance: 15
-    Cold:
+    Frozen:
       NaturalGrowthRate: 80
       UVLightGrowthRate: 65
       NaturalDeathChance: 35
@@ -267,7 +267,7 @@ BEETROOTS:
     Groups:
       - Temperate
       - Chilly
-      - Cold
+      - Frozen
     Chilly:
       NaturalGrowthRate: 100
       UVLightGrowthRate: 85
@@ -278,7 +278,7 @@ BEETROOTS:
       UVLightGrowthRate: 60
       NaturalDeathChance: 5
       UVLightDeathChance: 15
-    Cold:
+    Frozen:
       NaturalGrowthRate: 60
       UVLightGrowthRate: 85
       NaturalDeathChance: 35
@@ -391,7 +391,7 @@ PUMPKIN:
     Groups:
       - Chilly
       - Temperate
-      - Cold
+      - Frozen
     Chilly:
       NaturalGrowthRate: 100
       UVLightGrowthRate: 85
@@ -402,7 +402,7 @@ PUMPKIN:
       UVLightGrowthRate: 70
       NaturalDeathChance: 5
       UVLightDeathChance: 15
-    Cold:
+    Frozen:
       NaturalGrowthRate: 70
       UVLightGrowthRate: 85
       NaturalDeathChance: 35
@@ -440,7 +440,7 @@ WHEAT:
     Groups:
       - Temperate
       - Arid
-      - Cold
+      - Frozen
     Temperate:
       NaturalGrowthRate: 100
       UVLightGrowthRate: 85
@@ -451,7 +451,7 @@ WHEAT:
       UVLightGrowthRate: 50
       NaturalDeathChance: 100
       UVLightDeathChance: 5
-    Cold:
+    Frozen:
       NaturalGrowthRate: 0
       UVLightGrowthRate: 50
       NaturalDeathChance: 100
@@ -942,14 +942,14 @@ SPRUCE_SAPLING:
   BiomeGroup:
     Groups:
       - Chilly
-      - Cold
+      - Frozen
       - Temperate
     Chilly:
       NaturalGrowthRate: 100
       UVLightGrowthRate: 85
       NaturalDeathChance: 5
       UVLightDeathChance: 15
-    Cold:
+    Frozen:
       NaturalGrowthRate: 75
       UVLightGrowthRate: 55
       NaturalDeathChance: 12

@@ -26,7 +26,7 @@ public abstract class VersionMapper {
      * A set of plant materials used for the 'require_hoe_to_harvest' setting in the {@link RealisticPlantGrowth} plugin.
      * These {@link Material}s represent agricultural plants that require a hoe to be harvested.
      */
-    static final Set<Material> agriculturalPlants = new HashSet<>(Arrays.asList(
+    protected static final Set<Material> agriculturalPlants = new HashSet<>(Arrays.asList(
             Material.ATTACHED_MELON_STEM,
             Material.ATTACHED_PUMPKIN_STEM,
             Material.BEETROOTS,
@@ -43,7 +43,7 @@ public abstract class VersionMapper {
      * This set includes various plant {@link Material}s found on land.
      * Saplings are added later to this set.
      */
-    static final Set<Material> plants = new HashSet<>(Set.of(
+    protected static final Set<Material> plants = new HashSet<>(Set.of(
             Material.BAMBOO,
             Material.BAMBOO_SAPLING,
             Material.BROWN_MUSHROOM,
@@ -74,13 +74,13 @@ public abstract class VersionMapper {
             Material.WEEPING_VINES_PLANT,
             Material.WHEAT
     ));
-    static Set<Material> saplings;
+    protected static Set<Material> saplings;
 
     /**
      * A set of all supported aquatic plants in the {@link RealisticPlantGrowth} plugin.
      * These {@link Material} represent plant {@link Block}s typically found in aquatic environments.
      */
-    static final Set<Material> aquaticPlants = new HashSet<>(Set.of(
+    protected static final Set<Material> aquaticPlants = new HashSet<>(Set.of(
             Material.KELP,
             Material.KELP_PLANT,
             Material.SEAGRASS,
@@ -88,7 +88,7 @@ public abstract class VersionMapper {
             Material.TALL_SEAGRASS
     ));
 
-    static final Set<Material> upwardsGrowingPlants = new HashSet<>(Set.of(
+    protected static final Set<Material> upwardsGrowingPlants = new HashSet<>(Set.of(
             Material.BAMBOO,
             Material.BAMBOO_SAPLING,
             Material.KELP,
@@ -99,14 +99,14 @@ public abstract class VersionMapper {
             Material.TWISTING_VINES_PLANT
     ));
 
-    static final Set<Material> downwardsGrowingPlants = new HashSet<>(Set.of(
+    protected static final Set<Material> downwardsGrowingPlants = new HashSet<>(Set.of(
             Material.CAVE_VINES,
             Material.CAVE_VINES_PLANT,
             Material.WEEPING_VINES,
             Material.WEEPING_VINES_PLANT
     ));
 
-    static final Set<Material> growEventReturnsAirBlockPlants = new HashSet<>(Set.of(
+    protected static final Set<Material> growEventReturnsAirBlockPlants = new HashSet<>(Set.of(
             Material.CHORUS_FLOWER,
             Material.CHORUS_PLANT,
             Material.MELON_STEM,
