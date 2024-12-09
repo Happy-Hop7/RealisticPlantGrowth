@@ -43,9 +43,9 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     private static VersionMapper versionMapper;
 
     /**
-     * The {@link Logger} instance for recording log messages in the {@link RealisticPlantGrowth} plugin.
+     * The {@link org.slf4j.Logger} instance for recording log messages in the {@link RealisticPlantGrowth} plugin.
      */
-    private Logger logger;
+    private org.slf4j.Logger logger;
 
     /**
      * The {@link CommandManager} used by the {@link RealisticPlantGrowth} plugin.
@@ -71,14 +71,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         instance = this;
         this.pluginVersion = this.getDescription().getVersion();
 
-        try {
-            cm = ConfigManager.get();
-        } catch (ConfigurationException e) {
-            disablePlugin();
-            return;
-        }
-
-        logger = new Logger(this.getClass().getSimpleName(), cm.isVerbose(), cm.isDebug_log());
+        logger = LogUtils.getLogger(this.getClass());
 
 
         checkServerFork();
@@ -106,14 +99,14 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      */
     private void checkServerFork() {
         try {
-            logger.log("Checking server version...");
+            logger.info("Checking server version...");
             // Attempt to load a Paper-specific class to verify if running on a Paper fork
             Class.forName("io.papermc.paper.util.Tick");
             isPaperFork = true;
-            logger.log("... using Paper implementation.");
+            logger.info("... using Paper implementation.");
         } catch (ClassNotFoundException ignored) {
             isPaperFork = false;
-            logger.log("... using Spigot implementation.");
+            logger.info("... using Spigot implementation.");
         }
     }
 
@@ -126,42 +119,55 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * @return {@code true} if the version check and initialization are successful, {@code false} otherwise.
      */
     private boolean checkServerVersion() {
-        int minorVersion;
-        int microVersion;
+
+        int minorReleaseVersion;
+        int microReleaseVersion;
 
         try {
-            // Extract version numbers from Bukkit version string
-            String[] versionParts = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-            minorVersion = Integer.parseInt(versionParts[1]);
-            microVersion = versionParts.length >= 3 ? Integer.parseInt(versionParts[2]) : 0;
 
-            logger.log("Your server is running version 1." + minorVersion + "." + microVersion);
-        } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+            String[] versionString = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+            minorReleaseVersion = Integer.parseInt(versionString[1]);
+
+            if (versionString.length >= 3) {
+                microReleaseVersion = Integer.parseInt(versionString[2]);
+            } else {
+                microReleaseVersion = 0;
+            }
+
+            logger.info("Your server is running version 1." + minorReleaseVersion + "." + microReleaseVersion);
+
+        } catch (ArrayIndexOutOfBoundsException | NumberFormatException whatVersionAreYouUsingException) {
             logger.error("Error extracting server version: Unable to parse Bukkit version format.");
             return false;
         }
 
-        // Warn if using a snapshot version of the plugin
+        // Warn if the server version is a snapshot version
         if (pluginVersion.contains("SNAPSHOT")) {
             logger.warn("You are using a snapshot version of RealisticPlantGrowth!");
         }
 
         // Version below Minecraft 1.20.1 are not supported (due to createBlockState API change).
-        if (minorVersion < 20 || (minorVersion == 20 && microVersion == 0)) {
+        if (minorReleaseVersion < 20 || (minorReleaseVersion == 20 && microReleaseVersion == 0)) {
             logger.error("Unsupported server version: This plugin requires Minecraft 1.20.1 or higher.");
             return false;
         }
 
-        // Initialize VersionMapper based on server version
-        if (minorVersion == 20 && microVersion <= 3) {
+        // Assign the correct VersionMapper based on the server version
+        if (minorReleaseVersion == 20 && microReleaseVersion <= 3) {
             versionMapper = new Version_1_20();
-            logger.log("Implementation initialized for Minecraft 1.20.1 - 1.20.3.");
-        } else if (minorVersion < 21 || (minorVersion == 21 && microVersion <= 3)) {
+            logger.info("Implementation initialized for Minecraft 1.20.1 - 1.20.3.");
+        }
+
+        // Version 1.20.4 - 1.21.3
+        if (minorReleaseVersion <= 21 && microReleaseVersion <= 3) {
             versionMapper = new Version_1_20_4();
-            logger.log("Implementation initialized for Minecraft 1.20.4 - 1.21.3.");
-        } else {
+            logger.info("Implementation initialized for Minecraft 1.20.4 - 1.21.3.");
+        }
+
+        // Version >= 1.21.4
+        else {
             versionMapper = new Version_1_21_4();
-            logger.log("Implementation initialized for Minecraft 1.21.4 and above.");
+            logger.info("Implementation initialized for Minecraft 1.21.4 and above.");
         }
 
         return true;
@@ -212,12 +218,12 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         // Check if the use_metrics configuration setting is enabled
         if (cm.use_metrics()) {
             // Log that bStats is enabled
-            logger.log("bStats enabled.");
+            logger.info("bStats enabled.");
 
             // Create a new Metrics instance with the plugin and the unique plugin ID (20634)
             metrics = new Metrics(this, 20634);
         } else
-            logger.log("bStats disabled.");
+            logger.info("bStats disabled.");
     }
 
     /**
@@ -238,8 +244,8 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      */
     public void updateVariables() {
 
-        logger.setVerbose(cm.isVerbose());
-        logger.setDebug(cm.isDebug_log());
+        LogUtils.setVerbose(cm.isVerbose());
+        LogUtils.setDebug(cm.isDebug_log());
 
         cmdManager = new CommandManager();
 
@@ -264,7 +270,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
             if (thisPluginVersion.compareTo(version) >= 0) {
                 // Log a message if there is no new update available.
-                logger.log("Your RealisticPlantGrowth plugin is up to date (version " + pluginVersion + ").");
+                logger.info("Your RealisticPlantGrowth plugin is up to date (version " + pluginVersion + ").");
             } else {
                 // Log messages if a new update is available.
                 logger.warn("A new version of RealisticPlantGrowth is available!");
@@ -302,21 +308,33 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
 
     private void drawLogo() {
-        String logo = System.lineSeparator() +
-                System.lineSeparator() +
-                "&2     .{{}}}}}}." + "&r" + System.lineSeparator() +
-                "&2    {{{{{{(`)}}}." + "&r" + System.lineSeparator() +
-                "&2   {{{(`)}}}}}}}}}" + "&r" + System.lineSeparator() +
-                "&2  }}}}}}}}}{{(`){{{" + "&b     Realistic &aPlant &bGrowth" + "&r" + System.lineSeparator() +
-                "&2  }}}}{{{{(`)}}{{{{" + "&b       by &6TheRealPredator" + "&r" + System.lineSeparator() +
-                "&2 {{{(`)}}}}}}}{}}}}}" + "&r" + System.lineSeparator() +
-                "&2{{{{{{{{(`)}}}}}}}}}}" + "&r" + System.lineSeparator() +
-                "&2{{{{{{{}{{{{(`)}}}}}}" + "&a    ... successfully enabled." + "&r" + System.lineSeparator() +
-                "&2 {{{{{(`&r)   {&2{{{(`)}'" + "&r" + System.lineSeparator() +
-                "&2  `\"\"'\" &r|   | &2\"'\"'`" + "&r" + System.lineSeparator() +
-                "       &r/     \\" + "&r" + System.lineSeparator() +
-                "&a~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + "&r" + System.lineSeparator();
-        logger.log(logo);
+        final TextComponent logo = Component.text().appendNewline()
+                .appendNewline().append(Component.text("     .{{}}}}}}.", NamedTextColor.DARK_GREEN))
+                .appendNewline().append(Component.text("    {{{{{{(`)}}}.", NamedTextColor.DARK_GREEN))
+                .appendNewline().append(Component.text("   {{{(`)}}}}}}}}}", NamedTextColor.DARK_GREEN))
+                .appendNewline().append(Component.text("  }}}}}}}}}{{(`){{{", NamedTextColor.DARK_GREEN))
+                                .append(Component.text("     Realistic", NamedTextColor.AQUA))
+                                .append(Component.text(" Plant", NamedTextColor.GREEN))
+                                .append(Component.text(" Growth", NamedTextColor.AQUA))
+                .appendNewline().append(Component.text("  }}}}{{{{(`)}}{{{{", NamedTextColor.DARK_GREEN))
+                                .append(Component.text("       by", NamedTextColor.AQUA))
+                                .append(Component.text(" TheRealPredator", NamedTextColor.LIGHT_PURPLE))
+                .appendNewline().append(Component.text(" {{{(`)}}}}}}}{}}}}}", NamedTextColor.DARK_GREEN))
+                                .append(Component.text("         v" + pluginVersion, NamedTextColor.GOLD))
+                .appendNewline().append(Component.text("{{{{{{{{(`)}}}}}}}}}}", NamedTextColor.DARK_GREEN))
+                .appendNewline().append(Component.text("{{{{{{{}{{{{(`)}}}}}}", NamedTextColor.DARK_GREEN))
+                .appendNewline().append(Component.text(" {{{{{(`", NamedTextColor.DARK_GREEN))
+                                .append(Component.text(")   {", TextColor.color(121, 96, 76))
+                                .append(Component.text("{{{(`)}'", NamedTextColor.DARK_GREEN))
+                                .append(Component.text("    ... successfully enabled.", NamedTextColor.GREEN))
+                .appendNewline().append(Component.text("  `\"\"'\"", NamedTextColor.DARK_GREEN))
+                                .append(Component.text(" |   | ", TextColor.color(121, 96, 76)))
+                                .append(Component.text("\"'\"'`", NamedTextColor.DARK_GREEN))
+                .appendNewline().append(Component.text("       /     \\" , TextColor.color(121, 96, 76)))
+                .appendNewline().append(Component.text("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", NamedTextColor.GREEN)))
+                .build();
+
+        LogUtils.info(logger, logo);
 
     }
 
