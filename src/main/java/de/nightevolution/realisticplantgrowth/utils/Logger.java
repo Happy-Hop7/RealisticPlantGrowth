@@ -16,6 +16,7 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@Deprecated
 public class Logger {
     private static File logFolder;
     private static boolean verbose;
