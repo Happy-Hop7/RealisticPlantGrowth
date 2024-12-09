@@ -2,6 +2,8 @@ package utils;
 
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.LogUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.junit.jupiter.api.*;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
@@ -19,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LogUtilsTest {
     private ServerMock server;
     private RealisticPlantGrowth plugin;
-    private Logger pluginLogger;
+    private Logger mockPluginLogger;
 
     private ByteArrayOutputStream logCapture;
     private ByteArrayOutputStream errCapture;
@@ -66,7 +68,7 @@ public class LogUtilsTest {
         LogUtils.setDebug(false);
 
         // Get the logger for RealisticPlantGrowth class
-        pluginLogger = LogUtils.getLogger(RealisticPlantGrowth.class);
+        mockPluginLogger = LogUtils.getLogger(RealisticPlantGrowth.class);
     }
 
     /**
@@ -108,7 +110,7 @@ public class LogUtilsTest {
     @DisplayName("Test0: Log an INFO message")
     public void testLogInfo() {
         // Log message using the plugin logger
-        pluginLogger.info(INFO_MSG);
+        mockPluginLogger.info(INFO_MSG);
         // Validate the log line matches the expected format
         assertLogLine(logCapture.toString().trim(), LOG_LVL.INFO, INFO_MSG, RealisticPlantGrowth.class);
     }
@@ -137,7 +139,7 @@ public class LogUtilsTest {
     @DisplayName("Test2: Log a WARN message")
     public void testLogWarn() {
         // Log message using the plugin logger
-        pluginLogger.warn(WARN_MSG);
+        mockPluginLogger.warn(WARN_MSG);
         // Validate the log line matches the expected format
         assertLogLine(logCapture.toString().trim(), LOG_LVL.WARN, WARN_MSG, RealisticPlantGrowth.class);
     }
@@ -166,7 +168,7 @@ public class LogUtilsTest {
     @DisplayName("Test4: Log an ERROR message")
     public void testLogError() {
         // Log message using the plugin logger
-        pluginLogger.error(ERROR_MSG);
+        mockPluginLogger.error(ERROR_MSG);
         // Validate the log line matches the expected format
         assertLogLine(logCapture.toString().trim(), LOG_LVL.ERROR, ERROR_MSG, RealisticPlantGrowth.class);
     }
@@ -184,6 +186,169 @@ public class LogUtilsTest {
         logger.error(ERROR_MSG);
         // Validate the log line matches the verbose format
         assertLogLineVerbose(logCapture.toString().trim(), LOG_LVL.ERROR, ERROR_MSG, LogUtilsTest.class);
+    }
+
+
+    // --- Component Tests ---
+
+    @Test
+    @DisplayName("Log INFO with Adventure Component")
+    public void testLogInfoWithComponent() {
+        // Create a sample component
+        Component component = Component.text("Test INFO message. ")
+                .append(Component.text("This is very red").color(NamedTextColor.RED));
+
+        // Call the LogUtils.info method
+        LogUtils.info(mockPluginLogger, component);
+
+        // Verify that the logger's info method was called with the correct serialized message
+        String expectedMessage = "Test INFO message. This is very red";
+        assertLogLine(logCapture.toString().trim(), LOG_LVL.INFO, expectedMessage, RealisticPlantGrowth.class);
+    }
+
+    @Test
+    @DisplayName("Log WARN with Adventure Component")
+    public void testLogWarnWithComponent() {
+        // Create a sample component
+        Component component = Component.text("Test WARN message. ")
+                .append(Component.text("This is very red").color(NamedTextColor.RED));
+
+        // Call the LogUtils.warn method
+        LogUtils.warn(mockPluginLogger, component);
+
+        // Verify that the logger's warn method was called with the correct serialized message
+        String expectedMessage = "Test WARN message. This is very red";
+        assertLogLine(logCapture.toString().trim(), LOG_LVL.WARN, expectedMessage, RealisticPlantGrowth.class);
+    }
+
+    @Test
+    @DisplayName("Log ERROR with Adventure Component")
+    public void testLogErrorWithComponent() {
+        // Create a sample component
+        Component component = Component.text("Test ERROR message. ")
+                .append(Component.text("This is very red").color(NamedTextColor.RED));
+
+        // Call the LogUtils.error method
+        LogUtils.error(mockPluginLogger, component);
+
+        // Verify that the logger's error method was called with the correct serialized message
+        String expectedMessage = "Test ERROR message. This is very red";
+        assertLogLine(logCapture.toString().trim(), LOG_LVL.ERROR, expectedMessage, RealisticPlantGrowth.class);
+    }
+
+
+    // --- Verbose Logging Tests ---
+
+    @Test
+    @DisplayName("Verbose logging enabled - Component")
+    public void testVerboseLoggingEnabledWithComponent() {
+        // Enable verbose mode
+        LogUtils.setVerbose(true);
+        Logger logger = LogUtils.getLogger(LogUtilsTest.class);
+
+        // Create a test component
+        Component component = Component.text("Verbose Component Test").color(NamedTextColor.RED);
+
+        // Call verbose method
+        LogUtils.verbose(logger, component);
+
+        // Expected verbose component
+        String expectedMessage = "VERBOSE >> Verbose Component Test";
+
+        // Verify the logger.info method is called with the expected serialized message
+        assertLogLineVerbose(logCapture.toString().trim(), LOG_LVL.INFO, expectedMessage, LogUtilsTest.class);
+    }
+
+    @Test
+    @DisplayName("Verbose logging enabled - String message")
+    public void testVerboseLoggingEnabledWithString() {
+        // Enable verbose mode
+        LogUtils.setVerbose(true);
+        Logger logger = LogUtils.getLogger(LogUtilsTest.class);
+
+        // Test message
+        String message = "Verbose String Test";
+
+        // Call verbose method
+        LogUtils.verbose(logger, message);
+
+        // Expected verbose component
+        String expectedMessage = "VERBOSE >> Verbose String Test";
+
+        // Verify the logger.info method is called with the expected serialized message
+        assertLogLineVerbose(logCapture.toString().trim(), LOG_LVL.INFO, expectedMessage, LogUtilsTest.class);
+    }
+
+    @Test
+    @DisplayName("Verbose logging disabled")
+    public void testVerboseLoggingDisabled() {
+        // Disable verbose mode
+        LogUtils.setVerbose(false); // default value
+        LogUtils.setDebug(true);
+        Logger logger = LogUtils.getLogger(LogUtilsTest.class);
+
+        // Call verbose methods
+        LogUtils.verbose(logger, "This should not log");
+        LogUtils.verbose(logger, Component.text("This should not log either").color(NamedTextColor.RED));
+
+        // Verify that logger.info is never called
+        assertTrue(logCapture.toString().trim().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Debug logging enabled - Component")
+    public void testDebugLoggingEnabledWithComponent() {
+        // Enable verbose mode (debug uses verbose flag)
+        LogUtils.setDebug(true);
+        Logger logger = LogUtils.getLogger(LogUtilsTest.class);
+
+        // Create a test component
+        Component component = Component.text("Debug Component Test").color(NamedTextColor.RED);
+
+        // Call debug method
+        LogUtils.debug(logger, component);
+
+        // Expected debug component
+        String expectedMessage = "DEBUG >> Debug Component Test";
+
+        // Verify the logger.info method is called with the expected serialized message
+        assertLogLine(logCapture.toString().trim(), LOG_LVL.INFO, expectedMessage, RealisticPlantGrowth.class);
+    }
+
+    @Test
+    @DisplayName("Debug logging enabled - String message")
+    public void testDebugLoggingEnabledWithString() {
+        // Enable verbose mode (debug uses verbose flag)
+        LogUtils.setDebug(true);
+        Logger logger = LogUtils.getLogger(LogUtilsTest.class);
+
+        // Test message
+        String message = "Debug String Test";
+
+        // Call debug method
+        LogUtils.debug(logger, message);
+
+        // Expected debug component
+        String expectedMessage = "DEBUG >> Debug String Test";
+
+        // Verify the logger.info method is called with the expected serialized message
+        assertLogLine(logCapture.toString().trim(), LOG_LVL.INFO, expectedMessage, RealisticPlantGrowth.class);
+    }
+
+    @Test
+    @DisplayName("Debug logging disabled")
+    public void testDebugLoggingDisabled() {
+        // Disable verbose mode
+        LogUtils.setDebug(false);
+        LogUtils.setVerbose(true);
+        Logger logger = LogUtils.getLogger(LogUtils.class);
+
+        // Call debug methods
+        LogUtils.debug(logger, "This should not log");
+        LogUtils.debug(logger, Component.text("This should not log either"));
+
+        // Verify that logger.info is never called
+        assertTrue(logCapture.toString().trim().isEmpty());
     }
 
     /**
@@ -210,7 +375,7 @@ public class LogUtilsTest {
      * @param clazz the class associated with the logger
      */
     public void assertLogLineVerbose(String logLine, LOG_LVL expectedLevel, String expectedMessage, Class<?> clazz) {
-        String logFormatRegex = "\\[\\d{2}:\\d{2}:\\d{2} " + expectedLevel + "]: \\[" + RealisticPlantGrowth.class.getSimpleName() + "#" + clazz.getSimpleName() + "] " + expectedMessage;
+        String logFormatRegex = "\\[\\d{2}:\\d{2}:\\d{2} " + expectedLevel + "]: \\[" + RealisticPlantGrowth.class.getSimpleName() + "->" + clazz.getSimpleName() + "] " + expectedMessage;
         assertTrue(logLine.matches(logFormatRegex), "Log line does not match verbose regex pattern: " + logLine);
     }
 }
