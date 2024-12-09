@@ -23,10 +23,6 @@
 # Language setting for the plugin. Language files are located in /RealisticPlantGrowth/local
 language_code: en-US
 
-# Plugin prefix for console logs. Does not affect chat messages.
-# Supports miniMessage format and legacy &-color codes (Details at https://docs.advntr.dev/minimessage/format.html)
-plugin_prefix: "[RealisticPlantGrowth] "
-
 # List of worlds where this plugin is active. Worlds not listed here will use default growth behavior.
 enabled_worlds:
   - your_world
