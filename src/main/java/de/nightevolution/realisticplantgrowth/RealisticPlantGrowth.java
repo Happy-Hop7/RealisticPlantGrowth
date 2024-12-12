@@ -13,7 +13,6 @@ import de.nightevolution.realisticplantgrowth.utils.mapper.versions.*;
 import de.nightevolution.realisticplantgrowth.utils.rest.ModrinthVersion;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
@@ -119,60 +118,48 @@ public final class RealisticPlantGrowth extends JavaPlugin {
     }
 
     /**
-     * Checks the server version and initializes the appropriate {@link VersionMapper}.<p>
+     * Checks the server version and initializes the appropriate {@link VersionMapper}.
+     * <p>
      * This method determines the server version by extracting it from the Bukkit server class package name.
      * It then sets the corresponding version mapper based on the extracted version.
      *
      * @return {@code true} if the version check and initialization are successful, {@code false} otherwise.
      */
     private boolean checkServerVersion() {
-
-        int minorReleaseVersion;
-        int microReleaseVersion;
+        int minorVersion;
+        int microVersion;
 
         try {
+            // Extract version numbers from Bukkit version string
+            String[] versionParts = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
+            minorVersion = Integer.parseInt(versionParts[1]);
+            microVersion = versionParts.length >= 3 ? Integer.parseInt(versionParts[2]) : 0;
 
-            String[] versionString = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-            minorReleaseVersion = Integer.parseInt(versionString[1]);
-
-            if (versionString.length >= 3) {
-                microReleaseVersion = Integer.parseInt(versionString[2]);
-            } else {
-                microReleaseVersion = 0;
-            }
-
-            logger.log("Your server is running version 1." + minorReleaseVersion + "." + microReleaseVersion);
-
-        } catch (ArrayIndexOutOfBoundsException | NumberFormatException whatVersionAreYouUsingException) {
+            logger.log("Your server is running version 1." + minorVersion + "." + microVersion);
+        } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
             logger.error("Error extracting server version: Unable to parse Bukkit version format.");
             return false;
         }
 
-        // Warn if the server version is a snapshot version
+        // Warn if using a snapshot version of the plugin
         if (pluginVersion.contains("SNAPSHOT")) {
             logger.warn("You are using a snapshot version of RealisticPlantGrowth!");
         }
 
         // Version below Minecraft 1.20.1 are not supported (due to createBlockState API change).
-        if (minorReleaseVersion < 20 || (minorReleaseVersion == 20 && microReleaseVersion == 0)) {
+        if (minorVersion < 20 || (minorVersion == 20 && microVersion == 0)) {
             logger.error("Unsupported server version: This plugin requires Minecraft 1.20.1 or higher.");
             return false;
         }
 
-        // Assign the correct VersionMapper based on the server version
-        if (minorReleaseVersion == 20 && microReleaseVersion <= 3) {
+        // Initialize VersionMapper based on server version
+        if (minorVersion == 20 && microVersion <= 3) {
             versionMapper = new Version_1_20();
             logger.log("Implementation initialized for Minecraft 1.20.1 - 1.20.3.");
-        }
-
-        // Version 1.20.4 - 1.21.3
-        if (minorReleaseVersion <= 21 && microReleaseVersion <= 3) {
+        } else if (minorVersion < 21 || (minorVersion == 21 && microVersion <= 3)) {
             versionMapper = new Version_1_20_4();
             logger.log("Implementation initialized for Minecraft 1.20.4 - 1.21.3.");
-        }
-
-        // Version >= 1.21.4
-        else {
+        } else {
             versionMapper = new Version_1_21_4();
             logger.log("Implementation initialized for Minecraft 1.21.4 and above.");
         }
