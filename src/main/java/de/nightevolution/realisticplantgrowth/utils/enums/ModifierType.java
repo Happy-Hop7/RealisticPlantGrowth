@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum ModifierType {
-    NATURAL_GROWTH_RATE("GrowthRate"),
-    NATURAL_DEATH_CHANCE("NaturalDeathChance"),
-    UV_LIGHT_GROWTH_RATE("UVLightGrowthRate"),
-    UV_LIGHT_DEATH_CHANCE("UVLightDeathChance");
+    NATURAL("natural"),
+    UV_LIGHT("uv_light"),
+    GROWTH_RATE("growth_rate"),
+    DEATH_CHANCE("death_chance"),
+    FERTILIZER_BOOST("fertilizer_boost");
     //FERTILIZER_INVALID_BIOME("FERTILIZER_INVALID_BIOME");
 
     private final String value;

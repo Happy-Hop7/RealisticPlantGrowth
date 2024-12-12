@@ -4,13 +4,16 @@ import de.nightevolution.realisticplantgrowth.commands.TabCompleterImpl;
 import de.nightevolution.realisticplantgrowth.listeners.other.*;
 import de.nightevolution.realisticplantgrowth.listeners.plant.*;
 import de.nightevolution.realisticplantgrowth.listeners.player.*;
-import de.nightevolution.realisticplantgrowth.utils.Logger;
+import de.nightevolution.realisticplantgrowth.utils.LogUtils;
 import de.nightevolution.realisticplantgrowth.utils.UpdateChecker;
 import de.nightevolution.realisticplantgrowth.utils.biome.BiomeChecker;
-import de.nightevolution.realisticplantgrowth.utils.exception.ConfigurationException;
 import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
 import de.nightevolution.realisticplantgrowth.utils.mapper.versions.*;
 import de.nightevolution.realisticplantgrowth.utils.rest.ModrinthVersion;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -25,7 +28,7 @@ import java.util.Objects;
  * The main class for the {@link RealisticPlantGrowth} plugin.
  * This class serves as the entry point for the plugin and handles initialization, configuration, and event listening.
  */
-public final class RealisticPlantGrowth extends JavaPlugin {
+public class RealisticPlantGrowth extends JavaPlugin {
 
     /**
      * The main class for the {@link RealisticPlantGrowth} plugin, serving as a singleton instance.
@@ -71,20 +74,37 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         instance = this;
         this.pluginVersion = this.getDescription().getVersion();
 
+        // new paper way to do this:
+        //this.pluginVersion = getPluginMeta().getVersion();
+
+        LogUtils.initialize(this.getDataFolder(), true, true);
         logger = LogUtils.getLogger(this.getClass());
 
+        logger.info("Info1");
+        logger.warn("Warning1");
+        logger.error("Error1");
 
-        checkServerFork();
 
-        if (checkServerVersion()) {
-            logger.log("Version check passed.");
-        } else {
-            logger.error("Server version not supported!");
-            disablePlugin();
-        }
-
-        updateVariables();
-        registerMetrics();
+//        try {
+//            cm = ConfigManager.get();
+//        } catch (ConfigurationException e) {
+//            disablePlugin();
+//            return;
+//        }
+//
+//        logger = new Logger(this.getClass().getSimpleName(), cm.isVerbose(), cm.isDebug_log());
+//
+//
+//        checkServerFork();
+//
+//        if (checkServerVersion()) {
+//            logger.info("Version check passed.");
+//        } else {
+//            logger.error("Server version not supported!");
+//            disablePlugin();
+//        }
+//        updateVariables();
+//        registerMetrics();
         drawLogo();
     }
 
@@ -303,7 +323,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        LogUtils.shutdown();
     }
 
 

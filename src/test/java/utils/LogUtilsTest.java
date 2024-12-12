@@ -5,22 +5,21 @@ import de.nightevolution.realisticplantgrowth.utils.LogUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.junit.jupiter.api.*;
-import org.mockbukkit.mockbukkit.MockBukkit;
-import org.mockbukkit.mockbukkit.ServerMock;
 import org.slf4j.Logger;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test class for testing logging functionality in LogUtils class.
  * This ensures proper logging output format for different log levels.
  */
+@TestMethodOrder(MethodOrderer.DisplayName.class)
 public class LogUtilsTest {
-    private ServerMock server;
-    private RealisticPlantGrowth plugin;
     private Logger mockPluginLogger;
 
     private ByteArrayOutputStream logCapture;
@@ -32,6 +31,8 @@ public class LogUtilsTest {
     private final String INFO_MSG = "This is an Info.";
     private final String WARN_MSG = "This is a Warning.";
     private final String ERROR_MSG = "This is an Error.";
+
+    private final String LOG_PATH = "target/plugins/RealisticPlantGrowth";
 
     /**
      * Enum for different log levels used in testing.
@@ -49,7 +50,6 @@ public class LogUtilsTest {
      */
     @BeforeEach
     public void setUp() {
-        server = MockBukkit.mock(); // Initialize MockBukkit server
 
         // Capture console output
         logCapture = new ByteArrayOutputStream();
@@ -63,9 +63,8 @@ public class LogUtilsTest {
         System.setOut(new PrintStream(logCapture, true));
         System.setErr(new PrintStream(errCapture, true));
 
-        // Set the logger verbosity flags to false for basic logging
-        LogUtils.setVerbose(false);
-        LogUtils.setDebug(false);
+        // Initialize the logger with verbosity flags set to false for basic logging
+        LogUtils.initialize(new File(LOG_PATH), false, false);
 
         // Get the logger for RealisticPlantGrowth class
         mockPluginLogger = LogUtils.getLogger(RealisticPlantGrowth.class);
@@ -86,19 +85,28 @@ public class LogUtilsTest {
 
         if (logCapture.size() > 0) {
             // Print captured System.out logs (excluding logger messages)
-            System.out.println(testName + "Captured Log:");
+            System.out.println(testName + System.lineSeparator() + "Captured Log:");
             System.out.println(logCapture);
         }
 
         if (errCapture.size() > 0) {
             // Print captured error logs (if any)
-            System.out.println(testName + "Captured Error Log:");
+            System.out.println(testName + System.lineSeparator() + "Captured Error Log:");
             System.out.println(errCapture);
         }
 
+    }
 
-        // Unmock the MockBukkit server
-        MockBukkit.unmock();
+    // --- File System Tests ---
+
+    @Test
+    @DisplayName("Test00: Create Log Files")
+    public void createLogFiles() {
+        for (LogUtils.LogFile logFile : LogUtils.LogFile.values()) {
+            assertDoesNotThrow( () ->
+                {LogUtils.logToFileAsync(logFile, "LogFile created.");}
+            );
+        }
     }
 
     // --- INFO Log Level Tests ---
@@ -107,7 +115,7 @@ public class LogUtilsTest {
      * Test the logging of an INFO message using the plugin logger.
      */
     @Test
-    @DisplayName("Test0: Log an INFO message")
+    @DisplayName("Test01: Log an INFO message")
     public void testLogInfo() {
         // Log message using the plugin logger
         mockPluginLogger.info(INFO_MSG);
@@ -119,7 +127,7 @@ public class LogUtilsTest {
      * Test logging of an INFO message with class name included in verbose mode.
      */
     @Test
-    @DisplayName("Test1: Log INFO with class name in verbose mode")
+    @DisplayName("Test02: Log INFO with class name in verbose mode")
     public void testLogInfoWithClass() {
         // Enable verbose logging for class-specific logs
         LogUtils.setVerbose(true);
@@ -136,7 +144,7 @@ public class LogUtilsTest {
      * Test the logging of a WARN message using the plugin logger.
      */
     @Test
-    @DisplayName("Test2: Log a WARN message")
+    @DisplayName("Test03: Log a WARN message")
     public void testLogWarn() {
         // Log message using the plugin logger
         mockPluginLogger.warn(WARN_MSG);
@@ -148,7 +156,7 @@ public class LogUtilsTest {
      * Test logging of a WARN message with class name included in verbose mode.
      */
     @Test
-    @DisplayName("Test3: Log WARN with class name in verbose mode")
+    @DisplayName("Test04: Log WARN with class name in verbose mode")
     public void testLogWarnWithClass() {
         // Enable verbose logging for class-specific logs
         LogUtils.setVerbose(true);
@@ -165,7 +173,7 @@ public class LogUtilsTest {
      * Test the logging of an ERROR message using the plugin logger.
      */
     @Test
-    @DisplayName("Test4: Log an ERROR message")
+    @DisplayName("Test05: Log an ERROR message")
     public void testLogError() {
         // Log message using the plugin logger
         mockPluginLogger.error(ERROR_MSG);
@@ -177,7 +185,7 @@ public class LogUtilsTest {
      * Test logging of an ERROR message with class name included in verbose mode.
      */
     @Test
-    @DisplayName("Test5: Log ERROR with class name in verbose mode")
+    @DisplayName("Test06: Log ERROR with class name in verbose mode")
     public void testLogErrorWithClass() {
         // Enable verbose logging for class-specific logs
         LogUtils.setVerbose(true);
@@ -192,7 +200,7 @@ public class LogUtilsTest {
     // --- Component Tests ---
 
     @Test
-    @DisplayName("Log INFO with Adventure Component")
+    @DisplayName("Test07: Log INFO with Adventure Component")
     public void testLogInfoWithComponent() {
         // Create a sample component
         Component component = Component.text("Test INFO message. ")
@@ -207,7 +215,7 @@ public class LogUtilsTest {
     }
 
     @Test
-    @DisplayName("Log WARN with Adventure Component")
+    @DisplayName("Test08: Log WARN with Adventure Component")
     public void testLogWarnWithComponent() {
         // Create a sample component
         Component component = Component.text("Test WARN message. ")
@@ -222,7 +230,7 @@ public class LogUtilsTest {
     }
 
     @Test
-    @DisplayName("Log ERROR with Adventure Component")
+    @DisplayName("Test09: Log ERROR with Adventure Component")
     public void testLogErrorWithComponent() {
         // Create a sample component
         Component component = Component.text("Test ERROR message. ")
@@ -237,10 +245,29 @@ public class LogUtilsTest {
     }
 
 
+    @Test
+    @DisplayName("Test10: Log ERROR with Component and Throwable")
+    void testLogErrorWithComponentAndThrowable() {
+        Throwable throwable = new IllegalArgumentException("Test exception");
+
+        // Create a sample component
+        Component component = Component.text("Test ERROR message.");
+
+        // Call method
+        LogUtils.error(mockPluginLogger, component, throwable);
+
+        // Verify that the logger's error method was called with the correct serialized message
+        String expectedMessage = "Test ERROR message.";
+
+        assertThat(expectedMessage, logCapture.toString().contains(expectedMessage));
+        assertThat(expectedMessage, logCapture.toString().contains(throwable.toString()));
+
+    }
+
     // --- Verbose Logging Tests ---
 
     @Test
-    @DisplayName("Verbose logging enabled - Component")
+    @DisplayName("Test11: Verbose logging enabled - Component")
     public void testVerboseLoggingEnabledWithComponent() {
         // Enable verbose mode
         LogUtils.setVerbose(true);
@@ -260,7 +287,7 @@ public class LogUtilsTest {
     }
 
     @Test
-    @DisplayName("Verbose logging enabled - String message")
+    @DisplayName("Test12: Verbose logging enabled - String message")
     public void testVerboseLoggingEnabledWithString() {
         // Enable verbose mode
         LogUtils.setVerbose(true);
@@ -280,7 +307,7 @@ public class LogUtilsTest {
     }
 
     @Test
-    @DisplayName("Verbose logging disabled")
+    @DisplayName("Test13: Verbose logging disabled")
     public void testVerboseLoggingDisabled() {
         // Disable verbose mode
         LogUtils.setVerbose(false); // default value
@@ -296,7 +323,7 @@ public class LogUtilsTest {
     }
 
     @Test
-    @DisplayName("Debug logging enabled - Component")
+    @DisplayName("Test14: Debug logging enabled - Component")
     public void testDebugLoggingEnabledWithComponent() {
         // Enable verbose mode (debug uses verbose flag)
         LogUtils.setDebug(true);
@@ -316,7 +343,7 @@ public class LogUtilsTest {
     }
 
     @Test
-    @DisplayName("Debug logging enabled - String message")
+    @DisplayName("Test15: Debug logging enabled - String message")
     public void testDebugLoggingEnabledWithString() {
         // Enable verbose mode (debug uses verbose flag)
         LogUtils.setDebug(true);
@@ -336,11 +363,32 @@ public class LogUtilsTest {
     }
 
     @Test
-    @DisplayName("Debug logging disabled")
-    public void testDebugLoggingDisabled() {
+    @DisplayName("Test16: Debug logging disabled, verbose enabled")
+    public void testDebugLoggingVerbose() {
         // Disable verbose mode
         LogUtils.setDebug(false);
         LogUtils.setVerbose(true);
+        Logger logger = LogUtils.getLogger(LogUtils.class);
+
+        // Test message
+        String message = "Debug String Test";
+
+        // Call debug methods
+        LogUtils.debug(logger, message);
+
+        // Expected debug component
+        String expectedMessage = "DEBUG >> Debug String Test";
+
+        // Verify the logger.info method is called with the expected serialized message
+        assertLogLineVerbose(logCapture.toString().trim(), LOG_LVL.INFO, expectedMessage, LogUtils.class);
+    }
+
+    @Test
+    @DisplayName("Test17: Debug logging disabled, verbose disabled")
+    public void testDebugLoggingDisabled() {
+        // Disable verbose mode
+        LogUtils.setDebug(false);
+        LogUtils.setVerbose(false);
         Logger logger = LogUtils.getLogger(LogUtils.class);
 
         // Call debug methods
@@ -362,7 +410,7 @@ public class LogUtilsTest {
      */
     public void assertLogLine(String logLine, LOG_LVL expectedLevel, String expectedMessage, Class<?> clazz) {
         String logFormatRegex = "\\[\\d{2}:\\d{2}:\\d{2} " + expectedLevel + "]: \\[" + clazz.getSimpleName() + "] " + expectedMessage;
-        assertTrue(logLine.matches(logFormatRegex), "Log line does not match regex pattern: " + logLine);
+        assertThat(expectedMessage, logLine.matches(logFormatRegex));
     }
 
     /**
@@ -376,6 +424,6 @@ public class LogUtilsTest {
      */
     public void assertLogLineVerbose(String logLine, LOG_LVL expectedLevel, String expectedMessage, Class<?> clazz) {
         String logFormatRegex = "\\[\\d{2}:\\d{2}:\\d{2} " + expectedLevel + "]: \\[" + RealisticPlantGrowth.class.getSimpleName() + "->" + clazz.getSimpleName() + "] " + expectedMessage;
-        assertTrue(logLine.matches(logFormatRegex), "Log line does not match verbose regex pattern: " + logLine);
+        assertThat(expectedMessage, logLine.matches(logFormatRegex));
     }
 }
