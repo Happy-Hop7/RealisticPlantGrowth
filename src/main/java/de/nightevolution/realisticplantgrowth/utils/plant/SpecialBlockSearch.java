@@ -118,6 +118,11 @@ public class SpecialBlockSearch {
                     relativeBlock = startingBlock.getRelative(x, y, z);
                     relativeBlockLocation = relativeBlock.getLocation();
 
+                    // Fixes #26
+                    if (!relativeBlock.getChunk().isGenerated() || !relativeBlock.getChunk().isLoaded()) {
+                        continue;
+                    }
+
 
                     if (uvEnabled && isBlockWithinRadius(startingBlockLocation, relativeBlockLocation, radiusUV) && uvMaterials.contains(relativeBlock.getType())) {
                         uvSources.add(startingBlock.getRelative(x, y, z));
