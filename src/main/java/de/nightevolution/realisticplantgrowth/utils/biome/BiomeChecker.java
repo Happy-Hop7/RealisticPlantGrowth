@@ -148,11 +148,30 @@ public class BiomeChecker {
                 return true;
 
             if (instance.isPaperFork()) {
-                // TODO: ConfigManager getBiomeSetOfBiomeGroup need to return Strings
-                logger.logToFile("currentBiomeNameSpaceString: " + currentBiomeNameSpace, "biome");
-                return (biomeStringList.contains(currentBiomeNameSpace));
+
+                // Handles given namespaced biome key in the default Biome section
+                if (biomeStringList.contains(currentBiomeNameSpace)){
+                    return true;
+                }
+
+                // Check if Bukkit Biome name match
+                for (String biomeString : biomeStringList) {
+                    // provided a namespaced key in the default biome list
+                    try {
+                        Biome vanillaBiome = Biome.valueOf(biomeString);
+                        if (vanillaBiome.getKey().asString().equalsIgnoreCase(currentBiomeNameSpace)) {
+                            return true;
+                        }
+                    } catch (IllegalArgumentException ignored) {
+                        logger.verbose("Not a vanilla Biome: " + biomeString);
+                    }
+                }
+
+                // return false, if nothing matched currentBiomeNameSpace
+                return false;
+
             } else {
-                logger.logToFile("currentBiomeNameSpaceString: " + currentBiome.getKey().asString(), "biome");
+                logger.verbose("currentBiomeNameSpaceString: " + currentBiome.getKey().asString());
                 return (cm.getCheckedBiomeSet(biomeStringList).contains(currentBiome.getKey().asString()));
             }
 
