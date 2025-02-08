@@ -119,6 +119,11 @@ public class BlockGrowListener extends PlantGrowthListener {
         eventBlockType = eventBlock.getType();
         eventLocation = eventBlock.getLocation();
 
+        // If Chunk is not fully generated ignore the Event (Fixes #26)
+        if (!eventBlock.getChunk().isGenerated()) {
+            return false;
+        }
+
         return !instance.isWorldDisabled(eventWorld);
     }
 

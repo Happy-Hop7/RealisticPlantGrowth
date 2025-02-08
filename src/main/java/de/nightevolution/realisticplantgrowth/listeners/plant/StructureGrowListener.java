@@ -91,6 +91,11 @@ public class StructureGrowListener extends PlantGrowthListener {
         eventBiome = eventBlock.getBiome();
         eventBlockType = eventBlock.getType();
 
+        // If Chunk is not fully generated ignore the Event (Fixes #26)
+        if (!eventBlock.getChunk().isGenerated()) {
+            return false;
+        }
+
         // Return whether the world is enabled for plant growth modification
         return !instance.isWorldDisabled(eventWorld);
     }
