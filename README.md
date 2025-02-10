@@ -1,4 +1,5 @@
-<img src="https://github.com/Happy-Hop7/RealisticPlantGrowth-Wiki/blob/master/.gitbook/assets/Plugin%20Logo%202k.png" alt="Realistic Plant Growth Plugin Logo" width="50%"/>
+<img src="https://github.com/Happy-Hop7/RealisticPlantGrowth-Wiki/blob/master/.gitbook/assets/Plugin%20Logo%202k.png" alt="Realistic Plant Growth Plugin Logo" width="80%"/>
+
 ---
 
 <br>
