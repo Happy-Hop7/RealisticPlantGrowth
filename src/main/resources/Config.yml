@@ -93,7 +93,7 @@ fertilizer_radius: 8
 
 # true: Fertilizer effects do not deplete composters to fertilize the surroundings.
 # false: Players must actively fill the composter to achieve fertilization effects.
-fertilizer_passiv: false
+fertilizer_passive: false
 
 # The 'fertilizer_boost_growth_rate' is a percentage added to biome-specific growth rates,
 # if a composter is within the configured 'fertilizer_radius'.
@@ -230,5 +230,5 @@ bonemeal_log: false
 #| Spooky internal settings.                                                                                          |#
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
-config-version: 5
+config-version: 6
 verbose: false

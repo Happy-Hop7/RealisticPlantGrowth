@@ -295,7 +295,7 @@ public abstract class PlantGrowthListener implements Listener {
      * </p>
      */
     protected void checkFertilizerUsage() {
-        if (surrounding.usedFertilizer() && !configManager.isFertilizer_passiv()) {
+        if (surrounding.usedFertilizer() && !configManager.isFertilizer_passive()) {
             if (logEvent) {
                 superLogger.logToFile("  Fertilizer was used.", logFile);
                 superLogger.logToFile("  Reducing fill level of the closest composter.", logFile);

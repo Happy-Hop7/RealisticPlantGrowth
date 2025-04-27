@@ -285,7 +285,7 @@ public class PlantKiller {
      */
     public void reduceComposterFillLevelOf(Block composterToDrain) {
         // Check if passive fertilizer passiv mode is enabled
-        if (cm.isFertilizer_passiv() || composterToDrain == null) {
+        if (cm.isFertilizer_passive() || composterToDrain == null) {
             return;
         }
 

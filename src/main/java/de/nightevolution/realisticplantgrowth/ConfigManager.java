@@ -93,7 +93,7 @@ public class ConfigManager {
     // Fertilizer config values
     private static boolean fertilizer_enabled;
     private static int fertilizer_radius;
-    private static boolean fertilizer_passiv;
+    private static boolean fertilizer_passive;
     private static double fertilizer_boost_growth_rate;
     private static boolean fertilizer_allow_growth_rate_above_100;
     private static boolean fertilizer_enables_growth_in_invalid_biomes;
@@ -380,7 +380,7 @@ public class ConfigManager {
             // Fertilizer settings
             fertilizer_enabled = config.getBoolean("fertilizer_enabled");
             fertilizer_radius = config.getInt("fertilizer_radius");
-            fertilizer_passiv = config.getBoolean("fertilizer_passiv");
+            fertilizer_passive = config.getBoolean("fertilizer_passive");
             fertilizer_boost_growth_rate = config.getDouble("fertilizer_boost_growth_rate");
             fertilizer_allow_growth_rate_above_100 = config.getBoolean("fertilizer_allow_growth_rate_above_100");
             fertilizer_enables_growth_in_invalid_biomes = config.getBoolean("fertilizer_enables_growth_in_invalid_biomes");
@@ -478,7 +478,7 @@ public class ConfigManager {
             // Fertilizer settings
             logger.logToFile("fertilizer_enabled: " + fertilizer_enabled, logFile);
             logger.logToFile("fertilizer_radius: " + fertilizer_radius, logFile);
-            logger.logToFile("fertilizer_passiv: " + fertilizer_passiv, logFile);
+            logger.logToFile("fertilizer_passive: " + fertilizer_passive, logFile);
             logger.logToFile("fertilizer_boost_growth_rate: " +
                     fertilizer_boost_growth_rate, logFile);
             logger.logToFile("fertilizer_allow_growth_rate_above_100: " +
@@ -911,8 +911,8 @@ public class ConfigManager {
         return fertilizer_radius;
     }
 
-    public boolean isFertilizer_passiv() {
-        return fertilizer_passiv;
+    public boolean isFertilizer_passive() {
+        return fertilizer_passive;
     }
 
     public boolean isFertilizer_Enables_Growth_In_Invalid_Biomes() {
