@@ -83,6 +83,7 @@ public class ConfigManager {
     // More config values
     private static int bonemeal_limit;
     private static boolean shift_composter_fill;
+    private static boolean allow_bonemeal_in_composters;
     private static int min_natural_light;
     private static boolean destroy_farmland;
     private static boolean require_hoe;
@@ -371,6 +372,7 @@ public class ConfigManager {
             use_enabled_worlds_as_world_blacklist = config.getBoolean("use_enabled_worlds_as_world_blacklist");
             bonemeal_limit = config.getInt("bonemeal_limit");
             shift_composter_fill = config.getBoolean("shift_composter_fill");
+            allow_bonemeal_in_composters = config.getBoolean("allow_bonemeal_in_composters");
             min_natural_light = config.getInt("min_natural_light");
             destroy_farmland = config.getBoolean("destroy_farmland");
             require_hoe = config.getBoolean("require_hoe");
@@ -470,6 +472,7 @@ public class ConfigManager {
 
             logger.logToFile("bonemeal_limit: " + bonemeal_limit, logFile);
             logger.logToFile("shift_composter_fill: " + shift_composter_fill, logFile);
+            logger.logToFile("allow_bonemeal_in_composters: " + allow_bonemeal_in_composters, logFile);
             logger.logToFile("min_natural_light: " + min_natural_light, logFile);
             logger.logToFile("destroy_farmland: " + destroy_farmland, logFile);
             logger.logToFile("require_hoe: " + require_hoe, logFile);
@@ -879,6 +882,10 @@ public class ConfigManager {
 
     public boolean getShiftComposterFill() {
         return shift_composter_fill;
+    }
+
+    public boolean getAllowBonemealInComposters() {
+        return allow_bonemeal_in_composters;
     }
 
     public int getMin_Natural_Light() {

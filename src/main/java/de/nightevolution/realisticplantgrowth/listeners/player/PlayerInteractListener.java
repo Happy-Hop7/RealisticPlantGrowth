@@ -280,16 +280,27 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             return;
         }
 
-        // Check if the held item is compostable
-        if (!e.getMaterial().isCompostable()) {
+        // Holds compost chance for the held material
+        float compostChance;
+
+        // Check if the held item is compostable or if bonemeal can be used in composters
+        if (e.getMaterial().isCompostable()) {
+            compostChance = e.getMaterial().getCompostChance();
+
+        } else if (cm.getAllowBonemealInComposters() && e.getMaterial().equals(Material.BONE_MEAL)) {
+            compostChance = 1.0f;
+
+            if (logEvent) {
+                logger.logToFile("  Using Bonemeal in Composter.", logFile);
+            }
+
+        } else {
             if (logEvent) {
                 logger.logToFile("  Item '" + e.getMaterial() + "' is not compostable.", logFile);
             }
             return;
         }
 
-        // Get compost chance for the held material
-        float compostChance = (e.getMaterial().getCompostChance());
 
         if (compostChance <= 0 || compostChance > 1.0) {
             if (logEvent) {
@@ -302,7 +313,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         // Get the current composter fill level and maximum level
         Levelled composterLevel = (Levelled) clickedBlock.getBlockData();
         int currentLevel = composterLevel.getLevel();
-        int maxLevel = composterLevel.getMaximumLevel();
+        int maxLevel = composterLevel.getMaximumLevel()-1;
         int neededSuccesses = maxLevel - currentLevel;
 
         ItemStack itemsInHand = e.getItem();
@@ -353,14 +364,12 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
 
 
         // Instantly update composter fill level
-        BlockState blockState = clickedBlock.getState();
         int newComposterLevel = currentLevel + appliedSuccesses;
-
         assert newComposterLevel <= maxLevel : "Error: New composter level exceeds maximum allowed!";
         composterLevel.setLevel(newComposterLevel);
 
+        // Update the block data and apply changes to the world
         clickedBlock.setBlockData(composterLevel);
-        blockState.update(true, false);
 
         // Cancel normal composting behavior
         e.setCancelled(true);

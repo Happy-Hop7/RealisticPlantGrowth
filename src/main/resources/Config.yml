@@ -49,7 +49,7 @@ shift_composter_fill: true
 # Allows players and hoppers to fill composters using bonemeal.
 # (Only effective if fertilizer functionality is enabled.)
 # Bonemeal always increases the composter fill level by 1 (100% success chance).
-allow_bonemeal_in_composters: true
+allow_bonemeal_in_composters: false
 
 # Required natural sky light level for plant growth.
 # Sky light level: 0: allows underground growth. (Additional light sources are still necessary.)
