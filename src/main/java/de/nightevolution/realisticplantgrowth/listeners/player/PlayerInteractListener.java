@@ -11,6 +11,8 @@ import de.nightevolution.realisticplantgrowth.utils.plant.SpecialBlockSearch;
 import de.nightevolution.realisticplantgrowth.utils.plant.Surrounding;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -59,11 +61,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         instance.getServer().getPluginManager().registerEvents(this, instance);
 
-        if (RealisticPlantGrowth.isDebug())
-            randomNumberGenerator = new Random(1);
-        else {
-            randomNumberGenerator = new Random();
-        }
+        this.randomNumberGenerator = RealisticPlantGrowth.isDebug() ? new Random(1) : new Random();
 
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
     }
@@ -74,9 +72,29 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
      * @param e The PlayerInteractEvent.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerInteractEventWithClickableSeeds(PlayerInteractEvent e) {
-
+    public void onPlayerInteractEvent(PlayerInteractEvent e) {
         logEvent(e);
+
+        Player player = e.getPlayer();
+        if (instance.isWorldDisabled(player.getWorld())) {
+            if (logEvent) logger.logToFile("  -> World is disabled for RealisticPlantGrowth.", logFile);
+            return;
+        }
+
+        Action action = e.getAction();
+        Material material = e.getMaterial();
+        Block clickedBlock = e.getClickedBlock();
+
+        if (action == Action.LEFT_CLICK_BLOCK && versionMapper.isClickableSeed(material)) {
+            onPlayerInteractEventWithClickableSeeds(e);
+        }
+
+        else if (action == Action.RIGHT_CLICK_BLOCK && clickedBlock != null && clickedBlock.getType() == Material.COMPOSTER) {
+            onComposterFillEvent(e);
+        }
+    }
+
+    public void onPlayerInteractEventWithClickableSeeds(PlayerInteractEvent e) {
 
         // Check if growth rate display is enabled
         if (!cm.isDisplay_growth_rates()) {
@@ -84,22 +102,6 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
                 logger.logToFile("  display_growth_rates deactivated.", logFile);
             return;
         }
-
-        if (instance.isWorldDisabled(e.getPlayer().getWorld())) {
-            if (logEvent) {
-                logger.logToFile("  -> World is disabled for RealisticPlantGrowth.", logFile);
-            }
-            return;
-        }
-
-        // Check if the player is holding a clickable seed in their hand
-        if (!versionMapper.isClickableSeed(e.getMaterial())) {
-            return;
-        }
-
-        // Check if the player interaction was a left click
-        if (e.getAction() != Action.LEFT_CLICK_BLOCK)
-            return;
 
         // If the clicked block is a plant, prioritize harvest over growth information
         Block clickedBlock = e.getClickedBlock();
@@ -242,10 +244,8 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
      *
      * @param e The {@link PlayerInteractEvent} triggered when the player interacts with a block.
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onComposterFillEvent(PlayerInteractEvent e) {
 
-        logEvent(e);
 
         // Check if quick fill feature is enabled
         if (!cm.getShiftComposterFill()) {
@@ -254,31 +254,8 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             return;
         }
 
-        // Check if the event occurred in a disabled world
-        if (instance.isWorldDisabled(e.getPlayer().getWorld())) {
-            if (logEvent) {
-                logger.logToFile("  -> World is disabled for RealisticPlantGrowth.", logFile);
-            }
-            return;
-        }
-
         Player player = e.getPlayer();
         Block clickedBlock = e.getClickedBlock();
-
-        // Validate interaction: right-click on block, holding an item
-        if (e.getAction() != Action.RIGHT_CLICK_BLOCK || clickedBlock == null || e.getItem() == null) {
-            return;
-        }
-
-        // Check if the clicked block is a composter
-        if (clickedBlock.getType() != Material.COMPOSTER) {
-            return;
-        }
-
-        // Check if player is sneaking
-        if (!player.isSneaking()) {
-            return;
-        }
 
         // Holds compost chance for the held material
         float compostChance;
@@ -311,13 +288,20 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
 
 
         // Get the current composter fill level and maximum level
+        assert clickedBlock != null;
         Levelled composterLevel = (Levelled) clickedBlock.getBlockData();
         int currentLevel = composterLevel.getLevel();
         int maxLevel = composterLevel.getMaximumLevel()-1;
         int neededSuccesses = maxLevel - currentLevel;
 
+        if (currentLevel >= maxLevel)
+            return;
+
+
         ItemStack itemsInHand = e.getItem();
-        int numberOfItemsInHand = itemsInHand.getAmount();
+        assert itemsInHand != null;
+        int numberOfItemsInHand = player.isSneaking() ? itemsInHand.getAmount() :  1;
+
         int appliedSuccesses = 0;
         int itemsConsumed = 0;
 
@@ -340,26 +324,28 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             logger.logToFile("  Successful compost actions applied: " + appliedSuccesses, logFile);
         }
 
-        // Validate inventory state after composting
-        assert e.getItem() != null : "Item in Player hand not found!";
-        assert numberOfItemsInHand >= itemsConsumed : "Composter Consumed Items is higher than items in player hand!";
+        if (player.getGameMode() == GameMode.SURVIVAL) {
+            // Validate inventory state after composting
+            assert e.getItem() != null : "Item in Player hand not found!";
+            assert numberOfItemsInHand >= itemsConsumed : "Composter Consumed Items is higher than items in player hand!";
 
-        if (itemsInHand.getAmount() - itemsConsumed == 0) {
-            // Remove item from hand
-            assert e.getHand() != null;
-            player.getInventory().setItem(e.getHand(), null);
+            if (itemsInHand.getAmount() - itemsConsumed == 0) {
+                // Remove item from hand
+                assert e.getHand() != null;
+                player.getInventory().setItem(e.getHand(), null);
 
-            // Update the inventory to reflect the change (only necessary when the item is fully removed)
-            player.updateInventory();
+                // Update the inventory to reflect the change (only necessary when the item is fully removed)
+                player.updateInventory();
 
-            if (logEvent) {
-                logger.logToFile("  All items in hand were consumed.", logFile);
-                logger.logToFile("  -> ItemStack removed from player inventory.", logFile);
+                if (logEvent) {
+                    logger.logToFile("  All items in hand were consumed.", logFile);
+                    logger.logToFile("  -> ItemStack removed from player inventory.", logFile);
+                }
+            } else {
+                // Reduce item amount without removing the item
+                e.getItem().setAmount(itemsInHand.getAmount() - itemsConsumed);
+                // No need to call updateInventory() here, Minecraft handles it
             }
-        } else {
-            // Reduce item amount without removing the item
-            e.getItem().setAmount(itemsInHand.getAmount() - itemsConsumed);
-            // No need to call updateInventory() here, Minecraft handles it
         }
 
 
@@ -371,6 +357,22 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         // Update the block data and apply changes to the world
         clickedBlock.setBlockData(composterLevel);
 
+        // Play composter fill sound
+        clickedBlock.getWorld().playSound(
+                clickedBlock.getLocation().add(0.5, 0.5, 0.5),
+                Sound.BLOCK_COMPOSTER_FILL_SUCCESS,
+                1.0f,
+                1.0f
+        );
+
+        // Spawn green happy particles
+        clickedBlock.getWorld().spawnParticle(
+                Particle.HAPPY_VILLAGER,
+                clickedBlock.getLocation().add(0.5, 0.1 + 0.15 * newComposterLevel, 0.5),
+                3,
+                0.15, 0.25, 0.15
+        );
+
         // Cancel normal composting behavior
         e.setCancelled(true);
 
@@ -378,6 +380,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
             logger.logToFile("  Composter at " + clickedBlock.getLocation() + " was quick-filled to level " + newComposterLevel + ".", logFile);
         }
     }
+
 
 
     private void logEvent(PlayerInteractEvent e) {
