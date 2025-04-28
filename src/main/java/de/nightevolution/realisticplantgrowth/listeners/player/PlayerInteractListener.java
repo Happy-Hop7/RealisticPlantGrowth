@@ -14,17 +14,16 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Listens to player block interactions in order to provide information
@@ -37,6 +36,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
     private final Logger logger;
     private final MessageManager msgManager;
     private final VersionMapper versionMapper;
+    private final Random randomNumberGenerator;
     private final boolean logEvent;
     private final String logFile = "PlayerInteractEvent";
 
@@ -59,6 +59,12 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         instance.getServer().getPluginManager().registerEvents(this, instance);
 
+        if (RealisticPlantGrowth.isDebug())
+            randomNumberGenerator = new Random(1);
+        else {
+            randomNumberGenerator = new Random();
+        }
+
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
     }
 
@@ -70,17 +76,12 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteractEventWithClickableSeeds(PlayerInteractEvent e) {
 
-        if (logEvent) {
-            logger.logToFile("", logFile);
-            logger.logToFile("-------------------- Player Interact Event --------------------", logFile);
-            logger.logToFile("  Player: " + e.getPlayer().getName(), logFile);
-            logger.logToFile("  Player location: " + e.getPlayer().getLocation(), logFile);
-        }
+        logEvent(e);
 
         // Check if growth rate display is enabled
         if (!cm.isDisplay_growth_rates()) {
             if (logEvent)
-                logger.logToFile("  Display_growth_rates deactivated.", logFile);
+                logger.logToFile("  display_growth_rates deactivated.", logFile);
             return;
         }
 
@@ -220,6 +221,165 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         // Send the localized message to the player
         msgManager.sendLocalizedMsg(ePlayer, MessageType.GROWTH_RATE_MSG, placeholders, replacements, true);
     }
+
+    /**
+     * Handles quick fill interactions with Composter blocks.
+     * <p>
+     * When a player shift-right-clicks a Composter while holding a compostable item,
+     * all items needed to fully fill the composter will be instantly consumed from the player's hand,
+     * based on the vanilla compostable chances.
+     * <p>
+     * If the amount of items in the player's hand is insufficient to fully fill the composter,
+     * the composter will be partially filled according to the number of successful compost actions,
+     * and all items will be consumed.
+     * <p>
+     * This bypasses the normal, gradual composting process.
+     * <p>
+     * Preconditions:<br>
+     * - Quick fill feature must be enabled in {@code Config.yml}.<br>
+     * - The world must not be disabled for this plugin.<br>
+     * - The player must be sneaking and holding a compostable item.<br>
+     *
+     * @param e The {@link PlayerInteractEvent} triggered when the player interacts with a block.
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onComposterFillEvent(PlayerInteractEvent e) {
+
+        logEvent(e);
+
+        // Check if quick fill feature is enabled
+        if (!cm.getShiftComposterFill()) {
+            if (logEvent)
+                logger.logToFile("  Quick fill of composters is disabled.", logFile);
+            return;
+        }
+
+        // Check if the event occurred in a disabled world
+        if (instance.isWorldDisabled(e.getPlayer().getWorld())) {
+            if (logEvent) {
+                logger.logToFile("  -> World is disabled for RealisticPlantGrowth.", logFile);
+            }
+            return;
+        }
+
+        Player player = e.getPlayer();
+        Block clickedBlock = e.getClickedBlock();
+
+        // Validate interaction: right-click on block, holding an item
+        if (e.getAction() != Action.RIGHT_CLICK_BLOCK || clickedBlock == null || e.getItem() == null) {
+            return;
+        }
+
+        // Check if the clicked block is a composter
+        if (clickedBlock.getType() != Material.COMPOSTER) {
+            return;
+        }
+
+        // Check if player is sneaking
+        if (!player.isSneaking()) {
+            return;
+        }
+
+        // Check if the held item is compostable
+        if (!e.getMaterial().isCompostable()) {
+            if (logEvent) {
+                logger.logToFile("  Item '" + e.getMaterial() + "' is not compostable.", logFile);
+            }
+            return;
+        }
+
+        // Get compost chance for the held material
+        float compostChance = (e.getMaterial().getCompostChance());
+
+        if (compostChance <= 0 || compostChance > 1.0) {
+            if (logEvent) {
+                logger.error("  Invalid compost chance for item '" + e.getMaterial() + "'.");
+            }
+            return;
+        }
+
+
+        // Get the current composter fill level and maximum level
+        Levelled composterLevel = (Levelled) clickedBlock.getBlockData();
+        int currentLevel = composterLevel.getLevel();
+        int maxLevel = composterLevel.getMaximumLevel();
+        int neededSuccesses = maxLevel - currentLevel;
+
+        ItemStack itemsInHand = e.getItem();
+        int numberOfItemsInHand = itemsInHand.getAmount();
+        int appliedSuccesses = 0;
+        int itemsConsumed = 0;
+
+        // Calculate how many items would be consumed and how many compost successes would be achieved
+        // without actually modifying the composter or the player's inventory yet.
+        while (itemsConsumed < numberOfItemsInHand && (currentLevel + appliedSuccesses) < maxLevel) {
+            assert appliedSuccesses <= neededSuccesses : "Error: Applied more compost successes than needed!";
+
+            if (randomNumberGenerator.nextFloat() <= compostChance) {
+                // Compost succeeded
+                appliedSuccesses++;
+            }
+
+            itemsConsumed++;
+        }
+
+        if (logEvent) {
+            logger.logToFile("  Compost chance for '" + e.getMaterial() + "': " + compostChance, logFile);
+            logger.logToFile("  Successes needed to fully fill composter: " + neededSuccesses, logFile);
+            logger.logToFile("  Successful compost actions applied: " + appliedSuccesses, logFile);
+        }
+
+        // Validate inventory state after composting
+        assert e.getItem() != null : "Item in Player hand not found!";
+        assert numberOfItemsInHand >= itemsConsumed : "Composter Consumed Items is higher than items in player hand!";
+
+        if (itemsInHand.getAmount() - itemsConsumed == 0) {
+            // Remove item from hand
+            assert e.getHand() != null;
+            player.getInventory().setItem(e.getHand(), null);
+
+            // Update the inventory to reflect the change (only necessary when the item is fully removed)
+            player.updateInventory();
+
+            if (logEvent) {
+                logger.logToFile("  All items in hand were consumed.", logFile);
+                logger.logToFile("  -> ItemStack removed from player inventory.", logFile);
+            }
+        } else {
+            // Reduce item amount without removing the item
+            e.getItem().setAmount(itemsInHand.getAmount() - itemsConsumed);
+            // No need to call updateInventory() here, Minecraft handles it
+        }
+
+
+        // Instantly update composter fill level
+        BlockState blockState = clickedBlock.getState();
+        int newComposterLevel = currentLevel + appliedSuccesses;
+
+        assert newComposterLevel <= maxLevel : "Error: New composter level exceeds maximum allowed!";
+        composterLevel.setLevel(newComposterLevel);
+
+        clickedBlock.setBlockData(composterLevel);
+        blockState.update(true, false);
+
+        // Cancel normal composting behavior
+        e.setCancelled(true);
+
+        if (logEvent) {
+            logger.logToFile("  Composter at " + clickedBlock.getLocation() + " was quick-filled to level " + newComposterLevel + ".", logFile);
+        }
+    }
+
+
+    private void logEvent(PlayerInteractEvent e) {
+        if (logEvent) {
+            logger.logToFile("", logFile);
+            logger.logToFile("-------------------- Player Interact Event --------------------", logFile);
+            logger.logToFile("  Player: " + e.getPlayer().getName(), logFile);
+            logger.logToFile("  Player location: " + e.getPlayer().getLocation(), logFile);
+        }
+    }
+
     /**
      * Clears the cooldown data for a specific player.
      * Called in {@link PlayerQuitListener}.

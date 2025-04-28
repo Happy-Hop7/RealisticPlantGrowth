@@ -42,6 +42,15 @@ use_enabled_worlds_as_world_blacklist: false
 # Negative numbers deactivate this feature (e.g., 'bonemeal_limit: -1').
 bonemeal_limit: 3
 
+# Allows players to rapidly fill composters by holding Shift and right-clicking with compostable items.
+# Speeds up the composting process compared to placing items one at a time.
+shift_composter_fill: true
+
+# Allows players and hoppers to fill composters using bonemeal.
+# (Only effective if fertilizer functionality is enabled.)
+# Bonemeal always increases the composter fill level by 1 (100% success chance).
+allow_bonemeal_in_composters: true
+
 # Required natural sky light level for plant growth.
 # Sky light level: 0: allows underground growth. (Additional light sources are still necessary.)
 # Sky light level 10-12: corresponds to sunlight filtered through leaves.

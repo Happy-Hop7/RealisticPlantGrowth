@@ -73,6 +73,7 @@ You can tweak them to your preference in the ```Config.yml``` and ```GrowthModif
 - **☀️ Sunlight Requirement:** Plants need natural light to grow.
 - **💡 UV Blocks for Indoor Farming:** Grow indoors with UV blocks.
 - **🌾 Fertilizer Boost:** Nearby composters speed up growth, requiring refills.
+- **🚀 Quick Composter Fill:** Shift-right-click with compostable items to instantly fill composters.
 - **🎶 Atmospheric Effects:** Optional sounds/effects on plant death.
 - **🗨️ Custom Messages:** Fully customizable player messages.
 
