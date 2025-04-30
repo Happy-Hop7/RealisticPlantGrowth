@@ -248,7 +248,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
 
 
         // Check if quick fill feature is enabled
-        if (!cm.getShiftComposterFill()) {
+        if (!cm.isComposterQuickFillEnabled()) {
             if (logEvent)
                 logger.logToFile("  Quick fill of composters is disabled.", logFile);
             return;
@@ -264,7 +264,7 @@ public class PlayerInteractListener implements Listener, PlaceholderInterface {
         if (e.getMaterial().isCompostable()) {
             compostChance = e.getMaterial().getCompostChance();
 
-        } else if (cm.getAllowBonemealInComposters() && e.getMaterial().equals(Material.BONE_MEAL)) {
+        } else if (cm.isComposterBonemealInputAllowed() && e.getMaterial().equals(Material.BONE_MEAL)) {
             compostChance = 1.0f;
 
             if (logEvent) {

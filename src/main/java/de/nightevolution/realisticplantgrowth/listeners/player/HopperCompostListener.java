@@ -9,102 +9,124 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Levelled;
-import org.bukkit.Material;
 
 import java.util.Objects;
 
+/**
+ * Handles the interaction between hoppers and composters.
+ * Allows bonemeal to be input to composters via hoppers, and optionally prevents bonemeal extraction.
+ */
 public class HopperCompostListener implements Listener {
+
     private final ConfigManager cm;
     private final Logger logger;
     private final boolean logEvent;
-    private final String logFile = "InventoryMoveEvent";
+    private static final String LOG_FILE = "BonemealLog";
 
+    /**
+     * Registers the hopper-composter event listener.
+     *
+     * @param instance Main plugin instance
+     */
     public HopperCompostListener(RealisticPlantGrowth instance) {
         this.cm = instance.getConfigManager();
+        this.logEvent = RealisticPlantGrowth.isDebug() && cm.isBonemeal_log();
 
-        // Enable logging if debug mode is active and player logging is enabled
-        this.logEvent = (RealisticPlantGrowth.isDebug() && cm.isPlayer_log());
-
-        logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
+        this.logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         instance.getServer().getPluginManager().registerEvents(this, instance);
 
         logger.verbose("Registered new " + this.getClass().getSimpleName() + ".");
     }
 
+    /**
+     * Called when items move between inventories (e.g. hopper to composter).
+     *
+     * @param e Inventory move event
+     */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onHopperCompostItem(InventoryMoveItemEvent e) {
+    public void onHopperComposterInteraction(InventoryMoveItemEvent e) {
+        if (logEvent) logEventDetails(e);
 
-        logEvent(e);
+        final ItemStack item = e.getItem();
+        if (item.getAmount() <= 0) return;
 
-        // Ensure the event is from a hopper moving an item
-        if (!(e.getSource().getType().name().equals("HOPPER"))) {
-            return;
-        }
+        final InventoryType sourceType = e.getSource().getType();
+        final InventoryType destinationType = e.getDestination().getType();
 
-        ItemStack item = e.getItem();
-        if (item.getAmount() <= 0) {
-            return;
-        }
-
-        Block composterBlock = Objects.requireNonNull(e.getDestination().getLocation()).getBlock();
-        if (composterBlock.getType() != Material.COMPOSTER) {
-            return;
-        }
-
-        // Check if the item is (Bonemeal or any other compostable item)
-        if (!(item.getType() == Material.BONE_MEAL) || !cm.getAllowBonemealInComposters()) {
-            return;
-        }
-        
-        // Get the current composter state
-        Levelled composterLevel = (Levelled) composterBlock.getBlockData();
-        int currentLevel = composterLevel.getLevel();
-        int maxLevel = composterLevel.getMaximumLevel() - 1;
-
-
-        // If the composter was successfully filled, update the level
-        if (currentLevel < maxLevel) {
-            int newComposterLevel = currentLevel + 1;
-            composterLevel.setLevel(newComposterLevel);
-
-            // Update the composter block data
-            composterBlock.setBlockData(composterLevel);
-
-
-            // Play composter fill sound
-            composterBlock.getWorld().playSound(
-                    composterBlock.getLocation().add(0.5, 0.5, 0.5),
-                    Sound.BLOCK_COMPOSTER_FILL_SUCCESS,
-                    1.0f,
-                    1.0f
-            );
-
-            // Spawn green happy particles
-            composterBlock.getWorld().spawnParticle(
-                    Particle.HAPPY_VILLAGER,
-                    composterBlock.getLocation().add(0.5, 0.1 + 0.15 * newComposterLevel, 0.5),
-                    3,
-                    0.15, 0.25, 0.15
-            );
-
-            // Remove the items from the hopper
-            e.getItem().setAmount(item.getAmount() - 1);
-
-            // Log or handle further actions if necessary
-            if (logEvent) logger.logToFile("  Composter quick-filled by hopper: " + composterBlock.getLocation() + " to level " + newComposterLevel, logFile);
+        if (sourceType == InventoryType.HOPPER && destinationType == InventoryType.COMPOSTER && cm.isComposterBonemealInputAllowed()) {
+            handleBonemealInput(e, item);
+        } else if (sourceType == InventoryType.COMPOSTER && destinationType == InventoryType.HOPPER && cm.isComposterBonemealOutputDisabled()) {
+            handleBonemealOutput(e);
         }
     }
 
-    private void logEvent(InventoryMoveItemEvent e) {
+    /**
+     * Handles the event where bonemeal is fed into a composter by a hopper.
+     *
+     * @param e    The inventory move event
+     * @param item The item being transferred
+     */
+    private void handleBonemealInput(InventoryMoveItemEvent e, ItemStack item) {
+        final Block composterBlock = Objects.requireNonNull(e.getDestination().getLocation()).getBlock();
+        final Levelled composterData = (Levelled) composterBlock.getBlockData();
+        final int currentLevel = composterData.getLevel();
+        final int maxLevel = composterData.getMaximumLevel() - 1;
+
+        if (currentLevel >= maxLevel) return;
+
+        final int newLevel = currentLevel + 1;
+        composterData.setLevel(newLevel);
+        composterBlock.setBlockData(composterData, true);
+
+        // Play sound and spawn particles
+        composterBlock.getWorld().playSound(
+                composterBlock.getLocation().add(0.5, 0.5, 0.5),
+                Sound.BLOCK_COMPOSTER_FILL_SUCCESS, 1.0f, 1.0f
+        );
+
+        composterBlock.getWorld().spawnParticle(
+                Particle.HAPPY_VILLAGER,
+                composterBlock.getLocation().add(0.5, 0.1 + 0.15 * newLevel, 0.5),
+                3, 0.15, 0.25, 0.15
+        );
+
+        // Decrease item count
+        item.setAmount(item.getAmount() - 1);
+
+        // Logging
         if (logEvent) {
-            logger.logToFile("", logFile);
-            logger.logToFile("-------------------- Inventory Move Item Event --------------------", logFile);
-            logger.logToFile("  Source: " + e.getSource().getType().name(), logFile);
-            logger.logToFile("  Destination: " + e.getDestination().getType().name(), logFile);
-            logger.logToFile("  Location: " + e.getDestination().getLocation(), logFile);
+            logger.logToFile(String.format("  Composter accepted bonemeal at %s, level increased to %d",
+                    composterBlock.getLocation(), newLevel), LOG_FILE);
         }
+    }
+
+    /**
+     * Cancels extraction of bonemeal from a composter.
+     *
+     * @param e Inventory move event
+     */
+    private void handleBonemealOutput(InventoryMoveItemEvent e) {
+        e.setCancelled(true);
+
+        if (logEvent) {
+            logger.logToFile("  Cancelled bonemeal extraction from composter.", LOG_FILE);
+        }
+    }
+
+    /**
+     * Logs the inventory move event details if logging is enabled.
+     *
+     * @param e Inventory move event
+     */
+    private void logEventDetails(InventoryMoveItemEvent e) {
+        logger.logToFile("", LOG_FILE);
+        logger.logToFile("---------------- Inventory Move Item Event ----------------", LOG_FILE);
+        logger.logToFile("  Source: " + e.getSource().getType().name(), LOG_FILE);
+        logger.logToFile("  Destination: " + e.getDestination().getType().name(), LOG_FILE);
+        logger.logToFile("  Location: " + e.getDestination().getLocation(), LOG_FILE);
     }
 }
