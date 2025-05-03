@@ -25,7 +25,7 @@ public class HopperCompostListener implements Listener {
     private final ConfigManager cm;
     private final Logger logger;
     private final boolean logEvent;
-    private static final String LOG_FILE = "BonemealLog";
+    private static final String LOG_FILE = "Bonemeal";
 
     /**
      * Registers the hopper-composter event listener.
