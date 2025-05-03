@@ -3,6 +3,7 @@ package de.nightevolution.realisticplantgrowth.listeners.player;
 import de.nightevolution.realisticplantgrowth.ConfigManager;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
@@ -52,7 +53,7 @@ public class HopperCompostListener implements Listener {
         if (logEvent) logEventDetails(e);
 
         final ItemStack item = e.getItem();
-        if (item.getAmount() <= 0) return;
+        if (item.getType() != Material.BONE_MEAL || item.getAmount() <= 0) return;
 
         final InventoryType sourceType = e.getSource().getType();
         final InventoryType destinationType = e.getDestination().getType();
