@@ -1,13 +1,7 @@
 # Realistic Plant Growth Configuration File
 #
-# For additional configuration details and examples, visit the Realistic Plant Growth documentation at:
+# Documentation:
 # https://realistic-plant-growth.nightevolution.de/
-#
-# A complete list of biomes can be found in the Spigot API documentation:
-# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html
-#
-# Information on plants and crops can be referenced in the "Material" list at:
-# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
 #
 # If you appreciate this plugin, please consider showing your support with a donation.
 # Your contributions help maintain and develop the plugin further. Thank you! ❤️
@@ -16,31 +10,36 @@
 #
 ########################################################################################################################
 #|                                                                                                                    |#
-#| General Settings                                                                                                   |#
+#| General Plugin Settings                                                                                            |#
+#|                                                                                                                    |#
+#| Core options controlling language, world activation, and user interactions.                                        |#
 #|                                                                                                                    |#
 ########################################################################################################################
 
-# Language setting for the plugin. Language files are located in /RealisticPlantGrowth/local
-language_code: en-US
+general:
 
-# List of worlds where this plugin is active. Worlds not listed here will use default growth behavior.
-enabled_worlds:
-  - your_world
-  - your_world_nether
-  - your_world_the_end
+  # Language file to use (from /RealisticPlantGrowth/local).
+  # Format: language-region (e.g., en-US, de-DE)
+  language_code: en-US
 
-# When set to 'true', the world whitelist above will function as a world blacklist,
-# enabling the plugin on all worlds except those listed.
-use_enabled_worlds_as_world_blacklist: false
+  # List of world names where the plugin is active.
+  # Worlds not listed here will follow vanilla growth behavior.
+  enabled_worlds:
+    - your_world
+    - your_world_nether
+    - your_world_the_end
 
-# Displays potential growth rates for an item in hand when a player left-clicks the ground.
-# Only shows growth rates for the biome the player is currently in.
-display_growth_rates: true
+  # If true, the list above is treated as a blacklist instead of a whitelist.
+  # All worlds EXCEPT those listed will have the plugin enabled.
+  enabled_worlds_as_blacklist: false
 
-# Only active, if display_growth_rates is enabled.
-# Time in seconds before the growth rates are shown to the player again.
-# Prevents spam clicking and therefore heavy area scans.
-display_cooldown: 5
+  # If true, players can left-click the ground with an item in hand to view
+  # the plant's growth rate for their current biome.
+  show_growth_rates_on_click: true
+
+  # Cooldown (in seconds) between uses of the growth rate display.
+  # Helps reduce spam and server load from repeated biome scans.
+  growth_rate_display_cooldown: 5
 
 
 ########################################################################################################################
@@ -87,42 +86,46 @@ composter:
 #|                                                                                                                    |#
 #| Fertilizer                                                                                                         |#
 #|                                                                                                                    |#
-#| Enables Composters to fertilize crops in the surrounding area, allowing for growth in normally uninhabitable areas.|#
+#| Controls how composters enhance plant growth.                                                                      |#
+#| Fertilizer can affect growth rates, extend crop viability to otherwise invalid biomes, and operate passively.      |#
 #|                                                                                                                    |#
 ########################################################################################################################
 
-# Enables the use of composters to fertilize crops in the surrounding area.
-fertilizer_enabled: false
+fertilizer:
+  # Master switch to enable or disable the fertilizer system entirely.
+  enabled: false
 
-# Plants within this block radius will grow at the 'fertilizer_growth_rate' (see below).
-# Higher values may increase server resource consumption and cause lag (Maximum 15 blocks).
-fertilizer_radius: 8
+  # Defines how composters apply fertilizer to surrounding crops.
+  behavior:
+    # Radius (in blocks) around a composter where fertilizer effects apply.
+    # Valid range: 1–15.
+    # Larger radii effect more crops but may increase server load.
+    radius: 8
 
-# true: Fertilizer effects do not deplete composters to fertilize the surroundings.
-# false: Players must actively fill the composter to achieve fertilization effects.
-fertilizer_passive: false
+    # If true, composters continuously fertilize surrounding crops without being filled by players.
+    # If false, players must manually fill composters with compostable materials.
+    passive: false
 
-# Allows a growth rate above 100.0%.
-# If a plant has a biome-specific growth rate of 100.0% and this is set to be true,
-# the resulting growth rate can exceed 100.0% (e.g., 125.0%).
-# Otherwise, the growth rate is capped at 100.0%.
-fertilizer_allow_growth_rate_above_100: false
+    # If true, crop growth rates enhanced by fertilizer can exceed 100%.
+    # This allows overperformance in otherwise optimal growth conditions.
+    # If false, growth rates are capped at 100%, even if bonuses apply.
+    allow_growth_rate_above_100: false
 
-# If set to true, Fertilizer allows plants to thrive in 'invalid' biomes.
-# If set to false, plant growth is limited to biomes explicitly listed in 'Biome' within GrowthModifiers.yml.
-fertilizer_enables_growth_in_invalid_biomes: false
+  # Controls how fertilizer interacts with crops growing in biomes where they normally cannot thrive.
+  invalid_biome:
+    # Enables crop growth in biomes that are normally non-permissive (e.g., deserts for wheat).
+    # Must be true for any of the below invalid biome settings to take effect.
+    enabled: false
 
-# Growth rate of plants in invalid biomes with fertilizer access.
-# Only active if 'fertilizer_enables_growth_in_invalid_biomes' is set to 'true',
-# and the plant is in an invalid biome.
-fertilizer_invalid_biome_growth_rate: 20.0
+    # Growth rate (%) applied to plants in invalid biomes when fertilizer is active.
+    # Example: 20.0 means crops grow at 20% of the normal speed.
+    # Ignored unless 'invalid_biome.enabled' is true.
+    growth_rate: 20.0
 
-# Probability of plant death in an invalid biome despite fertilizer supply.
-# This rule is effective only when 'fertilizer_enables_growth_in_invalid_biomes'
-# is set to 'true' and the plant is located in an inappropriate biome.
-# If the Growth process of the plant consists of multiple growth stages, the death rate is internally
-# adjusted by dividing it by the number of growth stages
-fertilizer_invalid_biome_death_chance: 35.0
+    # Chance (%) that a plant dies at each growth stage, even if fertilized.
+    # Useful for balancing fertilizer in hostile environments.
+    # Internally scaled by the number of growth stages the plant has.
+    death_chance: 35.0
 
 
 ########################################################################################################################
@@ -136,43 +139,48 @@ fertilizer_invalid_biome_death_chance: 35.0
 #|                                                                                                                    |#
 ########################################################################################################################
 
-# Enable use of UV-Light Blocks
-uv_enabled: false
+uv_light:
+  # Master toggle for enabling/disabling the UV-Light system.
+  enabled: false
 
-# Radius around a UV-Light block that affects growth.
-# Higher values consume more server resources and may lead to server lag. (Maximum 15 blocks)
-uv_radius: 5
+  # Radius (in blocks) around a UV block where artificial light affects plant growth.
+  # Valid range: 1–15. Larger values increase performance cost.
+  radius: 5
 
-# List of blocks that can function as UV-Light sources; they don't need to emit light.
-uv_blocks:
-  - OCHRE_FROGLIGHT
-  - PEARLESCENT_FROGLIGHT
-  - VERDANT_FROGLIGHT
+  # List of block types (by material name) that act as artificial UV light sources.
+  # These do not need to emit real light in-game.
+  blocks:
+    - OCHRE_FROGLIGHT
+    - PEARLESCENT_FROGLIGHT
+    - VERDANT_FROGLIGHT
 
-# Determines whether a plant requires all UV-Light Blocks listed above to grow.
-#   true: All blocks in 'uv_blocks' are necessary for plant growth.
-#   false: Only one of the blocks listed in 'uv_blocks' is required for plant growth.
-require_all_uv_blocks: true
+  # Determines whether all listed UV-Light blocks must be present for a plant to grow.
+  # If true, all blocks in 'blocks' must be in range. If false, only one is required.
+  require_all_blocks: true
 
-# List of plants that grow without requiring natural sky light, allowing growth
-# in artificial light sources like torches and lanterns (not the same as UV-Light).
-# Use official MATERIAL_NAMES to add items to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
-grow_in_dark:
-  # Overworld plants
-  - RED_MUSHROOM
-  - BROWN_MUSHROOM
-  - CAVE_VINES
-  - GLOW_LICHEN
-  # Ocean
-  - KELP
-  # End plants
-  - CHORUS_FLOWER
-  # Nether plants
-  - WEEPING_VINES
-  - TWISTING_VINES
-  - NETHER_WART
-  - WARPED_FUNGUS
-  - CRIMSON_FUNGUS
+
+  # List of plants that grow without requiring natural sky light, allowing growth
+  # in artificial light sources like torches and lanterns (not the same as UV-Light).
+  # Use official MATERIAL_NAMES to add items to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
+  grow_in_dark:
+    # Overworld Plants
+    - RED_MUSHROOM
+    - BROWN_MUSHROOM
+    - CAVE_VINES
+    - GLOW_LICHEN
+
+    # Ocean Plants
+    - KELP
+
+    # End Plants
+    - CHORUS_FLOWER
+
+    # Nether Plants
+    - WEEPING_VINES
+    - TWISTING_VINES
+    - NETHER_WART
+    - WARPED_FUNGUS
+    - CRIMSON_FUNGUS
 
 
 ########################################################################################################################
@@ -187,19 +195,20 @@ grow_in_dark:
 #|                                                                                                                    |#
 ########################################################################################################################
 
-plant_death_sound_effect:
-  # Enables the sound and particle effects for dying plants.
-  enabled: true
-  # The sound played when a plant dies. Choose from available sounds (link provided above).
-  sound: BLOCK_CROP_BREAK
-  # Adjust the volume (0.0 to 1.0).
-  volume: 0.5
-  # Adjust the pitch (0.5 to 2.0, 1.0 is normal pitch).
-  pitch: 0.5
-  # The particle effect played when a plant dies. Choose from available particle effects (link provided above).
-  effect: SMOKE
-  # Adjust effect data if applicable.
-  data: 1
+effects:
+  plant_death_sound_effect:
+    # Enables the sound and particle effects for dying plants.
+    enabled: true
+    # The sound played when a plant dies. Choose from available sounds (link provided above).
+    sound: BLOCK_CROP_BREAK
+    # Adjust the volume (0.0 to 1.0).
+    volume: 0.5
+    # Adjust the pitch (0.5 to 2.0, 1.0 is normal pitch).
+    pitch: 0.5
+    # The particle effect played when a plant dies. Choose from available particle effects (link provided above).
+    effect: SMOKE
+    # Adjust effect data if applicable.
+    data: 1
 
 ########################################################################################################################
 #|                                                                                                                    |#
@@ -210,20 +219,21 @@ plant_death_sound_effect:
 #|                                                                                                                    |#
 ########################################################################################################################
 
-# Enable Debug Mode. This can generate a large amount of log data, so use it only for debugging purposes.
-debug_log: false
+logging:
+  # Enable Debug Mode. This can generate a large amount of log data, so use it only for debugging purposes.
+  debug_log: false
 
-# Enable logging of plant growing events in a separate log file.
-plant_log: false
+  # Enable logging of plant growing events in a separate log file.
+  plant_log: false
 
-# Enable logging of tree growing events (e.g., sapling to tree, mushroom to huge mushroom) in a separate log file.
-structure_log: false
+  # Enable logging of tree growing events (e.g., sapling to tree, mushroom to huge mushroom) in a separate log file.
+  structure_log: false
 
-# Enable logging of player interaction events in a separate log file.
-player_log: false
+  # Enable logging of player interaction events in a separate log file.
+  player_log: false
 
-# Enable logging of bonemeal usage events in a separate log file.
-bonemeal_log: false
+  # Enable logging of bonemeal usage events in a separate log file.
+  bonemeal_log: false
 
 
 ########################################################################################################################
@@ -243,9 +253,9 @@ bonemeal_log: false
 # - Set 'interval' to -1 if you only want the update check to run once at startup.
 #
 # Setting 'enabled' to 'false' disables all automatic update checks.
-update_check:
-  enabled: true
-  interval: 24
+plugin_updates:
+  check_for_updates: true
+  check_interval_hours: 24
 
 # bStats
 # Please keep this enabled! It helps me understand what Minecraft versions and server setups are most common.
