@@ -189,15 +189,16 @@ public final class RealisticPlantGrowth extends JavaPlugin {
      * Each listener is associated with the provided instance of the {@link RealisticPlantGrowth} plugin.
      */
     private void registerListeners() {
+        new BlockBreakListener(instance);
+        new BlockFromToListener(instance);
         new BlockGrowListener(instance);
-        new StructureGrowListener(instance);
+        new BlockPistonListener(instance);
         new BlockSpreadListener(instance);
         new BonemealListener(instance);
-        new BlockBreakListener(instance);
+        new HopperCompostListener(instance);
         new PlayerInteractListener(instance);
         new PlayerQuitListener(instance);
-        new BlockFromToListener(instance);
-        new BlockPistonListener(instance);
+        new StructureGrowListener(instance);
     }
 
     /**

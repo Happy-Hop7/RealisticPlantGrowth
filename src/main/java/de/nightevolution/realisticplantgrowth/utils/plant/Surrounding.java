@@ -261,7 +261,7 @@ public class Surrounding {
                 logger.verbose("  - " + block.getLocation());
             }
         }
-        if (cm.isFertilizer_passiv()) {
+        if (cm.isFertilizer_passive()) {
             closestComposter = fertilizerSources.get(0);
             return closestComposter;
 
@@ -308,7 +308,7 @@ public class Surrounding {
     public boolean canApplyFertilizerBoost() {
         if (cm.isFertilizer_enabled() && !getFertilizerSources().isEmpty()) {
 
-            if (cm.isFertilizer_passiv()) {
+            if (cm.isFertilizer_passive()) {
                 if (isInValidBiome())
                     return true;
 

@@ -82,6 +82,7 @@ public class ConfigManager {
 
     // More config values
     private static int bonemeal_limit;
+    private static boolean allow_bonemeal_in_composters;
     private static int min_natural_light;
     private static boolean destroy_farmland;
     private static boolean require_hoe;
@@ -90,10 +91,13 @@ public class ConfigManager {
     private static boolean use_metrics;
     private static boolean check_for_updates;
 
+    // Composter config values
+    private static Section composterSection;
+
     // Fertilizer config values
     private static boolean fertilizer_enabled;
     private static int fertilizer_radius;
-    private static boolean fertilizer_passiv;
+    private static boolean fertilizer_passive;
     private static double fertilizer_boost_growth_rate;
     private static boolean fertilizer_allow_growth_rate_above_100;
     private static boolean fertilizer_enables_growth_in_invalid_biomes;
@@ -369,6 +373,7 @@ public class ConfigManager {
             enabled_worlds = config.getStringList("enabled_worlds");
             use_enabled_worlds_as_world_blacklist = config.getBoolean("use_enabled_worlds_as_world_blacklist");
             bonemeal_limit = config.getInt("bonemeal_limit");
+            allow_bonemeal_in_composters = config.getBoolean("allow_bonemeal_in_composters");
             min_natural_light = config.getInt("min_natural_light");
             destroy_farmland = config.getBoolean("destroy_farmland");
             require_hoe = config.getBoolean("require_hoe");
@@ -377,10 +382,13 @@ public class ConfigManager {
             use_metrics = config.getBoolean("use_metrics");
             check_for_updates = config.getBoolean("check_for_updates");
 
+            // Composter settings
+            composterSection = config.getSection("composter");
+
             // Fertilizer settings
             fertilizer_enabled = config.getBoolean("fertilizer_enabled");
             fertilizer_radius = config.getInt("fertilizer_radius");
-            fertilizer_passiv = config.getBoolean("fertilizer_passiv");
+            fertilizer_passive = config.getBoolean("fertilizer_passive");
             fertilizer_boost_growth_rate = config.getDouble("fertilizer_boost_growth_rate");
             fertilizer_allow_growth_rate_above_100 = config.getBoolean("fertilizer_allow_growth_rate_above_100");
             fertilizer_enables_growth_in_invalid_biomes = config.getBoolean("fertilizer_enables_growth_in_invalid_biomes");
@@ -467,6 +475,7 @@ public class ConfigManager {
             enabled_worlds.forEach((n) -> logger.logToFile("  - " + n, logFile));
 
             logger.logToFile("bonemeal_limit: " + bonemeal_limit, logFile);
+            logger.logToFile("allow_bonemeal_in_composters: " + allow_bonemeal_in_composters, logFile);
             logger.logToFile("min_natural_light: " + min_natural_light, logFile);
             logger.logToFile("destroy_farmland: " + destroy_farmland, logFile);
             logger.logToFile("require_hoe: " + require_hoe, logFile);
@@ -475,10 +484,16 @@ public class ConfigManager {
             logger.logToFile("use_metrics: " + use_metrics, logFile);
             logger.logToFile("check_for_updates: " + check_for_updates, logFile);
 
+            // Composter settings
+            logger.logToFile("composter: ", logFile);
+            logger.logToFile("  - " + composterSection.getBoolean("disable_bonemeal_output"), logFile);
+            logger.logToFile("  - " + composterSection.getBoolean("quick_fill_with_shift"), logFile);
+            logger.logToFile("  - " + composterSection.getBoolean("allow_bonemeal_as_input"), logFile);
+
             // Fertilizer settings
             logger.logToFile("fertilizer_enabled: " + fertilizer_enabled, logFile);
             logger.logToFile("fertilizer_radius: " + fertilizer_radius, logFile);
-            logger.logToFile("fertilizer_passiv: " + fertilizer_passiv, logFile);
+            logger.logToFile("fertilizer_passive: " + fertilizer_passive, logFile);
             logger.logToFile("fertilizer_boost_growth_rate: " +
                     fertilizer_boost_growth_rate, logFile);
             logger.logToFile("fertilizer_allow_growth_rate_above_100: " +
@@ -903,6 +918,19 @@ public class ConfigManager {
     }
 
 
+    public boolean isComposterBonemealOutputDisabled() {
+        return composterSection.getBoolean("disable_bonemeal_output");
+    }
+
+    public boolean isComposterQuickFillEnabled() {
+        return composterSection.getBoolean("quick_fill_with_shift");
+    }
+
+    public boolean isComposterBonemealInputAllowed() {
+        return composterSection.getBoolean("allow_bonemeal_as_input");
+    }
+
+
     public boolean isFertilizer_enabled() {
         return fertilizer_enabled;
     }
@@ -911,8 +939,8 @@ public class ConfigManager {
         return fertilizer_radius;
     }
 
-    public boolean isFertilizer_passiv() {
-        return fertilizer_passiv;
+    public boolean isFertilizer_passive() {
+        return fertilizer_passive;
     }
 
     public boolean isFertilizer_Enables_Growth_In_Invalid_Biomes() {

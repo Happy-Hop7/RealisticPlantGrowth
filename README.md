@@ -1,4 +1,8 @@
-# 👋 Welcome to the Realistic Plant Growth Plugin
+<img src="https://github.com/Happy-Hop7/RealisticPlantGrowth-Wiki/blob/master/.gitbook/assets/Plugin%20Logo%202k.png" alt="Realistic Plant Growth Plugin Logo" width="80%"/>
+
+---
+
+<br>
 
 ![GitHub branch status](https://img.shields.io/github/checks-status/Happy-Hop7/RealisticPlantGrowth/master?style=for-the-badge)
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/TcGxLk2t?style=for-the-badge&logo=modrinth&logoSize=auto)](https://modrinth.com/plugin/realistic-plant-growth)
@@ -9,78 +13,43 @@
 
 <br>
 
-> [!IMPORTANT]
-> RealisticPlantGrowth is still in an early phase of development. <br>
-> If you encounter any problems, please open an issue with a detailed error description. <br>
-> I will investigate the occurring problem and try to fix it as soon as possible.
 
-<br>
+
+# 👋 Welcome to the Realistic Plant Growth Plugin
 
 Realistic Plant Growth is a powerful Spigot/Paper plugin that brings a new level of realism to
 the Minecraft flora, allowing you to fine-tune growth parameters on a per-biome basis.
+
+<br>
 
 - Do you want to stop Nether Wart farming or make it only work in the Nether like it used to be?
 - Do you think Melon farms are too powerful and want to balance them?
 - Maybe you want cocoa to grow only in jungles or make plants grow slower in deserts?
 - Or perhaps you want farms to be above ground and need natural light?
 
-You can do all that with **Realistic Plant Grotwh**!
+You can do all that with **Realistic Plant Growth**!
 
 
 <br>
 
-**Realistic Plant Growth** actively monitors grow events, allowing plants to progress through their growth stages based
-on a configured growth rate. <br>
-What sets this plugin apart is its biome-dependent growth rate, providing an immersive experience tailored to the
-in-game environment.
+**Realistic Plant Growth** actively monitors grow events, allowing plants to progress through their growth stages based on a configured growth rate. <br>
+What sets this plugin apart is its biome-dependent growth rate, providing an immersive experience tailored to the in-game environment.
 
 <br>
 
-## Balancing Automatic Farms
-
-You can customize your farming experience by adjusting the required light level for plant growth. This feature can not
-only ensure that growth occurs only above ground but also disables the dominance of stacked farms, preventing
-overpowering setups like giant cactus farms.
-
-To add an extra layer of complexity, each plant introduces a configurable death chance. This element adds a strategic
-component to the game, as plants now have a chance to perish during their growth process. The introduction of a death
-chance serves as a countermeasure against fully automatic farms, adding a balancing factor to the gameplay.
 
 
-<br>
+## Supported Languages
 
-## UV-Light Blocks
+Realistic Plant Growth is currently available in the following languages:
 
-UV-Light enables the growth of plants that lack access to natural skylight, enabling their cultivation in dark and
-indoor environments. Easily customize the effect radius and the UV-light blocks in the configuration settings.
+- **English** (default)
+- **German** (Deutsch)
+- **Finnish** (Suomi)
+- **Russian** (Русский)
+- **Chinese** (Traditional) (繁體中文)
 
-<br>
-
-## Fertilizer
-
-Fertilizer blocks (Composter) enhance the growth rates of plants in their vicinity. By default, each time a plant
-advances to the next stage, the composter fill level is depleted, signifying the utilization of fertilizer to boost the
-growth rate. Players must refill the composter either manually or with the assistance of hoppers.
-
-
-<br>
-
-## Features
-
-All features can be toggled and fine-tuned either directly in the ```Config.yml``` file or by adjusting
-the ```GrowthModifiers.yml``` file.
-
-- Biome-Specific Plant Growth
-- Biome-Specific Plant Death Chance
-- Sounds and Effects On Plant Death
-- Replace Farmland On Harvest
-- Agricultural Crops Require Hoe
-- Plants Require Natural Sky Light
-- UV-Light Blocks
-- Boost Growth Rates With Fertilizer
-- Customizable Messages With [miniMessage](https://docs.advntr.dev/minimessage/format.html) Support.
-
-
+Want to add another language? See the [Translators page](https://realistic-plant-growth.nightevolution.de/for-contributors/for-translators)!
 
 <br>
 <br>
@@ -91,49 +60,105 @@ Check out our [wiki](https://docs.nightevolution.de/) for detailed documentation
 <br>
 <br>
 
+## Features
+
+All features are highly customizable! <br>
+You can tweak them to your preference in the ```Config.yml``` and ```GrowthModifiers.yml``` files.
+
+- **🌍 Biome-Based Growth:** Customize plant growth by biome.
+- **🏞️ Custom Biome Support**: Works with Terra, Terralith, and more.
+- **🌱 Survival Chance:** Plants may die at each growth stage.
+- **🪓 Tool-Based Harvesting:** Use hoes for crop drops.
+- **🚜 Farmland Decay:** Farmland revert to dirt after harvest.
+- **☀️ Sunlight Requirement:** Plants need natural light to grow.
+- **💡 UV Blocks for Indoor Farming:** Grow indoors with UV blocks.
+- **🌾 Fertilizer Boost:** Nearby composters speed up growth, requiring refills.
+- **🚀 Quick Composter Fill:** Shift-right-click with compostable items to instantly fill composters.
+- **🎶 Atmospheric Effects:** Optional sounds/effects on plant death.
+- **🗨️ Custom Messages:** Fully customizable player messages.
+
+<br>
+
+For a full and detailed feature description, visit the [wiki](https://realistic-plant-growth.nightevolution.de/overview/features).
+
+<br>
+
+
+
 ## Requirements
 
 **Minecraft version:** <br>
-→ **1.20.1** _or above_.
+-> **1.20.1** _or above_.
 
 **Java version:** <br>
-→ _At least_ **Java 21**.
+-> _At least_ **Java 21**.
 
 <br>
-<br>
 
+---
+
+## Commands
+
+```yaml
+commands:
+   rpg:
+      description: Execute a RealisticPlantGrowth command.
+      usage: /rpg <help|info|reload>
+      permission: rpg.help
+      aliases: [realisticPlantGrowth, realisticplantgrowth]
+```
+
+
+## Permissions
+
+```yaml
+permissions:
+  rpg.*:
+    description: Gives access to all RealisticPlantGrowth features.
+    default: op
+    children:
+      rpg.reload: true
+      rpg.help: true
+      rpg.info: true
+
+  rpg.reload:
+    description: Gives access to the /rpg reload command.
+    default: op
+
+  rpg.help:
+    description: Base-Permission to access /rpg command.
+    default: op
+
+  rpg.info:
+    description: Gives access to the /rpg info command.
+    default: op
+    children:
+      rpg.info.interact: true
+
+  rpg.info.interact:
+    description: Gives growth information of plants when interacting with them.
+    default: true
+```
+
+---
+
+<br>
 
 [![IMG](https://bstats.org/signatures/bukkit/Realistic%20Plant%20Growth.svg)](https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634)
 
 <br>
-<br>
 
-<details>
-<summary>Useful Bukkit/Spigot Resources</summary>
-
-## Useful Bukkit/Spigot Resources
-
-- Item/Plant Materials: [Material Documentation](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
-- All available Biomes: [Biome Documentation](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/block/Biome.html)
-- Sounds: [Sound Documentation](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html)
-- Effects: [Effect Documentation](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Effect.html)
-
-</details>
+---
 
 
-<br>
-
-<details>
-  <summary>License</summary>
-
-## License
+# License
 
 Realistic Plant Growth is licensed under the terms of the GNU General Public License (GPL) version 3
 or any later versions, as published by the Free Software Foundation.
 This means you are free to redistribute and modify the program, subject to the conditions outlined
 in the license.
 
-### Warranty Disclaimer
+## Warranty Disclaimer
 
 Realistic Plant Growth is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
 without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -142,12 +167,10 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with Realistic Plant Growth. <br>
 If not, see [http://www.gnu.org/licenses/](http://www.gnu.org/licenses/).
 
-### Contribution and Collaboration
+## Contribution and Collaboration
 
 Contributions to Realistic Plant Growth are welcome under the terms of the GPL.
 If you choose to contribute, you agree that your contributions will also be subject to the license terms outlined in the GPL.
-
-</details>
 
 <br>
 
@@ -156,5 +179,3 @@ If you choose to contribute, you agree that your contributions will also be subj
 
 _This plugin draws inspiration from [PwnPlantGrowth](https://github.com/Pwn9/PwnPlantGrowth)
 by [Pwn9](https://github.com/Pwn9)._ <br>
-
-

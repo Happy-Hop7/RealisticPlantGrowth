@@ -40,6 +40,7 @@ use_enabled_worlds_as_world_blacklist: false
 # Limits the use of bonemeal on plants to the specified amount.
 # Setting 'bonemeal_limit: 0' completely disables the use of bone meal.
 # Negative numbers deactivate this feature (e.g., 'bonemeal_limit: -1').
+# Note: This feature is currently not implemented.
 bonemeal_limit: 3
 
 # Required natural sky light level for plant growth.
@@ -76,6 +77,29 @@ use_metrics: true
 # Setting it to 'false' will disable update checking.
 check_for_updates: true
 
+
+########################################################################################################################
+#|                                                                                                                    |#
+#| Composter Settings                                                                                                 |#
+#|                                                                                                                    |#
+#| Configuration options for customizing composter behavior and functionality in the game.                           |#
+#|                                                                                                                    |#
+########################################################################################################################
+
+composter:
+  # If enabled, composters will NOT produce bonemeal.
+  # This also disables bonemeal farming via hopper-fed composters.
+  disable_bonemeal_output: false
+
+  # If enabled, allows players to rapidly fill composters by holding Shift and right-clicking
+  # with compostable items. Speeds up manual composting.
+  quick_fill_with_shift: false
+
+  # If enabled, allows bonemeal to be added to composters by players or hoppers.
+  # Each use of bonemeal increases the compost level by 1 (100% success rate).
+  allow_bonemeal_as_input: false
+
+
 ########################################################################################################################
 #|                                                                                                                    |#
 #| Fertilizer                                                                                                         |#
@@ -93,7 +117,7 @@ fertilizer_radius: 8
 
 # true: Fertilizer effects do not deplete composters to fertilize the surroundings.
 # false: Players must actively fill the composter to achieve fertilization effects.
-fertilizer_passiv: false
+fertilizer_passive: false
 
 # The 'fertilizer_boost_growth_rate' is a percentage added to biome-specific growth rates,
 # if a composter is within the configured 'fertilizer_radius'.
@@ -230,5 +254,5 @@ bonemeal_log: false
 #| Spooky internal settings.                                                                                          |#
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
-config-version: 5
+config-version: 7
 verbose: false
