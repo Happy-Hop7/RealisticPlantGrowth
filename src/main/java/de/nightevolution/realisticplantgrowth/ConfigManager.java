@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth;
 
-import de.nightevolution.realisticplantgrowth.utils.Logger;
+import de.nightevolution.realisticplantgrowth.utils.LogUtils;
 import de.nightevolution.realisticplantgrowth.utils.enums.ModifierType;
 import de.nightevolution.realisticplantgrowth.utils.exception.ConfigurationException;
 import dev.dejvokep.boostedyaml.YamlDocument;
@@ -29,7 +29,7 @@ public class ConfigManager {
 
     private static ConfigManager configManager;
     private static RealisticPlantGrowth instance;
-    private static Logger logger;
+    private static org.apache.logging.log4j.Logger logger;
 
     private static String plugin_prefix;
     private static final String logFile = "debug";
@@ -124,8 +124,7 @@ public class ConfigManager {
 
         configManager = this;
         instance = RealisticPlantGrowth.getInstance();
-
-        logger = new Logger(this.getClass().getSimpleName(), false, false);
+        logger = LogUtils.getLogger(this.getClass());
 
         pluginFolder = instance.getDataFolder();
         languageFolder = new File(pluginFolder + File.separator + "lang");
@@ -136,31 +135,29 @@ public class ConfigManager {
 
 
         if (!languageFolder.exists()) {
-            logger.warn("&eLanguage directory doesn't exist!");
-            logger.log("Creating new directory...");
+            logger.warn("Language directory doesn't exist!");
+            logger.info("Creating new directory...");
 
-            try {
-                if (languageFolder.mkdir()) {
-                    logger.log("New language directory created.");
-                }
-
-            } catch (Exception e) {
-                logger.error("&cCouldn't create language directory!");
-                throw new ConfigurationException("&cCouldn't create language directory!");
+            if (languageFolder.mkdirs()) {
+                logger.info("New language directory created.");
+            } else {
+                String errorMsg = "Failed to create language directory: " + languageFolder.getAbsolutePath();
+                logger.error(errorMsg);
+                throw new ConfigurationException(errorMsg);
             }
 
         } else
-            logger.logToFile("Language directory already exist.", logFile);
+            logger.debug("Language directory already exist.");
 
-        logger.log("Loading supported languages...");
+        logger.info("Loading supported languages...");
         registerSupportedLanguages();
         registerSelectedLanguage();
         readLanguageData();
 
-        logger.log("Loading BiomeGroups data...");
+        logger.info("Loading BiomeGroups data...");
         readBiomeGroupsData();
 
-        logger.log("Loading GrowthModifiers ...");
+        logger.info("Loading GrowthModifiers ...");
         readGrowthModifierData();
 
         // Check GrowthModifiers.yml
@@ -198,7 +195,7 @@ public class ConfigManager {
                     GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT,
                     UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
             config.update();
-            logger.log("Config.yml loaded.");
+            logger.info("Config.yml loaded.");
 
         } catch (IOException e) {
             logger.error("&cCouldn't load YAML configuration!");
@@ -213,7 +210,7 @@ public class ConfigManager {
                     Objects.requireNonNull(instance.getResource("BiomeGroups.yml")),
                     gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
 
-            logger.log("BiomeGroups.yml loaded.");
+            logger.info("BiomeGroups.yml loaded.");
 
         } catch (IOException e) {
             logger.error("&cCouldn't load BiomeGroups YAML configuration!");
@@ -226,7 +223,7 @@ public class ConfigManager {
                     Objects.requireNonNull(instance.getResource("GrowthModifiers.yml")),
                     gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT, UpdaterSettings.DEFAULT);
 
-            logger.log("GrowthModifiers.yml loaded.");
+            logger.info("GrowthModifiers.yml loaded.");
 
         } catch (IOException e) {
             logger.error("&cCouldn't load GrowthModifiers YAML configuration!");
@@ -243,15 +240,15 @@ public class ConfigManager {
      */
     private void registerSupportedLanguages() {
 
-        logger.logToFile("Language Folder: " + languageFolder, logFile);
+        logger.debug("Language Folder: " + languageFolder);
 
         // Copies all supported language files into the lang directory.
         try {
             for (String languageCode : supportedLanguageCodes) {
-                logger.logToFile("Language: " + languageCode, logFile);
+                logger.debug("Language: " + languageCode);
 
                 if (languageCode.equalsIgnoreCase(getLanguage_code())) {
-                    logger.logToFile("Loading selected language File: " + languageFolder + File.separator + languageCode + ".yml", logFile);
+                    logger.debug("Loading selected language File: " + languageFolder + File.separator + languageCode + ".yml");
 
                     selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
                             Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")),
@@ -259,7 +256,7 @@ public class ConfigManager {
                             UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build());
 
                 } else {
-                    logger.logToFile("Loading language File: " + languageFolder + File.separator + languageCode + ".yml", logFile);
+                    logger.debug("Loading language File: " + languageFolder + File.separator + languageCode + ".yml");
                     YamlDocument temp = YamlDocument.create(new File(languageFolder + File.separator, languageCode + ".yml"),
                             Objects.requireNonNull(instance.getResource("lang/" + languageCode + ".yml")),
                             GeneralSettings.DEFAULT, LoaderSettings.DEFAULT, DumperSettings.DEFAULT,
@@ -267,7 +264,7 @@ public class ConfigManager {
                     temp.update();
                 }
 
-                logger.logToFile(languageCode + ".yml loaded.", logFile);
+                logger.debug(languageCode + ".yml loaded.");
 
             }
         } catch (IOException e) {
@@ -286,7 +283,7 @@ public class ConfigManager {
             }
 
             GeneralSettings gs = GeneralSettings.builder().setUseDefaults(false).build();
-            logger.log("Searching for custom language files...");
+            logger.info("Searching for custom language files...");
             for (File file : allFiles) {
                 if (file.isFile()) {
                     String fileName = file.getName();
@@ -295,7 +292,7 @@ public class ConfigManager {
                             selectedLanguageFile = YamlDocument.create(new File(languageFolder + File.separator, language_code + ".yml"),
                                     gs, LoaderSettings.DEFAULT, DumperSettings.DEFAULT,
                                     UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build());
-                            logger.log(fileName + " loaded.");
+                            logger.info(fileName + " loaded.");
                         } catch (IOException e) {
                             logger.warn("Couldn't load language_code: " + language_code);
                         }
@@ -334,12 +331,12 @@ public class ConfigManager {
 
         try {
             selectedLanguageFile.update();
-            logger.log("Language files loaded.");
-            logger.log("Selected language: " + language_code);
+            logger.info("Language files loaded.");
+            logger.info("Selected language: " + language_code);
 
         } catch (IOException e) {
-            logger.error("&cCouldn't load YAML configuration!");
-            throw new ConfigurationException("&cCouldn't load YAML configuration!");
+            logger.error("Couldn't load YAML configuration!");
+            throw new ConfigurationException("Couldn't load YAML configuration!");
         }
     }
 
@@ -353,16 +350,14 @@ public class ConfigManager {
 
             // Get different debugging and logging modes from Config.yml
             verbose = config.getBoolean("verbose");
-            logger.log("verbose: " + verbose);
-            logger.setVerbose(verbose);
+            logger.info("verbose: " + verbose);
+            LogUtils.setVerbose(verbose);
 
             debug_log = config.getBoolean("debug_log");
-            logger.setDebug(debug_log);
-            logger.logToFile("debug_log: " + debug_log, logFile);
-
-            plugin_prefix = config.getString("plugin_prefix");
-            logger.setPluginPrefix(plugin_prefix);
-
+            LogUtils.setDebug(debug_log);
+            logger.debug("debug_log: " + debug_log);
+            
+            
             structure_log = config.getBoolean("structure_log");
             plant_log = config.getBoolean("plant_log");
             bonemeal_log = config.getBoolean("bonemeal_log");
@@ -412,10 +407,10 @@ public class ConfigManager {
 
 
         } catch (YAMLException e) {
-            logger.error("&cAn Error occurred while reading config.yml data!");
-            logger.log(e.getLocalizedMessage());
+            logger.error("An Error occurred while reading config.yml data!");
+            logger.info(e.getLocalizedMessage());
 
-            throw new ConfigurationException("&cAn Error occurred while reading config.yml data!");
+            throw new ConfigurationException("An Error occurred while reading config.yml data!");
         }
     }
 
@@ -445,85 +440,85 @@ public class ConfigManager {
     }
 
     /**
-     * Prints the key set of a given map to the log file.
+     * Prints the key set of a given map to the info file.
      *
      * @param data The map to be printed.
      */
     private void printMap(Map<String, Object> data) {
         Set<String> keys = data.keySet();
-        keys.forEach((key) -> logger.logToFile(key, logFile));
+        keys.forEach((key) -> logger.debug(key));
     }
 
     /**
-     * Prints the configuration data to the log file.
+     * Prints the configuration data to the info file.
      */
     private void printConfigData() {
         Bukkit.getScheduler().runTaskLaterAsynchronously(instance, () -> {
-            logger.logToFile("", logFile);
-            logger.logToFile("-------------------- Config.yml Data --------------------", logFile);
-            logger.logToFile("", logFile);
+            logger.debug("");
+            logger.debug("-------------------- Config.yml Data --------------------");
+            logger.debug("");
 
-            logger.logToFile("plugin_prefix: " + plugin_prefix, logFile);
-            logger.logToFile("structure_log: " + structure_log, logFile);
-            logger.logToFile("plant_log: " + plant_log, logFile);
-            logger.logToFile("bonemeal_log: " + bonemeal_log, logFile);
-            logger.logToFile("player_log: " + player_log, logFile);
+            logger.debug("plugin_prefix: " + plugin_prefix);
+            logger.debug("structure_log: " + structure_log);
+            logger.debug("plant_log: " + plant_log);
+            logger.debug("bonemeal_log: " + bonemeal_log);
+            logger.debug("player_log: " + player_log);
 
             // General settings
-            logger.logToFile("language_code: " + language_code, logFile);
-            logger.logToFile("enabled worlds:", logFile);
-            enabled_worlds.forEach((n) -> logger.logToFile("  - " + n, logFile));
+            logger.debug("language_code: " + language_code);
+            logger.debug("enabled worlds:");
+            enabled_worlds.forEach((n) -> logger.debug("  - " + n));
 
-            logger.logToFile("bonemeal_limit: " + bonemeal_limit, logFile);
-            logger.logToFile("allow_bonemeal_in_composters: " + allow_bonemeal_in_composters, logFile);
-            logger.logToFile("min_natural_light: " + min_natural_light, logFile);
-            logger.logToFile("destroy_farmland: " + destroy_farmland, logFile);
-            logger.logToFile("require_hoe: " + require_hoe, logFile);
-            logger.logToFile("display_growth_rates: " + display_growth_rates, logFile);
-            logger.logToFile("display_cooldown: " + display_cooldown, logFile);
-            logger.logToFile("use_metrics: " + use_metrics, logFile);
-            logger.logToFile("check_for_updates: " + check_for_updates, logFile);
+            logger.debug("bonemeal_limit: " + bonemeal_limit);
+            logger.debug("allow_bonemeal_in_composters: " + allow_bonemeal_in_composters);
+            logger.debug("min_natural_light: " + min_natural_light);
+            logger.debug("destroy_farmland: " + destroy_farmland);
+            logger.debug("require_hoe: " + require_hoe);
+            logger.debug("display_growth_rates: " + display_growth_rates);
+            logger.debug("display_cooldown: " + display_cooldown);
+            logger.debug("use_metrics: " + use_metrics);
+            logger.debug("check_for_updates: " + check_for_updates);
 
             // Composter settings
-            logger.logToFile("composter: ", logFile);
-            logger.logToFile("  - " + composterSection.getBoolean("disable_bonemeal_output"), logFile);
-            logger.logToFile("  - " + composterSection.getBoolean("quick_fill_with_shift"), logFile);
-            logger.logToFile("  - " + composterSection.getBoolean("allow_bonemeal_as_input"), logFile);
+            logger.debug("composter: ");
+            logger.debug("  - " + composterSection.getBoolean("disable_bonemeal_output"));
+            logger.debug("  - " + composterSection.getBoolean("quick_fill_with_shift"));
+            logger.debug("  - " + composterSection.getBoolean("allow_bonemeal_as_input"));
 
             // Fertilizer settings
-            logger.logToFile("fertilizer_enabled: " + fertilizer_enabled, logFile);
-            logger.logToFile("fertilizer_radius: " + fertilizer_radius, logFile);
-            logger.logToFile("fertilizer_passive: " + fertilizer_passive, logFile);
-            logger.logToFile("fertilizer_boost_growth_rate: " +
-                    fertilizer_boost_growth_rate, logFile);
-            logger.logToFile("fertilizer_allow_growth_rate_above_100: " +
-                    fertilizer_allow_growth_rate_above_100, logFile);
-            logger.logToFile("fertilizer_enables_growth_in_invalid_biomes: " +
-                    fertilizer_enables_growth_in_invalid_biomes, logFile);
-            logger.logToFile("fertilizer_invalid_biome_growth_rate: " +
-                    fertilizer_invalid_biome_growth_rate, logFile);
-            logger.logToFile("fertilizer_invalid_biome_death_chance: " +
-                    fertilizer_invalid_biome_death_chance, logFile);
+            logger.debug("fertilizer_enabled: " + fertilizer_enabled);
+            logger.debug("fertilizer_radius: " + fertilizer_radius);
+            logger.debug("fertilizer_passive: " + fertilizer_passive);
+            logger.debug("fertilizer_boost_growth_rate: " +
+                    fertilizer_boost_growth_rate);
+            logger.debug("fertilizer_allow_growth_rate_above_100: " +
+                    fertilizer_allow_growth_rate_above_100);
+            logger.debug("fertilizer_enables_growth_in_invalid_biomes: " +
+                    fertilizer_enables_growth_in_invalid_biomes);
+            logger.debug("fertilizer_invalid_biome_growth_rate: " +
+                    fertilizer_invalid_biome_growth_rate);
+            logger.debug("fertilizer_invalid_biome_death_chance: " +
+                    fertilizer_invalid_biome_death_chance);
 
             // UV-Light settings
-            logger.logToFile("uv_enabled: " + uv_enabled, logFile);
-            logger.logToFile("uv_radius: " + uv_radius, logFile);
-            logger.logToFile("require_all_uv_blocks: " + require_all_uv_blocks, logFile);
+            logger.debug("uv_enabled: " + uv_enabled);
+            logger.debug("uv_radius: " + uv_radius);
+            logger.debug("require_all_uv_blocks: " + require_all_uv_blocks);
 
-            logger.logToFile("uv_blocks:", logFile);
-            uv_blocks.forEach((materialName) -> logger.logToFile("  - " + materialName, logFile));
+            logger.debug("uv_blocks:");
+            uv_blocks.forEach((materialName) -> logger.debug("  - " + materialName));
 
-            logger.logToFile("grow_in_dark:", logFile);
-            grow_in_dark.forEach((materialName) -> logger.logToFile("  - " + materialName, logFile));
+            logger.debug("grow_in_dark:");
+            grow_in_dark.forEach((materialName) -> logger.debug("  - " + materialName));
 
             // Sound & Effects
-            logger.logToFile("plant_death_sound_effect: ", logFile);
-            logger.logToFile("  - " + plant_death_sound_effect.getBoolean("enabled"), logFile);
-            logger.logToFile("  - " + plant_death_sound_effect.getString("sound"), logFile);
-            logger.logToFile("  - " + plant_death_sound_effect.getFloat("volume"), logFile);
-            logger.logToFile("  - " + plant_death_sound_effect.getFloat("pitch"), logFile);
-            logger.logToFile("  - " + plant_death_sound_effect.getString("effect"), logFile);
-            logger.logToFile("  - " + plant_death_sound_effect.getInt("data"), logFile);
+            logger.debug("plant_death_sound_effect: ");
+            logger.debug("  - " + plant_death_sound_effect.getBoolean("enabled"));
+            logger.debug("  - " + plant_death_sound_effect.getString("sound"));
+            logger.debug("  - " + plant_death_sound_effect.getFloat("volume"));
+            logger.debug("  - " + plant_death_sound_effect.getFloat("pitch"));
+            logger.debug("  - " + plant_death_sound_effect.getString("effect"));
+            logger.debug("  - " + plant_death_sound_effect.getInt("data"));
 
         }, 6 * 20);
     }
@@ -566,13 +561,13 @@ public class ConfigManager {
             if (debug_log)
                 printConfigData();
 
-            logger.log("&2All configuration files reloaded.");
+            logger.info("&2All configuration files reloaded.");
 
 
         } catch (YAMLException | IOException e) {
-            logger.log(e.getLocalizedMessage());
-            logger.error("&cError while reloading config files.");
-            throw new ConfigurationException("&cError while reloading config files.");
+            logger.info(e.getLocalizedMessage());
+            logger.error("Error while reloading config files.");
+            throw new ConfigurationException("Error while reloading config files.");
         }
     }
 
@@ -593,7 +588,7 @@ public class ConfigManager {
      * <p><b>Important:</b> Proper configuration is critical to avoid runtime errors and ensure expected plugin functionality.</p>
      */
     private void verifyGrowthModifiersConfiguration() {
-        logger.log("Starting verification of GrowthModifiers.yml...");
+        logger.info("Starting verification of GrowthModifiers.yml...");
 
         // Iterate through all plants defined in the GrowthModifiers.yml file
         for (String plantSectionString : growthModifierData.keySet()) {
@@ -622,10 +617,10 @@ public class ConfigManager {
                 checkDefaultModifiers(plantSection);
             }
 
-            logger.verbose(plantSection.getNameAsString() + ": Verification completed.");
+            LogUtils.verbose(logger, plantSection.getNameAsString() + ": Verification completed.");
         }
 
-        logger.log("GrowthModifiers.yml verification completed successfully.");
+        logger.info("GrowthModifiers.yml verification completed successfully.");
     }
 
     /**
@@ -746,8 +741,8 @@ public class ConfigManager {
                         try {
                             Biome biome = Biome.valueOf(biomeString);
                             returnList.add((biome.getKey().asString()));
-                            logger.verbose("Checked BiomeString: " + biome);
-                            logger.verbose("Added to return list: " + biome.getKey().asString());
+                            LogUtils.verbose(logger, "Checked BiomeString: " + biome);
+                            LogUtils.verbose(logger, "Added to return list: " + biome.getKey().asString());
                         } catch (IllegalArgumentException e) {
                             logger.warn("Biome '" + biomeString + "' is not a valid Bukkit Biome name!");
                             logger.warn("Please check your BiomeGroups.yml!");
@@ -805,7 +800,7 @@ public class ConfigManager {
             try {
                 Biome biome = Biome.valueOf(biomeName);
                 biomeSet.add(biome.toString());
-                logger.verbose("Checked BiomeString: " + biome);
+                LogUtils.verbose(logger, "Checked BiomeString: " + biome);
             } catch (IllegalArgumentException e) {
                 logger.warn("Biome '" + biomeName + "' is not a valid Bukkit Biome name!");
                 logger.warn("Please check your BiomeGroups.yml!");
