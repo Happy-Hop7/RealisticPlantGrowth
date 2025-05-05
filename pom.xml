@@ -95,11 +95,6 @@
                                 </relocation>
 
                                 <relocation>
-                                    <pattern>net.kyori.</pattern>
-                                    <shadedPattern>de.nightevolution.shade.</shadedPattern>
-                                </relocation>
-
-                                <relocation>
                                     <pattern>dev.dejvokep.boostedyaml</pattern>
                                     <shadedPattern>de.nightevolution.shade.boostedyaml</shadedPattern>
                                 </relocation>
@@ -107,16 +102,6 @@
                                 <relocation>
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>de.nightevolution.shade.bstats</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>org.jetbrains</pattern>
-                                    <shadedPattern>de.nightevolution.shade.jetbrains</shadedPattern>
-                                </relocation>
-
-                                <relocation>
-                                    <pattern>org.intellij</pattern>
-                                    <shadedPattern>de.nightevolution.shade.intellij</shadedPattern>
                                 </relocation>
 
                             </relocations>
@@ -239,18 +224,18 @@
             <version>4.17.0</version>
         </dependency>
 
-        <!-- SLF4J API -->
+        <!-- Log4j2  API -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.9</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.20.0</version>
         </dependency>
 
-        <!-- SLF4J implementation for testing-->
+        <!-- Log4j2  implementation for testing-->
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.5.13</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.20.0</version>
             <scope>test</scope>
         </dependency>
 
