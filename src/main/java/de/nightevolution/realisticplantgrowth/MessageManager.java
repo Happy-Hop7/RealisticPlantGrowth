@@ -5,7 +5,6 @@ import de.nightevolution.realisticplantgrowth.utils.enums.MessageType;
 import de.nightevolution.realisticplantgrowth.utils.enums.PlaceholderInterface;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -99,7 +98,7 @@ public class MessageManager {
             sendMessageHeader(target);
 
         Component messageComponent = miniMessage.deserialize(message);
-        target.spigot().sendMessage(BungeeComponentSerializer.get().serialize(messageComponent));
+        target.sendMessage(messageComponent);
     }
 
     /**
@@ -139,7 +138,7 @@ public class MessageManager {
      */
     public void sendMessageHeader(CommandSender target) {
         Component headerComponent = miniMessage.deserialize(prefix);
-        target.spigot().sendMessage(BungeeComponentSerializer.get().serialize(headerComponent));
+        target.sendMessage(headerComponent);
     }
 
     /**
