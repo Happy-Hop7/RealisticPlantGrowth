@@ -4,7 +4,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,7 +31,7 @@ public class LogUtils {
     private static final String VERBOSE_PREFIX = "VERBOSE >> ";
 
     /** Logger instance for the plugin */
-    private static final org.slf4j.Logger PLUGIN_LOGGER = LoggerFactory.getLogger(PLUGIN_PREFIX);
+    private static final Logger PLUGIN_LOGGER = LogManager.getLogger(PLUGIN_PREFIX);
 
     /** Flag for verbose logging */
     private static boolean verbose = false;
@@ -67,7 +69,7 @@ public class LogUtils {
    /**
     * Initializes the LogUtils class
     */
-    public static void initialize(File pluginDir, boolean debug, boolean verbose) {
+    public static void initialize(File pluginDir,boolean debug, boolean verbose) {
         LogUtils.logDir =  new File(pluginDir + File.separator + "log");
         LogUtils.debug = debug;
         LogUtils.verbose = verbose;
@@ -82,14 +84,12 @@ public class LogUtils {
 
     // --- Logging Methods ---
 
-
     /**
      * Logs an info message.
      *
-     * @param logger    the logger to use
      * @param component the message to log
      */
-    public static void info(org.slf4j.Logger logger, Component component) {
+    public static void info(Logger logger, Component component) {
         logger.info(ANSIComponentSerializer.ansi().serialize(component));
     }
 
@@ -99,7 +99,7 @@ public class LogUtils {
      * @param logger    the logger to use
      * @param component the message to log
      */
-    public static void warn(org.slf4j.Logger logger, Component component) {
+    public static void warn(Logger logger, Component component) {
         logger.warn(ANSIComponentSerializer.ansi().serialize(component));
     }
 
@@ -109,7 +109,7 @@ public class LogUtils {
      * @param logger    the logger to use
      * @param message the message to log
      */
-    public static void error(org.slf4j.Logger logger, Component message) {
+    public static void error(Logger logger, Component message) {
         logger.error(ANSIComponentSerializer.ansi().serialize(message));
         logToFileAsync(LogFile.ERROR, PlainTextComponentSerializer.plainText().serialize(message));
     }
@@ -120,7 +120,7 @@ public class LogUtils {
      * @param logger    the logger to use
      * @param message the message to log
      */
-    public static void error(org.slf4j.Logger logger, Component message, Throwable t) {
+    public static void error(Logger logger, Component message, Throwable t) {
         logger.error(ANSIComponentSerializer.ansi().serialize(message), t);
         logToFileAsync(LogFile.ERROR, PlainTextComponentSerializer.plainText().serialize(message));
         logToFileAsync(LogFile.ERROR, t.toString());
@@ -134,7 +134,7 @@ public class LogUtils {
      *
      * @param message the message string to be logged
      */
-    public static void error(org.slf4j.Logger logger, String message) {
+    public static void error(Logger logger, String message) {
         logger.error(message);
         logToFileAsync(LogFile.ERROR, message);
     }
@@ -145,7 +145,7 @@ public class LogUtils {
      * @param message the message string to be logged
      * @param t   the exception to be logged
      */
-    public static void error(org.slf4j.Logger logger, String message, Throwable t) {
+    public static void error(Logger logger, String message, Throwable t) {
         logger.error(message, t);
         logToFileAsync(LogFile.ERROR, message);
         logToFileAsync(LogFile.ERROR, t.toString());
@@ -160,7 +160,7 @@ public class LogUtils {
      * @param logger    the logger to use
      * @param message the message to log
      */
-    public static void verbose(org.slf4j.Logger logger, Component message) {
+    public static void verbose(Logger logger, Component message) {
         if (verbose) {
             Component prefixedComponent = applyPrefix(VERBOSE_PREFIX, NamedTextColor.DARK_RED, message);
             info(logger, prefixedComponent);
@@ -175,7 +175,7 @@ public class LogUtils {
      * @param logger  the logger to use
      * @param message the message string to be logged
      */
-    public static void verbose(org.slf4j.Logger logger, String message) {
+    public static void verbose(Logger logger, String message) {
         if (verbose) {
             Component prefixedComponent = applyPrefix(VERBOSE_PREFIX, NamedTextColor.DARK_RED, Component.text(message));
             info(logger, prefixedComponent);
@@ -190,7 +190,7 @@ public class LogUtils {
      * @param logger    the logger to use
      * @param message the message to log
      */
-    public static void debug(org.slf4j.Logger logger, Component message) {
+    public static void debug(Logger logger, Component message) {
         if (debug || verbose) {
             Component prefixedComponent = applyPrefix(DEBUG_PREFIX, NamedTextColor.RED, message);
             info(logger, prefixedComponent);
@@ -205,7 +205,7 @@ public class LogUtils {
      * @param logger  the logger to use
      * @param message the message string to be logged
      */
-    public static void debug(org.slf4j.Logger logger, String message) {
+    public static void debug(Logger logger, String message) {
         if (debug || verbose) {
             Component prefixedComponent = applyPrefix(DEBUG_PREFIX, NamedTextColor.RED, Component.text(message));
             info(logger, prefixedComponent);
@@ -310,9 +310,9 @@ public class LogUtils {
      * @param clazz the class for which the logger is requested
      * @return a logger instance
      */
-    public static org.slf4j.Logger getLogger(Class<?> clazz) {
+    public static Logger getLogger(Class<?> clazz) {
         if (verbose && !PLUGIN_PREFIX.equals(clazz.getSimpleName())) {
-            return LoggerFactory.getLogger(PLUGIN_PREFIX + "->" + clazz.getSimpleName());
+            return LogManager.getLogger(PLUGIN_PREFIX + "->" + clazz.getSimpleName());
         } else {
             return PLUGIN_LOGGER;
         }
