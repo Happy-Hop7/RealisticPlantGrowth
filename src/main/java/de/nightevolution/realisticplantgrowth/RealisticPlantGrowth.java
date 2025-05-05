@@ -9,7 +9,6 @@ import de.nightevolution.realisticplantgrowth.utils.UpdateChecker;
 import de.nightevolution.realisticplantgrowth.utils.biome.BiomeChecker;
 import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
 import de.nightevolution.realisticplantgrowth.utils.mapper.versions.*;
-import de.nightevolution.realisticplantgrowth.utils.rest.ModrinthVersion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -48,12 +47,17 @@ public class RealisticPlantGrowth extends JavaPlugin {
     /**
      * The {@link org.slf4j.Logger} instance for recording log messages in the {@link RealisticPlantGrowth} plugin.
      */
-    private org.slf4j.Logger logger;
+    private org.apache.logging.log4j.Logger logger;
 
     /**
      * The {@link CommandManager} used by the {@link RealisticPlantGrowth} plugin.
      */
     private CommandManager cmdManager;
+
+    /**
+     * The {@link UpdateChecker} used by the {@link RealisticPlantGrowth} plugin.
+     */
+    private UpdateChecker updateChecker;
 
     /**
      * The {@link Metrics} instance for collecting anonymous usage data for the {@link RealisticPlantGrowth} plugin.
@@ -154,10 +158,10 @@ public class RealisticPlantGrowth extends JavaPlugin {
                 microReleaseVersion = 0;
             }
 
-            logger.info("Your server is running version 1." + minorReleaseVersion + "." + microReleaseVersion);
+            logger.info("Your server is running version 1.{}.{}", minorReleaseVersion, microReleaseVersion);
 
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException whatVersionAreYouUsingException) {
-            logger.error("Error extracting server version: Unable to parse Bukkit version format.");
+            LogUtils.error(logger, "Error extracting server version: Unable to parse Bukkit version format.");
             return false;
         }
 
@@ -274,32 +278,16 @@ public class RealisticPlantGrowth extends JavaPlugin {
         BiomeChecker.clearCache();
         registerListeners();
 
-        if (cm.check_for_updates())
-            checkForUpdates();
-    }
+        //TODO: Read Update Interval from ConfigManager
+        if (updateChecker != null) {
+            updateChecker.cancelScheduledTask();
+            updateChecker = null;
+        }
 
-    /**
-     * Checks for updates of the {@link RealisticPlantGrowth} plugin.
-     * This method uses an {@link UpdateChecker} to compare the current version
-     * of the plugin with the latest available version and logs messages accordingly.
-     */
-    private void checkForUpdates() {
-        new UpdateChecker().getVersion(version -> {
-            ModrinthVersion thisPluginVersion = new ModrinthVersion();
-            thisPluginVersion.setVersion_number(pluginVersion);
+        if (cm.check_for_updates()) {
+            updateChecker = new UpdateChecker(12);
+        }
 
-            if (thisPluginVersion.compareTo(version) >= 0) {
-                // Log a message if there is no new update available.
-                logger.info("Your RealisticPlantGrowth plugin is up to date (version " + pluginVersion + ").");
-            } else {
-                // Log messages if a new update is available.
-                logger.warn("A new version of RealisticPlantGrowth is available!");
-                logger.warn("Current version: " + pluginVersion);
-                logger.warn("Latest version: " + version.getVersion_number());
-                logger.warn("Download the latest version at:");
-                logger.warn("https://modrinth.com/plugin/realistic-plant-growth/version/latest");
-            }
-        });
     }
 
 
@@ -315,6 +303,12 @@ public class RealisticPlantGrowth extends JavaPlugin {
         cmdManager = null;
         metrics = null;
         pluginVersion = null;
+
+        if (updateChecker != null) {
+            updateChecker.cancelScheduledTask();
+            updateChecker = null;
+        }
+
         HandlerList.unregisterAll(this);
         Objects.requireNonNull(this.getCommand("rpg")).setTabCompleter(null);
         Objects.requireNonNull(this.getCommand("rpg")).setExecutor(null);
