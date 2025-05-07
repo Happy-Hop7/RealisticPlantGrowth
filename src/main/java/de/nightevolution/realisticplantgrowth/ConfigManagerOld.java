@@ -25,7 +25,7 @@ import java.util.*;
  * of the Bukkit/Spigot plugin "RealisticPlantGrowth." It uses the BoostedYAML API for file operations
  * and provides methods to access and update configuration values.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class ConfigManagerOld {
 
     private static ConfigManagerOld configManagerOld;
