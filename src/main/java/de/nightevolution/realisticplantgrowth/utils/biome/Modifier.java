@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.utils.biome;
 
-import de.nightevolution.realisticplantgrowth.ConfigManager;
+import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.enums.DeathChanceType;
@@ -24,7 +24,7 @@ import java.util.Optional;
 public class Modifier {
 
     private final RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();
-    private final ConfigManager cm = instance.getConfigManager();
+    private final ConfigManagerOld cm = instance.getConfigManager();
     private final Logger logger;
     private final GrowthModifierType growthModifierType;
     private final DeathChanceType deathChanceType;

@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.utils;
 
-import de.nightevolution.realisticplantgrowth.ConfigManager;
+import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -49,7 +49,7 @@ public class Logger {
 
     /**
      * Stores a String with a Timestamp to a log file
-     * Calls {@link ConfigManager} to perform the file I/O tasks.
+     * Calls {@link ConfigManagerOld} to perform the file I/O tasks.
      * Should be called async.
      *
      * @param msg      String to write into the file.

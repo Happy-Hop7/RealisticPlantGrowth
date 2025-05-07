@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.listeners;
 
-import de.nightevolution.realisticplantgrowth.ConfigManager;
+import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
@@ -33,7 +33,7 @@ public abstract class PlantGrowthListener implements Listener {
     protected String logFile = "PlantGrowthEvent";
     protected boolean logEvent;
 
-    protected ConfigManager configManager;
+    protected ConfigManagerOld configManagerOld;
     protected SpecialBlockSearch specialBlockSearch;
     protected Surrounding surrounding;
     protected VersionMapper versionMapper;
@@ -79,11 +79,11 @@ public abstract class PlantGrowthListener implements Listener {
 
         // Initialize components.
         specialBlockSearch = SpecialBlockSearch.get();
-        configManager = instance.getConfigManager();
+        configManagerOld = instance.getConfigManager();
         versionMapper = instance.getVersionMapper();
 
         // Can get overwritten by child classes.
-        logEvent = RealisticPlantGrowth.isDebug() && configManager.isPlant_log();
+        logEvent = RealisticPlantGrowth.isDebug() && configManagerOld.isPlant_log();
     }
 
     /**
@@ -295,7 +295,7 @@ public abstract class PlantGrowthListener implements Listener {
      * </p>
      */
     protected void checkFertilizerUsage() {
-        if (surrounding.usedFertilizer() && !configManager.isFertilizer_passive()) {
+        if (surrounding.usedFertilizer() && !configManagerOld.isFertilizer_passive()) {
             if (logEvent) {
                 superLogger.logToFile("  Fertilizer was used.", logFile);
                 superLogger.logToFile("  Reducing fill level of the closest composter.", logFile);

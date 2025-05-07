@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.plant;
 
-import de.nightevolution.realisticplantgrowth.ConfigManager;
+import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.biome.BiomeChecker;
@@ -32,7 +32,7 @@ import java.util.Set;
  */
 public class Surrounding {
     private final static RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();
-    private final static ConfigManager cm = instance.getConfigManager();
+    private final static ConfigManagerOld cm = instance.getConfigManager();
     private final BiomeChecker biomeChecker;
     private final Modifier modifier;
     private final Logger logger;

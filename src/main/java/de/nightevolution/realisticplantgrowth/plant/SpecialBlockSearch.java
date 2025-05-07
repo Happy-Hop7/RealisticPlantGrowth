@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.plant;
 
-import de.nightevolution.realisticplantgrowth.ConfigManager;
+import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import org.bukkit.Location;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 /**
  * This class is responsible for finding special blocks like UV light sources and composters (as fertilizer sources)
- * within a specified radius around a given block. The radius values are obtained from the {@link ConfigManager}.
+ * within a specified radius around a given block. The radius values are obtained from the {@link ConfigManagerOld}.
  * It uses a singleton pattern to ensure only one instance is used throughout the application.
  */
 public class SpecialBlockSearch {
@@ -25,7 +25,7 @@ public class SpecialBlockSearch {
      */
     private static SpecialBlockSearch specialBlockSearch;
     private static RealisticPlantGrowth instance;
-    private static ConfigManager configManager;
+    private static ConfigManagerOld configManagerOld;
     private final Logger logger;
 
     private static final String logFile = "debug";
@@ -64,10 +64,10 @@ public class SpecialBlockSearch {
             new SpecialBlockSearch();
 
         instance = RealisticPlantGrowth.getInstance();
-        configManager = instance.getConfigManager();
-        radiusUV = configManager.getUV_Radius();
-        radiusFertilizer = configManager.getFertilizer_radius();
-        debug_log = configManager.isDebug_log();
+        configManagerOld = instance.getConfigManager();
+        radiusUV = configManagerOld.getUV_Radius();
+        radiusFertilizer = configManagerOld.getFertilizer_radius();
+        debug_log = configManagerOld.isDebug_log();
 
         return specialBlockSearch;
     }
@@ -85,10 +85,10 @@ public class SpecialBlockSearch {
 
         int radius;
 
-        boolean uvEnabled = configManager.isUV_Enabled();
-        boolean fertilizerEnabled = configManager.isFertilizer_enabled();
+        boolean uvEnabled = configManagerOld.isUV_Enabled();
+        boolean fertilizerEnabled = configManagerOld.isFertilizer_enabled();
 
-        Set<Material> uvMaterials = configManager.getUV_Blocks();
+        Set<Material> uvMaterials = configManagerOld.getUV_Blocks();
 
         // Determine the search radius
         if (uvEnabled && fertilizerEnabled) {

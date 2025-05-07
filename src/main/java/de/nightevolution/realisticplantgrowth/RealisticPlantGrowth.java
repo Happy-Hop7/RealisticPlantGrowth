@@ -35,9 +35,9 @@ public class RealisticPlantGrowth extends JavaPlugin {
     private static RealisticPlantGrowth instance;
 
     /**
-     * The {@link ConfigManager} used by the {@link RealisticPlantGrowth} plugin.
+     * The {@link ConfigManagerOld} used by the {@link RealisticPlantGrowth} plugin.
      */
-    private static ConfigManager cm;
+    private static ConfigManagerOld cm;
 
     /**
      * The {@link VersionMapper} used by the {@link RealisticPlantGrowth} plugin.
@@ -90,7 +90,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
 
 
 //        try {
-//            cm = ConfigManager.get();
+//            cm = ConfigManagerOld.get();
 //        } catch (ConfigurationException e) {
 //            disablePlugin();
 //            return;
@@ -263,7 +263,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
 
     /**
      * Updates the plugin variables and configurations based on the latest settings.
-     * This method refreshes the {@link ConfigManager}, {@link MessageManager}, logging settings,
+     * This method refreshes the {@link ConfigManagerOld}, {@link MessageManager}, logging settings,
      * and various cached data used by the plugin.
      */
     public void updateVariables() {
@@ -278,7 +278,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
         BiomeChecker.clearCache();
         registerListeners();
 
-        //TODO: Read Update Interval from ConfigManager
+        //TODO: Read Update Interval from ConfigManagerOld
         if (updateChecker != null) {
             updateChecker.cancelScheduledTask();
             updateChecker = null;
@@ -377,10 +377,10 @@ public class RealisticPlantGrowth extends JavaPlugin {
     /**
      * Retrieves the configuration manager associated with the {@link RealisticPlantGrowth} plugin.
      *
-     * @return The {@link ConfigManager} instance managing plugin configurations.
+     * @return The {@link ConfigManagerOld} instance managing plugin configurations.
      */
     @NotNull
-    public ConfigManager getConfigManager() {
+    public ConfigManagerOld getConfigManager() {
         return cm;
     }
 

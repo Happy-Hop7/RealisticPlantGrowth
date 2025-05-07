@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.commands.sub;
 
-import de.nightevolution.realisticplantgrowth.ConfigManager;
+import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.MessageManager;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
@@ -26,7 +26,7 @@ public abstract class SubCommand {
     protected CommandSender commandSender;
 
     /** Manager for handling plugin configuration */
-    protected ConfigManager configManager;
+    protected ConfigManagerOld configManagerOld;
 
     /** Mapper for handling version-specific operations */
     protected VersionMapper mapper;
@@ -56,7 +56,7 @@ public abstract class SubCommand {
     public SubCommand(CommandSender commandSender, String[] args, RealisticPlantGrowth instance) {
         this.instance = instance;
         this.msgManager = instance.getMessageManager();
-        this.configManager = instance.getConfigManager();
+        this.configManagerOld = instance.getConfigManager();
         this.mapper = instance.getVersionMapper();
         this.commandSender = commandSender;
         this.args = args;

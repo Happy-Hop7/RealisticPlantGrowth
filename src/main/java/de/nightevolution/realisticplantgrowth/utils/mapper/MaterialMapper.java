@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.utils.mapper;
 
-import de.nightevolution.realisticplantgrowth.ConfigManager;
+import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import dev.dejvokep.boostedyaml.route.Route;
@@ -17,7 +17,7 @@ import java.util.*;
 public class MaterialMapper {
 
     private final VersionMapper versionMapper;
-    private final ConfigManager cm;
+    private final ConfigManagerOld cm;
     private final Logger logger;
     private final String logFile = "verbose";
 

@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.listeners.other;
 
-import de.nightevolution.realisticplantgrowth.ConfigManager;
+import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 public class BlockBreakListener implements Listener {
 
     private final RealisticPlantGrowth instance;
-    private final ConfigManager cm;
+    private final ConfigManagerOld cm;
     private final VersionMapper vm;
     private final Logger logger;
     private final BukkitScheduler scheduler;

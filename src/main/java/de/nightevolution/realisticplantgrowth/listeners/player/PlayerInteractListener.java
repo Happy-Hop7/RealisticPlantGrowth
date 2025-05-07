@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.listeners.player;
 
-import de.nightevolution.realisticplantgrowth.ConfigManager;
+import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.MessageManager;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
@@ -33,7 +33,7 @@ import java.util.*;
 public class PlayerInteractListener implements Listener, PlaceholderInterface {
 
     private final RealisticPlantGrowth instance;
-    private final ConfigManager cm;
+    private final ConfigManagerOld cm;
     private final Logger logger;
     private final MessageManager msgManager;
     private final VersionMapper versionMapper;

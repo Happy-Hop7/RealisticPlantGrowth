@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.utils.biome;
 
-import de.nightevolution.realisticplantgrowth.ConfigManager;
+import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.mapper.MaterialMapper;
@@ -21,7 +21,7 @@ import java.util.*;
 @Deprecated
 public class BiomeChecker {
     private final RealisticPlantGrowth instance;
-    private final ConfigManager cm;
+    private final ConfigManagerOld cm;
     private final Logger logger;
 
     private final Material plantMaterial;
@@ -88,7 +88,7 @@ public class BiomeChecker {
 
 
     /**
-     * Initializes the plant {@link Section} from the {@link ConfigManager}.
+     * Initializes the plant {@link Section} from the {@link ConfigManagerOld}.
      * Throws an exception if the section cannot be obtained.
      */
     private void initPlantSection() {
@@ -112,7 +112,7 @@ public class BiomeChecker {
         if (!biomeGroupStringList.isEmpty()) {
             for (String biomeGroup : biomeGroupStringList) {
                 if (instance.isPaperFork()) {
-                    // TODO: ConfigManager getBiomeSetOfBiomeGroup need to return Strings
+                    // TODO: ConfigManagerOld getBiomeSetOfBiomeGroup need to return Strings
                     for (String biomeString : cm.getBiomeSetOfBiomeGroup(biomeGroup)) {
                         logger.verbose("returned String: " + biomeString);
                         logger.verbose("String to check: " + currentBiomeNameSpace);

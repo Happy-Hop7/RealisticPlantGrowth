@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.plant;
 
-import de.nightevolution.realisticplantgrowth.ConfigManager;
+import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
@@ -22,7 +22,7 @@ import java.util.Set;
 public class PlantKiller {
 
     private final RealisticPlantGrowth instance;
-    private final ConfigManager cm;
+    private final ConfigManagerOld cm;
     private final Logger logger;
     private final BukkitScheduler scheduler;
     private final VersionMapper vm;

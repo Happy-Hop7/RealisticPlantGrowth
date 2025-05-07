@@ -19,7 +19,7 @@ import java.util.List;
  * It uses a {@link MiniMessage} instance for text serialization and a {@link Logger} for logging messages.
  */
 public class MessageManager {
-    private static ConfigManager configManager;
+    private static ConfigManagerOld configManagerOld;
     private static MessageManager messageManager;
     private final MiniMessage miniMessage;
     private final Logger logger;
@@ -34,7 +34,7 @@ public class MessageManager {
      */
     private MessageManager() {
         RealisticPlantGrowth instance = RealisticPlantGrowth.getInstance();
-        configManager = instance.getConfigManager();
+        configManagerOld = instance.getConfigManager();
         this.miniMessage = MiniMessage.miniMessage();
         logger = new Logger(this.getClass().getSimpleName(), RealisticPlantGrowth.isVerbose(), RealisticPlantGrowth.isDebug());
         messageManager = this;
@@ -60,7 +60,7 @@ public class MessageManager {
         localizedMessagePair = new EnumMap<>(MessageType.class);
 
         for (MessageType s : MessageType.values()) {
-            localizedMessagePair.put(s, configManager.getSelectedLanguageString(s.toString()));
+            localizedMessagePair.put(s, configManagerOld.getSelectedLanguageString(s.toString()));
         }
 
         debug = RealisticPlantGrowth.isDebug();
