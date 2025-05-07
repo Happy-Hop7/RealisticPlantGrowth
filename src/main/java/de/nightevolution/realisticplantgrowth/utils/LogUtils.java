@@ -53,7 +53,8 @@ public class LogUtils {
         PLANT("plant.log"),
         STRUCTURE("structure.log"),
         PLAYER("player.log"),
-        BONEMEAL("bonemeal.log");
+        BONEMEAL("bonemeal.log"),
+        CONFIG_DUMP("ConfigDump.log");
 
         private final String value;
 
