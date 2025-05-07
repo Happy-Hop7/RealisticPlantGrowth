@@ -16,61 +16,54 @@ import org.yaml.snakeyaml.error.YAMLException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * ConfigManager handles loading, updating, and accessing all configuration and language files
  * used by the RealisticPlantGrowth plugin.
  * <p>
- * This includes the main config file, biome groups, growth modifiers, and user-selected language files.
- * The class uses a singleton pattern to ensure a single source of configuration access.
+ * This implementation uses a thread-safe approach with read-write locks to ensure
+ * safe access to configuration data across multiple threads, making it suitable for
+ * multithreaded server environments like Folia.
  */
 public class ConfigManager {
 
-    // Singleton instance
-    private static ConfigManager instance;
-
     // Core plugin instance and logger
-    private final RealisticPlantGrowth rpgInstance;
+    private final RealisticPlantGrowth rpgPlugin;
     private org.apache.logging.log4j.Logger logger;
 
     // Paths to important plugin folders
     private final File pluginFolder;
     private final File languageFolder;
 
-    // YAML documents managed by this class
-    private YamlDocument config;
-    private YamlDocument biomeGroupsFile;
-    private YamlDocument growthModifiersFile;
-    private YamlDocument selectedLanguageFile;
+    // Thread safety mechanism
+    private final ReadWriteLock configLock = new ReentrantReadWriteLock();
+
+    // YAML documents managed by this class - marked volatile for visibility across threads
+    private volatile YamlDocument config;
+    private volatile YamlDocument biomeGroupsFile;
+    private volatile YamlDocument growthModifiersFile;
+    private volatile YamlDocument selectedLanguageFile;
 
     // List of officially supported language codes
-    private static final List<String> SUPPORTED_LANGUAGE_CODES = Arrays.asList(
+    private static final List<String> SUPPORTED_LANGUAGE_CODES = List.of(
             "de-DE", "en-US", "fi-FI", "ru-RU", "zh-Hant"
     );
 
     /**
-     * Private constructor to initialize and load configuration files.
+     * Creates a new ConfigManager instance.
+     *
+     * @param rpgPlugin The plugin instance that this manager belongs to
      */
-    private ConfigManager() {
-        this.rpgInstance = RealisticPlantGrowth.getInstance();
-        this.pluginFolder = rpgInstance.getDataFolder();
+    public ConfigManager(RealisticPlantGrowth rpgPlugin) {
+        this.rpgPlugin = rpgPlugin;
+        this.pluginFolder = rpgPlugin.getDataFolder();
         this.languageFolder = new File(pluginFolder, "lang");
         this.logger = LogUtils.getLogger(this.getClass());
 
         createLanguageFolder();
         loadConfigs();
-    }
-
-    /**
-     * Returns the singleton instance of ConfigManager, creating it if necessary.
-     *
-     * @return ConfigManager instance
-     */
-    public static synchronized ConfigManager get() {
-        if (instance == null) {
-            instance = new ConfigManager();
-        }
-        return instance;
     }
 
     /**
@@ -89,17 +82,22 @@ public class ConfigManager {
      * Loads all core configuration files, sets logging modes, and loads language files.
      */
     private void loadConfigs() {
-        this.config = loadYaml("Config.yml", true, true, "config-version");
+        configLock.writeLock().lock();
+        try {
+            this.config = loadYaml("Config.yml", true, true, "config-version");
 
-        // Set logging levels and update logger
-        LogUtils.setDebug(isDebug());
-        LogUtils.setVerbose(isVerbose());
-        logger = LogUtils.getLogger(this.getClass());
+            // Set logging levels and update logger
+            LogUtils.setDebug(isDebug());
+            LogUtils.setVerbose(isVerbose());
+            logger = LogUtils.getLogger(this.getClass());
 
-        this.biomeGroupsFile = loadYaml("BiomeGroups.yml", false, true, null);
-        this.growthModifiersFile = loadYaml("GrowthModifiers.yml", false, true, null);
+            this.biomeGroupsFile = loadYaml("BiomeGroups.yml", false, true, null);
+            this.growthModifiersFile = loadYaml("GrowthModifiers.yml", false, true, null);
 
-        loadLanguageFiles();
+            loadLanguageFiles();
+        } finally {
+            configLock.writeLock().unlock();
+        }
     }
 
     /**
@@ -116,7 +114,7 @@ public class ConfigManager {
             File file = new File(fileName.endsWith(".yml") ? pluginFolder : languageFolder, fileName);
             return YamlDocument.create(
                     file,
-                    hasResource ? Objects.requireNonNull(rpgInstance.getResource(
+                    hasResource ? Objects.requireNonNull(rpgPlugin.getResource(
                             fileName.contains("/") ? fileName : fileName.startsWith("lang/") ? fileName : "lang/" + fileName
                     )) : null,
                     useDefaults ? GeneralSettings.DEFAULT : GeneralSettings.builder().setUseDefaults(false).build(),
@@ -186,12 +184,19 @@ public class ConfigManager {
 
     /**
      * Reloads all configuration and language files.
-     * Useful for /reload commands or hot updates.
+     * Uses write lock to ensure thread safety during reload.
      */
-    public synchronized void reloadAllYAMLFiles() {
+    public void reloadAllYAMLFiles() {
         logger.warn("Reloading config and language files...");
+        configLock.writeLock().lock();
         try {
             config.reload();
+
+            // Set logging levels and update logger
+            LogUtils.setDebug(isDebug());
+            LogUtils.setVerbose(isVerbose());
+            logger = LogUtils.getLogger(this.getClass());
+
             biomeGroupsFile.reload();
             growthModifiersFile.reload();
             selectedLanguageFile.reload();
@@ -200,73 +205,122 @@ public class ConfigManager {
         } catch (IOException | YAMLException e) {
             LogUtils.error(logger, "Error reloading config files", e);
             throw new ConfigurationException("Error reloading config files.", e);
+        } finally {
+            configLock.writeLock().unlock();
         }
     }
 
     /**
      * Dumps the raw YAML contents of all major config files to a log file.
-     * Mainly used for debugging purposes.
+     * Uses read lock to ensure thread safety.
      */
     public void dumpConfigData() {
-        LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, "===== Config.yml =====");
-        LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, config.dump());
-        LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, "===== BiomeGroups.yml =====");
-        LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, biomeGroupsFile.dump());
-        LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, "===== GrowthModifiers.yml =====");
-        LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, growthModifiersFile.dump());
+        configLock.readLock().lock();
+        try {
+            LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, "===== Config.yml =====");
+            LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, config.dump());
+            LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, "===== BiomeGroups.yml =====");
+            LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, biomeGroupsFile.dump());
+            LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, "===== GrowthModifiers.yml =====");
+            LogUtils.logToFileAsync(LogUtils.LogFile.CONFIG_DUMP, growthModifiersFile.dump());
+        } finally {
+            configLock.readLock().unlock();
+        }
     }
 
     // ----------------------------
-    // Getters
+    // Thread-safe Getters
     // ----------------------------
 
     /**
+     * Thread-safe access to main configuration document
      * @return Main configuration document
      */
     public YamlDocument getConfig() {
-        return config;
+        configLock.readLock().lock();
+        try {
+            return config;
+        } finally {
+            configLock.readLock().unlock();
+        }
     }
 
     /**
+     * Thread-safe access to biome groups configuration
      * @return Biome groups configuration document
      */
     public YamlDocument getBiomeGroupsFile() {
-        return biomeGroupsFile;
+        configLock.readLock().lock();
+        try {
+            return biomeGroupsFile;
+        } finally {
+            configLock.readLock().unlock();
+        }
     }
 
     /**
+     * Thread-safe access to growth modifiers configuration
      * @return Growth modifiers configuration document
      */
     public YamlDocument getGrowthModifiersFile() {
-        return growthModifiersFile;
+        configLock.readLock().lock();
+        try {
+            return growthModifiersFile;
+        } finally {
+            configLock.readLock().unlock();
+        }
     }
 
     /**
+     * Thread-safe access to language file
      * @return Currently selected language file
      */
     public YamlDocument getSelectedLanguageFile() {
-        return selectedLanguageFile;
+        configLock.readLock().lock();
+        try {
+            return selectedLanguageFile;
+        } finally {
+            configLock.readLock().unlock();
+        }
     }
 
     /**
+     * Thread-safe access to language code
      * @return Language code selected in the main config, or "en-US" if not set
      */
     public String getLanguageCode() {
-        String code = config.getString(MainConfigPath.GENERAL_LANGUAGE_CODE.getPath());
-        return code != null ? code : "en-US";
+        configLock.readLock().lock();
+        try {
+            String code = config != null ? config.getString(MainConfigPath.GENERAL_LANGUAGE_CODE.getPath()) : null;
+            return code != null ? code : "en-US";
+        } finally {
+            configLock.readLock().unlock();
+        }
     }
 
     /**
+     * Thread-safe access to debug setting
      * @return True if debug logging is enabled
      */
     public boolean isDebug() {
-        return config.getBoolean(MainConfigPath.LOGGING_DEBUG_LOG.getPath());
+        configLock.readLock().lock();
+        try {
+            return config != null && config.getBoolean(MainConfigPath.LOGGING_DEBUG_LOG.getPath());
+        } finally {
+            configLock.readLock().unlock();
+        }
     }
 
     /**
+     * Thread-safe access to verbose setting
      * @return True if verbose logging is enabled
      */
     public boolean isVerbose() {
-        return config.getBoolean(MainConfigPath.VERBOSE.getPath());
+        configLock.readLock().lock();
+        try {
+            return config != null && config.getBoolean(MainConfigPath.VERBOSE.getPath());
+        } finally {
+            configLock.readLock().unlock();
+        }
     }
 }
