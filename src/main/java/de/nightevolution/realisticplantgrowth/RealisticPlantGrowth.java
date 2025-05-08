@@ -91,22 +91,10 @@ public class RealisticPlantGrowth extends JavaPlugin {
         logger.warn("Warning1");
         logger.error("Error1");
 
-        // Starts bStats metrics, if enabled in the config
-        new MetricsHandler(this, cm);
-//        try {
-//            cm = ConfigManagerOld.get();
-//        } catch (ConfigurationException e) {
-//            disablePlugin();
-//            return;
-//        }
-//
-//        logger = new Logger(this.getClass().getSimpleName(), cm.isVerbose(), cm.isDebug_log());
-//
-//
-//        checkServerFork();
-//
+
         ServerEnvironmentChecker serverEnvironmentChecker = new ServerEnvironmentChecker(pluginVersion);
-        if (serverEnvironmentChecker.checkVersion()) {
+        versionMapper = serverEnvironmentChecker.checkVersion();
+        if (versionMapper != null) {
             logger.info("Version check passed.");
         } else {
             logger.error("Server version not supported!");
@@ -114,74 +102,20 @@ public class RealisticPlantGrowth extends JavaPlugin {
         }
 
         isPaperFork = serverEnvironmentChecker.checkFork();
-        if(serverEnvironmentChecker.checkFork())
-//        updateVariables();
-//        registerMetrics();
+        if(!isPaperFork) {
+            logger.error("Server fork not supported!");
+            disablePlugin();
+        }
+
+        // Starts bStats metrics, if enabled in the config
+        new MetricsHandler(this, cm);
+
+        updateVariables();
+
         drawLogo();
+
     }
 
-    /**
-     * Checks the server version and initializes the appropriate {@link VersionMapper}.
-     * <p>
-     * This method determines the server version by extracting it from the Bukkit server class package name.
-     * It then sets the corresponding version mapper based on the extracted version.
-     *
-     * @return {@code true} if the version check and initialization are successful, {@code false} otherwise.
-     */
-    private boolean checkServerVersion() {
-
-        int minorReleaseVersion;
-        int microReleaseVersion;
-
-        try {
-
-            String[] versionString = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-            minorReleaseVersion = Integer.parseInt(versionString[1]);
-
-            if (versionString.length >= 3) {
-                microReleaseVersion = Integer.parseInt(versionString[2]);
-            } else {
-                microReleaseVersion = 0;
-            }
-
-            logger.info("Your server is running version 1.{}.{}", minorReleaseVersion, microReleaseVersion);
-
-        } catch (ArrayIndexOutOfBoundsException | NumberFormatException whatVersionAreYouUsingException) {
-            LogUtils.error(logger, "Error extracting server version: Unable to parse Bukkit version format.");
-            return false;
-        }
-
-        // Warn if the server version is a snapshot version
-        if (pluginVersion.contains("SNAPSHOT")) {
-            logger.warn("You are using a snapshot version of RealisticPlantGrowth!");
-        }
-
-        // Version below Minecraft 1.20.1 are not supported (due to createBlockState API change).
-        if (minorReleaseVersion < 20 || (minorReleaseVersion == 20 && microReleaseVersion == 0)) {
-            logger.error("Unsupported server version: This plugin requires Minecraft 1.20.1 or higher.");
-            return false;
-        }
-
-        // Assign the correct VersionMapper based on the server version
-        if (minorReleaseVersion == 20 && microReleaseVersion <= 3) {
-            versionMapper = new Version_1_20();
-            logger.info("Implementation initialized for Minecraft 1.20.1 - 1.20.3.");
-        }
-
-        // Version 1.20.4 - 1.21.3
-        if (minorReleaseVersion <= 21 && microReleaseVersion <= 3) {
-            versionMapper = new Version_1_20_4();
-            logger.info("Implementation initialized for Minecraft 1.20.4 - 1.21.3.");
-        }
-
-        // Version >= 1.21.4
-        else {
-            versionMapper = new Version_1_21_4();
-            logger.info("Implementation initialized for Minecraft 1.21.4 and above.");
-        }
-
-        return true;
-    }
 
     /**
      * Registers the primary command executor for the {@link RealisticPlantGrowth} plugin.
@@ -231,7 +165,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
 
     /**
      * Updates the plugin variables and configurations based on the latest settings.
-     * This method refreshes the {@link ConfigManagerOld}, {@link MessageManager}, logging settings,
+     * This method refreshes the {@link ConfigManager}, {@link MessageManager}, logging settings,
      * and various cached data used by the plugin.
      */
     public void updateVariables() {
@@ -246,7 +180,6 @@ public class RealisticPlantGrowth extends JavaPlugin {
         BiomeChecker.clearCache();
         registerListeners();
 
-        //TODO: Read Update Interval from ConfigManagerOld
         if (updateChecker != null) {
             updateChecker.cancelScheduledTask();
             updateChecker = null;

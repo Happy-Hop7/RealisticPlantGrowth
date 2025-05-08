@@ -5,6 +5,7 @@ import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper
 import de.nightevolution.realisticplantgrowth.utils.version.versions.*;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.Nullable;
 
 public class ServerEnvironmentChecker {
 
@@ -35,20 +36,21 @@ public class ServerEnvironmentChecker {
             return true;
 
         } catch (ClassNotFoundException ignored) {
-            logger.error("... during the BETA only Paper forks are supported.");
+            logger.error("Unsupported server: Paper or compatible fork required during BETA.");
             return false;
         }
     }
 
     /**
-     * Checks the server version and initializes the appropriate {@link VersionMapper}.
+     * Checks the server version and returns the appropriate {@link VersionMapper}.
      * <p>
      * This method determines the server version by extracting it from the Bukkit server class package name.
      * It then sets the corresponding version mapper based on the extracted version.
      *
-     * @return {@code true} if the version check and initialization are successful, {@code false} otherwise.
+     * @return Subclass of {@link  VersionMapper} if the version check and initialization are successful, {@code null} otherwise.
      */
-    public boolean checkVersion() {
+    @Nullable
+    public VersionMapper checkVersion() {
 
         int minorReleaseVersion;
         int microReleaseVersion;
@@ -70,7 +72,7 @@ public class ServerEnvironmentChecker {
 
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException whatVersionAreYouUsingException) {
             LogUtils.error(logger, "Error extracting server version: Unable to parse Bukkit version format.");
-            return false;
+            return null;
         }
 
         // Warn if the server version is a snapshot version
@@ -81,31 +83,25 @@ public class ServerEnvironmentChecker {
         // Version below Minecraft 1.20.1 are not supported (due to createBlockState API change).
         if (minorReleaseVersion < 20 || (minorReleaseVersion == 20 && microReleaseVersion == 0)) {
             logger.error("Unsupported server version: This plugin requires Minecraft 1.20.1 or higher.");
-            return false;
+            return null;
         }
 
         // Assign the correct VersionMapper based on the server version
         if (minorReleaseVersion == 20 && microReleaseVersion <= 3) {
-            versionMapper = new Version_1_20();
             logger.info("Implementation initialized for Minecraft 1.20.1 - 1.20.3.");
+            return new Version_1_20();
         }
 
         // Version 1.20.4 - 1.21.3
         if (minorReleaseVersion <= 21 && microReleaseVersion <= 3) {
-            versionMapper = new Version_1_20_4();
             logger.info("Implementation initialized for Minecraft 1.20.4 - 1.21.3.");
+            return new Version_1_20_4();
         }
 
         // Version >= 1.21.4
         else {
-            versionMapper = new Version_1_21_4();
             logger.info("Implementation initialized for Minecraft 1.21.4 and above.");
+            return new Version_1_21_4();
         }
-
-        return true;
-    }
-
-    public VersionMapper getVersionMapper() {
-        return versionMapper;
     }
 }
