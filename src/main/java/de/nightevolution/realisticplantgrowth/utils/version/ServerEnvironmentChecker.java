@@ -2,7 +2,9 @@ package de.nightevolution.realisticplantgrowth.utils.version;
 
 import de.nightevolution.realisticplantgrowth.utils.LogUtils;
 import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper;
-import de.nightevolution.realisticplantgrowth.utils.version.versions.*;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.versions.Version_1_20;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.versions.Version_1_20_4;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.versions.Version_1_21_4;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;

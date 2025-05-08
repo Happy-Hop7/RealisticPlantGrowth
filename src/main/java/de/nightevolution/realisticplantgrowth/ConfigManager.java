@@ -1,7 +1,7 @@
 package de.nightevolution.realisticplantgrowth;
 
 import de.nightevolution.realisticplantgrowth.utils.LogUtils;
-import de.nightevolution.realisticplantgrowth.utils.enums.MainConfigPath;
+import de.nightevolution.realisticplantgrowth.utils.enums.ConfigPath;
 import de.nightevolution.realisticplantgrowth.utils.exception.ConfigurationException;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
@@ -354,7 +354,7 @@ public class ConfigManager {
                 return SUPPORTED_LANGUAGE_CODES.getFirst();
             }
 
-            String configuredCode = config.getString(MainConfigPath.GENERAL_LANGUAGE_CODE.getPath());
+            String configuredCode = config.getString(ConfigPath.GENERAL_LANGUAGE_CODE.getPath());
             return (configuredCode != null) ? configuredCode : SUPPORTED_LANGUAGE_CODES.getFirst();
 
         } finally {
@@ -369,7 +369,7 @@ public class ConfigManager {
     public boolean isDebug() {
         configLock.readLock().lock();
         try {
-            return config != null && config.getBoolean(MainConfigPath.LOGGING_DEBUG_LOG.getPath());
+            return config != null && config.getBoolean(ConfigPath.LOGGING_DEBUG_LOG.getPath());
         } finally {
             configLock.readLock().unlock();
         }
@@ -382,7 +382,7 @@ public class ConfigManager {
     public boolean isVerbose() {
         configLock.readLock().lock();
         try {
-            return config != null && config.getBoolean(MainConfigPath.VERBOSE.getPath());
+            return config != null && config.getBoolean(ConfigPath.VERBOSE.getPath());
         } finally {
             configLock.readLock().unlock();
         }

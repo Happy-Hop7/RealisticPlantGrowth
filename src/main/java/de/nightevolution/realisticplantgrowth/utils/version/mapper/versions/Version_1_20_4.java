@@ -1,17 +1,14 @@
-package de.nightevolution.realisticplantgrowth.utils.version.versions;
+package de.nightevolution.realisticplantgrowth.utils.version.mapper.versions;
 
 import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper;
 import org.bukkit.Material;
 
-public class Version_1_21_4 extends VersionMapper {
+public class Version_1_20_4 extends VersionMapper {
 
-    public Version_1_21_4() {
+
+    public Version_1_20_4() {
         super();
-
-        plants.add(Material.valueOf("PALE_HANGING_MOSS"));
-        downwardsGrowingPlants.add(Material.valueOf("PALE_HANGING_MOSS"));
         reload();
-
     }
 
     @Override
@@ -34,3 +31,4 @@ public class Version_1_21_4 extends VersionMapper {
         return Material.valueOf("TORCHFLOWER");
     }
 }
+

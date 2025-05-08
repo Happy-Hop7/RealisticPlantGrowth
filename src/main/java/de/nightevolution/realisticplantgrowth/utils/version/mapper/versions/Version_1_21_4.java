@@ -1,17 +1,22 @@
-package de.nightevolution.realisticplantgrowth.utils.version.versions;
+package de.nightevolution.realisticplantgrowth.utils.version.mapper.versions;
 
 import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper;
 import org.bukkit.Material;
 
-public class Version_1_20 extends VersionMapper {
-    public Version_1_20() {
+public class Version_1_21_4 extends VersionMapper {
+
+    public Version_1_21_4() {
         super();
+
+        plants.add(Material.valueOf("PALE_HANGING_MOSS"));
+        downwardsGrowingPlants.add(Material.valueOf("PALE_HANGING_MOSS"));
         reload();
+
     }
 
     @Override
     public Material getGrassMaterial() {
-        return Material.valueOf("GRASS");
+        return Material.valueOf("SHORT_GRASS");
     }
 
     @Override

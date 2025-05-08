@@ -9,9 +9,8 @@ import de.nightevolution.realisticplantgrowth.utils.MetricsHandler;
 import de.nightevolution.realisticplantgrowth.utils.version.ServerEnvironmentChecker;
 import de.nightevolution.realisticplantgrowth.utils.version.UpdateChecker;
 import de.nightevolution.realisticplantgrowth.utils.biome.BiomeChecker;
-import de.nightevolution.realisticplantgrowth.utils.enums.MainConfigPath;
+import de.nightevolution.realisticplantgrowth.utils.enums.ConfigPath;
 import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper;
-import de.nightevolution.realisticplantgrowth.utils.version.versions.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -87,30 +86,26 @@ public class RealisticPlantGrowth extends JavaPlugin {
         cm = new ConfigManager(this);
         logger = LogUtils.getLogger(this.getClass());
 
-        logger.info("Info1");
-        logger.warn("Warning1");
-        logger.error("Error1");
 
-
-        ServerEnvironmentChecker serverEnvironmentChecker = new ServerEnvironmentChecker(pluginVersion);
-        versionMapper = serverEnvironmentChecker.checkVersion();
-        if (versionMapper != null) {
-            logger.info("Version check passed.");
-        } else {
-            logger.error("Server version not supported!");
-            disablePlugin();
-        }
-
-        isPaperFork = serverEnvironmentChecker.checkFork();
-        if(!isPaperFork) {
-            logger.error("Server fork not supported!");
-            disablePlugin();
-        }
+//        ServerEnvironmentChecker serverEnvironmentChecker = new ServerEnvironmentChecker(pluginVersion);
+//        versionMapper = serverEnvironmentChecker.checkVersion();
+//        if (versionMapper != null) {
+//            logger.info("Version check passed.");
+//        } else {
+//            logger.error("Server version not supported!");
+//            disablePlugin();
+//        }
+//
+//        isPaperFork = serverEnvironmentChecker.checkFork();
+//        if(!isPaperFork) {
+//            logger.error("Server fork not supported!");
+//            disablePlugin();
+//        }
 
         // Starts bStats metrics, if enabled in the config
         new MetricsHandler(this, cm);
 
-        updateVariables();
+//        updateVariables();
 
         drawLogo();
 
@@ -185,8 +180,8 @@ public class RealisticPlantGrowth extends JavaPlugin {
             updateChecker = null;
         }
 
-        if (cm.getConfig().getBoolean(MainConfigPath.PLUGIN_UPDATES_CHECK_FOR_UPDATES.getPath())) {
-            updateChecker = new UpdateChecker(cm.getConfig().getInt(MainConfigPath.PLUGIN_UPDATES_INTERVAL_HOURS.getPath()));
+        if (cm.getConfig().getBoolean(ConfigPath.PLUGIN_UPDATES_CHECK_FOR_UPDATES.getPath())) {
+            updateChecker = new UpdateChecker(cm.getConfig().getInt(ConfigPath.PLUGIN_UPDATES_INTERVAL_HOURS.getPath()));
         }
 
     }
@@ -282,7 +277,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
     @Deprecated(forRemoval = true)
     @NotNull
     public ConfigManagerOld getConfigManager() {
-        return cmOld;
+        return ConfigManagerOld.get();
     }
 
     /**
@@ -313,10 +308,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
      */
     @Deprecated(forRemoval = true)
     public boolean isWorldDisabled(@NotNull World world) {
-        if (cmOld.getEnabled_worlds().contains(world.getName())) {
-            return cmOld.isUse_enabled_worlds_as_world_blacklist();
-        }
-        return !cmOld.isUse_enabled_worlds_as_world_blacklist();
+        return true;
     }
 
 
@@ -327,7 +319,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
      */
     @Deprecated(forRemoval = true)
     public static boolean isDebug() {
-        return cmOld.isDebug_log();
+        return true;
     }
 
     /**
@@ -337,7 +329,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
      */
     @Deprecated(forRemoval = true)
     public static boolean isVerbose() {
-        return cmOld.isVerbose();
+        return true;
     }
 
 }

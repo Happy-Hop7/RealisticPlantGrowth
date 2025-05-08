@@ -1,6 +1,6 @@
 package de.nightevolution.realisticplantgrowth.utils.enums;
 
-public enum MainConfigPath {
+public enum ConfigPath {
     // General Settings
     GENERAL_SECTION("general"),
     GENERAL_LANGUAGE_CODE("general.language_code"),
@@ -69,7 +69,7 @@ public enum MainConfigPath {
 
     private final String path;
 
-    MainConfigPath(String path) {
+    ConfigPath(String path) {
         this.path = path;
     }
 
