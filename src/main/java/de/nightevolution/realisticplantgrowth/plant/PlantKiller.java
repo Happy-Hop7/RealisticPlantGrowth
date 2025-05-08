@@ -3,7 +3,7 @@ package de.nightevolution.realisticplantgrowth.plant;
 import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
-import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.*;
 import org.bukkit.block.Block;

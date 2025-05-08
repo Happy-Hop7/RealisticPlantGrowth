@@ -1,4 +1,4 @@
-package de.nightevolution.realisticplantgrowth.utils.mapper;
+package de.nightevolution.realisticplantgrowth.utils.version.mapper;
 
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;

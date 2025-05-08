@@ -4,7 +4,7 @@ import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.MessageManager;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
-import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 

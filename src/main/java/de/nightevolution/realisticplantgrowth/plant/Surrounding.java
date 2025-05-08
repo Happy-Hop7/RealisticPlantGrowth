@@ -7,7 +7,7 @@ import de.nightevolution.realisticplantgrowth.utils.biome.BiomeChecker;
 import de.nightevolution.realisticplantgrowth.utils.biome.Modifier;
 import de.nightevolution.realisticplantgrowth.utils.enums.DeathChanceType;
 import de.nightevolution.realisticplantgrowth.utils.enums.GrowthModifierType;
-import de.nightevolution.realisticplantgrowth.utils.mapper.MaterialMapper;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.MaterialMapper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

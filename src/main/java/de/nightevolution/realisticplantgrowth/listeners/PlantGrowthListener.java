@@ -3,7 +3,7 @@ package de.nightevolution.realisticplantgrowth.listeners;
 import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
-import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper;
 import de.nightevolution.realisticplantgrowth.plant.PlantKiller;
 import de.nightevolution.realisticplantgrowth.plant.SpecialBlockSearch;
 import de.nightevolution.realisticplantgrowth.plant.Surrounding;

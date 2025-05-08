@@ -1,4 +1,4 @@
-package de.nightevolution.realisticplantgrowth.utils.rest;
+package de.nightevolution.realisticplantgrowth.utils.version.rest;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -5,7 +5,7 @@ import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
 import de.nightevolution.realisticplantgrowth.utils.enums.DeathChanceType;
 import de.nightevolution.realisticplantgrowth.utils.enums.GrowthModifierType;
-import de.nightevolution.realisticplantgrowth.utils.mapper.MaterialMapper;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.MaterialMapper;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.route.Route;
 import org.bukkit.Material;

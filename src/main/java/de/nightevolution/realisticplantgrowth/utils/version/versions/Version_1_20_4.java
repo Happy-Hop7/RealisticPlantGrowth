@@ -1,17 +1,19 @@
-package de.nightevolution.realisticplantgrowth.utils.mapper.versions;
+package de.nightevolution.realisticplantgrowth.utils.version.versions;
 
-import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper;
 import org.bukkit.Material;
 
-public class Version_1_20 extends VersionMapper {
-    public Version_1_20() {
+public class Version_1_20_4 extends VersionMapper {
+
+
+    public Version_1_20_4() {
         super();
         reload();
     }
 
     @Override
     public Material getGrassMaterial() {
-        return Material.valueOf("GRASS");
+        return Material.valueOf("SHORT_GRASS");
     }
 
     @Override
@@ -29,3 +31,4 @@ public class Version_1_20 extends VersionMapper {
         return Material.valueOf("TORCHFLOWER");
     }
 }
+

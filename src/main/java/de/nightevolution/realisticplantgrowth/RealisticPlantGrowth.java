@@ -5,15 +5,17 @@ import de.nightevolution.realisticplantgrowth.listeners.other.*;
 import de.nightevolution.realisticplantgrowth.listeners.plant.*;
 import de.nightevolution.realisticplantgrowth.listeners.player.*;
 import de.nightevolution.realisticplantgrowth.utils.LogUtils;
-import de.nightevolution.realisticplantgrowth.utils.UpdateChecker;
+import de.nightevolution.realisticplantgrowth.utils.MetricsHandler;
+import de.nightevolution.realisticplantgrowth.utils.version.ServerEnvironmentChecker;
+import de.nightevolution.realisticplantgrowth.utils.version.UpdateChecker;
 import de.nightevolution.realisticplantgrowth.utils.biome.BiomeChecker;
-import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
-import de.nightevolution.realisticplantgrowth.utils.mapper.versions.*;
+import de.nightevolution.realisticplantgrowth.utils.enums.MainConfigPath;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper;
+import de.nightevolution.realisticplantgrowth.utils.version.versions.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;
@@ -37,7 +39,12 @@ public class RealisticPlantGrowth extends JavaPlugin {
     /**
      * The {@link ConfigManagerOld} used by the {@link RealisticPlantGrowth} plugin.
      */
-    private static ConfigManagerOld cm;
+    private static ConfigManagerOld cmOld;
+
+    /**
+     * The {@link ConfigManager} used by the {@link RealisticPlantGrowth} plugin.
+     */
+    private ConfigManager cm;
 
     /**
      * The {@link VersionMapper} used by the {@link RealisticPlantGrowth} plugin.
@@ -60,11 +67,6 @@ public class RealisticPlantGrowth extends JavaPlugin {
     private UpdateChecker updateChecker;
 
     /**
-     * The {@link Metrics} instance for collecting anonymous usage data for the {@link RealisticPlantGrowth} plugin.
-     */
-    private Metrics metrics;
-
-    /**
      * The name of the debug log file used by the {@link RealisticPlantGrowth} plugin.
      */
     private static final String logFile = "debug";
@@ -80,15 +82,17 @@ public class RealisticPlantGrowth extends JavaPlugin {
 
         // new paper way to do this:
         //this.pluginVersion = getPluginMeta().getVersion();
+        LogUtils.initialize(this.getDataFolder(), false, false);
 
-        LogUtils.initialize(this.getDataFolder(), true, true);
+        cm = new ConfigManager(this);
         logger = LogUtils.getLogger(this.getClass());
 
         logger.info("Info1");
         logger.warn("Warning1");
         logger.error("Error1");
 
-
+        // Starts bStats metrics, if enabled in the config
+        new MetricsHandler(this, cm);
 //        try {
 //            cm = ConfigManagerOld.get();
 //        } catch (ConfigurationException e) {
@@ -101,37 +105,19 @@ public class RealisticPlantGrowth extends JavaPlugin {
 //
 //        checkServerFork();
 //
-//        if (checkServerVersion()) {
-//            logger.info("Version check passed.");
-//        } else {
-//            logger.error("Server version not supported!");
-//            disablePlugin();
-//        }
+        ServerEnvironmentChecker serverEnvironmentChecker = new ServerEnvironmentChecker(pluginVersion);
+        if (serverEnvironmentChecker.checkVersion()) {
+            logger.info("Version check passed.");
+        } else {
+            logger.error("Server version not supported!");
+            disablePlugin();
+        }
+
+        isPaperFork = serverEnvironmentChecker.checkFork();
+        if(serverEnvironmentChecker.checkFork())
 //        updateVariables();
 //        registerMetrics();
         drawLogo();
-    }
-
-
-    /**
-     * Checks the server implementation to determine if it is running on a Paper or Spigot server.
-     * <p>
-     * This method attempts to load a Paper-specific class. If the class is found, it indicates that
-     * the server is a Paper fork, and the corresponding flag is set. If the class cannot be found,
-     * it assumes the server is running on Spigot or another non-Paper implementation.
-     * </p>
-     */
-    private void checkServerFork() {
-        try {
-            logger.info("Checking server version...");
-            // Attempt to load a Paper-specific class to verify if running on a Paper fork
-            Class.forName("io.papermc.paper.util.Tick");
-            isPaperFork = true;
-            logger.info("... using Paper implementation.");
-        } catch (ClassNotFoundException ignored) {
-            isPaperFork = false;
-            logger.info("... using Spigot implementation.");
-        }
     }
 
     /**
@@ -231,24 +217,6 @@ public class RealisticPlantGrowth extends JavaPlugin {
         new StructureGrowListener(instance);
     }
 
-    /**
-     * Registers metrics using bStats if the corresponding configuration setting is enabled.
-     * <p> bStats is a service that provides statistics and insights about plugin usage. </p>
-     * <p> For more information about bStats, visit the bStats page:
-     * <a href="https://bstats.org/plugin/bukkit/Realistic%20Plant%20Growth/20634">bStats Page</a>
-     * </p>
-     */
-    private void registerMetrics() {
-        // Check if the use_metrics configuration setting is enabled
-        if (cm.use_metrics()) {
-            // Log that bStats is enabled
-            logger.info("bStats enabled.");
-
-            // Create a new Metrics instance with the plugin and the unique plugin ID (20634)
-            metrics = new Metrics(this, 20634);
-        } else
-            logger.info("bStats disabled.");
-    }
 
     /**
      * Reloads the plugin by refreshing YAML files, unregistering event handlers, and updating variables.
@@ -269,7 +237,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
     public void updateVariables() {
 
         LogUtils.setVerbose(cm.isVerbose());
-        LogUtils.setDebug(cm.isDebug_log());
+        LogUtils.setDebug(cm.isDebug());
 
         cmdManager = new CommandManager();
 
@@ -284,8 +252,8 @@ public class RealisticPlantGrowth extends JavaPlugin {
             updateChecker = null;
         }
 
-        if (cm.check_for_updates()) {
-            updateChecker = new UpdateChecker(12);
+        if (cm.getConfig().getBoolean(MainConfigPath.PLUGIN_UPDATES_CHECK_FOR_UPDATES.getPath())) {
+            updateChecker = new UpdateChecker(cm.getConfig().getInt(MainConfigPath.PLUGIN_UPDATES_INTERVAL_HOURS.getPath()));
         }
 
     }
@@ -301,7 +269,6 @@ public class RealisticPlantGrowth extends JavaPlugin {
         versionMapper = null;
         logger = null;
         cmdManager = null;
-        metrics = null;
         pluginVersion = null;
 
         if (updateChecker != null) {
@@ -379,9 +346,10 @@ public class RealisticPlantGrowth extends JavaPlugin {
      *
      * @return The {@link ConfigManagerOld} instance managing plugin configurations.
      */
+    @Deprecated(forRemoval = true)
     @NotNull
     public ConfigManagerOld getConfigManager() {
-        return cm;
+        return cmOld;
     }
 
     /**
@@ -410,11 +378,12 @@ public class RealisticPlantGrowth extends JavaPlugin {
      * @param world The {@link World} to check for plant growth modification.
      * @return {@code true} if growth modification is enabled for the world, {@code false} otherwise.
      */
+    @Deprecated(forRemoval = true)
     public boolean isWorldDisabled(@NotNull World world) {
-        if (cm.getEnabled_worlds().contains(world.getName())) {
-            return cm.isUse_enabled_worlds_as_world_blacklist();
+        if (cmOld.getEnabled_worlds().contains(world.getName())) {
+            return cmOld.isUse_enabled_worlds_as_world_blacklist();
         }
-        return !cm.isUse_enabled_worlds_as_world_blacklist();
+        return !cmOld.isUse_enabled_worlds_as_world_blacklist();
     }
 
 
@@ -423,8 +392,9 @@ public class RealisticPlantGrowth extends JavaPlugin {
      *
      * @return {@code true} if debug mode is enabled, {@code false} otherwise.
      */
+    @Deprecated(forRemoval = true)
     public static boolean isDebug() {
-        return cm.isDebug_log();
+        return cmOld.isDebug_log();
     }
 
     /**
@@ -432,8 +402,9 @@ public class RealisticPlantGrowth extends JavaPlugin {
      *
      * @return {@code true} if verbose mode is enabled, {@code false} otherwise.
      */
+    @Deprecated(forRemoval = true)
     public static boolean isVerbose() {
-        return cm.isVerbose();
+        return cmOld.isVerbose();
     }
 
 }

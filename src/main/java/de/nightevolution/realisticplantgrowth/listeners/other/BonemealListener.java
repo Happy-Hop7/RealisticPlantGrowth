@@ -2,7 +2,7 @@ package de.nightevolution.realisticplantgrowth.listeners.other;
 
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import de.nightevolution.realisticplantgrowth.utils.Logger;
-import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;

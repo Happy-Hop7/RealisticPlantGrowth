@@ -1,8 +1,9 @@
-package de.nightevolution.realisticplantgrowth.utils;
+package de.nightevolution.realisticplantgrowth.utils.version;
 
 import com.google.gson.Gson;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
-import de.nightevolution.realisticplantgrowth.utils.rest.ModrinthVersion;
+import de.nightevolution.realisticplantgrowth.utils.LogUtils;
+import de.nightevolution.realisticplantgrowth.utils.version.rest.ModrinthVersion;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 
@@ -20,6 +21,8 @@ import java.util.function.Consumer;
 /**
  * The UpdateChecker class is responsible for checking updates for the {@link RealisticPlantGrowth} plugin
  * using the Modrinth API.
+ * <p>
+ * You can find the latest version of the plugin at <a href="https://modrinth.com/plugin/realistic-plant-growth/version/latest">modrinth.com</a>
  */
 public class UpdateChecker {
 

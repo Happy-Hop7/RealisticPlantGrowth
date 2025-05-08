@@ -1,6 +1,6 @@
-package de.nightevolution.realisticplantgrowth.utils.mapper.versions;
+package de.nightevolution.realisticplantgrowth.utils.version.versions;
 
-import de.nightevolution.realisticplantgrowth.utils.mapper.VersionMapper;
+import de.nightevolution.realisticplantgrowth.utils.version.mapper.VersionMapper;
 import org.bukkit.Material;
 
 public class Version_1_21_4 extends VersionMapper {
