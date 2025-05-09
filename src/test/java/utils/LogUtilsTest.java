@@ -488,6 +488,161 @@ public class LogUtilsTest {
         assertTrue(messages.isEmpty(), "Expected no log messages");
     }
 
+    // --- Tests for Methods with Parameters ---
+
+    @Test
+    @DisplayName("Test18: Log INFO with parameters")
+    public void testLogInfoWithParameters() {
+        // Define a message with placeholders and parameters
+        String message = "Player {} logged in from {} with level {}";
+        String playerName = "Steve";
+        String ipAddress = "192.168.1.1";
+        int level = 42;
+
+        // Call the method with parameters
+        LogUtils.info(mockPluginLogger, message, playerName, ipAddress, level);
+
+        // Get logged messages
+        List<String> messages = testAppender.getMessages();
+
+        // Expected formatted message
+        String expectedMessage = "Player Steve logged in from 192.168.1.1 with level 42";
+
+        // Verify the message was formatted correctly and logged
+        assertLogLine(messages.getFirst(), LOG_LVL.INFO, expectedMessage, RealisticPlantGrowth.class);
+    }
+
+    @Test
+    @DisplayName("Test19: Log WARN with parameters")
+    public void testLogWarnWithParameters() {
+        // Define a message with placeholders and parameters
+        String message = "Warning: Found {} invalid blocks at {}, expected {}";
+        int count = 5;
+        String location = "spawn";
+        String expected = "stone";
+
+        // Call the method with parameters
+        LogUtils.warn(mockPluginLogger, message, count, location, expected);
+
+        // Get logged messages
+        List<String> messages = testAppender.getMessages();
+
+        // Expected formatted message
+        String expectedMessage = "Warning: Found 5 invalid blocks at spawn, expected stone";
+
+        // Verify the message was formatted correctly and logged
+        assertLogLine(messages.getFirst(), LOG_LVL.WARN, expectedMessage, RealisticPlantGrowth.class);
+    }
+
+    @Test
+    @DisplayName("Test20: Log ERROR with parameters")
+    public void testLogErrorWithParameters() {
+        // Define a message with placeholders and parameters
+        String message = "Error code {}: Failed to load {} at {}";
+        int errorCode = 404;
+        File resource = new File("Config.yml");
+        String path = "/plugins/config/";
+
+        // Call the method with parameters
+        LogUtils.error(mockPluginLogger, message, errorCode, resource, path);
+
+        // Get logged messages
+        List<String> messages = testAppender.getMessages();
+
+        // Expected formatted message
+        String expectedMessage = "Error code 404: Failed to load Config.yml at /plugins/config/";
+
+        // Verify the message was formatted correctly and logged
+        assertLogLine(messages.getFirst(), LOG_LVL.ERROR, expectedMessage, RealisticPlantGrowth.class);
+    }
+
+    @Test
+    @DisplayName("Test21: Verbose logging with parameters")
+    public void testVerboseLoggingWithParameters() {
+        // Enable verbose mode
+        LogUtils.setVerbose(true);
+        Logger logger = getClassLogger(LogUtilsTest.class);
+
+        // Define a message with placeholders and parameters
+        String message = "Processing chunk at x={}, z={} with {} entities";
+        int x = 123;
+        int z = 456;
+        int entities = 42;
+
+        // Call verbose method with parameters
+        LogUtils.verbose(logger, message, x, z, entities);
+
+        // Get logged messages
+        List<String> messages = testAppender.getMessages();
+
+        // Expected verbose formatted message
+        String expectedMessage = "VERBOSE >> Processing chunk at x=123, z=456 with 42 entities";
+
+        // Verify the logger.info method is called with the expected serialized message
+        assertLogLineVerbose(messages.getFirst(), LOG_LVL.INFO, expectedMessage, LogUtilsTest.class);
+    }
+
+    @Test
+    @DisplayName("Test22: Verbose logging with parameters disabled")
+    public void testVerboseLoggingWithParametersDisabled() {
+        // Disable verbose mode
+        LogUtils.setVerbose(false);
+        Logger logger = getClassLogger(LogUtilsTest.class);
+
+        // Call verbose method with parameters
+        LogUtils.verbose(logger, "This {} should {} not {}", "message", "definitely", "log");
+
+        // Get logged messages
+        List<String> messages = testAppender.getMessages();
+
+        // Verify that logger.info is never called
+        assertTrue(messages.isEmpty(), "Expected no log messages when verbose mode is disabled");
+    }
+
+    @Test
+    @DisplayName("Test23: Log INFO with mixed parameter types")
+    public void testLogInfoWithMixedParameters() {
+        // Define a message with placeholders and mixed parameter types
+        String message = "Server status: online={}, players={}, uptime={} minutes, version={}";
+        boolean online = true;
+        int players = 42;
+        double uptime = 123.45;
+        String version = "1.19.2";
+
+        // Call the method with parameters
+        LogUtils.info(mockPluginLogger, message, online, players, uptime, version);
+
+        // Get logged messages
+        List<String> messages = testAppender.getMessages();
+
+        // Expected formatted message
+        String expectedMessage = "Server status: online=true, players=42, uptime=123.45 minutes, version=1.19.2";
+
+        // Verify the message was formatted correctly and logged
+        assertLogLine(messages.getFirst(), LOG_LVL.INFO, expectedMessage, RealisticPlantGrowth.class);
+    }
+
+    @Test
+    @DisplayName("Test24: ERROR logging with null parameters")
+    public void testLogErrorWithNullParameters() {
+        // Define a message with placeholders where some parameters are null
+        String message = "Failed to load player {}: {} is missing";
+        String playerName = "Alex";
+        String missingData = null;
+
+        // Call the method with null parameter
+        LogUtils.error(mockPluginLogger, message, playerName, missingData);
+
+        // Get logged messages
+        List<String> messages = testAppender.getMessages();
+
+        // Expected formatted message with null displayed as "null"
+        String expectedMessage = "Failed to load player Alex: null is missing";
+
+        // Verify the message was formatted correctly and logged
+        assertLogLine(messages.getFirst(), LOG_LVL.ERROR, expectedMessage, RealisticPlantGrowth.class);
+    }
+
     /**
      * Helper method to assert that the logged line matches the expected format.
      * This method checks if the log message matches a regex pattern based on the log level, message, and class.

@@ -1,12 +1,12 @@
 package de.nightevolution.realisticplantgrowth.utils;
 
+import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,16 +19,17 @@ import java.util.concurrent.Executors;
 
 /**
  * Utility class for handling logging with different levels of verbosity and debug information.
+ * Compatible with standard log4j2 methods while providing additional functionality.
  */
 public class LogUtils {
     /** Default prefix for the plugin log messages */
     private static final String PLUGIN_PREFIX = "RealisticPlantGrowth";
 
     /** Prefix for debug messages */
-    private static final String DEBUG_PREFIX = "DEBUG >> ";
+    private static final Component DEBUG_PREFIX = Component.text("DEBUG >> ", NamedTextColor.RED);
 
     /** Prefix for verbose messages */
-    private static final String VERBOSE_PREFIX = "VERBOSE >> ";
+    private static final Component VERBOSE_PREFIX = Component.text("VERBOSE >> ", NamedTextColor.DARK_RED);
 
     /** Logger instance for the plugin */
     private static final Logger PLUGIN_LOGGER = LogManager.getLogger(PLUGIN_PREFIX);
@@ -67,13 +68,22 @@ public class LogUtils {
         }
     }
 
-   /**
-    * Initializes the LogUtils class
-    */
-    public static void initialize(File pluginDir,boolean debug, boolean verbose) {
-        LogUtils.logDir =  new File(pluginDir + File.separator + "log");
+    /**
+     * Initializes the LogUtils class
+     */
+    public static void initialize(RealisticPlantGrowth plugin, boolean debug, boolean verbose) {
         LogUtils.debug = debug;
         LogUtils.verbose = verbose;
+        logDir = new File(plugin.getDataFolder(), "log");
+    }
+
+    /**
+     * Initializes the LogUtils class
+     */
+    public static void initialize(File dataFolder, boolean debug, boolean verbose) {
+        LogUtils.debug = debug;
+        LogUtils.verbose = verbose;
+        logDir = dataFolder;
     }
 
     /**
@@ -83,57 +93,86 @@ public class LogUtils {
         logExecutor.shutdown();
     }
 
-    // --- Logging Methods ---
+    // --- Standard Log4j2 Compatible Methods ---
 
     /**
-     * Logs an info message.
-     *
-     * @param component the message to log
+     * Logs a message at DEBUG level
      */
-    public static void info(Logger logger, Component component) {
-        logger.info(ANSIComponentSerializer.ansi().serialize(component));
-    }
-
-    /**
-     * Logs a warning message.
-     *
-     * @param logger    the logger to use
-     * @param component the message to log
-     */
-    public static void warn(Logger logger, Component component) {
-        logger.warn(ANSIComponentSerializer.ansi().serialize(component));
-    }
-
-    /**
-     * Logs an error message.
-     *
-     * @param logger    the logger to use
-     * @param message the message to log
-     */
-    public static void error(Logger logger, Component message) {
-        logger.error(ANSIComponentSerializer.ansi().serialize(message));
-        logToFileAsync(LogFile.ERROR, PlainTextComponentSerializer.plainText().serialize(message));
-    }
-
-    /**
-     * Logs an error message.
-     *
-     * @param logger    the logger to use
-     * @param message the message to log
-     */
-    public static void error(Logger logger, Component message, Throwable t) {
-        logger.error(ANSIComponentSerializer.ansi().serialize(message), t);
-        logToFileAsync(LogFile.ERROR, PlainTextComponentSerializer.plainText().serialize(message));
-        logToFileAsync(LogFile.ERROR, t.toString());
-        for (StackTraceElement stackTraceElement : t.getStackTrace()) {
-            logToFileAsync(LogFile.ERROR, "\tat " + stackTraceElement);
+    public static void debug(Logger logger, String message) {
+        if (debug || verbose) {
+            Component prefixedComponent = DEBUG_PREFIX.append(Component.text(message));
+            logger.info(ANSIComponentSerializer.ansi().serialize(prefixedComponent));
+            logToFileAsync(getLogFileName(), PlainTextComponentSerializer.plainText().serialize(prefixedComponent));
         }
     }
 
     /**
-     * Logs an error message.
-     *
-     * @param message the message string to be logged
+     * Logs a message at DEBUG level with parameters
+     */
+    public static void debug(Logger logger, String message, Object... params) {
+        if (debug || verbose) {
+            String formattedMessage = String.format(message.replace("{}", "%s"), params);
+            Component prefixedComponent = DEBUG_PREFIX.append(Component.text(formattedMessage));
+            logger.info(ANSIComponentSerializer.ansi().serialize(prefixedComponent));
+            logToFileAsync(getLogFileName(), PlainTextComponentSerializer.plainText().serialize(prefixedComponent));
+        }
+    }
+
+    /**
+     * Logs a message at DEBUG level
+     */
+    public static void debug(Logger logger, Component message) {
+        if (debug || verbose) {
+            Component prefixedComponent = DEBUG_PREFIX.append(message);
+            logger.info(ANSIComponentSerializer.ansi().serialize(prefixedComponent));
+            logToFileAsync(getLogFileName(), PlainTextComponentSerializer.plainText().serialize(prefixedComponent));
+        }
+    }
+
+    /**
+     * Logs a message at INFO level
+     */
+    public static void info(Logger logger, String message) {
+        logger.info(message);
+    }
+
+    /**
+     * Logs a message at INFO level with parameters
+     */
+    public static void info(Logger logger, String message, Object... params) {
+        logger.info(message, params);
+    }
+
+    /**
+     * Logs a message at INFO level
+     */
+    public static void info(Logger logger, Component message) {
+        logger.info(ANSIComponentSerializer.ansi().serialize(message));
+    }
+
+    /**
+     * Logs a message at WARN level
+     */
+    public static void warn(Logger logger, String message) {
+        logger.warn(message);
+    }
+
+    /**
+     * Logs a message at WARN level with parameters
+     */
+    public static void warn(Logger logger, String message, Object... params) {
+        logger.warn(message, params);
+    }
+
+    /**
+     * Logs a message at WARN level
+     */
+    public static void warn(Logger logger, Component message) {
+        logger.warn(ANSIComponentSerializer.ansi().serialize(message));
+    }
+
+    /**
+     * Logs a message at ERROR level
      */
     public static void error(Logger logger, String message) {
         logger.error(message);
@@ -141,80 +180,75 @@ public class LogUtils {
     }
 
     /**
-     * Logs an error message.
-     *
-     * @param message the message string to be logged
-     * @param t   the exception to be logged
+     * Logs a message at ERROR level with parameters
+     */
+    public static void error(Logger logger, String message, Object... params) {
+        logger.error(message, params);
+        String formattedMessage = String.format(message.replace("{}", "%s"), params);
+        logToFileAsync(LogFile.ERROR, formattedMessage);
+    }
+
+    /**
+     * Logs a message at ERROR level with exception
      */
     public static void error(Logger logger, String message, Throwable t) {
         logger.error(message, t);
         logToFileAsync(LogFile.ERROR, message);
-        logToFileAsync(LogFile.ERROR, t.toString());
-        for (StackTraceElement stackTraceElement : t.getStackTrace()) {
-            logToFileAsync(LogFile.ERROR, "\tat " + stackTraceElement);
-        }
+        logStackTrace(t);
     }
 
     /**
-     * Logs a verbose message if verbose mode is enabled.
-     *
-     * @param logger    the logger to use
-     * @param message the message to log
+     * Logs a message at ERROR level
      */
-    public static void verbose(Logger logger, Component message) {
-        if (verbose) {
-            Component prefixedComponent = applyPrefix(VERBOSE_PREFIX, NamedTextColor.DARK_RED, message);
-            info(logger, prefixedComponent);
-            logToFileAsync(LogFile.VERBOSE, PlainTextComponentSerializer.plainText().serialize(prefixedComponent));
-        }
-        // Skip message if verbose is not activated
+    public static void error(Logger logger, Component message) {
+        logger.error(ANSIComponentSerializer.ansi().serialize(message));
+        logToFileAsync(LogFile.ERROR, PlainTextComponentSerializer.plainText().serialize(message));
     }
 
     /**
+     * Logs a message at ERROR level with exception
+     */
+    public static void error(Logger logger, Component message, Throwable t) {
+        logger.error(ANSIComponentSerializer.ansi().serialize(message), t);
+        logToFileAsync(LogFile.ERROR, PlainTextComponentSerializer.plainText().serialize(message));
+        logStackTrace(t);
+    }
+
+    // --- Custom Logger Methods ---
+
+    /**
      * Logs a verbose message if verbose mode is enabled.
-     *
-     * @param logger  the logger to use
-     * @param message the message string to be logged
      */
     public static void verbose(Logger logger, String message) {
         if (verbose) {
-            Component prefixedComponent = applyPrefix(VERBOSE_PREFIX, NamedTextColor.DARK_RED, Component.text(message));
-            info(logger, prefixedComponent);
+            Component prefixedComponent = VERBOSE_PREFIX.append(Component.text(message));
+            logger.info(ANSIComponentSerializer.ansi().serialize(prefixedComponent));
             logToFileAsync(LogFile.VERBOSE, PlainTextComponentSerializer.plainText().serialize(prefixedComponent));
         }
-        // Skip message if verbose is not activated
     }
 
     /**
-     * Logs a debug message if debug mode is enabled.
-     *
-     * @param logger    the logger to use
-     * @param message the message to log
+     * Logs a verbose message with parameters if verbose mode is enabled.
      */
-    public static void debug(Logger logger, Component message) {
-        if (debug || verbose) {
-            Component prefixedComponent = applyPrefix(DEBUG_PREFIX, NamedTextColor.RED, message);
-            info(logger, prefixedComponent);
-            logToFileAsync(getLogFileName(), PlainTextComponentSerializer.plainText().serialize(prefixedComponent));
+    public static void verbose(Logger logger, String message, Object... params) {
+        if (verbose) {
+            String formattedMessage = String.format(message.replace("{}", "%s"), params);
+            Component prefixedComponent = VERBOSE_PREFIX.append(Component.text(formattedMessage));
+            logger.info(ANSIComponentSerializer.ansi().serialize(prefixedComponent));
+            logToFileAsync(LogFile.VERBOSE, PlainTextComponentSerializer.plainText().serialize(prefixedComponent));
         }
-        // Skip message if debug is not activated
     }
 
     /**
-     * Logs a debug message if debug mode is enabled.
-     *
-     * @param logger  the logger to use
-     * @param message the message string to be logged
+     * Logs a verbose message if verbose mode is enabled.
      */
-    public static void debug(Logger logger, String message) {
-        if (debug || verbose) {
-            Component prefixedComponent = applyPrefix(DEBUG_PREFIX, NamedTextColor.RED, Component.text(message));
-            info(logger, prefixedComponent);
-            logToFileAsync(getLogFileName(), PlainTextComponentSerializer.plainText().serialize(prefixedComponent));
+    public static void verbose(Logger logger, Component message) {
+        if (verbose) {
+            Component prefixedComponent = VERBOSE_PREFIX.append(message);
+            logger.info(ANSIComponentSerializer.ansi().serialize(prefixedComponent));
+            logToFileAsync(LogFile.VERBOSE, PlainTextComponentSerializer.plainText().serialize(prefixedComponent));
         }
-        // Skip message if debug is not activated
     }
-
 
     /**
      * Logs a message asynchronously to a separate file.
@@ -237,16 +271,14 @@ public class LogUtils {
         });
     }
 
-
-    // --- Private Methods ---
     /**
-     * Applies a prefix to the given component.
+     * Helper method to log stack traces to file
      */
-    private static Component applyPrefix(String prefix, NamedTextColor prefixColor ,Component component) {
-        return Component.text()
-                .append(Component.text(prefix, prefixColor))
-                .append(component)
-                .build();
+    private static void logStackTrace(Throwable t) {
+        logToFileAsync(LogFile.ERROR, t.toString());
+        for (StackTraceElement stackTraceElement : t.getStackTrace()) {
+            logToFileAsync(LogFile.ERROR, "\tat " + stackTraceElement);
+        }
     }
 
     /**
@@ -255,7 +287,6 @@ public class LogUtils {
      * @param logFile The file to check or create.
      */
     private static void createLogFileIfNeeded(File logFile) {
-
         if (!logFile.exists()) {
             PLUGIN_LOGGER.warn("Log file '{}' doesn't exist yet!", logFile);
             PLUGIN_LOGGER.info("Creating new file...");
@@ -282,10 +313,7 @@ public class LogUtils {
         return verbose ? LogFile.VERBOSE : LogFile.DEBUG;
     }
 
-
-
     // --- Getter and Setter ---
-
 
     /**
      * Sets the verbose flag.
@@ -318,5 +346,4 @@ public class LogUtils {
             return PLUGIN_LOGGER;
         }
     }
-
 }
