@@ -36,8 +36,8 @@ public class UpdateChecker {
     /**
      * Constructs a new {@link UpdateChecker} instance.
      */
-    public UpdateChecker(int updateInterval) {
-        this.plugin = RealisticPlantGrowth.getInstance();
+    public UpdateChecker(RealisticPlantGrowth plugin, int updateInterval) {
+        this.plugin = plugin;
         this.logger = LogUtils.getLogger(this.getClass());
         this.updateInterval = updateInterval;
         boolean isAutoUpdate = updateInterval >= 1;
@@ -106,7 +106,7 @@ public class UpdateChecker {
                 int responseCode = httpsGetResponse.statusCode();
 
                 LogUtils.debug(logger, "Modrinth API response code: " + responseCode);
-                LogUtils.debug(logger, "Modrinth API response body: " + httpsGetResponse.body());
+                LogUtils.verbose(logger, "Modrinth API response body: " + httpsGetResponse.body());
 
                 if (responseCode == 200) {
                     consumer.accept(getVersion(httpsGetResponse));
