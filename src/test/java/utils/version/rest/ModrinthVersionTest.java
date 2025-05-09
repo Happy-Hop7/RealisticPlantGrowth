@@ -1,12 +1,10 @@
 package utils.version.rest;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import de.nightevolution.realisticplantgrowth.utils.version.rest.ModrinthVersion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -92,10 +90,13 @@ public class ModrinthVersionTest {
         ModrinthVersion v2 = new ModrinthVersion();
 
         v1.setVersion_number("BETA-1.0.0");
+        v1.setVersions_type("beta");
         v2.setVersion_number("BETA-1.0.0");
+        v2.setVersions_type("beta");
 
         assertEquals(0, v1.compareTo(v2));
     }
+
 
     @Test
     public void testCompareToWithDifferentVersions() {
@@ -103,7 +104,9 @@ public class ModrinthVersionTest {
         ModrinthVersion v2 = new ModrinthVersion();
 
         v1.setVersion_number("BETA-0.9.3");
+        v1.setVersions_type("beta");
         v2.setVersion_number("BETA-0.9.4");
+        v2.setVersions_type("beta");
 
         assertTrue(v1.compareTo(v2) < 0);
         assertTrue(v2.compareTo(v1) > 0);
@@ -115,10 +118,13 @@ public class ModrinthVersionTest {
         ModrinthVersion v2 = new ModrinthVersion();
 
         v1.setVersion_number("ALPHA-1.0.0");
+        v1.setVersions_type("alpha");
         v2.setVersion_number("BETA-1.0.0");
+        v2.setVersions_type("beta");
 
-        // Should be equal since prefixes are filtered out
-        assertEquals(0, v1.compareTo(v2));
+        // ALPHA should be less than BETA due to version_type precedence
+        assertTrue(v1.compareTo(v2) < 0);
+        assertTrue(v2.compareTo(v1) > 0);
     }
 
     @Test
@@ -127,7 +133,9 @@ public class ModrinthVersionTest {
         ModrinthVersion v2 = new ModrinthVersion();
 
         v1.setVersion_number("BETA-1.0");
+        v1.setVersions_type("beta");
         v2.setVersion_number("BETA-1.0.1");
+        v2.setVersions_type("beta");
 
         assertTrue(v1.compareTo(v2) < 0);
         assertTrue(v2.compareTo(v1) > 0);
@@ -140,33 +148,135 @@ public class ModrinthVersionTest {
 
         ModrinthVersion v1 = new ModrinthVersion();
         v1.setVersion_number("BETA-0.9.4");
+        v1.setVersions_type("beta");
         v1.setName("Version 0.9.4");
         versionList.add(v1);
 
         ModrinthVersion v2 = new ModrinthVersion();
         v2.setVersion_number("BETA-0.8.2");
+        v2.setVersions_type("beta");
         v2.setName("Version 0.8.2");
         versionList.add(v2);
 
         ModrinthVersion v3 = new ModrinthVersion();
-        v3.setVersion_number("BETA-0.9.3");
-        v3.setName("Version 0.9.3");
+        v3.setVersion_number("BETA-1.1.0");
+        v3.setVersions_type("beta");
+        v3.setName("Version 1.1.0");
         versionList.add(v3);
 
         ModrinthVersion v4 = new ModrinthVersion();
-        v4.setVersion_number("BETA-1.0.0");
-        v4.setName("Version 1.0.0");
+        v4.setVersion_number("BETA-0.9.3");
+        v4.setVersions_type("beta");
+        v4.setName("Version 0.9.3");
         versionList.add(v4);
 
-        // Sort the list
+        ModrinthVersion v5 = new ModrinthVersion();
+        v5.setVersion_number("1.0.0");
+        v5.setVersions_type("release");
+        v5.setName("Version 1.0.0");
+        versionList.add(v5);
+
+        ModrinthVersion v6 = new ModrinthVersion();
+        v6.setVersion_number("ALPHA-1.1.0");
+        v6.setVersions_type("alpha");
+        v6.setName("Version 1.1.0");
+        versionList.add(v6);
+
+        ModrinthVersion v7 = new ModrinthVersion();
+        v7.setVersion_number("1.1.0");
+        v7.setVersions_type("release");
+        v7.setName("Version 1.1.0");
+        versionList.add(v7);
+
         Collections.sort(versionList);
 
-        // Check the order
+        // Ascending order: alpha < beta < release
         assertEquals("Version 0.8.2", versionList.get(0).getName());
         assertEquals("Version 0.9.3", versionList.get(1).getName());
         assertEquals("Version 0.9.4", versionList.get(2).getName());
-        assertEquals("Version 1.0.0", versionList.get(3).getName());
+        assertEquals("Version 1.0.0", versionList.get(3).getName());  // release
+        assertEquals("Version 1.1.0", versionList.get(4).getName());  // alpha
+        assertEquals("Version 1.1.0", versionList.get(5).getName());  // beta
+        assertEquals("Version 1.1.0", versionList.get(6).getName());  // release
     }
+
+    @Test
+    public void testCompareToWithUnknownVersionType() {
+        ModrinthVersion v1 = new ModrinthVersion();
+        ModrinthVersion v2 = new ModrinthVersion();
+
+        v1.setVersion_number("BETA-1.0.0");
+        v1.setVersions_type("beta");
+
+        v2.setVersion_number("UNKNOWN-1.0.0");
+        v2.setVersions_type("weird"); // unknown type = rank 3
+
+        // v1 should be considered greater because "beta" has higher precedence than "weird"
+        assertTrue(v1.compareTo(v2) > 0);
+        assertTrue(v2.compareTo(v1) < 0);
+    }
+
+    @Test
+    public void testCompareToWithNullVersionType() {
+        ModrinthVersion v1 = new ModrinthVersion();
+        ModrinthVersion v2 = new ModrinthVersion();
+
+        v1.setVersion_number("BETA-1.0.0");
+        v1.setVersions_type("beta"); // rank 1
+
+        v2.setVersion_number("1.0.0");
+        v2.setVersions_type(null); // null = rank 3
+
+        // beta is higher precedence (rank 1), so v1 > v2 in compareTo logic
+        assertTrue(v1.compareTo(v2) > 0);
+        assertTrue(v2.compareTo(v1) < 0);
+    }
+
+    @Test
+    public void testCompareToWithBothNullVersionTypes() {
+        ModrinthVersion v1 = new ModrinthVersion();
+        ModrinthVersion v2 = new ModrinthVersion();
+
+        v1.setVersion_number("1.0.1");
+        v1.setVersions_type(null);
+        v2.setVersion_number("1.0.0");
+        v2.setVersions_type(null);
+
+        // With both version types null, fallback to version number comparison
+        assertTrue(v1.compareTo(v2) > 0);
+        assertTrue(v2.compareTo(v1) < 0);
+    }
+
+    @Test
+    public void testCompareToWithMixedCaseVersionTypes() {
+        ModrinthVersion v1 = new ModrinthVersion();
+        ModrinthVersion v2 = new ModrinthVersion();
+
+        v1.setVersion_number("1.0.0");
+        v1.setVersions_type("Beta"); // mixed-case
+        v2.setVersion_number("1.0.0");
+        v2.setVersions_type("bEta"); // mixed-case, different capitalization
+
+        // Both have the same version number and type; they should be considered equal
+        assertEquals(0, v1.compareTo(v2));
+
+        // Now comparing different version types with mixed case
+        v1.setVersions_type("RELEASE"); // release
+        v2.setVersions_type("beta");   // beta
+
+        // RELEASE should be ranked higher than BETA
+        assertTrue(v1.compareTo(v2) > 0);
+        assertTrue(v2.compareTo(v1) < 0);
+
+        // Testing ALPHA with mixed case
+        v1.setVersions_type("Alpha");
+        v2.setVersions_type("reLeAsE");
+
+        // ALPHA should be ranked lower than RELEASE
+        assertTrue(v1.compareTo(v2) < 0);
+        assertTrue(v2.compareTo(v1) > 0);
+    }
+
 
     @Test
     public void testVersionParsingFromFullJSON() {

@@ -114,31 +114,60 @@ public class ModrinthVersion implements Comparable<ModrinthVersion> {
 
 
     /**
-     * Compares this {@link ModrinthVersion} with another version based on version numbers.
+     * Compares this {@link ModrinthVersion} with another version to determine ordering.
+     * <p>
+     * The comparison is performed in two steps:
+     * <ul>
+     *     <li><b>Numeric Version Comparison:</b> Versions are compared numerically based on their version number
+     *     components (e.g., "1.2.0" &lt; "1.2.1"). Missing components are treated as zero.</li>
+     *     <li><b>Version Type Precedence:</b> Used only as a tiebreaker when numeric versions are equal.
+     *     Precedence: "release" &gt; "beta" &gt; "alpha". Unknown or null types are considered lowest.</li>
+     * </ul>
+     *
+     * <p>
+     * For example: <code>1.2.1 (alpha)</code> &gt; <code>1.2.0 (release)</code>, but <code>1.2.0 (release)</code> &gt; <code>1.2.0 (beta)</code>.
      *
      * @param otherVersion The {@link ModrinthVersion} to compare to.
      * @return A negative integer, zero, or a positive integer if this version is
-     * less than, equal to, or greater than the specified version.
+     *         considered less than, equal to, or greater than the specified version.
      */
     @Override
     public int compareTo(@NotNull ModrinthVersion otherVersion) {
-
+        // Compare version numbers first
         String[] thisParts = this.getFilteredVersion().split("\\.");
         String[] otherParts = otherVersion.getFilteredVersion().split("\\.");
 
         int length = Math.max(thisParts.length, otherParts.length);
-
         for (int i = 0; i < length; i++) {
-            int thisPart = i < thisParts.length ?
-                    Integer.parseInt(thisParts[i]) : 0;
-            int otherPart = i < otherParts.length ?
-                    Integer.parseInt(otherParts[i]) : 0;
-            if (thisPart < otherPart)
-                return -1;
-            if (thisPart > otherPart)
-                return 1;
+            int thisPart = i < thisParts.length ? parseIntSafe(thisParts[i]) : 0;
+            int otherPart = i < otherParts.length ? parseIntSafe(otherParts[i]) : 0;
+            if (thisPart != otherPart) {
+                return Integer.compare(thisPart, otherPart);
+            }
         }
-        return 0;
+
+        // Version numbers are equal, compare type as a tiebreaker
+        int thisTypeRank = getVersionTypeRank(this.versions_type);
+        int otherTypeRank = getVersionTypeRank(otherVersion.versions_type);
+        return Integer.compare(thisTypeRank, otherTypeRank);
+    }
+
+    private int getVersionTypeRank(String versionType) {
+        if (versionType == null || versionType.isEmpty()) return 0; // Null/unknown = lowest
+        return switch (versionType.toLowerCase()) {
+            case "alpha"   -> 1;
+            case "beta"    -> 2;
+            case "release" -> 3;
+            default        -> 0; // unknown types ranked lowest
+        };
+    }
+
+    private int parseIntSafe(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     /**
