@@ -4,7 +4,6 @@ import de.nightevolution.realisticplantgrowth.ConfigManagerOld;
 import de.nightevolution.realisticplantgrowth.RealisticPlantGrowth;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -75,12 +74,12 @@ public class Logger {
     public void log(String msg) {
         Component c = MiniMessage.miniMessage().deserialize(pluginPrefix + msg);
 
-        String msgInANSI = LegacyComponentSerializer.legacyAmpersand().serialize(c);
+        //String msgInANSI = LegacyComponentSerializer.legacyAmpersand().serialize(c);
         // String msgInANSI = ANSIComponentSerializer.ansi().serialize(c); // Not supported in older mc versions.
 
 
         // Translate & in § Legacy ColorCodes for Console
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', msgInANSI));
+        //Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', msgInANSI));
     }
 
     /**

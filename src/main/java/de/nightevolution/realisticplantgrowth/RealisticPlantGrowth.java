@@ -81,7 +81,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
 
         // new paper way to do this:
         //this.pluginVersion = getPluginMeta().getVersion();
-        LogUtils.initialize(this.getDataFolder(), false, false);
+        LogUtils.initialize(this, false, false);
 
         cm = new ConfigManager(this);
         logger = LogUtils.getLogger(this.getClass());
@@ -104,6 +104,11 @@ public class RealisticPlantGrowth extends JavaPlugin {
 
         // Starts bStats metrics, if enabled in the config
         new MetricsHandler(this, cm);
+
+        // Check for plugin updates
+        if (cm.getConfig().getBoolean(ConfigPath.PLUGIN_UPDATES_CHECK_FOR_UPDATES.getPath())) {
+            updateChecker = new UpdateChecker(this, cm.getConfig().getInt(ConfigPath.PLUGIN_UPDATES_INTERVAL_HOURS.getPath()));
+        }
 
 //        updateVariables();
 
@@ -181,7 +186,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
         }
 
         if (cm.getConfig().getBoolean(ConfigPath.PLUGIN_UPDATES_CHECK_FOR_UPDATES.getPath())) {
-            updateChecker = new UpdateChecker(cm.getConfig().getInt(ConfigPath.PLUGIN_UPDATES_INTERVAL_HOURS.getPath()));
+            updateChecker = new UpdateChecker(this, cm.getConfig().getInt(ConfigPath.PLUGIN_UPDATES_INTERVAL_HOURS.getPath()));
         }
 
     }
@@ -254,6 +259,7 @@ public class RealisticPlantGrowth extends JavaPlugin {
      *
      * @return The singleton instance of the {@link RealisticPlantGrowth} plugin.
      */
+    @Deprecated(forRemoval = true)
     @NotNull
     public static RealisticPlantGrowth getInstance() {
         return instance;

@@ -6,6 +6,7 @@ import de.nightevolution.realisticplantgrowth.utils.LogUtils;
 import de.nightevolution.realisticplantgrowth.utils.version.rest.ModrinthVersion;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 import java.net.URI;
@@ -26,7 +27,7 @@ import java.util.function.Consumer;
  */
 public class UpdateChecker {
 
-    private final RealisticPlantGrowth plugin;
+    private final Plugin plugin;
     private final Logger logger;
     private final int updateInterval;
 
@@ -36,7 +37,7 @@ public class UpdateChecker {
     /**
      * Constructs a new {@link UpdateChecker} instance.
      */
-    public UpdateChecker(RealisticPlantGrowth plugin, int updateInterval) {
+    public UpdateChecker(Plugin plugin, int updateInterval) {
         this.plugin = plugin;
         this.logger = LogUtils.getLogger(this.getClass());
         this.updateInterval = updateInterval;
