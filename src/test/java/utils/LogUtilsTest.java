@@ -38,7 +38,7 @@ public class LogUtilsTest {
     private final String WARN_MSG = "This is a Warning.";
     private final String ERROR_MSG = "This is an Error.";
 
-    private final String LOG_PATH = "target/plugins/RealisticPlantGrowth";
+    private final String LOG_PATH = "target/plugins/RealisticPlantGrowth/log";
 
 
     // Custom ListAppender for capturing log messages
@@ -122,7 +122,7 @@ public class LogUtilsTest {
             LogUtils.logToFileAsync(logFile, testMessage);
 
             // Define the expected file
-            File file = new File(LOG_PATH + "/log", logFile.getValue());
+            File file = new File(LOG_PATH, logFile.getValue());
 
             // Wait for the file to be written (basic polling)
             boolean fileWritten = false;
