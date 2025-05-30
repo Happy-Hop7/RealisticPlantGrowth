@@ -227,6 +227,7 @@ public class ConfigManager {
 
         try {
             selectedLanguageFile.update();
+            assert selectedLanguageFile.getFile() != null;
             logger.info("Selected language file: {}", selectedLanguageFile.getFile().getName());
         } catch (IOException e) {
             throw new ConfigurationException("Could not update selected language file.", e);
