@@ -9,11 +9,6 @@ public enum ConfigPath {
     GENERAL_SHOW_GROWTH_RATES_ON_CLICK("general.show_growth_rates_on_click"),
     GENERAL_GROWTH_RATE_DISPLAY_COOLDOWN("general.growth_rate_display_cooldown"),
 
-    // Farmland Settings
-    FARMLAND_SETTINGS_SECTION("farmland_settings"),
-    FARMLAND_DESTROY_ON_HARVEST("farmland_settings.destroy_on_harvest"),
-    FARMLAND_REPLACEMENT_BLOCKS("farmland_settings.replacement_blocks"),
-
     // Composter Settings
     COMPOSTER_SECTION("composter"),
     COMPOSTER_DISABLE_BONEMEAL_OUTPUT("composter.disable_bonemeal_output"),
@@ -26,9 +21,6 @@ public enum ConfigPath {
     FERTILIZER_BEHAVIOR_RADIUS("fertilizer.behavior.radius"),
     FERTILIZER_BEHAVIOR_PASSIVE("fertilizer.behavior.passive"),
     FERTILIZER_BEHAVIOR_ALLOW_ABOVE_100("fertilizer.behavior.allow_growth_rate_above_100"),
-    FERTILIZER_INVALID_BIOME_ENABLED("fertilizer.invalid_biome.enabled"),
-    FERTILIZER_INVALID_BIOME_GROWTH_RATE("fertilizer.invalid_biome.growth_rate"),
-    FERTILIZER_INVALID_BIOME_DEATH_CHANCE("fertilizer.invalid_biome.death_chance"),
 
     // UV Light Settings
     UV_LIGHT_SECTION("uv_light"),
@@ -36,16 +28,6 @@ public enum ConfigPath {
     UV_LIGHT_RADIUS("uv_light.radius"),
     UV_LIGHT_BLOCKS("uv_light.blocks"),
     UV_LIGHT_REQUIRE_ALL_BLOCKS("uv_light.require_all_blocks"),
-    UV_LIGHT_GROW_IN_DARK("uv_light.grow_in_dark"),
-
-    // Effects
-    EFFECTS_SECTION("effects"),
-    EFFECTS_PLANT_DEATH_SOUND_EFFECT_ENABLED("effects.plant_death_sound_effect.enabled"),
-    EFFECTS_PLANT_DEATH_SOUND("effects.plant_death_sound_effect.sound"),
-    EFFECTS_PLANT_DEATH_VOLUME("effects.plant_death_sound_effect.volume"),
-    EFFECTS_PLANT_DEATH_PITCH("effects.plant_death_sound_effect.pitch"),
-    EFFECTS_PLANT_DEATH_EFFECT("effects.plant_death_sound_effect.effect"),
-    EFFECTS_PLANT_DEATH_DATA("effects.plant_death_sound_effect.data"),
 
     // Logging
     LOGGING_SECTION("logging"),
