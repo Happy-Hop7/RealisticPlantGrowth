@@ -15,9 +15,7 @@
 #| Core options controlling language, world activation, and user interactions.                                        |#
 #|                                                                                                                    |#
 ########################################################################################################################
-
 general:
-
   # Language file to use (from /RealisticPlantGrowth/local).
   # Format: language-region (e.g., en-US, de-DE)
   language_code: en-US
@@ -44,30 +42,11 @@ general:
 
 ########################################################################################################################
 #|                                                                                                                    |#
-#| Farmland Behavior                                                                                                  |#
-#|                                                                                                                    |#
-########################################################################################################################
-
-# If enabled, farmland will be replaced with another block when a player harvests a plant growing on it.
-# This feature forces players to re-till the soil before planting new crops.
-farmland_settings:
-  destroy_on_harvest: true # Enables farmland destruction upon harvest.
-
-  # Define the blocks that can replace farmland when it is destroyed and their probabilities.
-  # The format is: <BLOCK>: <PROBABILITY in %>
-  replacement_blocks:
-    DIRT: 75          # 75% chance for farmland to be replaced by dirt
-    COARSE_DIRT: 25   # 25% chance for farmland to be replaced by coarse dirt
-
-
-########################################################################################################################
-#|                                                                                                                    |#
 #| Composter Settings                                                                                                 |#
 #|                                                                                                                    |#
 #| Configuration options for customizing composter behavior and functionality in the game.                           |#
 #|                                                                                                                    |#
 ########################################################################################################################
-
 composter:
   # If enabled, composters will NOT produce bonemeal.
   # This also disables bonemeal farming via hopper-fed composters.
@@ -90,7 +69,6 @@ composter:
 #| Fertilizer can affect growth rates, extend crop viability to otherwise invalid biomes, and operate passively.      |#
 #|                                                                                                                    |#
 ########################################################################################################################
-
 fertilizer:
   # Master switch to enable or disable the fertilizer system entirely.
   enabled: false
@@ -111,22 +89,6 @@ fertilizer:
     # If false, growth rates are capped at 100%, even if bonuses apply.
     allow_growth_rate_above_100: false
 
-  # Controls how fertilizer interacts with crops growing in biomes where they normally cannot thrive.
-  invalid_biome:
-    # Enables crop growth in biomes that are normally non-permissive (e.g., deserts for wheat).
-    # Must be true for any of the below invalid biome settings to take effect.
-    enabled: false
-
-    # Growth rate (%) applied to plants in invalid biomes when fertilizer is active.
-    # Example: 20.0 means crops grow at 20% of the normal speed.
-    # Ignored unless 'invalid_biome.enabled' is true.
-    growth_rate: 20.0
-
-    # Chance (%) that a plant dies at each growth stage, even if fertilized.
-    # Useful for balancing fertilizer in hostile environments.
-    # Internally scaled by the number of growth stages the plant has.
-    death_chance: 35.0
-
 
 ########################################################################################################################
 #|                                                                                                                    |#
@@ -138,14 +100,13 @@ fertilizer:
 #| Note: Plants still require a certain light level to grow.                                                          |#
 #|                                                                                                                    |#
 ########################################################################################################################
-
 uv_light:
   # Master toggle for enabling/disabling the UV-Light system.
   enabled: false
 
   # Radius (in blocks) around a UV block where artificial light affects plant growth.
   # Valid range: 1–15. Larger values increase performance cost.
-  radius: 5
+  radius: 8
 
   # List of block types (by material name) that act as artificial UV light sources.
   # These do not need to emit real light in-game.
@@ -159,57 +120,6 @@ uv_light:
   require_all_blocks: true
 
 
-  # List of plants that grow without requiring natural sky light, allowing growth
-  # in artificial light sources like torches and lanterns (not the same as UV-Light).
-  # Use official MATERIAL_NAMES to add items to this list (https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html)
-  grow_in_dark:
-    # Overworld Plants
-    - RED_MUSHROOM
-    - BROWN_MUSHROOM
-    - CAVE_VINES
-    - GLOW_LICHEN
-
-    # Ocean Plants
-    - KELP
-
-    # End Plants
-    - CHORUS_FLOWER
-
-    # Nether Plants
-    - WEEPING_VINES
-    - TWISTING_VINES
-    - NETHER_WART
-    - WARPED_FUNGUS
-    - CRIMSON_FUNGUS
-
-
-########################################################################################################################
-#|                                                                                                                    |#
-#| Sounds & Effects                                                                                                   |#
-#|                                                                                                                    |#
-#| Configure played sounds or particle effects used by this plugin.                                                   |#
-#|                                                                                                                    |#
-#| Available sounds and effects:                                                                                      |#
-#| Sound:            https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html                                   |#
-#| Particle Effect:  https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Effect.html                                  |#
-#|                                                                                                                    |#
-########################################################################################################################
-
-effects:
-  plant_death_sound_effect:
-    # Enables the sound and particle effects for dying plants.
-    enabled: true
-    # The sound played when a plant dies. Choose from available sounds (link provided above).
-    sound: BLOCK_CROP_BREAK
-    # Adjust the volume (0.0 to 1.0).
-    volume: 0.5
-    # Adjust the pitch (0.5 to 2.0, 1.0 is normal pitch).
-    pitch: 0.5
-    # The particle effect played when a plant dies. Choose from available particle effects (link provided above).
-    effect: SMOKE
-    # Adjust effect data if applicable.
-    data: 1
-
 ########################################################################################################################
 #|                                                                                                                    |#
 #| Logging & Debugging                                                                                                |#
@@ -218,7 +128,6 @@ effects:
 #| WARNING: Enable logging only for debugging purposes, as it can generate a large amount of data.                    |#
 #|                                                                                                                    |#
 ########################################################################################################################
-
 logging:
   # Enable Debug Mode. This can generate a large amount of log data, so use it only for debugging purposes.
   debug_log: false
@@ -268,5 +177,5 @@ use_metrics: true
 #| Spooky internal settings.                                                                                          |#
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
-config-version: 8
+config-version: 9
 verbose: false

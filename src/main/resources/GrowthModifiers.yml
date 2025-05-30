@@ -13,22 +13,54 @@
 BAMBOO:
   growth_settings:
     bonemeal_limit: 3
-    min_light_level: 12
-    max_light_level: 15
+    water_proximity: 8
     offline_grow: true
 
-  harvesting_requirements:
+  light_settings:
+    min_light_level: 12
+    max_light_level: 15
+    can_grow_in_dark: false
+
+  harvesting:
     require_tool: true
     allowed_tools:
       - DIAMOND_SWORD
+      - myplugin:custom_tools
+      - HOES # Item Tag
     allow_dispenser: false
     allow_piston: false
+
+    destroy_farmland: true # Enables farmland destruction upon harvest (Only if plant is on Farmland)
+    soil_replacement_blocks: # (Only when destroy_farmland is activated)
+      DIRT: 75          # 75% chance for farmland to be replaced by dirt
+      COARSE_DIRT: 25   # 25% chance for farmland to be replaced by coarse dirt
+
 
   # Controls fertilizer effects in biomes where crops normally can't grow.
   invalid_biome:
     enabled: false
     growth_rate: 20.0
     death_chance: 35.0
+
+  plant_death:
+    replacement_blocks:
+      AIR: 65          # 75% chance for plant to be replaced by air
+      GRASS: 15        # 15% chance for plant to be replaced by grass
+      DEAD_BUSH: 20    # 20% chance for plant to be replaced by dead bush
+
+    sound_effect:
+      # Enables the sound and particle effects for dying plants.
+      enabled: true
+      # The sound played when a plant dies. Choose from available sounds (link provided above).
+      sound: BLOCK_CROP_BREAK
+      # Adjust the volume (0.0 to 1.0).
+      volume: 0.5
+      # Adjust the pitch (0.5 to 2.0, 1.0 is normal pitch).
+      pitch: 0.5
+      # The particle effect played when a plant dies. Choose from available particle effects (link provided above).
+      effect: SMOKE
+      # Adjust effect data if applicable.
+      data: 1
 
   biome_settings:
     Tropical_group1:
@@ -39,7 +71,6 @@ BAMBOO:
       growth_rates:
         natural: { rate: 100, death: 5 , boost: 20, offline: 50 }
         uv:      { rate: 35,  death: 15, boost: 20, offline: 50 }
-        invalid: { rate: 35,  death: 15, boost: 20, offline: 50 }
 
     Tropical_group2:
       worlds:
@@ -51,7 +82,6 @@ BAMBOO:
       growth_rates:
         natural: { rate: 100, death: 5 , boost: 20, offline: 50 }
         uv:      { rate: 35,  death: 15, boost: 20, offline: 50 }
-        invalid: { rate: 35,  death: 15, boost: 20, offline: 50 }
 
 
 
