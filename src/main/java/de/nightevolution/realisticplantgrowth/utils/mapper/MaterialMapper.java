@@ -185,7 +185,7 @@ public class MaterialMapper {
     @NotNull
     private String findConfigKeyInGrowthModifiers(@NotNull String configKey) {
         for (String key : cm.getGrowthModifiers().keySet()) {
-            if (key.contains(configKey.toUpperCase())) {
+            if (key.equalsIgnoreCase(configKey)) {
                 return key;
             }
         }
