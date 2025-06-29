@@ -58,6 +58,22 @@ destroy_farmland: true
 # If 'require_hoe' is set to 'true' and a plant is harvested without a hoe, the plant will not drop anything.
 require_hoe: true
 
+# Determines whether farmer villagers are affected by the 'require_hoe' and 'destroy_farmland' settings.
+# These settings apply only to crops affected by GrowthModifier rules.
+#
+# When set to 'true':
+# - destroy_farmland:
+#   Farmland will be converted to coarse dirt when villagers harvest GrowthModified plants.
+#   The player must re-till the soil to replant crops.
+# - require_hoe:
+#   Villagers will not receive crop drops from GrowthModified plants, effectively disabling villager farming.
+#
+# When set to 'false':
+# Villagers are unaffected by these settings and will farm GrowthModified crops normally.
+villager:
+  destroy_farmland: true
+  require_hoe: true
+
 # Displays potential growth rates for an item in hand when a player left-clicks the ground.
 # Only shows growth rates for the biome the player is currently in.
 display_growth_rates: true
@@ -254,5 +270,5 @@ bonemeal_log: false
 #| Spooky internal settings.                                                                                          |#
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
-config-version: 7
+config-version: 8
 verbose: false
