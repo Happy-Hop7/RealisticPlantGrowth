@@ -67,12 +67,15 @@ require_hoe: true
 #   The player must re-till the soil to replant crops.
 # - require_hoe:
 #   Villagers will not receive crop drops from GrowthModified plants, effectively disabling villager farming.
+# - disable_composter_interaction:
+#   Villagers will no longer be able to fill composters with collected seeds.
 #
 # When set to 'false':
 # Villagers are unaffected by these settings and will farm GrowthModified crops normally.
 villager:
   destroy_farmland: true
   require_hoe: true
+  disable_composter_interaction: true
 
 # Displays potential growth rates for an item in hand when a player left-clicks the ground.
 # Only shows growth rates for the biome the player is currently in.
@@ -98,7 +101,7 @@ check_for_updates: true
 #|                                                                                                                    |#
 #| Composter Settings                                                                                                 |#
 #|                                                                                                                    |#
-#| Configuration options for customizing composter behavior and functionality in the game.                           |#
+#| Configuration options for customizing composter behavior and functionality in the game.                            |#
 #|                                                                                                                    |#
 ########################################################################################################################
 
@@ -270,5 +273,5 @@ bonemeal_log: false
 #| Spooky internal settings.                                                                                          |#
 #| Please do not modify. =)                                                                                           |#
 ########################################################################################################################
-config-version: 8
+config-version: 9
 verbose: false
