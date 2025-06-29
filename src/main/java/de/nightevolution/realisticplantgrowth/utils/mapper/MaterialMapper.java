@@ -185,7 +185,14 @@ public class MaterialMapper {
     @NotNull
     private String findConfigKeyInGrowthModifiers(@NotNull String configKey) {
         for (String key : cm.getGrowthModifiers().keySet()) {
-            if (key.equalsIgnoreCase(configKey)) {
+            if (key.toLowerCase().contains(configKey.toLowerCase())) {
+                // This was previously fixed using key.equalsIgnoreCase(configKey),
+                // but that caused issues with the current implementation of the plantVariations map.
+                // This is a temporary workaround in place since 19.06.2025.
+                if (configKey.equalsIgnoreCase(Material.OAK_SAPLING.toString()) && key.toLowerCase().contains("dark")){
+                    continue;
+                }
+
                 return key;
             }
         }

@@ -199,6 +199,7 @@ public final class RealisticPlantGrowth extends JavaPlugin {
         new PlayerInteractListener(instance);
         new PlayerQuitListener(instance);
         new StructureGrowListener(instance);
+        new VillagerFarmingListener(instance);
     }
 
     /**

@@ -86,6 +86,9 @@ public class ConfigManager {
     private static int min_natural_light;
     private static boolean destroy_farmland;
     private static boolean require_hoe;
+    private static boolean villager_destroy_farmland;
+    private static boolean villager_require_hoe;
+    private static boolean villager_disable_composter_interaction;
     private static boolean display_growth_rates;
     private static int display_cooldown;
     private static boolean use_metrics;
@@ -377,6 +380,9 @@ public class ConfigManager {
             min_natural_light = config.getInt("min_natural_light");
             destroy_farmland = config.getBoolean("destroy_farmland");
             require_hoe = config.getBoolean("require_hoe");
+            villager_destroy_farmland = config.getBoolean("villager.destroy_farmland");
+            villager_require_hoe = config.getBoolean("villager.require_hoe");
+            villager_disable_composter_interaction = config.getBoolean("villager.disable_composter_interaction");
             display_growth_rates = config.getBoolean("display_growth_rates");
             display_cooldown = config.getInt("display_cooldown");
             use_metrics = config.getBoolean("use_metrics");
@@ -479,6 +485,9 @@ public class ConfigManager {
             logger.logToFile("min_natural_light: " + min_natural_light, logFile);
             logger.logToFile("destroy_farmland: " + destroy_farmland, logFile);
             logger.logToFile("require_hoe: " + require_hoe, logFile);
+            logger.logToFile("villager_destroy_farmland: " + villager_destroy_farmland, logFile);
+            logger.logToFile("villager_require_hoe: " + villager_require_hoe, logFile);
+            logger.logToFile("villager_disable_composter_interaction: " + villager_disable_composter_interaction, logFile);
             logger.logToFile("display_growth_rates: " + display_growth_rates, logFile);
             logger.logToFile("display_cooldown: " + display_cooldown, logFile);
             logger.logToFile("use_metrics: " + use_metrics, logFile);
@@ -900,6 +909,18 @@ public class ConfigManager {
     public boolean isRequire_Hoe() {
         return require_hoe;
     }
+
+    public boolean getVillager_destroy_farmland() {
+        return villager_destroy_farmland;
+     }
+
+    public boolean getVillager_require_hoe() {
+        return villager_require_hoe;
+     }
+
+     public boolean getVillager_disable_composter_interaction() {
+        return villager_disable_composter_interaction;
+     }
 
     public boolean isDisplay_growth_rates() {
         return display_growth_rates;
