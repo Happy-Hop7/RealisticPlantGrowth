@@ -177,6 +177,8 @@ public class SpecialBlockSearch {
         int startY = startingBlock.getY();
         int startZ = startingBlock.getZ();
 
+        World world = startingBlock.getWorld();
+
         // We are searching around a block, that triggered a PlantGrowthEvent.
         // This requires an o(n^3) area scan.
         // This code gets obsolete in the 1.0 release of the plugin
@@ -185,19 +187,19 @@ public class SpecialBlockSearch {
                 for (int z = -searchRadius; z <= searchRadius; z++) {
 
                     // Calculate absolute coordinates
-                    int blockX = startX + x;
-                    int blockY = startY + y;
-                    int blockZ = startZ + z;
+                    int currentBlockX = startX + x;
+                    int currentBlockY = startY + y;
+                    int currentBlockZ = startZ + z;
 
-                    World world = startingBlock.getWorld();
-                    Block relativeBlock = world.getBlockAt(blockX, blockY, blockZ);
+                    // Get the current block to inspect
+                    Block currentBlock = world.getBlockAt(currentBlockX, currentBlockY, currentBlockZ);
 
                     // Skip blocks in unloaded chunks to prevent forced chunk loading
-                    if (!loadedChunks.contains(relativeBlock.getChunk())) {
+                    if (!loadedChunks.contains(currentBlock.getChunk())) {
                         continue;
                     }
 
-                    Material blockType = relativeBlock.getType();
+                    Material blockType = currentBlock.getType();
 
                     // Pre-calculate distance squared once
                     double distanceSquared = (x * x) + (y * y) + (z * z);
@@ -205,9 +207,9 @@ public class SpecialBlockSearch {
                     // Check UV sources
                     if (uvEnabled) {
                         if (uvMaterials.contains(blockType) && distanceSquared <= uvRadiusSquared){
-                            uvSources.add(relativeBlock);
+                            uvSources.add(currentBlock);
                             if (debug_log)
-                                logger.logToFile("[" + relativeBlock.getLocation() + "] Located UV-Source: " + blockType, logFile);
+                                logger.logToFile("[" + currentBlock.getLocation() + "] Located UV-Source: " + blockType, logFile);
                         }
                     }
 
@@ -215,9 +217,9 @@ public class SpecialBlockSearch {
                     // Check fertilizer sources
                     if (fertilizerEnabled) {
                         if (blockType == Material.COMPOSTER && distanceSquared <= fertilizerRadiusSquared){
-                            fertilizerSources.add(relativeBlock);
+                            fertilizerSources.add(currentBlock);
                             if (debug_log)
-                                logger.logToFile("[" + relativeBlock.getLocation() + "] Located Fertilizer-Source: " + blockType, logFile);
+                                logger.logToFile("[" + currentBlock.getLocation() + "] Located Fertilizer-Source: " + blockType, logFile);
                         }
                     }
                 }
